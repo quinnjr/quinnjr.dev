@@ -17,6 +17,7 @@ export { EducationCreateNestedManyWithoutUserInput } from './education-create-ne
 export { EducationCreateOrConnectWithoutUserInput } from './education-create-or-connect-without-user.input';
 export { EducationCreateWithoutUserInput } from './education-create-without-user.input';
 export { EducationCreateInput } from './education-create.input';
+export { EducationCreateactivitiesInput } from './education-createactivities.input';
 export { EducationGroupByArgs } from './education-group-by.args';
 export { EducationGroupBy } from './education-group-by.output';
 export { EducationListRelationFilter } from './education-list-relation-filter.input';
@@ -49,6 +50,7 @@ export { EducationUpdateManyWithoutUserInput } from './education-update-many-wit
 export { EducationUpdateWithWhereUniqueWithoutUserInput } from './education-update-with-where-unique-without-user.input';
 export { EducationUpdateWithoutUserInput } from './education-update-without-user.input';
 export { EducationUpdateInput } from './education-update.input';
+export { EducationUpdateactivitiesInput } from './education-updateactivities.input';
 export { EducationUpsertWithWhereUniqueWithoutUserInput } from './education-upsert-with-where-unique-without-user.input';
 export { EducationWhereUniqueInput } from './education-where-unique.input';
 export { EducationWhereInput } from './education-where.input';

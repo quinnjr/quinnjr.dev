@@ -1,7 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { Int } from '@nestjs/graphql';
-import { EducationCreateactivitiesInput } from '../prisma/education-createactivities.input';
+import { EducationCreateactivitiesInput } from './education-createactivities.input';
 
 @InputType()
 export class EducationCreateWithoutUserInput {

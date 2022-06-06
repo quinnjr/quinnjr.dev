@@ -34,6 +34,10 @@ export { UserCreateWithoutEducationsInput } from './user-create-without-educatio
 export { UserCreateWithoutExperiencesInput } from './user-create-without-experiences.input';
 export { UserCreateWithoutProjectsInput } from './user-create-without-projects.input';
 export { UserCreateInput } from './user-create.input';
+export { UserCreateprofessionalMembershipsInput } from './user-createprofessional-memberships.input';
+export { UserCreateprofileHighlightsInput } from './user-createprofile-highlights.input';
+export { UserCreateskillsInput } from './user-createskills.input';
+export { UserCreateyubikeysInput } from './user-createyubikeys.input';
 export { UserGroupByArgs } from './user-group-by.args';
 export { UserGroupBy } from './user-group-by.output';
 export { UserMaxAggregateInput } from './user-max-aggregate.input';
@@ -76,6 +80,10 @@ export { UserUpdateWithoutEducationsInput } from './user-update-without-educatio
 export { UserUpdateWithoutExperiencesInput } from './user-update-without-experiences.input';
 export { UserUpdateWithoutProjectsInput } from './user-update-without-projects.input';
 export { UserUpdateInput } from './user-update.input';
+export { UserUpdateprofessionalMembershipsInput } from './user-updateprofessional-memberships.input';
+export { UserUpdateprofileHighlightsInput } from './user-updateprofile-highlights.input';
+export { UserUpdateskillsInput } from './user-updateskills.input';
+export { UserUpdateyubikeysInput } from './user-updateyubikeys.input';
 export { UserUpsertWithoutArticlesInput } from './user-upsert-without-articles.input';
 export { UserUpsertWithoutCertificationsInput } from './user-upsert-without-certifications.input';
 export { UserUpsertWithoutConferencesInput } from './user-upsert-without-conferences.input';
