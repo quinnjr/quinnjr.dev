@@ -9,7 +9,7 @@ COPY . .
 
 RUN <<EOF
   apk --no-cache add libc6-compat pkgconfig autoconf automake build-base sudo gawk make musl-dev gcc libtool nasm
-  npm i -g npm "pnpm@^6.0.0" @angular/cli
+  npm i -g npm pnpm @angular/cli
   chown -R node:node /app
   echo 'node ALL=(ALL:ALL) NOPASSWD: ALL' >> /etc/sudoers
 EOF

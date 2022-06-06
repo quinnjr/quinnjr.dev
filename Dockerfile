@@ -11,7 +11,7 @@ COPY . .
 
 RUN apk add --no-cache libc6-compat zlib zlib-dev optipng pkgconfig autoconf \
     automake nasm build-base libtool && \
-  npm i -g npm "pnpm@^6.0.0" && \
+  npm i -g npm pnpm && \
   pnpm install --no-optional --unsafe-perm && \
   pnpm run build:ssr
 
@@ -30,7 +30,7 @@ COPY --from=builder --chown=node:node /app/angular.json /app/angular.json
 COPY --from=builder --chown=node:node /app/pnpm-lock.yaml /app/pnpm-lock.yaml
 COPY --from=builder --chown=node:node /app/docker-entry.sh /app/docker-entry.sh
 
-RUN npm i -g npm "pnpm@^6.0.0" && \
+RUN npm i -g npm pnpm && \
   pnpm install --no-optional && \
   pnpm install -g prisma && \
   pnpx prisma generate && \

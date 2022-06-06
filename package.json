@@ -22,7 +22,7 @@
     "test:server": "jest -c jest.server-config.json"
   },
   "engines": {
-    "pnpm": ">=6.21.0"
+    "pnpm": "^7.0.0"
   },
   "private": true,
   "dependencies": {
