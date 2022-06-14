@@ -3,126 +3,241 @@
     <aside class="menu">
       <ul class="menu-list">
         <li>
-          <a>Profile</a>
+          <a href="#profile">Profile</a>
         </li>
         <li>
-          <a>Education</a>
+          <a href="#skills">Skills</a>
         </li>
         <li>
-          <a>Experience</a>
+          <a href="#education">Education</a>
         </li>
         <li>
-          <a>Skills</a>
+          <a href="#experience">Experience</a>
         </li>
         <li>
-          <a>Professional Memberships</a>
+          <a href="#certifications">Certifications</a>
         </li>
         <li>
-          <a>Certifications</a>
+          <a href="#professional">Professional Memberships</a>
         </li>
       </ul>
     </aside>
   </div>
   <div class="column">
-    <div *ngIf="loading && !user; else elseBlock">
-      Loading...
-    </div>
-    <ng-template #elseBlock>
-      <section id="header" class="content section">
-        <div class="container is-fluid has-text-centered">
-          <img alt="headshot" [src]="user?.profilePicture" class="image is-rounded" />
-          <h1 class="title">{{ user?.firstName }} {{ user?.middleName }} {{ user?.lastName }}</h1>
-          <p class="subtitle">
-            <a href="mailto:{{user?.email}}">{{ user?.email }}</a>&nbsp;&#x26AC;&nbsp;<a
-              [href]="user?.linkedin">LinkedIn</a>&nbsp;&#x26AC;&nbsp;<a [href]="user?.github">Github</a>
-          </p>
-        </div>
+    <div class="content">
+      <section class="section">
+        <h1 id="profile">Profile</h1>
+        <article class="media">
+          <figure class="media-left">
+            <p class="image is-128x128">
+              <img src="/assets/profile_picture.jpg" />
+            </p>
+          </figure>
+          <div class="media-content">
+            <p>A <em>dedicated, versatile, fast-learner</em> anxious to expand his programming and legal skills and make an immediate
+contribution.</p>
+            <p>Able to efficiently juggle workloads, prevail over deadlines, and adapt to new and challenging
+environments.</p>
+            <p>A <strong>strong team player</strong> with great ethical standards, communication skills, and respect for
+confidentiality.</p>
+            <ul>
+              <li>Florida Bar - September 2016</li>
+              <li>Special interests in Open Source technologies, Intellectual Property, Cyber Law, Linux, Cyber Security, Systems Programming, and GPU-assisted Programming</li>
+            </ul>
+          </div>
+        </article>
       </section>
-      <section id="profile" class="section">
-        <h1>Profile</h1>
-        <hr />
-        <div class="content">
-          <p>{{ user?.profile }}</p>
-          <ul>
-            <li *ngFor="let highlight of user?.profileHighlights">{{ highlight }}</li>
-          </ul>
-        </div>
-      </section>
-      <section id="education" class="section">
-        <h1>Education</h1>
-        <hr />
-        <div class="content" *ngIf="user?.educations">
-          <ng-container *ngFor="let institution in user.educations">
-            <div class="media">
-              <figure class="media-left">
-                <span class="image is-128x128">
-                  <a [href]="institution.url">
-                    <img [src]="institution.campusImage" alt="Campus Image" />
-                  </a>
-                </span>
-              </figure>
-              <div class="media-content">
-                <div class="content">
-                  <dl>
-                    <dt>{{ institution.name }}</dt>
-                    <dd>{{ institution.location }} -
-                      <ng-template
-                        *ngIf="institution.startYear && !institution.graduationYear; else elseGraduationBlock">
-                        {{ institution.startYear }} - Present
-                      </ng-template>
-                      <ng-template #elseGraduationBlock>
-                        {{ institution.startYear }} - {{ institution.graduationYear }}
-                      </ng-template>
-                    </dd>
-                    <dd><em>{{ institution.degree }}</em></dd>
-                    <dd>
-                      <ul>
-                        <li *ngFor="let activity in institution.activities">{{ activity }}</li>
-                      </ul>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </ng-container>
-        </div>
-      </section>
-      <section id="experience" class="section">
-        <h1>Experience</h1>
-        <hr />
-        <div class="content">
-        </div>
-      </section>
-      <section id="skills" class="section">
-        <h1>Skills</h1>
-        <hr />
-        <div class="content">
-          <div class="columns">
-            <div class="column" *ngFor="let skillset of skillsSplit(3)">
-              <ul>
-                <li *ngFor="let skill of skillset">{{ skill }}</li>
-              </ul>
-            </div>
+      <section class="section">
+        <h1 id="skills">Skills</h1>
+        <div class="columns">
+          <div class="column">
+            <ul>
+              <li>Analytics, Informatics</li>
+              <li>Cyber Law</li>
+              <li>Linux server management</li>
+            </ul>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Rust, Go, C++/C, PHP, Typescript/Javascript, Node.js</li>
+              <li>C#, F#, Python, SQL, NoSQL</li>
+              <li>Agile, DevOps, Docker, Kubernetes, Jenkins/JenkinsX, Unity</li>
+            </ul>
+          </div>
+          <div class="column">
+            <ul>
+              <li>Intermediate Spanish</li>
+              <li>Zoom, Microsoft Teams, Google Meet, Amazon Chime</li>
+            </ul>
           </div>
         </div>
       </section>
-      <section id="professionalMemberships" class="section">
-        <h1>Professional Memberships</h1>
-        <hr />
-        <div class="content">
-          <ul>
-            <li *ngFor="let membership in user?.professionalMemberships">
-              {{ membership }}
-            </li>
-          </ul>
-        </div>
+      <section class="section">
+        <h1 id="education">Education</h1>
+        <section class="section" id="fiu">
+          <article class="media">
+            <figure class="media-left">
+              <p class="image is-16x9">
+                <img src="/assets/fiu.jpg" />
+              </p>
+            </figure>
+            <div class="media-content">
+              <h2>Florida International University</h2>
+              <p>
+                <strong>Masters Candidate in Computer Science</strong>: Fall 2022
+              </p>
+              <p>
+                <strong>Bachelors of Science in Computer Science</strong>: Fall 2017 - Spring 2022
+              </p>
+              <strong>Activities</strong>
+              <ul>
+                <li><a href="https://biorg.cs.fiu.edu/pluma/">FIU Bioinformatics Research Group</a> - Lead Student Developer</li>
+                <li>Google DSC</li>
+                <li>Upsilon Pi Epsilon</li>
+                <li>The National Society of Leadership and Success</li>
+              </ul>
+            </div>
+          </article>
+        </section>
+        <section class="section" id="um">
+          <article class="media">
+            <div class="media-content">
+              <h2>Universtiy of Miami School of Law</h2>
+              <p>
+                <strong>Juris Doctorate</strong>: Fall 2012 - Spring 2015
+              </p>
+              <strong>Activities</strong>
+              <ul>
+                <li>International Law Society - Co-Vice President, Parliamentarian</li>
+                <li>Irish American Law Student Association</li>
+              </ul>
+            </div>
+            <figure class="media-right">
+              <p class="image is-16x9">
+                <img src="/assets/um.jpg" />
+              </p>
+            </figure>
+          </article>
+        </section>
+        <section class="section" id="michigan">
+          <article class="media">
+            <figure class="media-left">
+              <p class="image is-16x9">
+                <img src="/assets/msu.jpg" />
+              </p>
+            </figure>
+            <div class="media-content">
+              <h2>Michigan State University School of Law</h2>
+              <h4>Summer Abroad Intellectual Property and Cybercrime Institute</h4>
+              <p>Rijeka/Dubrovnik, Croatia</p>
+              <p>
+                <strong>Visiting Juris Doctorate Candidate</strong>: Summer 2014
+              </p>
+            </div>
+          </article>
+        </section>
+        <section class="section" id="belmont">
+          <article class="media">
+            <div class="media-content">
+              <h2>Belmont University</h2>
+              <p>
+                <strong>Bachelors in the Arts in Politics and Public Law</strong>: Fall 2008 - Fall 2011
+              </p>
+              <strong>Activities</strong>
+              <ul>
+                <li>Dean's List (2 semesters)</li>
+                <li>Pre-Law Society - President</li>
+                <li>Phi Mu Alpha Sinfonia Fraternity - Vice President, Province Council Representative</li>
+                <li>James Madison Society</li>
+                <li><em>The Vision</em> Student Newspaper</li>
+              </ul>
+            </div>
+            <figure class="media-right">
+              <p class="image is-16x9">
+                <img src="/assets/belmont.jpg" />
+              </p>
+            </figure>
+          </article>
+        </section>
       </section>
-      <section id="certifications" class="section">
-        <h1>Certifications</h1>
-        <hr />
-        <div class="content">
-        </div>
+      <section class="section">
+        <h1 id="experience">Experience</h1>
+        <section class="section">
+          <article class="media">
+            <figure class="media-left"></figure>
+            <div class="media-content">
+              <h2 class="title">Skillcourt, LLC</h2>
+              <h4 class="subtitle">Deerfield Beach, FL</h4>
+              <h4>Project Manager/Technology Consultant</h4>
+              <strong>May 2021 - Present</strong>
+              <p>Consulting on multi-platform development projects. Administrating server infrastructure. Mentoring FIU Capstone
+development students. Developing physical product firmware.</p>
+            </div>
+          </article>
+        </section>
+        <section class="section">
+          <article class="media">
+            <figure class="media-left"></figure>
+            <div class="media-content">
+              <h2 class="title">Florida International University</h2>
+              <h4 class="subtitle">Miami, FL</h4>
+              <h4 class="subtitle">Learning Assistant</h4>
+              <strong>August 2020 - May 2022</strong>
+              <p>Assisted supervising Professor with running class; mentored and aided students. Achieved high levels of class passing
+grades.</p>
+            </div>
+          </article>
+        </section>
+        <section class="section">
+          <article class="media">
+            <figure class="media-left"></figure>
+            <div class="media-content">
+              <h2 class="title">Eleanor R. Cristol and Judge A. Jay Cristol Bankruptcy Pro Bono Assistance Clinic</h2>
+              <h4 class="subtitle">Miami, FL</h4>
+              <h4 class="subtitle">Extern</h4>
+              <strong>August 2014 - May 2015</strong>
+              <p>Reviewed documentation, completed bankruptcy filings, attended trustee meetings.</p>
+            </div>
+          </article>
+        </section>
       </section>
-    </ng-template>
+      <section class="section">
+        <h1 id="certifications">Certifications</h1>
+        <ul>
+          <li>
+            <a href="https://training.linuxfoundation.org/training/devops-and-sre-fundamentals-implementing-continuous-delivery-lfs261/"><strong>Linux Foundation LFS261</strong></a> - DevOps and SRE Fundamentals
+          </li>
+          <li>
+            <a href="https://training.linuxfoundation.org/training/containers-for-developers-and-quality-assurance/"><strong>Linux Foundation LFD254</strong></a> - Containers for Developers and Quality Assurance
+          </li>
+          <li>
+            <a href="https://training.linuxfoundation.org/training/kubernetes-for-developers/"><strong>Linux Foundation LFD259</strong></a> - Kubernetes for Developers
+          </li>
+          <li>
+            <a href="https://training.linuxfoundation.org/training/kubernetes-fundamentals/"><strong>Linux Foundation LFS258</strong></a> - Kubernetes Fundamentals
+          </li>
+          <li>
+            <a href="https://training.linuxfoundation.org/training/a-beginners-guide-to-linux-kernel-development-lfd103/"><strong>Linux Foundation LFD103</strong></a> - A Beginer's Guide to Linux Kernel Development
+          </li>
+          <li>
+            <a href="https://www.nvidia.com/en-us/training/"><strong>NVIDIA Deep Learning Institute</strong></a> - Fundamentals of Acclerated Computing with Cuda
+          </li>
+          <li>
+            <strong>Professional Development Training</strong> - University of Miami
+          </li>
+          <li>
+            <strong>PADI, Intl.</strong> - Open Water Scuba Instructor
+          </li>
+        </ul>
+      </section>
+      <section class="section">
+        <h1 id="professional">Professional Memberships</h1>
+        <ul>
+          <li>Florida Bar</li>
+          <li>American Bar Assn.</li>
+          <li>Professional Assn. of Diving Instructors, Emergency First Response, Intl.</li>
+          <li>National Society of Leadership and Success</li>
+        </ul>
+      </section>
+    </div>
   </div>
-</div>

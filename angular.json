@@ -4,7 +4,9 @@
   "newProjectRoot": "projects",
   "cli": {
     "packageManager": "pnpm",
-    "defaultCollection": "@angular-eslint/schematics"
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   },
   "projects": {
     "quinnjr.tech": {
@@ -190,6 +192,5 @@
         }
       }
     }
-  },
-  "defaultProject": "quinnjr.tech"
+  }
 }

@@ -4,7 +4,8 @@ import {
   default as webpack,
   Configuration,
   DefinePlugin,
-  IgnorePlugin
+  IgnorePlugin,
+  ProvidePlugin
 } from 'webpack';
 import {
   CustomWebpackBrowserSchema,
@@ -149,6 +150,9 @@ export default (
           }
           return false;
         }
+      }),
+      new ProvidePlugin({
+        Promise: 'bluebird'
       })
     );
   }

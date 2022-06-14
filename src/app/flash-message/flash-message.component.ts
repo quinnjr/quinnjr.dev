@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Observable } from 'rxjs';
+import { List } from 'immutable';
 
 import { FlashMessageService } from './flash-message.service';
 import { Level } from './level';
@@ -10,14 +11,12 @@ import { Message } from './message';
   templateUrl: './flash-message.component.html',
   styleUrls: ['./flash-message.component.scss']
 })
-export class FlashMessageComponent implements OnInit {
+export class FlashMessageComponent {
   constructor(private readonly $flashMessageService: FlashMessageService) {}
 
-  public get messages(): Observable<Message[]> {
+  public get messages(): Observable<List<Message>> {
     return this.$flashMessageService.messages;
   }
-
-  public ngOnInit(): void {}
 
   public close(idx: number) {
     this.$flashMessageService.remove(idx);

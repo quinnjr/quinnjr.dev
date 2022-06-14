@@ -6,7 +6,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AngularUniversalModule } from '@nestjs/ng-universal';
-import { HttpModule } from '@nestjs/axios';
+import { Logger } from '@nestjs/common';
 
 import { AppServerModule } from '../src/main.server';
 
@@ -24,16 +24,15 @@ import { GithubResolver } from './github/github.resolver';
     AngularUniversalModule.forRoot({
       bootstrap: AppServerModule,
       viewsPath: join(process.cwd(), 'dist/quinnjr.tech/browser'),
-      errorHandler: ({
-        err,
-        html,
-        renderCallback
-      }: {
-        err?: Error | undefined;
-        html?: string | undefined;
+      inlineCriticalCss: true,
+      errorHandler: (params: {
+        err?: Error;
+        html?: string;
         renderCallback: (err: any, content: string) => void;
       }) => {
-        console.error(err);
+        if (params.err) {
+          console.log(params.err);
+        }
       }
     }),
     ConfigModule.forRoot({

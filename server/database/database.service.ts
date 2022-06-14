@@ -12,7 +12,7 @@ export class DatabaseService
   implements OnModuleDestroy, OnModuleInit
 {
   public async onModuleInit() {
-    await this.$connect();
+    // await this.$connect();
   }
 
   public async onModuleDestroy() {

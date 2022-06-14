@@ -33,7 +33,7 @@ const STATE_KEY = makeStateKey<any>('apollo.state');
 
 @NgModule({
   imports: [
-    BrowserModule.withServerTransition({ appId: 'serverApp' }),
+    BrowserModule.withServerTransition({ appId: 'quinnjr.tech' }),
     BrowserTransferStateModule,
     HttpClientModule,
     FormsModule,

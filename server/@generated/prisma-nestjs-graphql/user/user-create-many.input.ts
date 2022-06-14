@@ -1,10 +1,10 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { HideField } from '@nestjs/graphql';
-import { UserCreateprofileHighlightsInput } from '../prisma/user-createprofile-highlights.input';
-import { UserCreateskillsInput } from '../prisma/user-createskills.input';
-import { UserCreateyubikeysInput } from '../prisma/user-createyubikeys.input';
-import { UserCreateprofessionalMembershipsInput } from '../prisma/user-createprofessional-memberships.input';
+import { UserCreateprofileHighlightsInput } from './user-createprofile-highlights.input';
+import { UserCreateskillsInput } from './user-createskills.input';
+import { UserCreateyubikeysInput } from './user-createyubikeys.input';
+import { UserCreateprofessionalMembershipsInput } from './user-createprofessional-memberships.input';
 import { Role } from '../prisma/role.enum';
 
 @InputType()

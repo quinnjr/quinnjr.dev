@@ -1,30 +1,25 @@
 import { Injectable } from '@angular/core';
 import { Observable, BehaviorSubject } from 'rxjs';
+import { List } from 'immutable';
 
 import { Message } from './message';
 import { Level } from './level';
 
 @Injectable()
 export class FlashMessageService {
-  private messagesSubject: BehaviorSubject<Message[]> = new BehaviorSubject(
-    [] as Message[]
-  );
+  private messagesSubject: BehaviorSubject<List<Message>> = new BehaviorSubject(List<Message>([]));
 
   constructor() {}
 
-  public get messages(): Observable<Message[]> {
+  public get messages(): Observable<List<Message>> {
     return this.messagesSubject.asObservable();
   }
 
   public add(value: string, level: Level = Level.Primary) {
-    const val = this.messagesSubject.value;
-    val.push({ value, level });
-    this.messagesSubject.next(val);
+    this.messagesSubject.next(this.messagesSubject.value.push({ value, level }));
   }
 
   public remove(idx: number) {
-    const val = this.messagesSubject.value;
-    val.splice(idx);
-    this.messagesSubject.next(val);
+    this.messagesSubject.next(this.messagesSubject.value.delete(idx));
   }
 }
