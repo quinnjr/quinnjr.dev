@@ -1,4 +1,4 @@
 #!/usr/bin/env sh
 
 ng lint --fix
-eslint server/**/*.ts --fix
+./node_modules/.bin/eslint server/**/*.ts --fix

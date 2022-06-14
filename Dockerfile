@@ -12,7 +12,7 @@ COPY . .
 RUN apk add --no-cache libc6-compat zlib zlib-dev optipng pkgconfig autoconf \
     automake nasm build-base libtool && \
   npm i -g npm pnpm && \
-  pnpm install --no-optional --unsafe-perm && \
+  pnpm install --no-optional --unsafe-perm --strict-peer-dependencies false && \
   pnpm run build:ssr
 
 FROM node:lts-alpine
@@ -31,7 +31,7 @@ COPY --from=builder --chown=node:node /app/pnpm-lock.yaml /app/pnpm-lock.yaml
 COPY --from=builder --chown=node:node /app/docker-entry.sh /app/docker-entry.sh
 
 RUN npm i -g npm pnpm && \
-  pnpm install --no-optional && \
+  pnpm install --no-optional --strict-peer-dependencies false && \
   pnpm install -g prisma && \
   pnpx prisma generate && \
   pnpm uninstall -g prisma && \

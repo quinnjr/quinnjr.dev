@@ -6,7 +6,8 @@
     "packageManager": "pnpm",
     "schematicCollections": [
       "@angular-eslint/schematics"
-    ]
+    ],
+    "analytics": "faf42e1a-2145-403b-9ab4-3e3cd838d982"
   },
   "projects": {
     "quinnjr.tech": {

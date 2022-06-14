@@ -11,7 +11,5 @@ import { Apollo, gql } from 'apollo-angular';
   styleUrls: ['./resume.component.scss']
 })
 export class ResumeComponent {
-
   constructor() {}
-
 }
