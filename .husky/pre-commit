@@ -1,0 +1,4 @@
+#!/usr/bin/env sh
+
+ng lint --fix
+eslint server/**/*.ts --fix
