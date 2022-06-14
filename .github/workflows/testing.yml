@@ -49,6 +49,7 @@ jobs:
           ${{ runner.os }}-build-${{ env.cache-name }}-${{ matrix.node-version }}-
 
     - run: npm i -g pnpm
+    - run: pnpm setup
     - run: pnpm i -g @angular/cli @nestjs/cli
     - run: pnpm install --no-frozen-lockfile
     - run: pnpx prisma migrate deploy
