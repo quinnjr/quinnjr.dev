@@ -1,5 +1,5 @@
 import { TestBed } from '@angular/core/testing';
-import { ApolloTestingModule } from 'apollo-angular/build/testing';
+import { ApolloTestingModule } from 'apollo-angular/testing';
 
 import { AuthService } from './auth.service';
 
