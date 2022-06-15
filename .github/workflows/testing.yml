@@ -58,6 +58,5 @@ jobs:
       env:
         DATABASE_URL: ${{secrets.DATABASE_URL}}
     - run: pnpm test -- --ci
-    - run: pnpm run test:server -- --ci
       env:
         JWT_SECRET: ${{ secrets.JWT_SECRET }}
