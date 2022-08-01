@@ -7,7 +7,9 @@ import { Level } from './level';
 
 @Injectable()
 export class FlashMessageService {
-  private messagesSubject: BehaviorSubject<List<Message>> = new BehaviorSubject(List<Message>([]));
+  private messagesSubject: BehaviorSubject<List<Message>> = new BehaviorSubject(
+    List<Message>([])
+  );
 
   constructor() {}
 
@@ -16,7 +18,9 @@ export class FlashMessageService {
   }
 
   public add(value: string, level: Level = Level.Primary) {
-    this.messagesSubject.next(this.messagesSubject.value.push({ value, level }));
+    this.messagesSubject.next(
+      this.messagesSubject.value.push({ value, level })
+    );
   }
 
   public remove(idx: number) {

@@ -7,7 +7,7 @@ import { UserWhereUniqueInput } from './user-where-unique.input';
 import { UserUpdateWithoutConferencesInput } from './user-update-without-conferences.input';
 
 @InputType()
-export class UserUpdateOneRequiredWithoutConferencesInput {
+export class UserUpdateOneRequiredWithoutConferencesNestedInput {
 
     @Field(() => UserCreateWithoutConferencesInput, {nullable:true})
     create?: UserCreateWithoutConferencesInput;

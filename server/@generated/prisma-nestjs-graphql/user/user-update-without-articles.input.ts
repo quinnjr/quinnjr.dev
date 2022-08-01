@@ -9,11 +9,11 @@ import { UserUpdateskillsInput } from './user-updateskills.input';
 import { UserUpdateyubikeysInput } from './user-updateyubikeys.input';
 import { UserUpdateprofessionalMembershipsInput } from './user-updateprofessional-memberships.input';
 import { EnumRoleFieldUpdateOperationsInput } from '../prisma/enum-role-field-update-operations.input';
-import { ExperienceUpdateManyWithoutUserInput } from '../experience/experience-update-many-without-user.input';
-import { EducationUpdateManyWithoutUserInput } from '../education/education-update-many-without-user.input';
-import { CertificationUpdateManyWithoutUserInput } from '../certification/certification-update-many-without-user.input';
-import { ProjectUpdateManyWithoutUserInput } from '../project/project-update-many-without-user.input';
-import { ConferenceUpdateManyWithoutUserInput } from '../conference/conference-update-many-without-user.input';
+import { ExperienceUpdateManyWithoutUserNestedInput } from '../experience/experience-update-many-without-user-nested.input';
+import { EducationUpdateManyWithoutUserNestedInput } from '../education/education-update-many-without-user-nested.input';
+import { CertificationUpdateManyWithoutUserNestedInput } from '../certification/certification-update-many-without-user-nested.input';
+import { ProjectUpdateManyWithoutUserNestedInput } from '../project/project-update-many-without-user-nested.input';
+import { ConferenceUpdateManyWithoutUserNestedInput } from '../conference/conference-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUpdateWithoutArticlesInput {
@@ -69,20 +69,20 @@ export class UserUpdateWithoutArticlesInput {
     @Field(() => EnumRoleFieldUpdateOperationsInput, {nullable:true})
     role?: EnumRoleFieldUpdateOperationsInput;
 
-    @Field(() => ExperienceUpdateManyWithoutUserInput, {nullable:true})
-    experiences?: ExperienceUpdateManyWithoutUserInput;
+    @Field(() => ExperienceUpdateManyWithoutUserNestedInput, {nullable:true})
+    experiences?: ExperienceUpdateManyWithoutUserNestedInput;
 
-    @Field(() => EducationUpdateManyWithoutUserInput, {nullable:true})
-    educations?: EducationUpdateManyWithoutUserInput;
+    @Field(() => EducationUpdateManyWithoutUserNestedInput, {nullable:true})
+    educations?: EducationUpdateManyWithoutUserNestedInput;
 
-    @Field(() => CertificationUpdateManyWithoutUserInput, {nullable:true})
-    certifications?: CertificationUpdateManyWithoutUserInput;
+    @Field(() => CertificationUpdateManyWithoutUserNestedInput, {nullable:true})
+    certifications?: CertificationUpdateManyWithoutUserNestedInput;
 
-    @Field(() => ProjectUpdateManyWithoutUserInput, {nullable:true})
-    projects?: ProjectUpdateManyWithoutUserInput;
+    @Field(() => ProjectUpdateManyWithoutUserNestedInput, {nullable:true})
+    projects?: ProjectUpdateManyWithoutUserNestedInput;
 
-    @Field(() => ConferenceUpdateManyWithoutUserInput, {nullable:true})
-    conferences?: ConferenceUpdateManyWithoutUserInput;
+    @Field(() => ConferenceUpdateManyWithoutUserNestedInput, {nullable:true})
+    conferences?: ConferenceUpdateManyWithoutUserNestedInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     createdAt?: DateTimeFieldUpdateOperationsInput;

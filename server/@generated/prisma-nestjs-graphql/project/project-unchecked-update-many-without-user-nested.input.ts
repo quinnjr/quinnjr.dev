@@ -10,7 +10,7 @@ import { ProjectUpdateManyWithWhereWithoutUserInput } from './project-update-man
 import { ProjectScalarWhereInput } from './project-scalar-where.input';
 
 @InputType()
-export class ProjectUncheckedUpdateManyWithoutUserInput {
+export class ProjectUncheckedUpdateManyWithoutUserNestedInput {
 
     @Field(() => [ProjectCreateWithoutUserInput], {nullable:true})
     create?: Array<ProjectCreateWithoutUserInput>;

@@ -40,13 +40,13 @@ export { EducationUncheckedCreateNestedManyWithoutUserInput } from './education-
 export { EducationUncheckedCreateWithoutUserInput } from './education-unchecked-create-without-user.input';
 export { EducationUncheckedCreateInput } from './education-unchecked-create.input';
 export { EducationUncheckedUpdateManyWithoutEducationsInput } from './education-unchecked-update-many-without-educations.input';
-export { EducationUncheckedUpdateManyWithoutUserInput } from './education-unchecked-update-many-without-user.input';
+export { EducationUncheckedUpdateManyWithoutUserNestedInput } from './education-unchecked-update-many-without-user-nested.input';
 export { EducationUncheckedUpdateManyInput } from './education-unchecked-update-many.input';
 export { EducationUncheckedUpdateWithoutUserInput } from './education-unchecked-update-without-user.input';
 export { EducationUncheckedUpdateInput } from './education-unchecked-update.input';
 export { EducationUpdateManyMutationInput } from './education-update-many-mutation.input';
 export { EducationUpdateManyWithWhereWithoutUserInput } from './education-update-many-with-where-without-user.input';
-export { EducationUpdateManyWithoutUserInput } from './education-update-many-without-user.input';
+export { EducationUpdateManyWithoutUserNestedInput } from './education-update-many-without-user-nested.input';
 export { EducationUpdateWithWhereUniqueWithoutUserInput } from './education-update-with-where-unique-without-user.input';
 export { EducationUpdateWithoutUserInput } from './education-update-without-user.input';
 export { EducationUpdateInput } from './education-update.input';

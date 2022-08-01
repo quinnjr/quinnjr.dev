@@ -9,11 +9,11 @@ import { UserUpdateskillsInput } from './user-updateskills.input';
 import { UserUpdateyubikeysInput } from './user-updateyubikeys.input';
 import { UserUpdateprofessionalMembershipsInput } from './user-updateprofessional-memberships.input';
 import { EnumRoleFieldUpdateOperationsInput } from '../prisma/enum-role-field-update-operations.input';
-import { ArticleUncheckedUpdateManyWithoutAuthorInput } from '../article/article-unchecked-update-many-without-author.input';
-import { ExperienceUncheckedUpdateManyWithoutUserInput } from '../experience/experience-unchecked-update-many-without-user.input';
-import { CertificationUncheckedUpdateManyWithoutUserInput } from '../certification/certification-unchecked-update-many-without-user.input';
-import { ProjectUncheckedUpdateManyWithoutUserInput } from '../project/project-unchecked-update-many-without-user.input';
-import { ConferenceUncheckedUpdateManyWithoutUserInput } from '../conference/conference-unchecked-update-many-without-user.input';
+import { ArticleUncheckedUpdateManyWithoutAuthorNestedInput } from '../article/article-unchecked-update-many-without-author-nested.input';
+import { ExperienceUncheckedUpdateManyWithoutUserNestedInput } from '../experience/experience-unchecked-update-many-without-user-nested.input';
+import { CertificationUncheckedUpdateManyWithoutUserNestedInput } from '../certification/certification-unchecked-update-many-without-user-nested.input';
+import { ProjectUncheckedUpdateManyWithoutUserNestedInput } from '../project/project-unchecked-update-many-without-user-nested.input';
+import { ConferenceUncheckedUpdateManyWithoutUserNestedInput } from '../conference/conference-unchecked-update-many-without-user-nested.input';
 
 @InputType()
 export class UserUncheckedUpdateWithoutEducationsInput {
@@ -69,20 +69,20 @@ export class UserUncheckedUpdateWithoutEducationsInput {
     @Field(() => EnumRoleFieldUpdateOperationsInput, {nullable:true})
     role?: EnumRoleFieldUpdateOperationsInput;
 
-    @Field(() => ArticleUncheckedUpdateManyWithoutAuthorInput, {nullable:true})
-    articles?: ArticleUncheckedUpdateManyWithoutAuthorInput;
+    @Field(() => ArticleUncheckedUpdateManyWithoutAuthorNestedInput, {nullable:true})
+    articles?: ArticleUncheckedUpdateManyWithoutAuthorNestedInput;
 
-    @Field(() => ExperienceUncheckedUpdateManyWithoutUserInput, {nullable:true})
-    experiences?: ExperienceUncheckedUpdateManyWithoutUserInput;
+    @Field(() => ExperienceUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    experiences?: ExperienceUncheckedUpdateManyWithoutUserNestedInput;
 
-    @Field(() => CertificationUncheckedUpdateManyWithoutUserInput, {nullable:true})
-    certifications?: CertificationUncheckedUpdateManyWithoutUserInput;
+    @Field(() => CertificationUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    certifications?: CertificationUncheckedUpdateManyWithoutUserNestedInput;
 
-    @Field(() => ProjectUncheckedUpdateManyWithoutUserInput, {nullable:true})
-    projects?: ProjectUncheckedUpdateManyWithoutUserInput;
+    @Field(() => ProjectUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    projects?: ProjectUncheckedUpdateManyWithoutUserNestedInput;
 
-    @Field(() => ConferenceUncheckedUpdateManyWithoutUserInput, {nullable:true})
-    conferences?: ConferenceUncheckedUpdateManyWithoutUserInput;
+    @Field(() => ConferenceUncheckedUpdateManyWithoutUserNestedInput, {nullable:true})
+    conferences?: ConferenceUncheckedUpdateManyWithoutUserNestedInput;
 
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     createdAt?: DateTimeFieldUpdateOperationsInput;

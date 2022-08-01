@@ -29,13 +29,13 @@ export { ConferenceUncheckedCreateNestedManyWithoutUserInput } from './conferenc
 export { ConferenceUncheckedCreateWithoutUserInput } from './conference-unchecked-create-without-user.input';
 export { ConferenceUncheckedCreateInput } from './conference-unchecked-create.input';
 export { ConferenceUncheckedUpdateManyWithoutConferencesInput } from './conference-unchecked-update-many-without-conferences.input';
-export { ConferenceUncheckedUpdateManyWithoutUserInput } from './conference-unchecked-update-many-without-user.input';
+export { ConferenceUncheckedUpdateManyWithoutUserNestedInput } from './conference-unchecked-update-many-without-user-nested.input';
 export { ConferenceUncheckedUpdateManyInput } from './conference-unchecked-update-many.input';
 export { ConferenceUncheckedUpdateWithoutUserInput } from './conference-unchecked-update-without-user.input';
 export { ConferenceUncheckedUpdateInput } from './conference-unchecked-update.input';
 export { ConferenceUpdateManyMutationInput } from './conference-update-many-mutation.input';
 export { ConferenceUpdateManyWithWhereWithoutUserInput } from './conference-update-many-with-where-without-user.input';
-export { ConferenceUpdateManyWithoutUserInput } from './conference-update-many-without-user.input';
+export { ConferenceUpdateManyWithoutUserNestedInput } from './conference-update-many-without-user-nested.input';
 export { ConferenceUpdateWithWhereUniqueWithoutUserInput } from './conference-update-with-where-unique-without-user.input';
 export { ConferenceUpdateWithoutUserInput } from './conference-update-without-user.input';
 export { ConferenceUpdateInput } from './conference-update.input';

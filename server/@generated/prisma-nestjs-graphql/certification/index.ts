@@ -29,13 +29,13 @@ export { CertificationUncheckedCreateNestedManyWithoutUserInput } from './certif
 export { CertificationUncheckedCreateWithoutUserInput } from './certification-unchecked-create-without-user.input';
 export { CertificationUncheckedCreateInput } from './certification-unchecked-create.input';
 export { CertificationUncheckedUpdateManyWithoutCertificationsInput } from './certification-unchecked-update-many-without-certifications.input';
-export { CertificationUncheckedUpdateManyWithoutUserInput } from './certification-unchecked-update-many-without-user.input';
+export { CertificationUncheckedUpdateManyWithoutUserNestedInput } from './certification-unchecked-update-many-without-user-nested.input';
 export { CertificationUncheckedUpdateManyInput } from './certification-unchecked-update-many.input';
 export { CertificationUncheckedUpdateWithoutUserInput } from './certification-unchecked-update-without-user.input';
 export { CertificationUncheckedUpdateInput } from './certification-unchecked-update.input';
 export { CertificationUpdateManyMutationInput } from './certification-update-many-mutation.input';
 export { CertificationUpdateManyWithWhereWithoutUserInput } from './certification-update-many-with-where-without-user.input';
-export { CertificationUpdateManyWithoutUserInput } from './certification-update-many-without-user.input';
+export { CertificationUpdateManyWithoutUserNestedInput } from './certification-update-many-without-user-nested.input';
 export { CertificationUpdateWithWhereUniqueWithoutUserInput } from './certification-update-with-where-unique-without-user.input';
 export { CertificationUpdateWithoutUserInput } from './certification-update-without-user.input';
 export { CertificationUpdateInput } from './certification-update.input';

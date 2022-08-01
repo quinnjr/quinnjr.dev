@@ -29,13 +29,13 @@ export { ArticleUncheckedCreateNestedManyWithoutAuthorInput } from './article-un
 export { ArticleUncheckedCreateWithoutAuthorInput } from './article-unchecked-create-without-author.input';
 export { ArticleUncheckedCreateInput } from './article-unchecked-create.input';
 export { ArticleUncheckedUpdateManyWithoutArticlesInput } from './article-unchecked-update-many-without-articles.input';
-export { ArticleUncheckedUpdateManyWithoutAuthorInput } from './article-unchecked-update-many-without-author.input';
+export { ArticleUncheckedUpdateManyWithoutAuthorNestedInput } from './article-unchecked-update-many-without-author-nested.input';
 export { ArticleUncheckedUpdateManyInput } from './article-unchecked-update-many.input';
 export { ArticleUncheckedUpdateWithoutAuthorInput } from './article-unchecked-update-without-author.input';
 export { ArticleUncheckedUpdateInput } from './article-unchecked-update.input';
 export { ArticleUpdateManyMutationInput } from './article-update-many-mutation.input';
 export { ArticleUpdateManyWithWhereWithoutAuthorInput } from './article-update-many-with-where-without-author.input';
-export { ArticleUpdateManyWithoutAuthorInput } from './article-update-many-without-author.input';
+export { ArticleUpdateManyWithoutAuthorNestedInput } from './article-update-many-without-author-nested.input';
 export { ArticleUpdateWithWhereUniqueWithoutAuthorInput } from './article-update-with-where-unique-without-author.input';
 export { ArticleUpdateWithoutAuthorInput } from './article-update-without-author.input';
 export { ArticleUpdateInput } from './article-update.input';

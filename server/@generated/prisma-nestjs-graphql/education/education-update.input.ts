@@ -4,7 +4,7 @@ import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-
 import { NullableDateTimeFieldUpdateOperationsInput } from '../prisma/nullable-date-time-field-update-operations.input';
 import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-field-update-operations.input';
 import { EducationUpdateactivitiesInput } from './education-updateactivities.input';
-import { UserUpdateOneRequiredWithoutEducationsInput } from '../user/user-update-one-required-without-educations.input';
+import { UserUpdateOneRequiredWithoutEducationsNestedInput } from '../user/user-update-one-required-without-educations-nested.input';
 
 @InputType()
 export class EducationUpdateInput {
@@ -36,6 +36,6 @@ export class EducationUpdateInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     url?: StringFieldUpdateOperationsInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutEducationsInput, {nullable:true})
-    user?: UserUpdateOneRequiredWithoutEducationsInput;
+    @Field(() => UserUpdateOneRequiredWithoutEducationsNestedInput, {nullable:true})
+    user?: UserUpdateOneRequiredWithoutEducationsNestedInput;
 }

@@ -10,7 +10,7 @@ import { CertificationUpdateManyWithWhereWithoutUserInput } from './certificatio
 import { CertificationScalarWhereInput } from './certification-scalar-where.input';
 
 @InputType()
-export class CertificationUncheckedUpdateManyWithoutUserInput {
+export class CertificationUpdateManyWithoutUserNestedInput {
 
     @Field(() => [CertificationCreateWithoutUserInput], {nullable:true})
     create?: Array<CertificationCreateWithoutUserInput>;

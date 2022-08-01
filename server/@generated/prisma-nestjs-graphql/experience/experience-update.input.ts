@@ -4,7 +4,7 @@ import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-
 import { IntFieldUpdateOperationsInput } from '../prisma/int-field-update-operations.input';
 import { NullableIntFieldUpdateOperationsInput } from '../prisma/nullable-int-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
-import { UserUpdateOneRequiredWithoutExperiencesInput } from '../user/user-update-one-required-without-experiences.input';
+import { UserUpdateOneRequiredWithoutExperiencesNestedInput } from '../user/user-update-one-required-without-experiences-nested.input';
 
 @InputType()
 export class ExperienceUpdateInput {
@@ -36,6 +36,6 @@ export class ExperienceUpdateInput {
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     updatedAt?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutExperiencesInput, {nullable:true})
-    user?: UserUpdateOneRequiredWithoutExperiencesInput;
+    @Field(() => UserUpdateOneRequiredWithoutExperiencesNestedInput, {nullable:true})
+    user?: UserUpdateOneRequiredWithoutExperiencesNestedInput;
 }

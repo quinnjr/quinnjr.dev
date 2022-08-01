@@ -10,7 +10,7 @@ import { ArticleUpdateManyWithWhereWithoutAuthorInput } from './article-update-m
 import { ArticleScalarWhereInput } from './article-scalar-where.input';
 
 @InputType()
-export class ArticleUpdateManyWithoutAuthorInput {
+export class ArticleUpdateManyWithoutAuthorNestedInput {
 
     @Field(() => [ArticleCreateWithoutAuthorInput], {nullable:true})
     create?: Array<ArticleCreateWithoutAuthorInput>;

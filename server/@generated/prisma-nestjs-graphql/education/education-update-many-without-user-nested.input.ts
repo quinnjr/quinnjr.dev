@@ -10,7 +10,7 @@ import { EducationUpdateManyWithWhereWithoutUserInput } from './education-update
 import { EducationScalarWhereInput } from './education-scalar-where.input';
 
 @InputType()
-export class EducationUncheckedUpdateManyWithoutUserInput {
+export class EducationUpdateManyWithoutUserNestedInput {
 
     @Field(() => [EducationCreateWithoutUserInput], {nullable:true})
     create?: Array<EducationCreateWithoutUserInput>;

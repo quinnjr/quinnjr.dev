@@ -1,4 +1,10 @@
-import { Component, OnInit, OnDestroy, PLATFORM_ID, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  OnDestroy,
+  PLATFORM_ID,
+  Inject
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { Apollo, gql } from 'apollo-angular';
 import { BehaviorSubject, Subscription } from 'rxjs';

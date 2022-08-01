@@ -36,13 +36,13 @@ export { ProjectUncheckedCreateNestedManyWithoutUserInput } from './project-unch
 export { ProjectUncheckedCreateWithoutUserInput } from './project-unchecked-create-without-user.input';
 export { ProjectUncheckedCreateInput } from './project-unchecked-create.input';
 export { ProjectUncheckedUpdateManyWithoutProjectsInput } from './project-unchecked-update-many-without-projects.input';
-export { ProjectUncheckedUpdateManyWithoutUserInput } from './project-unchecked-update-many-without-user.input';
+export { ProjectUncheckedUpdateManyWithoutUserNestedInput } from './project-unchecked-update-many-without-user-nested.input';
 export { ProjectUncheckedUpdateManyInput } from './project-unchecked-update-many.input';
 export { ProjectUncheckedUpdateWithoutUserInput } from './project-unchecked-update-without-user.input';
 export { ProjectUncheckedUpdateInput } from './project-unchecked-update.input';
 export { ProjectUpdateManyMutationInput } from './project-update-many-mutation.input';
 export { ProjectUpdateManyWithWhereWithoutUserInput } from './project-update-many-with-where-without-user.input';
-export { ProjectUpdateManyWithoutUserInput } from './project-update-many-without-user.input';
+export { ProjectUpdateManyWithoutUserNestedInput } from './project-update-many-without-user-nested.input';
 export { ProjectUpdateWithWhereUniqueWithoutUserInput } from './project-update-with-where-unique-without-user.input';
 export { ProjectUpdateWithoutUserInput } from './project-update-without-user.input';
 export { ProjectUpdateInput } from './project-update.input';

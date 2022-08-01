@@ -1,7 +1,7 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
-import { UserUpdateOneRequiredWithoutCertificationsInput } from '../user/user-update-one-required-without-certifications.input';
+import { UserUpdateOneRequiredWithoutCertificationsNestedInput } from '../user/user-update-one-required-without-certifications-nested.input';
 
 @InputType()
 export class CertificationUpdateInput {
@@ -15,6 +15,6 @@ export class CertificationUpdateInput {
     @Field(() => StringFieldUpdateOperationsInput, {nullable:true})
     certifier?: StringFieldUpdateOperationsInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutCertificationsInput, {nullable:true})
-    user?: UserUpdateOneRequiredWithoutCertificationsInput;
+    @Field(() => UserUpdateOneRequiredWithoutCertificationsNestedInput, {nullable:true})
+    user?: UserUpdateOneRequiredWithoutCertificationsNestedInput;
 }

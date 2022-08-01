@@ -10,7 +10,7 @@ import { ConferenceUpdateManyWithWhereWithoutUserInput } from './conference-upda
 import { ConferenceScalarWhereInput } from './conference-scalar-where.input';
 
 @InputType()
-export class ConferenceUpdateManyWithoutUserInput {
+export class ConferenceUncheckedUpdateManyWithoutUserNestedInput {
 
     @Field(() => [ConferenceCreateWithoutUserInput], {nullable:true})
     create?: Array<ConferenceCreateWithoutUserInput>;

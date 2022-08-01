@@ -10,7 +10,7 @@ import { ExperienceUpdateManyWithWhereWithoutUserInput } from './experience-upda
 import { ExperienceScalarWhereInput } from './experience-scalar-where.input';
 
 @InputType()
-export class ExperienceUncheckedUpdateManyWithoutUserInput {
+export class ExperienceUncheckedUpdateManyWithoutUserNestedInput {
 
     @Field(() => [ExperienceCreateWithoutUserInput], {nullable:true})
     create?: Array<ExperienceCreateWithoutUserInput>;

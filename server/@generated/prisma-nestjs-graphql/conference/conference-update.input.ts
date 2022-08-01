@@ -2,7 +2,7 @@ import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
 import { StringFieldUpdateOperationsInput } from '../prisma/string-field-update-operations.input';
 import { DateTimeFieldUpdateOperationsInput } from '../prisma/date-time-field-update-operations.input';
-import { UserUpdateOneRequiredWithoutConferencesInput } from '../user/user-update-one-required-without-conferences.input';
+import { UserUpdateOneRequiredWithoutConferencesNestedInput } from '../user/user-update-one-required-without-conferences-nested.input';
 
 @InputType()
 export class ConferenceUpdateInput {
@@ -19,6 +19,6 @@ export class ConferenceUpdateInput {
     @Field(() => DateTimeFieldUpdateOperationsInput, {nullable:true})
     endDate?: DateTimeFieldUpdateOperationsInput;
 
-    @Field(() => UserUpdateOneRequiredWithoutConferencesInput, {nullable:true})
-    user?: UserUpdateOneRequiredWithoutConferencesInput;
+    @Field(() => UserUpdateOneRequiredWithoutConferencesNestedInput, {nullable:true})
+    user?: UserUpdateOneRequiredWithoutConferencesNestedInput;
 }

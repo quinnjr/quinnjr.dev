@@ -39,13 +39,13 @@ export { ExperienceUncheckedCreateNestedManyWithoutUserInput } from './experienc
 export { ExperienceUncheckedCreateWithoutUserInput } from './experience-unchecked-create-without-user.input';
 export { ExperienceUncheckedCreateInput } from './experience-unchecked-create.input';
 export { ExperienceUncheckedUpdateManyWithoutExperiencesInput } from './experience-unchecked-update-many-without-experiences.input';
-export { ExperienceUncheckedUpdateManyWithoutUserInput } from './experience-unchecked-update-many-without-user.input';
+export { ExperienceUncheckedUpdateManyWithoutUserNestedInput } from './experience-unchecked-update-many-without-user-nested.input';
 export { ExperienceUncheckedUpdateManyInput } from './experience-unchecked-update-many.input';
 export { ExperienceUncheckedUpdateWithoutUserInput } from './experience-unchecked-update-without-user.input';
 export { ExperienceUncheckedUpdateInput } from './experience-unchecked-update.input';
 export { ExperienceUpdateManyMutationInput } from './experience-update-many-mutation.input';
 export { ExperienceUpdateManyWithWhereWithoutUserInput } from './experience-update-many-with-where-without-user.input';
-export { ExperienceUpdateManyWithoutUserInput } from './experience-update-many-without-user.input';
+export { ExperienceUpdateManyWithoutUserNestedInput } from './experience-update-many-without-user-nested.input';
 export { ExperienceUpdateWithWhereUniqueWithoutUserInput } from './experience-update-with-where-unique-without-user.input';
 export { ExperienceUpdateWithoutUserInput } from './experience-update-without-user.input';
 export { ExperienceUpdateInput } from './experience-update.input';
