@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { UuidFilter } from '../prisma/uuid-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { UserRelationFilter } from '../user/user-relation-filter.input';
 import { DateTimeFilter } from '../prisma/date-time-filter.input';
@@ -16,8 +17,8 @@ export class ArticleWhereInput {
     @Field(() => [ArticleWhereInput], {nullable:true})
     NOT?: Array<ArticleWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    id?: UuidFilter;
 
     @Field(() => StringFilter, {nullable:true})
     title?: StringFilter;
@@ -28,8 +29,8 @@ export class ArticleWhereInput {
     @Field(() => UserRelationFilter, {nullable:true})
     author?: UserRelationFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    authorId?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    authorId?: UuidFilter;
 
     @Field(() => StringFilter, {nullable:true})
     content?: StringFilter;

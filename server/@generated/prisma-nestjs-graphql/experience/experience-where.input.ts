@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { UuidFilter } from '../prisma/uuid-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { IntFilter } from '../prisma/int-filter.input';
 import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
@@ -18,8 +19,8 @@ export class ExperienceWhereInput {
     @Field(() => [ExperienceWhereInput], {nullable:true})
     NOT?: Array<ExperienceWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    id?: UuidFilter;
 
     @Field(() => StringFilter, {nullable:true})
     employer?: StringFilter;
@@ -48,6 +49,6 @@ export class ExperienceWhereInput {
     @Field(() => UserRelationFilter, {nullable:true})
     user?: UserRelationFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    userId?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    userId?: UuidFilter;
 }

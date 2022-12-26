@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { UuidFilter } from '../prisma/uuid-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 
 @InputType()
@@ -14,8 +15,8 @@ export class CertificationScalarWhereInput {
     @Field(() => [CertificationScalarWhereInput], {nullable:true})
     NOT?: Array<CertificationScalarWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    id?: UuidFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -23,6 +24,6 @@ export class CertificationScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     certifier?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    userId?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    userId?: UuidFilter;
 }

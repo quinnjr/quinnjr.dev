@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { UuidFilter } from '../prisma/uuid-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { DateTimeNullableFilter } from '../prisma/date-time-nullable-filter.input';
 import { IntNullableFilter } from '../prisma/int-nullable-filter.input';
@@ -17,8 +18,8 @@ export class EducationScalarWhereInput {
     @Field(() => [EducationScalarWhereInput], {nullable:true})
     NOT?: Array<EducationScalarWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    id?: UuidFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -44,6 +45,6 @@ export class EducationScalarWhereInput {
     @Field(() => StringFilter, {nullable:true})
     url?: StringFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    userId?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    userId?: UuidFilter;
 }

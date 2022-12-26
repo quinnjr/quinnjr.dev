@@ -1,5 +1,6 @@
 import { Field } from '@nestjs/graphql';
 import { InputType } from '@nestjs/graphql';
+import { UuidFilter } from '../prisma/uuid-filter.input';
 import { StringFilter } from '../prisma/string-filter.input';
 import { UserRelationFilter } from '../user/user-relation-filter.input';
 
@@ -15,8 +16,8 @@ export class ProjectWhereInput {
     @Field(() => [ProjectWhereInput], {nullable:true})
     NOT?: Array<ProjectWhereInput>;
 
-    @Field(() => StringFilter, {nullable:true})
-    id?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    id?: UuidFilter;
 
     @Field(() => StringFilter, {nullable:true})
     name?: StringFilter;
@@ -33,6 +34,6 @@ export class ProjectWhereInput {
     @Field(() => UserRelationFilter, {nullable:true})
     user?: UserRelationFilter;
 
-    @Field(() => StringFilter, {nullable:true})
-    userId?: StringFilter;
+    @Field(() => UuidFilter, {nullable:true})
+    userId?: UuidFilter;
 }
