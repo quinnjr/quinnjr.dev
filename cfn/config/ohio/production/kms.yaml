@@ -1,0 +1,3 @@
+template:
+  path: kms.yaml.j2
+  type: file

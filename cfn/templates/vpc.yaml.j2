@@ -1,0 +1,157 @@
+Resources:
+  MyVPC:
+    Type: AWS::EC2::VPC
+    Properties:
+      CidrBlock: "10.0.0.0/16"
+      EnableDnsHostnames: true
+      EnableDnsSupport: true
+      Tags:
+        - Key: Name
+          Value: production-vpc
+  MyDefaultRouteTable:
+    DeletionPolicy: Retain
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+  MyRouteTableA:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+  MyRouteTableB:
+    Type: AWS::EC2::RouteTable
+    Properties:
+      VpcId: !Ref MyVPC
+  MyPublicSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      CidrBlock: "10.0.0.0/24"
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "public-subnet-${AWS::Region}a"
+  MyPublicSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      CidrBlock: "10.0.2.0/24"
+      MapPublicIpOnLaunch: true
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "public-subnet-${AWS::Region}b"
+  MyPrivateSubnetA:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 0
+          - Fn::GetAZs: ""
+      CidrBlock: "10.0.1.0/24"
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "private-subnet-${AWS::Region}a"
+  MyPrivateSubnetB:
+    Type: AWS::EC2::Subnet
+    Properties:
+      AvailabilityZone:
+        Fn::Select:
+          - 1
+          - Fn::GetAZs: ""
+      CidrBlock: "10.0.3.0/24"
+      MapPublicIpOnLaunch: false
+      VpcId: !Ref MyVPC
+      Tags:
+        - Key: Name
+          Value: !Sub "private-subnet-${AWS::Region}b"
+  MyInternetGateway:
+    Type: AWS::EC2::InternetGateway
+    Properties:
+      Tags:
+        - Key: Env
+          Value: production
+        - Key: Name
+          Value: internet-gw
+  MyInternetGatewayAttachment:
+    Type: AWS::EC2::VPCGatewayAttachment
+    Properties:
+      InternetGatewayId: !Ref MyInternetGateway
+      VpcId: !Ref MyVPC
+  MyNatGatewayEIPA:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  MyNatGatewayA:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt MyNatGatewayEIPA.AllocationId
+      ConnectivityType: public
+      SubnetId: !Ref MyPublicSubnetA
+  MyNatGatewayRouteA:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref MyNatGatewayA
+      RouteTableId: !Ref MyRouteTableA
+  MyNatGatewayEIPB:
+    Type: AWS::EC2::EIP
+    Properties:
+      Domain: vpc
+  MyNatGatewayB:
+    Type: AWS::EC2::NatGateway
+    Properties:
+      AllocationId: !GetAtt MyNatGatewayEIPB.AllocationId
+      ConnectivityType: public
+      SubnetId: !Ref MyPublicSubnetB
+  MyNatGatewayRouteB:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: "0.0.0.0/0"
+      NatGatewayId: !Ref MyNatGatewayB
+      RouteTableId: !Ref MyRouteTableB
+  MyRouteTableAssociationA:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MyRouteTableA
+      SubnetId: !Ref MyPrivateSubnetA
+  MyRouteTableAssociationB:
+    Type: AWS::EC2::SubnetRouteTableAssociation
+    Properties:
+      RouteTableId: !Ref MyRouteTableB
+      SubnetId: !Ref MyPrivateSubnetB
+  MyInternetRoute:
+    Type: AWS::EC2::Route
+    Properties:
+      DestinationCidrBlock: "0.0.0.0/0"
+      GatewayId: !Ref MyInternetGateway
+      RouteTableId: !Ref MyDefaultRouteTable
+Outputs:
+  VpcId:
+    Value: !Ref MyVPC
+    Export:
+      Name: !Sub "${AWS::StackName}-vpc-id"
+  PublicSubnetA:
+    Value: !Ref MyPublicSubnetA
+    Export:
+      Name: !Sub "${AWS::StackName}-public-subnet-a"
+  PublicSubnetB:
+    Value: !Ref MyPublicSubnetB
+    Export:
+      Name: !Sub "${AWS::StackName}-public-subnet-b"
+  PrivateSubnetA:
+    Value: !Ref MyPrivateSubnetA
+    Export:
+      Name: !Sub "${AWS::StackName}-private-subnet-a"
+  PrivateSubnetB:
+    Value: !Ref MyPrivateSubnetB
+    Export:
+      Name: !Sub "${AWS::StackName}-private-subnet-b"

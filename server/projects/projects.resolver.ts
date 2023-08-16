@@ -3,7 +3,7 @@ import { DatabaseService } from '../database/database.service';
 
 import { Public } from '../auth/public.decorator';
 
-import { Project } from '../@generated/prisma-nestjs-graphql/project/project.model';
+import { Project } from '../../graphql/project/project.model';
 
 @Resolver((of: any) => Project)
 export class ProjectsResolver {

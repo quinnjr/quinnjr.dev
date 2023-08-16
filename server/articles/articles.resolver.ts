@@ -16,11 +16,11 @@ import { DatabaseService } from '../database/database.service';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { JwtGraphqlAuthGuard } from '../auth/jwt-graphql-auth.guard';
 
-import { Article } from '../@generated/prisma-nestjs-graphql/article/article.model';
-import { ArticleOrderByWithRelationInput } from 'server/@generated/prisma-nestjs-graphql/article';
-import { ArticleUpdateInput } from '../@generated/prisma-nestjs-graphql/article/article-update.input';
-import { ArticleCreateInput } from '../@generated/prisma-nestjs-graphql/article/article-create.input';
-import { User } from '../@generated/prisma-nestjs-graphql/user/user.model';
+import { Article } from '../../graphql/article/article.model';
+import { ArticleOrderByWithRelationInput } from '../../graphql/article';
+import { ArticleUpdateInput } from '../../graphql/article/article-update.input';
+import { ArticleCreateInput } from '../../graphql/article/article-create.input';
+import { User } from '../../graphql/user/user.model';
 
 @Resolver((of: any) => Article)
 export class ArticlesResolver {

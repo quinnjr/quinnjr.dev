@@ -1,0 +1,10 @@
+template:
+  path: database.yaml
+  type: file
+
+parameters:
+  KMSKeyId: !stack_output_external {{ stack_group_config.stack_prefix }}-kms::KMSKeyId
+  PrivateSubnets: 
+    - !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::PrivateSubnetA
+    - !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::PrivateSubnetB
+  VpcId: !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::VpcId

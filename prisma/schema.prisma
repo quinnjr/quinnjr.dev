@@ -8,12 +8,13 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  output = "../node_modules/.prisma/client"
   binaryTargets = ["native"]
 }
 
 generator nestgraphql {
   provider = "node node_modules/prisma-nestjs-graphql"
-  output = "../server/@generated/prisma-nestjs-graphql"
+  output = "../graphql"
   reExport = "Directories"
   // fields_Scalars_from = "graphql-scalars"
   // fields_Scalars_input = true
@@ -22,10 +23,6 @@ generator nestgraphql {
   fields_Validator_input = true
   purgeOutput = true
 }
-
-// generator dbml {
-//   provider = "prisma-dbml-generator"
-// }
 
 model User {
   id String @id @default(uuid()) @db.Uuid
@@ -41,7 +38,7 @@ model User {
   profilePicture String?
   profile String
   profileHighlights String[]
-  birthday DateTime @default("1970-01-01T00:00:00Z")
+  birthday DateTime
   skills String[]
   yubikeys String[]
   professionalMemberships String[]

@@ -1,0 +1,65 @@
+Parameters:
+  KMSKeyId:
+    Type: String
+  PrivateSubnets:
+    Type: List<String>
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+Resources:
+  MyDatabase:
+    DeletionPolicy: Snapshot
+    Type: AWS::RDS::DBInstance
+    Properties:
+      AllocatedStorage: 20
+      AllowMajorVersionUpgrade: true
+      AutoMinorVersionUpgrade: true
+      AvailabilityZone: us-east-2a
+      BackupRetentionPeriod: 1
+      DBInstanceClass: db.t4g.micro
+      DBInstanceIdentifier: !Sub "${AWS::StackName}"
+      DBName: quinnjr
+      DBSubnetGroupName: !Ref MyDatabaseSubnetGroup
+      DeletionProtection: true
+      Engine: postgres
+      EngineVersion: 15.3
+      KmsKeyId: !Ref KMSKeyId
+      MasterUsername: quinnjr
+      MasterUserPassword: '{{resolve:ssm-secure:/production/database_password:1}}'
+      MultiAZ: false
+      NetworkType: IPV4
+      PubliclyAccessible: false
+      StorageEncrypted: true
+      StorageType: gp2
+      VPCSecurityGroups:
+        - !Ref MyDatabaseSecurityGroup
+  MyDatabaseSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: PostgreSQL Security Group
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1
+      SecurityGroupIngress:
+        - CidrIp: 10.0.1.0/24
+          ToPort: 5432
+          FromPort: 5432
+          IpProtocol: -1
+        - CidrIp: 10.0.3.0/24
+          ToPort: 5432
+          FromPort: 5432
+          IpProtocol: -1
+      VpcId: !Ref VpcId
+  MyDatabaseSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: PostgreSQL Subnet
+      SubnetIds: !Ref PrivateSubnets
+Outputs:
+  DBAddress:
+    Value: !GetAtt MyDatabase.Endpoint.Address
+    Export:
+      Name: !Sub "${AWS::StackName}-db-address"
+  DBPort:
+    Value: !GetAtt MyDatabase.Endpoint.Port
+    Export:
+      Name: !Sub "${AWS::StackName}-db-port"

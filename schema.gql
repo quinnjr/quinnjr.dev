@@ -1,0 +1,1477 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type Article {
+  author: User!
+  authorId: String!
+  content: String!
+  createdAt: DateTime!
+  description: String!
+  id: ID!
+  title: String!
+  titleSlug: String!
+  updatedAt: DateTime!
+}
+
+type ArticleCountAggregate {
+  _all: Int!
+  authorId: Int!
+  content: Int!
+  createdAt: Int!
+  description: Int!
+  id: Int!
+  title: Int!
+  titleSlug: Int!
+  updatedAt: Int!
+}
+
+input ArticleCreateInput {
+  author: UserCreateNestedOneWithoutArticlesInput!
+  content: String!
+  createdAt: DateTime
+  description: String!
+  id: String
+  title: String!
+  titleSlug: String!
+  updatedAt: DateTime
+}
+
+input ArticleCreateManyAuthorInput {
+  content: String!
+  createdAt: DateTime
+  description: String!
+  id: String
+  title: String!
+  titleSlug: String!
+  updatedAt: DateTime
+}
+
+input ArticleCreateManyAuthorInputEnvelope {
+  data: [ArticleCreateManyAuthorInput!]!
+  skipDuplicates: Boolean
+}
+
+input ArticleCreateNestedManyWithoutAuthorInput {
+  connect: [ArticleWhereUniqueInput!]
+  connectOrCreate: [ArticleCreateOrConnectWithoutAuthorInput!]
+  create: [ArticleCreateWithoutAuthorInput!]
+  createMany: ArticleCreateManyAuthorInputEnvelope
+}
+
+input ArticleCreateOrConnectWithoutAuthorInput {
+  create: ArticleCreateWithoutAuthorInput!
+  where: ArticleWhereUniqueInput!
+}
+
+input ArticleCreateWithoutAuthorInput {
+  content: String!
+  createdAt: DateTime
+  description: String!
+  id: String
+  title: String!
+  titleSlug: String!
+  updatedAt: DateTime
+}
+
+input ArticleListRelationFilter {
+  every: ArticleWhereInput
+  none: ArticleWhereInput
+  some: ArticleWhereInput
+}
+
+type ArticleMaxAggregate {
+  authorId: String
+  content: String
+  createdAt: DateTime
+  description: String
+  id: String
+  title: String
+  titleSlug: String
+  updatedAt: DateTime
+}
+
+type ArticleMinAggregate {
+  authorId: String
+  content: String
+  createdAt: DateTime
+  description: String
+  id: String
+  title: String
+  titleSlug: String
+  updatedAt: DateTime
+}
+
+input ArticleOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ArticleOrderByWithRelationInput {
+  author: UserOrderByWithRelationInput
+  authorId: SortOrder
+  content: SortOrder
+  createdAt: SortOrder
+  description: SortOrder
+  id: SortOrder
+  title: SortOrder
+  titleSlug: SortOrder
+  updatedAt: SortOrder
+}
+
+input ArticleUpdateInput {
+  author: UserUpdateOneRequiredWithoutArticlesNestedInput
+  content: StringFieldUpdateOperationsInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  titleSlug: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input ArticleWhereInput {
+  AND: [ArticleWhereInput!]
+  NOT: [ArticleWhereInput!]
+  OR: [ArticleWhereInput!]
+  author: UserRelationFilter
+  authorId: UuidFilter
+  content: StringFilter
+  createdAt: DateTimeFilter
+  description: StringFilter
+  id: UuidFilter
+  title: StringFilter
+  titleSlug: StringFilter
+  updatedAt: DateTimeFilter
+}
+
+input ArticleWhereUniqueInput {
+  AND: [ArticleWhereInput!]
+  NOT: [ArticleWhereInput!]
+  OR: [ArticleWhereInput!]
+  author: UserRelationFilter
+  authorId: UuidFilter
+  content: StringFilter
+  createdAt: DateTimeFilter
+  description: StringFilter
+  id: String
+  title: String
+  titleSlug: String
+  updatedAt: DateTimeFilter
+}
+
+type Certification {
+  certifier: String!
+  id: ID!
+  name: String!
+  user: User!
+  userId: String!
+}
+
+input CertificationCreateInput {
+  certifier: String!
+  id: String
+  name: String!
+  user: UserCreateNestedOneWithoutCertificationsInput!
+}
+
+input CertificationCreateManyUserInput {
+  certifier: String!
+  id: String
+  name: String!
+}
+
+input CertificationCreateManyUserInputEnvelope {
+  data: [CertificationCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input CertificationCreateNestedManyWithoutUserInput {
+  connect: [CertificationWhereUniqueInput!]
+  connectOrCreate: [CertificationCreateOrConnectWithoutUserInput!]
+  create: [CertificationCreateWithoutUserInput!]
+  createMany: CertificationCreateManyUserInputEnvelope
+}
+
+input CertificationCreateOrConnectWithoutUserInput {
+  create: CertificationCreateWithoutUserInput!
+  where: CertificationWhereUniqueInput!
+}
+
+input CertificationCreateWithoutUserInput {
+  certifier: String!
+  id: String
+  name: String!
+}
+
+input CertificationListRelationFilter {
+  every: CertificationWhereInput
+  none: CertificationWhereInput
+  some: CertificationWhereInput
+}
+
+input CertificationOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input CertificationScalarWhereInput {
+  AND: [CertificationScalarWhereInput!]
+  NOT: [CertificationScalarWhereInput!]
+  OR: [CertificationScalarWhereInput!]
+  certifier: StringFilter
+  id: UuidFilter
+  name: StringFilter
+  userId: UuidFilter
+}
+
+input CertificationUpdateManyMutationInput {
+  certifier: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+}
+
+input CertificationUpdateManyWithWhereWithoutUserInput {
+  data: CertificationUpdateManyMutationInput!
+  where: CertificationScalarWhereInput!
+}
+
+input CertificationUpdateManyWithoutUserNestedInput {
+  connect: [CertificationWhereUniqueInput!]
+  connectOrCreate: [CertificationCreateOrConnectWithoutUserInput!]
+  create: [CertificationCreateWithoutUserInput!]
+  createMany: CertificationCreateManyUserInputEnvelope
+  delete: [CertificationWhereUniqueInput!]
+  deleteMany: [CertificationScalarWhereInput!]
+  disconnect: [CertificationWhereUniqueInput!]
+  set: [CertificationWhereUniqueInput!]
+  update: [CertificationUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [CertificationUpdateManyWithWhereWithoutUserInput!]
+  upsert: [CertificationUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input CertificationUpdateWithWhereUniqueWithoutUserInput {
+  data: CertificationUpdateWithoutUserInput!
+  where: CertificationWhereUniqueInput!
+}
+
+input CertificationUpdateWithoutUserInput {
+  certifier: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+}
+
+input CertificationUpsertWithWhereUniqueWithoutUserInput {
+  create: CertificationCreateWithoutUserInput!
+  update: CertificationUpdateWithoutUserInput!
+  where: CertificationWhereUniqueInput!
+}
+
+input CertificationWhereInput {
+  AND: [CertificationWhereInput!]
+  NOT: [CertificationWhereInput!]
+  OR: [CertificationWhereInput!]
+  certifier: StringFilter
+  id: UuidFilter
+  name: StringFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+input CertificationWhereUniqueInput {
+  AND: [CertificationWhereInput!]
+  NOT: [CertificationWhereInput!]
+  OR: [CertificationWhereInput!]
+  certifier: StringFilter
+  id: String
+  name: String
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+type Conference {
+  endDate: DateTime!
+  id: ID!
+  name: String!
+  startDate: DateTime!
+  user: User!
+  userId: String!
+}
+
+input ConferenceCreateManyUserInput {
+  endDate: DateTime!
+  id: String
+  name: String!
+  startDate: DateTime!
+}
+
+input ConferenceCreateManyUserInputEnvelope {
+  data: [ConferenceCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input ConferenceCreateNestedManyWithoutUserInput {
+  connect: [ConferenceWhereUniqueInput!]
+  connectOrCreate: [ConferenceCreateOrConnectWithoutUserInput!]
+  create: [ConferenceCreateWithoutUserInput!]
+  createMany: ConferenceCreateManyUserInputEnvelope
+}
+
+input ConferenceCreateOrConnectWithoutUserInput {
+  create: ConferenceCreateWithoutUserInput!
+  where: ConferenceWhereUniqueInput!
+}
+
+input ConferenceCreateWithoutUserInput {
+  endDate: DateTime!
+  id: String
+  name: String!
+  startDate: DateTime!
+}
+
+input ConferenceListRelationFilter {
+  every: ConferenceWhereInput
+  none: ConferenceWhereInput
+  some: ConferenceWhereInput
+}
+
+input ConferenceOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ConferenceScalarWhereInput {
+  AND: [ConferenceScalarWhereInput!]
+  NOT: [ConferenceScalarWhereInput!]
+  OR: [ConferenceScalarWhereInput!]
+  endDate: DateTimeFilter
+  id: UuidFilter
+  name: StringFilter
+  startDate: DateTimeFilter
+  userId: UuidFilter
+}
+
+input ConferenceUpdateManyMutationInput {
+  endDate: DateTimeFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  startDate: DateTimeFieldUpdateOperationsInput
+}
+
+input ConferenceUpdateManyWithWhereWithoutUserInput {
+  data: ConferenceUpdateManyMutationInput!
+  where: ConferenceScalarWhereInput!
+}
+
+input ConferenceUpdateManyWithoutUserNestedInput {
+  connect: [ConferenceWhereUniqueInput!]
+  connectOrCreate: [ConferenceCreateOrConnectWithoutUserInput!]
+  create: [ConferenceCreateWithoutUserInput!]
+  createMany: ConferenceCreateManyUserInputEnvelope
+  delete: [ConferenceWhereUniqueInput!]
+  deleteMany: [ConferenceScalarWhereInput!]
+  disconnect: [ConferenceWhereUniqueInput!]
+  set: [ConferenceWhereUniqueInput!]
+  update: [ConferenceUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [ConferenceUpdateManyWithWhereWithoutUserInput!]
+  upsert: [ConferenceUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input ConferenceUpdateWithWhereUniqueWithoutUserInput {
+  data: ConferenceUpdateWithoutUserInput!
+  where: ConferenceWhereUniqueInput!
+}
+
+input ConferenceUpdateWithoutUserInput {
+  endDate: DateTimeFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  startDate: DateTimeFieldUpdateOperationsInput
+}
+
+input ConferenceUpsertWithWhereUniqueWithoutUserInput {
+  create: ConferenceCreateWithoutUserInput!
+  update: ConferenceUpdateWithoutUserInput!
+  where: ConferenceWhereUniqueInput!
+}
+
+input ConferenceWhereInput {
+  AND: [ConferenceWhereInput!]
+  NOT: [ConferenceWhereInput!]
+  OR: [ConferenceWhereInput!]
+  endDate: DateTimeFilter
+  id: UuidFilter
+  name: StringFilter
+  startDate: DateTimeFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+input ConferenceWhereUniqueInput {
+  AND: [ConferenceWhereInput!]
+  NOT: [ConferenceWhereInput!]
+  OR: [ConferenceWhereInput!]
+  endDate: DateTimeFilter
+  id: String
+  name: String
+  startDate: DateTimeFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+input DateTimeFieldUpdateOperationsInput {
+  set: DateTime
+}
+
+input DateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input DateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeNullableFilter
+  notIn: [DateTime!]
+}
+
+type Education {
+  activities: [String!]
+  campusImage: String!
+  degree: String!
+  graduationYear: Int
+  id: ID!
+  location: String!
+  name: String!
+  startYear: DateTime
+  url: String!
+  user: User!
+  userId: String!
+}
+
+input EducationCreateManyUserInput {
+  activities: EducationCreateactivitiesInput
+  campusImage: String!
+  degree: String!
+  graduationYear: Int
+  id: String
+  location: String!
+  name: String!
+  startYear: DateTime
+  url: String!
+}
+
+input EducationCreateManyUserInputEnvelope {
+  data: [EducationCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input EducationCreateNestedManyWithoutUserInput {
+  connect: [EducationWhereUniqueInput!]
+  connectOrCreate: [EducationCreateOrConnectWithoutUserInput!]
+  create: [EducationCreateWithoutUserInput!]
+  createMany: EducationCreateManyUserInputEnvelope
+}
+
+input EducationCreateOrConnectWithoutUserInput {
+  create: EducationCreateWithoutUserInput!
+  where: EducationWhereUniqueInput!
+}
+
+input EducationCreateWithoutUserInput {
+  activities: EducationCreateactivitiesInput
+  campusImage: String!
+  degree: String!
+  graduationYear: Int
+  id: String
+  location: String!
+  name: String!
+  startYear: DateTime
+  url: String!
+}
+
+input EducationCreateactivitiesInput {
+  set: [String!]!
+}
+
+input EducationListRelationFilter {
+  every: EducationWhereInput
+  none: EducationWhereInput
+  some: EducationWhereInput
+}
+
+input EducationOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input EducationScalarWhereInput {
+  AND: [EducationScalarWhereInput!]
+  NOT: [EducationScalarWhereInput!]
+  OR: [EducationScalarWhereInput!]
+  activities: StringNullableListFilter
+  campusImage: StringFilter
+  degree: StringFilter
+  graduationYear: IntNullableFilter
+  id: UuidFilter
+  location: StringFilter
+  name: StringFilter
+  startYear: DateTimeNullableFilter
+  url: StringFilter
+  userId: UuidFilter
+}
+
+input EducationUpdateManyMutationInput {
+  activities: EducationUpdateactivitiesInput
+  campusImage: StringFieldUpdateOperationsInput
+  degree: StringFieldUpdateOperationsInput
+  graduationYear: NullableIntFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  location: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  startYear: NullableDateTimeFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+}
+
+input EducationUpdateManyWithWhereWithoutUserInput {
+  data: EducationUpdateManyMutationInput!
+  where: EducationScalarWhereInput!
+}
+
+input EducationUpdateManyWithoutUserNestedInput {
+  connect: [EducationWhereUniqueInput!]
+  connectOrCreate: [EducationCreateOrConnectWithoutUserInput!]
+  create: [EducationCreateWithoutUserInput!]
+  createMany: EducationCreateManyUserInputEnvelope
+  delete: [EducationWhereUniqueInput!]
+  deleteMany: [EducationScalarWhereInput!]
+  disconnect: [EducationWhereUniqueInput!]
+  set: [EducationWhereUniqueInput!]
+  update: [EducationUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [EducationUpdateManyWithWhereWithoutUserInput!]
+  upsert: [EducationUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input EducationUpdateWithWhereUniqueWithoutUserInput {
+  data: EducationUpdateWithoutUserInput!
+  where: EducationWhereUniqueInput!
+}
+
+input EducationUpdateWithoutUserInput {
+  activities: EducationUpdateactivitiesInput
+  campusImage: StringFieldUpdateOperationsInput
+  degree: StringFieldUpdateOperationsInput
+  graduationYear: NullableIntFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  location: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  startYear: NullableDateTimeFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+}
+
+input EducationUpdateactivitiesInput {
+  push: [String!]
+  set: [String!]
+}
+
+input EducationUpsertWithWhereUniqueWithoutUserInput {
+  create: EducationCreateWithoutUserInput!
+  update: EducationUpdateWithoutUserInput!
+  where: EducationWhereUniqueInput!
+}
+
+input EducationWhereInput {
+  AND: [EducationWhereInput!]
+  NOT: [EducationWhereInput!]
+  OR: [EducationWhereInput!]
+  activities: StringNullableListFilter
+  campusImage: StringFilter
+  degree: StringFilter
+  graduationYear: IntNullableFilter
+  id: UuidFilter
+  location: StringFilter
+  name: StringFilter
+  startYear: DateTimeNullableFilter
+  url: StringFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+input EducationWhereUniqueInput {
+  AND: [EducationWhereInput!]
+  NOT: [EducationWhereInput!]
+  OR: [EducationWhereInput!]
+  activities: StringNullableListFilter
+  campusImage: StringFilter
+  degree: StringFilter
+  graduationYear: Int
+  id: String
+  location: StringFilter
+  name: String
+  startYear: DateTimeNullableFilter
+  url: StringFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+input EnumRoleFieldUpdateOperationsInput {
+  set: Role
+}
+
+input EnumRoleFilter {
+  equals: Role
+  in: [Role!]
+  not: NestedEnumRoleFilter
+  notIn: [Role!]
+}
+
+type Experience {
+  createdAt: DateTime!
+  description: String!
+  employer: String!
+  endYear: Int
+  id: ID!
+  location: String!
+  startYear: Int!
+  title: String!
+  updatedAt: DateTime!
+  user: User!
+  userId: String!
+}
+
+input ExperienceCreateManyUserInput {
+  createdAt: DateTime
+  description: String!
+  employer: String!
+  endYear: Int
+  id: String
+  location: String!
+  startYear: Int!
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExperienceCreateManyUserInputEnvelope {
+  data: [ExperienceCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input ExperienceCreateNestedManyWithoutUserInput {
+  connect: [ExperienceWhereUniqueInput!]
+  connectOrCreate: [ExperienceCreateOrConnectWithoutUserInput!]
+  create: [ExperienceCreateWithoutUserInput!]
+  createMany: ExperienceCreateManyUserInputEnvelope
+}
+
+input ExperienceCreateOrConnectWithoutUserInput {
+  create: ExperienceCreateWithoutUserInput!
+  where: ExperienceWhereUniqueInput!
+}
+
+input ExperienceCreateWithoutUserInput {
+  createdAt: DateTime
+  description: String!
+  employer: String!
+  endYear: Int
+  id: String
+  location: String!
+  startYear: Int!
+  title: String!
+  updatedAt: DateTime
+}
+
+input ExperienceListRelationFilter {
+  every: ExperienceWhereInput
+  none: ExperienceWhereInput
+  some: ExperienceWhereInput
+}
+
+input ExperienceOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ExperienceScalarWhereInput {
+  AND: [ExperienceScalarWhereInput!]
+  NOT: [ExperienceScalarWhereInput!]
+  OR: [ExperienceScalarWhereInput!]
+  createdAt: DateTimeFilter
+  description: StringFilter
+  employer: StringFilter
+  endYear: IntNullableFilter
+  id: UuidFilter
+  location: StringFilter
+  startYear: IntFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+  userId: UuidFilter
+}
+
+input ExperienceUpdateManyMutationInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  employer: StringFieldUpdateOperationsInput
+  endYear: NullableIntFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  location: StringFieldUpdateOperationsInput
+  startYear: IntFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input ExperienceUpdateManyWithWhereWithoutUserInput {
+  data: ExperienceUpdateManyMutationInput!
+  where: ExperienceScalarWhereInput!
+}
+
+input ExperienceUpdateManyWithoutUserNestedInput {
+  connect: [ExperienceWhereUniqueInput!]
+  connectOrCreate: [ExperienceCreateOrConnectWithoutUserInput!]
+  create: [ExperienceCreateWithoutUserInput!]
+  createMany: ExperienceCreateManyUserInputEnvelope
+  delete: [ExperienceWhereUniqueInput!]
+  deleteMany: [ExperienceScalarWhereInput!]
+  disconnect: [ExperienceWhereUniqueInput!]
+  set: [ExperienceWhereUniqueInput!]
+  update: [ExperienceUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [ExperienceUpdateManyWithWhereWithoutUserInput!]
+  upsert: [ExperienceUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input ExperienceUpdateWithWhereUniqueWithoutUserInput {
+  data: ExperienceUpdateWithoutUserInput!
+  where: ExperienceWhereUniqueInput!
+}
+
+input ExperienceUpdateWithoutUserInput {
+  createdAt: DateTimeFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  employer: StringFieldUpdateOperationsInput
+  endYear: NullableIntFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  location: StringFieldUpdateOperationsInput
+  startYear: IntFieldUpdateOperationsInput
+  title: StringFieldUpdateOperationsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+}
+
+input ExperienceUpsertWithWhereUniqueWithoutUserInput {
+  create: ExperienceCreateWithoutUserInput!
+  update: ExperienceUpdateWithoutUserInput!
+  where: ExperienceWhereUniqueInput!
+}
+
+input ExperienceWhereInput {
+  AND: [ExperienceWhereInput!]
+  NOT: [ExperienceWhereInput!]
+  OR: [ExperienceWhereInput!]
+  createdAt: DateTimeFilter
+  description: StringFilter
+  employer: StringFilter
+  endYear: IntNullableFilter
+  id: UuidFilter
+  location: StringFilter
+  startYear: IntFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+input ExperienceWhereUniqueInput {
+  AND: [ExperienceWhereInput!]
+  NOT: [ExperienceWhereInput!]
+  OR: [ExperienceWhereInput!]
+  createdAt: DateTimeFilter
+  description: StringFilter
+  employer: StringFilter
+  endYear: IntNullableFilter
+  id: String
+  location: StringFilter
+  startYear: IntFilter
+  title: StringFilter
+  updatedAt: DateTimeFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+type GithubGist {
+  description: String!
+  id: ID!
+  name: String!
+  url: String!
+}
+
+type GithubRepository {
+  description: String!
+  name: String!
+  url: String!
+}
+
+type GithubResponse {
+  gists: [GithubGist!]
+  repositories: [GithubRepository!]
+  url: String
+}
+
+input IntFieldUpdateOperationsInput {
+  decrement: Int
+  divide: Int
+  increment: Int
+  multiply: Int
+  set: Int
+}
+
+input IntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input IntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+type Mutation {
+  createArticle(data: ArticleCreateInput!): Article!
+  createCertification(data: CertificationCreateInput!): Certification!
+  deleteArticle(id: String!): Article
+  updateArticle(data: ArticleUpdateInput!, id: String!): Article!
+}
+
+input NestedDateTimeFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeFilter
+  notIn: [DateTime!]
+}
+
+input NestedDateTimeNullableFilter {
+  equals: DateTime
+  gt: DateTime
+  gte: DateTime
+  in: [DateTime!]
+  lt: DateTime
+  lte: DateTime
+  not: NestedDateTimeNullableFilter
+  notIn: [DateTime!]
+}
+
+input NestedEnumRoleFilter {
+  equals: Role
+  in: [Role!]
+  not: NestedEnumRoleFilter
+  notIn: [Role!]
+}
+
+input NestedIntFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntFilter
+  notIn: [Int!]
+}
+
+input NestedIntNullableFilter {
+  equals: Int
+  gt: Int
+  gte: Int
+  in: [Int!]
+  lt: Int
+  lte: Int
+  not: NestedIntNullableFilter
+  notIn: [Int!]
+}
+
+input NestedStringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input NestedStringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input NestedUuidFilter {
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  not: NestedUuidFilter
+  notIn: [String!]
+}
+
+input NullableDateTimeFieldUpdateOperationsInput {
+  set: DateTime
+}
+
+input NullableIntFieldUpdateOperationsInput {
+  decrement: Int
+  divide: Int
+  increment: Int
+  multiply: Int
+  set: Int
+}
+
+input NullableStringFieldUpdateOperationsInput {
+  set: String
+}
+
+enum NullsOrder {
+  first
+  last
+}
+
+type Project {
+  content: String!
+  description: String!
+  id: ID!
+  name: String!
+  url: String!
+  user: User!
+  userId: String!
+}
+
+input ProjectCreateManyUserInput {
+  content: String!
+  description: String!
+  id: String
+  name: String!
+  url: String!
+}
+
+input ProjectCreateManyUserInputEnvelope {
+  data: [ProjectCreateManyUserInput!]!
+  skipDuplicates: Boolean
+}
+
+input ProjectCreateNestedManyWithoutUserInput {
+  connect: [ProjectWhereUniqueInput!]
+  connectOrCreate: [ProjectCreateOrConnectWithoutUserInput!]
+  create: [ProjectCreateWithoutUserInput!]
+  createMany: ProjectCreateManyUserInputEnvelope
+}
+
+input ProjectCreateOrConnectWithoutUserInput {
+  create: ProjectCreateWithoutUserInput!
+  where: ProjectWhereUniqueInput!
+}
+
+input ProjectCreateWithoutUserInput {
+  content: String!
+  description: String!
+  id: String
+  name: String!
+  url: String!
+}
+
+input ProjectListRelationFilter {
+  every: ProjectWhereInput
+  none: ProjectWhereInput
+  some: ProjectWhereInput
+}
+
+input ProjectOrderByRelationAggregateInput {
+  _count: SortOrder
+}
+
+input ProjectScalarWhereInput {
+  AND: [ProjectScalarWhereInput!]
+  NOT: [ProjectScalarWhereInput!]
+  OR: [ProjectScalarWhereInput!]
+  content: StringFilter
+  description: StringFilter
+  id: UuidFilter
+  name: StringFilter
+  url: StringFilter
+  userId: UuidFilter
+}
+
+input ProjectUpdateManyMutationInput {
+  content: StringFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+}
+
+input ProjectUpdateManyWithWhereWithoutUserInput {
+  data: ProjectUpdateManyMutationInput!
+  where: ProjectScalarWhereInput!
+}
+
+input ProjectUpdateManyWithoutUserNestedInput {
+  connect: [ProjectWhereUniqueInput!]
+  connectOrCreate: [ProjectCreateOrConnectWithoutUserInput!]
+  create: [ProjectCreateWithoutUserInput!]
+  createMany: ProjectCreateManyUserInputEnvelope
+  delete: [ProjectWhereUniqueInput!]
+  deleteMany: [ProjectScalarWhereInput!]
+  disconnect: [ProjectWhereUniqueInput!]
+  set: [ProjectWhereUniqueInput!]
+  update: [ProjectUpdateWithWhereUniqueWithoutUserInput!]
+  updateMany: [ProjectUpdateManyWithWhereWithoutUserInput!]
+  upsert: [ProjectUpsertWithWhereUniqueWithoutUserInput!]
+}
+
+input ProjectUpdateWithWhereUniqueWithoutUserInput {
+  data: ProjectUpdateWithoutUserInput!
+  where: ProjectWhereUniqueInput!
+}
+
+input ProjectUpdateWithoutUserInput {
+  content: StringFieldUpdateOperationsInput
+  description: StringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  name: StringFieldUpdateOperationsInput
+  url: StringFieldUpdateOperationsInput
+}
+
+input ProjectUpsertWithWhereUniqueWithoutUserInput {
+  create: ProjectCreateWithoutUserInput!
+  update: ProjectUpdateWithoutUserInput!
+  where: ProjectWhereUniqueInput!
+}
+
+input ProjectWhereInput {
+  AND: [ProjectWhereInput!]
+  NOT: [ProjectWhereInput!]
+  OR: [ProjectWhereInput!]
+  content: StringFilter
+  description: StringFilter
+  id: UuidFilter
+  name: StringFilter
+  url: StringFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+input ProjectWhereUniqueInput {
+  AND: [ProjectWhereInput!]
+  NOT: [ProjectWhereInput!]
+  OR: [ProjectWhereInput!]
+  content: StringFilter
+  description: StringFilter
+  id: String
+  name: String
+  url: StringFilter
+  user: UserRelationFilter
+  userId: UuidFilter
+}
+
+type Query {
+  article(id: String!): Article!
+  articles(orderBy: ArticleOrderByWithRelationInput, searchString: String, skip: Int, take: Int): [Article!]!
+  certification(id: String!): Certification!
+  certifications(userId: String!): [Certification!]!
+  getGithubInformation(limit: Int): GithubResponse!
+  projects(take: Int, userId: String): [Project!]!
+  user(email: String!): User!
+}
+
+enum QueryMode {
+  default
+  insensitive
+}
+
+enum Role {
+  Admin
+  User
+}
+
+enum SortOrder {
+  asc
+  desc
+}
+
+input SortOrderInput {
+  nulls: NullsOrder
+  sort: SortOrder!
+}
+
+input StringFieldUpdateOperationsInput {
+  set: String
+}
+
+input StringFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  mode: QueryMode
+  not: NestedStringFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input StringNullableFilter {
+  contains: String
+  endsWith: String
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  mode: QueryMode
+  not: NestedStringNullableFilter
+  notIn: [String!]
+  startsWith: String
+}
+
+input StringNullableListFilter {
+  equals: [String!]
+  has: String
+  hasEvery: [String!]
+  hasSome: [String!]
+  isEmpty: Boolean
+}
+
+type User {
+  _count: UserCount!
+  articles: [Article!]!
+  birthday: DateTime!
+  certifications: [Certification!]!
+  conferences: [Conference!]
+  educations: [Education!]!
+  email: String!
+  experiences: [Experience!]!
+  firstName: String!
+  github: String
+  id: ID!
+  lastName: String!
+  linkedin: String
+  middleName: String
+  professionalMemberships: [String!]
+  profile: String!
+  profileHighlights: [String!]
+  profilePicture: String
+  projects: [Project!]!
+  role: Role!
+  skills: [String!]
+  updatedAt: DateTime!
+  website: String
+  yubikeys: [String!]
+}
+
+type UserCount {
+  articles: Int!
+  certifications: Int!
+  conferences: Int!
+  educations: Int!
+  experiences: Int!
+  projects: Int!
+}
+
+input UserCreateNestedOneWithoutArticlesInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutArticlesInput
+  create: UserCreateWithoutArticlesInput
+}
+
+input UserCreateNestedOneWithoutCertificationsInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutCertificationsInput
+  create: UserCreateWithoutCertificationsInput
+}
+
+input UserCreateOrConnectWithoutArticlesInput {
+  create: UserCreateWithoutArticlesInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateOrConnectWithoutCertificationsInput {
+  create: UserCreateWithoutCertificationsInput!
+  where: UserWhereUniqueInput!
+}
+
+input UserCreateWithoutArticlesInput {
+  birthday: DateTime!
+  certifications: CertificationCreateNestedManyWithoutUserInput
+  conferences: ConferenceCreateNestedManyWithoutUserInput
+  createdAt: DateTime
+  educations: EducationCreateNestedManyWithoutUserInput
+  email: String!
+  experiences: ExperienceCreateNestedManyWithoutUserInput
+  firstName: String!
+  github: String
+  id: String
+  lastName: String!
+  linkedin: String
+  middleName: String
+  professionalMemberships: UserCreateprofessionalMembershipsInput
+  profile: String!
+  profileHighlights: UserCreateprofileHighlightsInput
+  profilePicture: String
+  projects: ProjectCreateNestedManyWithoutUserInput
+  role: Role
+  skills: UserCreateskillsInput
+  updatedAt: DateTime
+  website: String
+  yubikeys: UserCreateyubikeysInput
+}
+
+input UserCreateWithoutCertificationsInput {
+  articles: ArticleCreateNestedManyWithoutAuthorInput
+  birthday: DateTime!
+  conferences: ConferenceCreateNestedManyWithoutUserInput
+  createdAt: DateTime
+  educations: EducationCreateNestedManyWithoutUserInput
+  email: String!
+  experiences: ExperienceCreateNestedManyWithoutUserInput
+  firstName: String!
+  github: String
+  id: String
+  lastName: String!
+  linkedin: String
+  middleName: String
+  professionalMemberships: UserCreateprofessionalMembershipsInput
+  profile: String!
+  profileHighlights: UserCreateprofileHighlightsInput
+  profilePicture: String
+  projects: ProjectCreateNestedManyWithoutUserInput
+  role: Role
+  skills: UserCreateskillsInput
+  updatedAt: DateTime
+  website: String
+  yubikeys: UserCreateyubikeysInput
+}
+
+input UserCreateprofessionalMembershipsInput {
+  set: [String!]!
+}
+
+input UserCreateprofileHighlightsInput {
+  set: [String!]!
+}
+
+input UserCreateskillsInput {
+  set: [String!]!
+}
+
+input UserCreateyubikeysInput {
+  set: [String!]!
+}
+
+input UserOrderByWithRelationInput {
+  articles: ArticleOrderByRelationAggregateInput
+  birthday: SortOrder
+  certifications: CertificationOrderByRelationAggregateInput
+  conferences: ConferenceOrderByRelationAggregateInput
+  createdAt: SortOrder
+  educations: EducationOrderByRelationAggregateInput
+  email: SortOrder
+  experiences: ExperienceOrderByRelationAggregateInput
+  firstName: SortOrder
+  github: SortOrderInput
+  id: SortOrder
+  lastName: SortOrder
+  linkedin: SortOrderInput
+  middleName: SortOrderInput
+  professionalMemberships: SortOrder
+  profile: SortOrder
+  profileHighlights: SortOrder
+  profilePicture: SortOrderInput
+  projects: ProjectOrderByRelationAggregateInput
+  role: SortOrder
+  skills: SortOrder
+  updatedAt: SortOrder
+  website: SortOrderInput
+  yubikeys: SortOrder
+}
+
+input UserRelationFilter {
+  is: UserWhereInput
+  isNot: UserWhereInput
+}
+
+input UserUpdateOneRequiredWithoutArticlesNestedInput {
+  connect: UserWhereUniqueInput
+  connectOrCreate: UserCreateOrConnectWithoutArticlesInput
+  create: UserCreateWithoutArticlesInput
+  update: UserUpdateToOneWithWhereWithoutArticlesInput
+  upsert: UserUpsertWithoutArticlesInput
+}
+
+input UserUpdateToOneWithWhereWithoutArticlesInput {
+  data: UserUpdateWithoutArticlesInput!
+  where: UserWhereInput
+}
+
+input UserUpdateWithoutArticlesInput {
+  birthday: DateTimeFieldUpdateOperationsInput
+  certifications: CertificationUpdateManyWithoutUserNestedInput
+  conferences: ConferenceUpdateManyWithoutUserNestedInput
+  createdAt: DateTimeFieldUpdateOperationsInput
+  educations: EducationUpdateManyWithoutUserNestedInput
+  email: StringFieldUpdateOperationsInput
+  experiences: ExperienceUpdateManyWithoutUserNestedInput
+  firstName: StringFieldUpdateOperationsInput
+  github: NullableStringFieldUpdateOperationsInput
+  id: StringFieldUpdateOperationsInput
+  lastName: StringFieldUpdateOperationsInput
+  linkedin: NullableStringFieldUpdateOperationsInput
+  middleName: NullableStringFieldUpdateOperationsInput
+  professionalMemberships: UserUpdateprofessionalMembershipsInput
+  profile: StringFieldUpdateOperationsInput
+  profileHighlights: UserUpdateprofileHighlightsInput
+  profilePicture: NullableStringFieldUpdateOperationsInput
+  projects: ProjectUpdateManyWithoutUserNestedInput
+  role: EnumRoleFieldUpdateOperationsInput
+  skills: UserUpdateskillsInput
+  updatedAt: DateTimeFieldUpdateOperationsInput
+  website: NullableStringFieldUpdateOperationsInput
+  yubikeys: UserUpdateyubikeysInput
+}
+
+input UserUpdateprofessionalMembershipsInput {
+  push: [String!]
+  set: [String!]
+}
+
+input UserUpdateprofileHighlightsInput {
+  push: [String!]
+  set: [String!]
+}
+
+input UserUpdateskillsInput {
+  push: [String!]
+  set: [String!]
+}
+
+input UserUpdateyubikeysInput {
+  push: [String!]
+  set: [String!]
+}
+
+input UserUpsertWithoutArticlesInput {
+  create: UserCreateWithoutArticlesInput!
+  update: UserUpdateWithoutArticlesInput!
+  where: UserWhereInput
+}
+
+input UserWhereInput {
+  AND: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  articles: ArticleListRelationFilter
+  birthday: DateTimeFilter
+  certifications: CertificationListRelationFilter
+  conferences: ConferenceListRelationFilter
+  createdAt: DateTimeFilter
+  educations: EducationListRelationFilter
+  email: StringFilter
+  experiences: ExperienceListRelationFilter
+  firstName: StringFilter
+  github: StringNullableFilter
+  id: UuidFilter
+  lastName: StringFilter
+  linkedin: StringNullableFilter
+  middleName: StringNullableFilter
+  professionalMemberships: StringNullableListFilter
+  profile: StringFilter
+  profileHighlights: StringNullableListFilter
+  profilePicture: StringNullableFilter
+  projects: ProjectListRelationFilter
+  role: EnumRoleFilter
+  skills: StringNullableListFilter
+  updatedAt: DateTimeFilter
+  website: StringNullableFilter
+  yubikeys: StringNullableListFilter
+}
+
+input UserWhereUniqueInput {
+  AND: [UserWhereInput!]
+  NOT: [UserWhereInput!]
+  OR: [UserWhereInput!]
+  articles: ArticleListRelationFilter
+  birthday: DateTimeFilter
+  certifications: CertificationListRelationFilter
+  conferences: ConferenceListRelationFilter
+  createdAt: DateTimeFilter
+  educations: EducationListRelationFilter
+  email: String
+  experiences: ExperienceListRelationFilter
+  firstName: String
+  github: String
+  id: String
+  lastName: String
+  linkedin: String
+  middleName: StringNullableFilter
+  professionalMemberships: StringNullableListFilter
+  profile: StringFilter
+  profileHighlights: StringNullableListFilter
+  profilePicture: StringNullableFilter
+  projects: ProjectListRelationFilter
+  role: EnumRoleFilter
+  skills: StringNullableListFilter
+  updatedAt: DateTimeFilter
+  website: StringNullableFilter
+  yubikeys: StringNullableListFilter
+}
+
+input UuidFilter {
+  equals: String
+  gt: String
+  gte: String
+  in: [String!]
+  lt: String
+  lte: String
+  mode: QueryMode
+  not: NestedUuidFilter
+  notIn: [String!]
+}

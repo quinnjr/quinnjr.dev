@@ -17,10 +17,7 @@ import { FlashMessageService } from '../flash-message/flash-message.service';
   styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-  public loginForm: UntypedFormGroup = this.$fb.group({
-    email: ['', Validators.required],
-    password: ['', [Validators.required, Validators.minLength(8)]]
-  });
+  public loginForm: UntypedFormGroup;
 
   constructor(
     private $storage: StorageMap,
@@ -28,7 +25,12 @@ export class LoginComponent implements OnInit {
     private $fb: UntypedFormBuilder,
     private $router: Router,
     private $flashMessageService: FlashMessageService
-  ) {}
+  ) {
+    this.loginForm = this.$fb.group({
+      email: ['', Validators.required],
+      password: ['', [Validators.required, Validators.minLength(8)]]
+    });
+  }
 
   public ngOnInit(): void {}
 

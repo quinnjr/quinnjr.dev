@@ -11,7 +11,7 @@ import { BehaviorSubject, Subscription } from 'rxjs';
 
 import { FlashMessageService } from '../flash-message/flash-message.service';
 import { Level } from '../flash-message/level';
-import { Article } from '@prisma/client';
+import { Article } from '../../../graphql/article';
 
 @Component({
   selector: 'app-home',

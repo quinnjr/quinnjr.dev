@@ -1,12 +1,13 @@
 import { join } from 'path';
 
-import { CacheInterceptor, CacheModule, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { AngularUniversalModule } from '@nestjs/ng-universal';
 import { Logger } from '@nestjs/common';
+import { CacheModule, CacheInterceptor } from '@nestjs/cache-manager';
 
 import { AppServerModule } from '../src/main.server';
 
@@ -45,9 +46,9 @@ import { GithubResolver } from './github/github.resolver';
     }),
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
-      autoSchemaFile: join(__dirname, 'schema.gql'),
-      debug: process.env['ENV'] === 'development',
-      cors: process.env['ENV'] === 'development',
+      autoSchemaFile: join(process.cwd(), 'schema.gql'),
+      sortSchema: true,
+      playground: false,
       context: ({ req }: { req: any }) => ({ req })
     })
   ],

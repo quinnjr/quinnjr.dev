@@ -1,8 +1,8 @@
 #!/usr/bin/env sh
 
 if [[ $ENV = "production" ]]; then
-  pnpm run serve:ssr
+  npm run serve:ssr
 else
-  pnpm install --no-optional  --strict-peer-dependencies false
-  pnpm run dev:ssr
+  npm install
+  npm run dev:ssr
 fi

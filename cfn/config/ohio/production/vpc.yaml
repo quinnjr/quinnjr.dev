@@ -1,0 +1,3 @@
+template:
+  path: vpc.yaml.j2
+  type: file

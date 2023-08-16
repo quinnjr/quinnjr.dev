@@ -126,7 +126,8 @@
               "cache-manager",
               "_http_common",
               "class-transformer/storage",
-              "apollo-server-fastify"
+              "apollo-server-fastify",
+              "@as-integrations/fastify"
             ]
           },
           "configurations": {
@@ -138,7 +139,8 @@
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "optimization": true,
+              "optimization": false,
+              "sourceMap": true,
               "extractLicenses": true
             },
             "development": {

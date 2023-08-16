@@ -1,0 +1,290 @@
+Parameters:
+  DatabaseUrlArn:
+    Type: String
+  GHTokenArn:
+    Type: String
+  JWTSecretArn:
+    Type: String
+  PrivateSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  PublicSubnets:
+    Type: List<AWS::EC2::Subnet::Id>
+  RedisHost:
+    Type: String
+  RedisPort:
+    Type: Number
+  RepositoryUri:
+    Type: String
+  SecretKeyArn:
+    Type: String
+  YubikeyClientIdArn:
+    Type: String
+  YubikeyClientSecretArn:
+    Type: String
+  VpcId:
+    Type: AWS::EC2::VPC::Id
+Resources:
+  MyExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+        - arn:aws:iam::aws:policy/CloudWatchFullAccess
+        - arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly
+      Policies:
+        - PolicyName: "ECR"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: 
+                  - ecr:BatchGetImage
+                  - ecr:GetDownloadUrlForLayer
+                  - ecr:GetAuthorizationToken
+                Resource: "*"
+        - PolicyName: "Logs"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:Create
+                  - logs:PutLogEvents
+                  - logs:CreateLogStream
+                  - logs:PutDestination
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+        - PolicyName: "GetSecrets"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                  - kms:Decrypt
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*"
+                  - !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:*"
+                  - !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"
+  MyTaskRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ecs-tasks.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: "GetSecrets"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameters
+                  - kms:Decrypt
+                  - secretsmanager:GetSecretValue
+                Resource:
+                  - !Sub "arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/*"
+                  - !Sub "arn:aws:secretsmanager:${AWS::Region}:${AWS::AccountId}:secret:*"
+                  - !Sub "arn:aws:kms:${AWS::Region}:${AWS::AccountId}:key/*"
+        - PolicyName: "Logs"
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action:
+                  - logs:Create
+                  - logs:PutLogEvents
+                  - logs:CreateLogStream
+                  - logs:PutDestination
+                Resource: !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:*"
+  MyECSLogsGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: "/ecs/website"
+      RetentionInDays: 90
+  MyECSCluster:
+    Type: AWS::ECS::Cluster
+    Properties:
+      ClusterName: website
+      Tags:
+        - Key: Env
+          Value: production
+  MyECSTaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      ContainerDefinitions:
+        - LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-region: !Sub "${AWS::Region}"
+              awslogs-group: !Ref MyECSLogsGroup
+              awslogs-stream-prefix: qjr
+          Environment:
+            - Name: REDIS_HOST
+              Value: !Ref RedisHost
+            - Name: REDIS_PORT
+              Value: !Ref RedisPort
+          Essential: true
+          Image: !Join [':', [!Ref RepositoryUri, 'latest']]
+          Memory: !!int 1024
+          Name: website
+          Cpu: !!int 512
+          PortMappings:
+            - AppProtocol: http
+              ContainerPort: !!int 4200
+              HostPort: !!int 4200
+              Protocol: tcp
+          Secrets:
+            - Name: DATABASE_URL
+              ValueFrom: !Ref DatabaseUrlArn
+            - Name: GH_TOKEN
+              ValueFrom: !Ref GHTokenArn
+            - Name: JWT_SECRET
+              ValueFrom: !Ref JWTSecretArn
+            - Name: SECRET_KEY
+              ValueFrom: !Ref SecretKeyArn
+            - Name: YUBIKEY_CLIENT_ID
+              ValueFrom: !Ref YubikeyClientIdArn
+            - Name: YUBIKEY_CLIENT_SECRET
+              ValueFrom: !Ref YubikeyClientSecretArn
+          User: node:node
+      Cpu: !!int 512
+      ExecutionRoleArn: !GetAtt MyExecutionRole.Arn
+      Memory: !!int 1024
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      RuntimePlatform:
+        CpuArchitecture: X86_64
+        OperatingSystemFamily: LINUX
+      TaskRoleArn: !GetAtt MyTaskRole.Arn
+  MyECSService:
+    DependsOn:
+      - MyECSTaskDefinition
+      - MyTargetGroup
+      - MyLoadBalancer
+      - MyLoadBalancerListener
+      - MyECSIngressSecurityGroup
+      - MyECSEgressSecurityGroup
+    Type: AWS::ECS::Service
+    Properties:
+      Cluster: !Ref MyECSCluster
+      DeploymentConfiguration:
+        MaximumPercent: !!int 100
+        MinimumHealthyPercent: !!int 0
+      DeploymentController:
+        Type: ECS
+      DesiredCount: !!int 1
+      LaunchType: FARGATE
+      LoadBalancers:
+        - ContainerName: website
+          ContainerPort: !!int 4200
+          TargetGroupArn: !Ref MyTargetGroup
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          AssignPublicIp: DISABLED
+          SecurityGroups:
+            - !GetAtt MyECSEgressSecurityGroup.GroupId
+            - !GetAtt MyECSIngressSecurityGroup.GroupId
+          Subnets: !Ref PrivateSubnets
+      PlatformVersion: 1.3.0
+      SchedulingStrategy: REPLICA
+      ServiceName: website
+      TaskDefinition: !Ref MyECSTaskDefinition
+  MyECSIngressSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Inbound Traffic
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: !!int 4200
+          ToPort: !!int 4200
+  MyECSEgressSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Outbound traffic
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1
+  MyLoadbalancerIngressSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Inbound Traffic
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: !!int 433
+          ToPort: !!int 433
+  MyLoadbalancerEgressSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      VpcId: !Ref VpcId
+      GroupDescription: Outbound traffic
+      SecurityGroupEgress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: -1
+  MyTargetGroup:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      VpcId: !Ref VpcId
+      Port: !!int 4200
+      Protocol: HTTP
+      TargetType: ip
+  MyLoadBalancer:
+    DependsOn:
+      - MyLoadbalancerIngressSecurityGroup
+      - MyLoadbalancerEgressSecurityGroup
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Subnets: !Ref PublicSubnets
+      SecurityGroups:
+        - !Ref MyLoadbalancerIngressSecurityGroup
+        - !Ref MyLoadbalancerEgressSecurityGroup
+  MyLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref MyDomainCertificate
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: !!int 443
+      Protocol: HTTPS
+      DefaultActions:
+        - Type: forward
+          TargetGroupArn: !Ref MyTargetGroup
+  MyDomainCertificate:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: quinnjr.tech
+      SubjectAlternativeNames:
+        - "*.quinnjr.tech"
+      ValidationMethod: DNS
+  MyRoute53ARecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      AliasTarget:
+        DNSName: !GetAtt MyLoadBalancer.DNSName
+        HostedZoneId: !GetAtt MyLoadBalancer.CanonicalHostedZoneID
+      HostedZoneId: Z096611533WBD8A9YH1BX
+      Name: quinnjr.tech
+      Type: A
+Outputs:
+  TaskDefinitionArn:
+    Value: !Ref MyECSTaskDefinition
+    Export:
+      Name: !Sub "${AWS::StackName}-ecs-task-definition"

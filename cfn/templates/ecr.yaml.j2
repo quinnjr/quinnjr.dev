@@ -1,0 +1,26 @@
+Parameters:
+  KMSArn:
+    Type: String
+Resources:
+  MyElasticContainerRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      EncryptionConfiguration:
+        EncryptionType: KMS
+        KMSKey: !Ref KMSArn
+      ImageTagMutability: MUTABLE
+      RepositoryName: website
+Outputs:
+  RepositoryName:
+    Value: !Ref MyElasticContainerRepository
+    Export:
+      Name: !Sub "${AWS::StackName}-repository-name"
+  RepositoryArn:
+    Value: !GetAtt MyElasticContainerRepository.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-repository-arn"
+  RepositoryUri:
+    Value: !GetAtt MyElasticContainerRepository.RepositoryUri
+    Export:
+      Name: !Sub "${AWS::StackName}-repository-uri"
+  

@@ -14,7 +14,7 @@ export class JwtGraphqlAuthGuard
     super();
   }
 
-  public getRequest(context: ExecutionContext): any {
+  public override getRequest(context: ExecutionContext): any {
     const ctx = GqlExecutionContext.create(context);
     return ctx.getContext().req;
   }

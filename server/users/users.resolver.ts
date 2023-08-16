@@ -3,12 +3,12 @@ import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { Public } from '../auth/public.decorator';
 import { DatabaseService } from '../database/database.service';
 
-import { User } from '../@generated/prisma-nestjs-graphql/user/user.model';
-import { Article } from '../@generated/prisma-nestjs-graphql/article/article.model';
-import { Education } from '../@generated/prisma-nestjs-graphql/education/education.model';
-import { Experience } from '../@generated/prisma-nestjs-graphql/experience/experience.model';
-import { Certification } from '../@generated/prisma-nestjs-graphql/certification/certification.model';
-import { Project } from '../@generated/prisma-nestjs-graphql/project/project.model';
+import { User } from '../../graphql/user/user.model';
+import { Article } from '../../graphql/article/article.model';
+import { Education } from '../../graphql/education/education.model';
+import { Experience } from '../../graphql/experience/experience.model';
+import { Certification } from '../../graphql/certification/certification.model';
+import { Project } from '../../graphql/project/project.model';
 
 @Resolver((of: any) => User)
 export class UsersResolver {

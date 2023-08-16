@@ -1,10 +1,5 @@
-import { InjectionToken, NgModule } from '@angular/core';
-import {
-  BrowserModule,
-  BrowserTransferStateModule,
-  TransferState,
-  makeStateKey
-} from '@angular/platform-browser';
+import { InjectionToken, NgModule, TransferState } from '@angular/core';
+import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -29,12 +24,10 @@ import { HttpErrorInterceptor } from './http-error.interceptor';
 import { FlashMessageService } from './flash-message/flash-message.service';
 
 const APOLLO_CACHE = new InjectionToken<InMemoryCache>('apollo-cache');
-const STATE_KEY = makeStateKey<any>('apollo.state');
 
 @NgModule({
   imports: [
-    BrowserModule.withServerTransition({ appId: 'quinnjr.tech' }),
-    BrowserTransferStateModule,
+    BrowserModule,
     HttpClientModule,
     FormsModule,
     ReactiveFormsModule,
@@ -83,14 +76,7 @@ const STATE_KEY = makeStateKey<any>('apollo.state');
         transferState: TransferState,
         store: StorageMap
       ) => {
-        const isBrowser = transferState.hasKey<any>(STATE_KEY);
-
-        if (isBrowser) {
-          const state = transferState.get<any>(STATE_KEY, null);
-        } else {
-          transferState.onSerialize(STATE_KEY, () => cache.extract());
-        }
-
+        
         const basic = setContext((operation, context) => ({
           headers: {
             Accept: 'charset=utf-8'
@@ -121,7 +107,7 @@ const STATE_KEY = makeStateKey<any>('apollo.state');
 
         return { cache, link };
       },
-      deps: [HttpLink, APOLLO_CACHE, TransferState, StorageMap]
+      deps: [HttpLink, StorageMap]
     }
   ],
   bootstrap: [AppComponent]

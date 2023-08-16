@@ -1,0 +1,18 @@
+Resources:
+  MyKMSKey:
+    Type: AWS::KMS::Key
+    Properties:
+      Description: My KMS Key
+      Enabled: true
+      EnableKeyRotation: false
+      MultiRegion: false
+      PendingWindowInDays: 7
+Outputs:
+  KMSKeyId:
+    Value: !Ref MyKMSKey
+    Export:
+      Name: !Sub "${AWS::StackName}-kms-key-id"
+  KMSArn:
+    Value: !GetAtt MyKMSKey.Arn
+    Export:
+      Name: !Sub "${AWS::StackName}-kms-arn"

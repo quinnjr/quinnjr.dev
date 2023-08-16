@@ -11,9 +11,9 @@ import { Public } from '../auth/public.decorator';
 import { CurrentUser } from '../auth/current-user.decorator';
 import { DatabaseService } from '../database/database.service';
 
-import { Certification } from '../@generated/prisma-nestjs-graphql/certification/certification.model';
-import { CertificationCreateInput } from '../@generated/prisma-nestjs-graphql/certification/certification-create.input';
-import { User } from '../@generated/prisma-nestjs-graphql/user/user.model';
+import { Certification } from '../../graphql/certification/certification.model';
+import { CertificationCreateInput } from '../../graphql/certification/certification-create.input';
+import { User } from '../../graphql/user/user.model';
 
 @Resolver((of: any) => Certification)
 export class CertificationsResolver {

@@ -12,9 +12,6 @@ import {
   TargetOptions
 } from '@angular-builders/custom-webpack';
 import SriPlugin from 'webpack-subresource-integrity';
-// @ts-ignore
-import ImageminMinimizerPlugin from 'image-minimizer-webpack-plugin';
-import DotenvPlugin from 'dotenv-webpack';
 import nodeExternals from 'webpack-node-externals';
 import TerserPlugin from 'terser-webpack-plugin';
 import * as pkg from './package.json';
@@ -30,11 +27,6 @@ export default (
   config.output!.crossOriginLoading = 'anonymous';
 
   config.plugins?.push(
-    // new DotenvPlugin({
-    //   safe: true,
-    //   allowEmptyValues: true,
-    //   systemvars: true
-    // }),
     new DefinePlugin({
       /* eslint @typescript-eslint/naming-convention: off */
       APP_NAME: pkg.name,
@@ -72,7 +64,6 @@ export default (
           hashFuncNames: ['sha256'],
           enabled: (process.env['ENV'] || 'development') === 'production'
         }),
-        new ImageminMinimizerPlugin(),
         new PurgeCSSPlugin({
           paths: glob.sync(`${join(__dirname, 'src')}**/*.html`, {
             nodir: true
@@ -80,6 +71,37 @@ export default (
         })
       );
     }
+
+    config.optimization = {
+      minimize: config.mode === 'production',
+      minimizer: [
+        (compiler) => {
+          new TerserPlugin({
+            terserOptions: {
+              mangle: false,
+              ecma: 2020,
+              keep_classnames: true,
+              toplevel: true,
+              ie8: false
+            }
+          }).apply(compiler);
+        }
+      ],
+      moduleIds: 'named',
+      chunkIds: 'named',
+      removeAvailableModules: true,
+      mergeDuplicateChunks: true,
+      mangleExports: false,
+      splitChunks: {
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendor',
+            chunks: 'all'
+          }
+        }
+      }
+    };
   }
 
   if (targetOptions.target === 'server') {
@@ -106,7 +128,7 @@ export default (
           new TerserPlugin({
             terserOptions: {
               mangle: false,
-              ecma: 2017,
+              ecma: 2020,
               keep_classnames: true,
               toplevel: true,
               ie8: false
@@ -114,8 +136,8 @@ export default (
           }).apply(compiler);
         }
       ],
-      moduleIds: config.mode === 'production' ? 'deterministic' : 'named',
-      chunkIds: config.mode === 'production' ? 'deterministic' : 'named',
+      moduleIds: 'named',
+      chunkIds: 'named',
       removeAvailableModules: true,
       mergeDuplicateChunks: true,
       mangleExports: false
@@ -136,7 +158,8 @@ export default (
             'utf-8-validate',
             'graphql-ws',
             'ws',
-            'ts-morph'
+            'ts-morph',
+            '@as-integrations/fastify'
           ];
 
           if (!lazyImports.includes(resource)) {

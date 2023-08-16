@@ -1,7 +1,8 @@
 /* eslint-disable prettier/prettier */
-import { Inject, CACHE_MANAGER } from '@nestjs/common';
+import { Inject } from '@nestjs/common';
 import { Resolver, Query, Args, Int } from '@nestjs/graphql';
 import { ConfigService } from '@nestjs/config';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { default as axios } from 'axios'
 import { Cache } from 'cache-manager';
 

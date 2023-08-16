@@ -1,0 +1,6 @@
+template:
+  path: ecr.yaml.j2
+  type: file
+
+parameters:
+  KMSArn: !stack_output_external {{ stack_group_config.stack_prefix }}-kms::KMSArn

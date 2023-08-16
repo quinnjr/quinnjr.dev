@@ -4,6 +4,8 @@
 .vscode/
 .pnpm-store/
 dist/
+docker/
+
 # Created by https://www.toptal.com/developers/gitignore/api/node
 # Edit at https://www.toptal.com/developers/gitignore?templates=node
 
