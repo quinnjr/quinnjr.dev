@@ -9,10 +9,6 @@ Parameters:
     Type: List<AWS::EC2::Subnet::Id>
   PublicSubnets:
     Type: List<AWS::EC2::Subnet::Id>
-  RedisHost:
-    Type: String
-  RedisPort:
-    Type: Number
   RepositoryUri:
     Type: String
   SecretKeyArn:
@@ -132,10 +128,8 @@ Resources:
               awslogs-group: !Ref MyECSLogsGroup
               awslogs-stream-prefix: qjr
           Environment:
-            - Name: REDIS_HOST
-              Value: !Ref RedisHost
-            - Name: REDIS_PORT
-              Value: !Ref RedisPort
+            - Name: ENV
+              Value: production
           Essential: true
           Image: !Join [':', [!Ref RepositoryUri, 'latest']]
           Memory: !!int 1024
@@ -199,7 +193,7 @@ Resources:
             - !GetAtt MyECSEgressSecurityGroup.GroupId
             - !GetAtt MyECSIngressSecurityGroup.GroupId
           Subnets: !Ref PrivateSubnets
-      PlatformVersion: 1.3.0
+      PlatformVersion: LATEST
       SchedulingStrategy: REPLICA
       ServiceName: website
       TaskDefinition: !Ref MyECSTaskDefinition
@@ -229,8 +223,12 @@ Resources:
       SecurityGroupIngress:
         - CidrIp: 0.0.0.0/0
           IpProtocol: tcp
-          FromPort: !!int 433
-          ToPort: !!int 433
+          FromPort: !!int 443
+          ToPort: !!int 443
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: !!int 80
+          ToPort: !!int 80
   MyLoadbalancerEgressSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -267,6 +265,22 @@ Resources:
       DefaultActions:
         - Type: forward
           TargetGroupArn: !Ref MyTargetGroup
+      SslPolicy: ELBSecurityPolicy-TLS13-1-2-2021-06
+  MyLoadBalancerListenerPort80:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      LoadBalancerArn: !Ref MyLoadBalancer
+      Port: !!int 80
+      Protocol: HTTP
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Host: "#{host}"
+            Port: 443
+            Path: "/#{path}"
+            Query: "#{query}"
+            Protocol: HTTPS
+            StatusCode: HTTP_301
   MyDomainCertificate:
     Type: AWS::CertificateManager::Certificate
     Properties:

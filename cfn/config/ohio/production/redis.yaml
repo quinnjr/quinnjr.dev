@@ -1,7 +1,0 @@
-template:
-  path: redis.yaml.j2
-  type: file
-
-parameters:
-  PrivateSubnetA: !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::PrivateSubnetA
-  VpcId: !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::VpcId

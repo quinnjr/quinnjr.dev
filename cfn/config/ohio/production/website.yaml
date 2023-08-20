@@ -12,8 +12,6 @@ parameters:
   PublicSubnets: 
     - !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::PublicSubnetA
     - !stack_output_external {{ stack_group_config.stack_prefix }}-vpc::PublicSubnetB
-  RedisHost: !stack_output_external {{ stack_group_config.stack_prefix }}-redis::RedisHost
-  RedisPort: !stack_output_external {{ stack_group_config.stack_prefix }}-redis::RedisPort
   RepositoryUri: !stack_output_external {{ stack_group_config.stack_prefix }}-ecr::RepositoryUri
   SecretKeyArn: arn:aws:ssm:us-east-2:922147267922:parameter/production/secret_key
   YubikeyClientIdArn: arn:aws:ssm:us-east-2:922147267922:parameter/production/yubikey_client_id

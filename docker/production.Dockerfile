@@ -35,6 +35,7 @@ ENV ENV=production
 ENV NODE_ENV=production
 
 RUN npm i -g npm && \
+  npm i -g pnpm && \
   mkdir /app && \
   mkdir -p /app/node_modules && \
   chown -R node:node /app
@@ -53,7 +54,7 @@ COPY --from=builder --chown=node:node /app/node_modules/.prisma /app/node_module
 COPY --from=builder --chown=node:node /app/node_modules/@prisma /app/node_modules/@prisma
 COPY --from=builder --chown=node:node /app/node_modules/prisma /app/node_modules/prisma
 
-RUN npm install --omit=dev
+RUN pnpm install --prod
 
 EXPOSE 4200
 
