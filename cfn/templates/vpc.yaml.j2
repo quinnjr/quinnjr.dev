@@ -102,21 +102,11 @@ Resources:
       DestinationCidrBlock: "0.0.0.0/0"
       NatGatewayId: !Ref MyNatGatewayA
       RouteTableId: !Ref MyRouteTableA
-  MyNatGatewayEIPB:
-    Type: AWS::EC2::EIP
-    Properties:
-      Domain: vpc
-  MyNatGatewayB:
-    Type: AWS::EC2::NatGateway
-    Properties:
-      AllocationId: !GetAtt MyNatGatewayEIPB.AllocationId
-      ConnectivityType: public
-      SubnetId: !Ref MyPublicSubnetB
   MyNatGatewayRouteB:
     Type: AWS::EC2::Route
     Properties:
       DestinationCidrBlock: "0.0.0.0/0"
-      NatGatewayId: !Ref MyNatGatewayB
+      NatGatewayId: !Ref MyNatGatewayA
       RouteTableId: !Ref MyRouteTableB
   MyRouteTableAssociationA:
     Type: AWS::EC2::SubnetRouteTableAssociation
