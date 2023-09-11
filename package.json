@@ -55,7 +55,7 @@
     "@angular/platform-server": "^16.1.8",
     "@angular/router": "^16.1.8",
     "@apollo/client": "^3.7.17",
-    "@apollo/server": "^4.9.1",
+    "@apollo/server": "^4.9.3",
     "@as-integrations/fastify": "^2.1.0",
     "@babel/core": "^7.22.9",
     "@babel/preset-env": "^7.22.9",
