@@ -145,7 +145,7 @@
     "zone.js": "~0.13.0"
   },
   "optionalDependencies": {
-    "cypress": "^12.17.3"
+    "cypress": "^13.1.0"
   },
   "overrides": {
     "multer": "^1.4.5-lts.1",
