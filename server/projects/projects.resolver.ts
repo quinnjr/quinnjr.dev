@@ -14,12 +14,13 @@ export class ProjectsResolver {
   public async getProjects(
     @Args('userId', { nullable: true }) userId?: string,
     @Args('take', { type: () => Int, nullable: true }) take?: number
-  ): Promise<Project[]> {
-    return this.$databaseService.project.findMany({
-      where: {
-        userId
-      },
-      take
-    });
+  ): Promise<Project[] | null> {
+    // return this.$databaseService.project.findMany({
+    //   where: {
+    //     userId
+    //   },
+    //   take
+    // });
+    return null;
   }
 }

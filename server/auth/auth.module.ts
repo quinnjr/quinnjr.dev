@@ -29,7 +29,7 @@ import { YubikeyService } from './yubikey.service';
   ],
   controllers: [AuthController],
   providers: [
-    DatabaseService,
+    // DatabaseService,
     AuthService,
     LocalStrategy,
     JwtStrategy,

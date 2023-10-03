@@ -24,11 +24,12 @@ export class CertificationsResolver {
     @Parent() certification: Certification
   ): Promise<User | null> {
     const { userId } = certification;
-    return this.$databaseService.user.findUnique({
-      where: {
-        id: userId
-      }
-    });
+    // return this.$databaseService.user.findUnique({
+    //   where: {
+    //     id: userId
+    //   }
+    // });
+    return null;
   }
 
   @Public()
@@ -36,11 +37,12 @@ export class CertificationsResolver {
   public async getCertifications(
     @Args('userId') userId: string
   ): Promise<Certification[] | null> {
-    return this.$databaseService.certification.findMany({
-      where: {
-        userId
-      }
-    });
+    // return this.$databaseService.certification.findMany({
+    //   where: {
+    //     userId
+    //   }
+    // });
+    return null;
   }
 
   @Public()
@@ -48,11 +50,12 @@ export class CertificationsResolver {
   public async getCertification(
     @Args('id') id: string
   ): Promise<Certification | null> {
-    return this.$databaseService.certification.findUnique({
-      where: {
-        id
-      }
-    });
+    // return this.$databaseService.certification.findUnique({
+    //   where: {
+    //     id
+    //   }
+    // });
+    return null;
   }
 
   @Mutation((returns) => Certification)
@@ -60,16 +63,17 @@ export class CertificationsResolver {
     @CurrentUser() user: User,
     @Args('data') data: CertificationCreateInput
   ): Promise<Certification | null> {
-    return this.$databaseService.certification.create({
-      data: {
-        name: data.name,
-        certifier: data.certifier,
-        user: {
-          connect: {
-            id: user.id
-          }
-        }
-      }
-    });
+    // return this.$databaseService.certification.create({
+    //   data: {
+    //     name: data.name,
+    //     certifier: data.certifier,
+    //     user: {
+    //       connect: {
+    //         id: user.id
+    //       }
+    //     }
+    //   }
+    // });
+    return null;
   }
 }

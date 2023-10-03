@@ -54,7 +54,7 @@ import { GithubResolver } from './github/github.resolver';
   ],
   controllers: [],
   providers: [
-    DatabaseService,
+    // DatabaseService,
     ArticlesResolver,
     CertificationsResolver,
     EducationResolver,

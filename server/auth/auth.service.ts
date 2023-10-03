@@ -11,7 +11,7 @@ import { YubikeyException } from './yubikey-exception';
 export class AuthService {
   constructor(
     private readonly $jwtService: JwtService,
-    private readonly $database: DatabaseService,
+    // private readonly $database: DatabaseService,
     private readonly $yubikeyService: YubikeyService
   ) {}
 
@@ -19,27 +19,27 @@ export class AuthService {
     email: string,
     password: string
   ): Promise<any | null> {
-    const user = await this.$database.user.findUnique({
-      where: {
-        email
-      },
-      select: {
-        id: true,
-        email: true,
-        passwordHash: true,
-        role: true,
-        yubikeys: true
-      }
-    });
+    // const user = await this.$database.user.findUnique({
+    //   where: {
+    //     email
+    //   },
+    //   select: {
+    //     id: true,
+    //     email: true,
+    //     passwordHash: true,
+    //     role: true,
+    //     yubikeys: true
+    //   }
+    // });
 
-    if (user?.passwordHash) {
-      const isValidPassword = await argon2.verify(user.passwordHash, password);
+    // if (user?.passwordHash) {
+    //   const isValidPassword = await argon2.verify(user.passwordHash, password);
 
-      if (isValidPassword) {
-        const { passwordHash, ...result } = user;
-        return result;
-      }
-    }
+    //   if (isValidPassword) {
+    //     const { passwordHash, ...result } = user;
+    //     return result;
+    //   }
+    // }
 
     return null;
   }
@@ -93,14 +93,14 @@ export class AuthService {
             ? user.yubikeys.push(clientId)
             : Array.from(clientId);
 
-        user = await this.$database.user.update({
-          where: {
-            id: user.id
-          },
-          data: {
-            yubikeys: keys as string[]
-          }
-        });
+        // user = await this.$database.user.update({
+        //   where: {
+        //     id: user.id
+        //   },
+        //   data: {
+        //     yubikeys: keys as string[]
+        //   }
+        // });
       }
     } catch (error: any) {
       throw error;

@@ -24,17 +24,18 @@ import { User } from '../../graphql/user/user.model';
 
 @Resolver((of: any) => Article)
 export class ArticlesResolver {
-  constructor(private readonly $databaseService: DatabaseService) {}
+  constructor(/*private readonly $databaseService: DatabaseService*/) {}
 
   @ResolveField('author', (returns) => User)
   public async getAuthor(@Parent() article: Article): Promise<User | null> {
-    return this.$databaseService.article
-      .findUnique({
-        where: {
-          id: article.id
-        }
-      })
-      .author();
+    // return this.$databaseService.article
+    //   .findUnique({
+    //     where: {
+    //       id: article.id
+    //     }
+    //   })
+    //   .author();
+    return null;
   }
 
   @Query((returns) => [Article], { name: 'articles' })
@@ -44,30 +45,32 @@ export class ArticlesResolver {
     @Args('skip', { type: () => Int, nullable: true }) skip: number,
     @Args('orderBy', { nullable: true })
     orderBy: ArticleOrderByWithRelationInput
-  ): Promise<Article[]> {
-    const or = searchString
-      ? {
-          /* eslint-disable-next-line @typescript-eslint/naming-convention */
-          OR: [
-            { title: { contains: searchString } },
-            { content: { contains: searchString } }
-          ]
-        }
-      : undefined;
+  ): Promise<Article[] | null> {
+    // const or = searchString
+    //   ? {
+    //       /* eslint-disable-next-line @typescript-eslint/naming-convention */
+    //       OR: [
+    //         { title: { contains: searchString } },
+    //         { content: { contains: searchString } }
+    //       ]
+    //     }
+    //   : undefined;
 
-    return this.$databaseService.article.findMany({
-      where: or,
-      take,
-      skip,
-      orderBy
-    });
+    // return this.$databaseService.article.findMany({
+    //   where: or,
+    //   take,
+    //   skip,
+    //   orderBy
+    // });
+    return null;
   }
 
   @Query((returns) => Article, { name: 'article' })
   public async getArticle(@Args('id') id: string): Promise<Article | null> {
-    return this.$databaseService.article.findUnique({
-      where: { id }
-    });
+    // return this.$databaseService.article.findUnique({
+    //   where: { id }
+    // });
+    return null;
   }
 
   @UseGuards(JwtGraphqlAuthGuard)
@@ -75,18 +78,19 @@ export class ArticlesResolver {
   public async createArticle(
     @CurrentUser() user: User,
     @Args('data') data: ArticleCreateInput
-  ): Promise<Article> {
-    return this.$databaseService.article.create({
-      data: {
-        title: data.title,
-        titleSlug: kebabCase(data.title),
-        description: data.description,
-        content: data.content,
-        author: {
-          connect: { id: user.id }
-        }
-      }
-    });
+  ): Promise<Article | null> {
+    // return this.$databaseService.article.create({
+    //   data: {
+    //     title: data.title,
+    //     titleSlug: kebabCase(data.title),
+    //     description: data.description,
+    //     content: data.content,
+    //     author: {
+    //       connect: { id: user.id }
+    //     }
+    //   }
+    // });
+    return null;
   }
 
   @UseGuards(JwtGraphqlAuthGuard)
@@ -94,22 +98,24 @@ export class ArticlesResolver {
   public async updateArticle(
     @Args('id') id: string,
     @Args('data') data: ArticleUpdateInput
-  ): Promise<Article> {
-    return this.$databaseService.article.update({
-      where: {
-        id
-      },
-      data
-    });
+  ): Promise<Article | null> {
+    // return this.$databaseService.article.update({
+    //   where: {
+    //     id
+    //   },
+    //   data
+    // });
+    return null;
   }
 
   @UseGuards(JwtGraphqlAuthGuard)
   @Mutation((returns) => Article, { nullable: true })
   public async deleteArticle(@Args('id') id: string): Promise<Article | null> {
-    return this.$databaseService.article.delete({
-      where: {
-        id
-      }
-    });
+    // return this.$databaseService.article.delete({
+    //   where: {
+    //     id
+    //   }
+    // });
+    return null;
   }
 }
