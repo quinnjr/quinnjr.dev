@@ -25,7 +25,7 @@
   },
   "private": true,
   "dependencies": {
-    "argon2": "^0.31.0",
+    "argon2": "^0.40.1",
     "bufferutil": "^4.0.7",
     "cache-manager": "^5.2.3",
     "encoding": "^0.1.13",
