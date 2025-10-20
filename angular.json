@@ -2,6 +2,13 @@
   "$schema": "./node_modules/@angular/cli/lib/config/schema.json",
   "version": 1,
   "newProjectRoot": "projects",
+  "cli": {
+    "packageManager": "pnpm",
+    "schematicCollections": [
+      "angular-eslint",
+      "@angular-eslint/schematics"
+    ]
+  },
   "projects": {
     "quinnjr.tech": {
       "projectType": "application",
@@ -36,13 +43,20 @@
             ],
             "scripts": [],
             "server": "src/main.server.ts",
-            "prerender": true,
+            "prerender": false,
             "ssr": {
-              "entry": "server.ts"
+              "entry": "src/server.ts"
             }
           },
           "configurations": {
             "production": {
+              "optimization": true,
+              "sourceMap": false,
+              "extractLicenses": true,
+              "aot": true,
+              "namedChunks": true,
+              "subresourceIntegrity": true,
+              "prerender": false,
               "budgets": [
                 {
                   "type": "initial",
@@ -99,6 +113,15 @@
               "src/styles.scss"
             ],
             "scripts": []
+          }
+        },
+        "lint": {
+          "builder": "@angular-eslint/builder:lint",
+          "options": {
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         }
       }
