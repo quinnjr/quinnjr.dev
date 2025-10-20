@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink"
+  xml:space="preserve"
+  viewBox="0 0 512 512"
+>
+  <circle fill="#C51E3A" cx="50%" cy="50%" r="50%" />
+  <text fill="#fafafa" font-size="312px" cy=".3em" stroke="#030303"
+    stroke-width="4px" x="50%" y="50%"
+    alignment-baseline="central" text-anchor="middle"
+    style="font-family:  'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;"
+  >JQ</text>
+</svg>
