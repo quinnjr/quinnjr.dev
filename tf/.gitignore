@@ -5,7 +5,6 @@
 *.tfvars
 !*.tfvars.example
 .terraform/
-.terraform.lock.hcl
 crash.log
 crash.*.log
 override.tf
@@ -22,6 +21,4 @@ tfplan.binary
 *.key
 secrets/
 
-# Lock files (optional - commit if you want version consistency)
-# .terraform.lock.hcl
-
+helper.sh

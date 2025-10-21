@@ -1,15 +1,186 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client-js"
+  provider = "prisma-client"
   output   = "../src/generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+// Blog Post Model
+model BlogPost {
+  id              String          @id @default(uuid())
+  title           String
+  slug            String          @unique // URL-friendly identifier
+  content         String          // Rich text content from WYSIWYG
+  excerpt         String?         // Short description
+  featuredImage   String?         // URL to featured image
+
+  // Publishing
+  status          PostStatus      @default(DRAFT)
+  publishedAt     DateTime?
+  scheduledFor    DateTime?
+
+  // SEO Fields
+  seoTitle        String?         // Custom SEO title (defaults to post title)
+  seoDescription  String?         // Meta description
+  seoKeywords     String[]        // Meta keywords
+  ogTitle         String?         // Open Graph title
+  ogDescription   String?         // Open Graph description
+  ogImage         String?         // Open Graph image
+  canonicalUrl    String?         // Canonical URL
+  noIndex         Boolean         @default(false) // Prevent search engine indexing
+  noFollow        Boolean         @default(false) // Prevent following links
+
+  // Relationships
+  authorId        String
+  author          User            @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  categoryId      String?
+  category        Category?       @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  tags            BlogPostTag[]
+
+  // Timestamps
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Analytics
+  viewCount       Int             @default(0)
+
+  @@index([slug])
+  @@index([status, publishedAt])
+  @@index([authorId])
+  @@index([categoryId])
+  @@map("blog_posts")
+}
+
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  SCHEDULED
+  ARCHIVED
+}
+
+// User/Author Model
+model User {
+  id              String          @id @default(uuid())
+  auth0Id         String          @unique // Auth0 user ID
+  email           String          @unique
+  name            String
+  picture         String?
+  bio             String?
+
+  // Roles
+  role            UserRole        @default(VIEWER)
+
+  // Relationships
+  blogPosts       BlogPost[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([auth0Id])
+  @@index([email])
+  @@map("users")
+}
+
+enum UserRole {
+  ADMIN
+  EDITOR
+  AUTHOR
+  VIEWER
+}
+
+// Category Model
+model Category {
+  id              String          @id @default(uuid())
+  name            String          @unique
+  slug            String          @unique
+  description     String?
+
+  // SEO
+  seoTitle        String?
+  seoDescription  String?
+
+  // Relationships
+  blogPosts       BlogPost[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([slug])
+  @@map("categories")
+}
+
+// Tag Model
+model Tag {
+  id              String          @id @default(uuid())
+  name            String          @unique
+  slug            String          @unique
+
+  // Relationships
+  blogPosts       BlogPostTag[]
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([slug])
+  @@map("tags")
+}
+
+// Many-to-Many relationship between BlogPost and Tag
+model BlogPostTag {
+  id              String          @id @default(uuid())
+  blogPostId      String
+  tagId           String
+
+  blogPost        BlogPost        @relation(fields: [blogPostId], references: [id], onDelete: Cascade)
+  tag             Tag             @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@unique([blogPostId, tagId])
+  @@index([blogPostId])
+  @@index([tagId])
+  @@map("blog_post_tags")
+}
+
+// SEO Settings (Global site SEO)
+model SeoSettings {
+  id              String          @id @default(uuid())
+
+  // Global SEO
+  siteName        String          @default("QuinnJR.tech")
+  siteDescription String?
+  siteKeywords    String[]
+  defaultOgImage  String?
+  twitterHandle   String?
+
+  // Analytics
+  googleAnalyticsId String?
+  googleSiteVerification String?
+  bingSiteVerification String?
+
+  // Structured Data
+  organizationName String?
+  organizationLogo String?
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@map("seo_settings")
+}
+
+// Sitemap Configuration
+model SitemapConfig {
+  id              String          @id @default(uuid())
+  url             String          // The route URL
+  changefreq      String          @default("weekly") // always, hourly, daily, weekly, monthly, yearly, never
+  priority        Float           @default(0.5) // 0.0 to 1.0
+  isStatic        Boolean         @default(true) // Static Angular routes vs dynamic blog routes
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@unique([url])
+  @@map("sitemap_config")
 }
