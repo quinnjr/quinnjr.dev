@@ -4,6 +4,8 @@ import express from 'express';
 import { fileURLToPath } from 'node:url';
 import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
+import blogRoutes from './server/routes/blog';
+import sitemapRoutes from './server/routes/sitemap';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -17,12 +19,19 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
-  // Example Express Rest API endpoints
-  // server.get('/api/**', (req, res) => { });
+  // Parse JSON bodies
+  server.use(express.json());
+  server.use(express.urlencoded({ extended: true }));
+
+  // API Routes
+  server.use('/api/blog', blogRoutes);
+
+  // SEO Routes (sitemap, robots.txt)
+  server.use('/', sitemapRoutes);
+
   // Serve static files from /browser
-  server.get('**', express.static(browserDistFolder, {
+  server.get('*.*', express.static(browserDistFolder, {
     maxAge: '1y',
-    index: 'index.html',
   }));
 
   // All regular routes use the Angular engine

@@ -4,11 +4,18 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "prebuild": "prisma generate",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "serve:ssr:quinnjr.tech": "node dist/quinnjr.tech/server/server.mjs",
-    "lint": "ng lint"
+    "lint": "ng lint",
+    "postinstall": "prisma generate",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "tsx prisma/seed.ts",
+    "prisma:reset": "prisma migrate reset"
   },
   "private": true,
   "dependencies": {
@@ -22,8 +29,14 @@
     "@angular/platform-server": "^20.0.0",
     "@angular/router": "^20.0.0",
     "@angular/ssr": "^20.0.0",
+    "@auth0/auth0-angular": "^2.3.0",
+    "@prisma/client": "^6.17.1",
     "express": "^4.18.2",
+    "ngx-quill": "^28.0.1",
+    "prisma": "^6.17.1",
+    "quill": "^2.0.3",
     "rxjs": "~7.8.0",
+    "slugify": "^1.6.6",
     "tslib": "^2.3.0",
     "zone.js": "~0.15.0"
   },
@@ -47,6 +60,7 @@
     "karma-jasmine": "~5.1.0",
     "karma-jasmine-html-reporter": "~2.1.0",
     "tailwindcss": "^3.4.17",
+    "tsx": "^4.20.6",
     "typescript": "~5.8.0",
     "typescript-eslint": "^8.19.0"
   }
