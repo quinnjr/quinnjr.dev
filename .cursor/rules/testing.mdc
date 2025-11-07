@@ -1,0 +1,66 @@
+# Testing Rules
+
+## Test Structure
+- Use `describe` blocks to group related tests
+- Use descriptive test names: `it('should do something when condition is met')`
+- Follow AAA pattern: Arrange, Act, Assert
+- Keep tests focused on a single behavior
+- Use `beforeEach` and `afterEach` for setup/teardown
+
+## Jest Configuration
+- Use `jest-mock-extended` for mocking Prisma Client
+- Create deep mocks with `mockDeep<Type>()` for complex objects
+- Use `DeepMockProxy<Type>` for type-safe mocks
+- Mock external dependencies before importing modules
+
+## Test Data
+- Use realistic test data that matches production types
+- Create test fixtures/factories for reusable test data
+- Use `as never` type assertion for partial mock data when needed
+- Keep test data minimal but complete
+
+## Mocking
+- Mock external dependencies (database, APIs, file system)
+- Use `jest.fn()` for function mocks
+- Use `jest.mock()` at the top level for module mocks
+- Reset mocks in `beforeEach` to ensure test isolation
+- Verify mock calls with `toHaveBeenCalledWith()`
+
+## Async Testing
+- Always `await` async operations in tests
+- Use `async/await` instead of `.then()` in tests
+- Handle promise rejections with `rejects.toThrow()`
+- Use `waitFor` for DOM updates in Angular tests
+
+## Assertions
+- Use specific matchers: `toBe()`, `toEqual()`, `toContain()`, etc.
+- Test both positive and negative cases
+- Verify error handling and edge cases
+- Check that errors are thrown with correct messages
+
+## Coverage
+- Aim for high code coverage (>80%)
+- Test edge cases and error paths
+- Don't test implementation details, test behavior
+- Use coverage reports to identify untested code
+
+## Best Practices
+- Keep tests independent - no shared state between tests
+- Use descriptive variable names in tests
+- Avoid testing multiple things in one test
+- Clean up resources in `afterEach`
+- Use test utilities and helpers to reduce duplication
+
+## Angular Testing
+- Use Angular testing utilities (`TestBed`, `ComponentFixture`)
+- Test component inputs, outputs, and events
+- Test template rendering and user interactions
+- Mock services and dependencies
+- Test routing and navigation
+
+## Server Testing
+- Mock Prisma Client using `jest-mock-extended`
+- Test service methods in isolation
+- Test error handling and edge cases
+- Verify database interactions without hitting real database
+- Use proper type assertions for mock data

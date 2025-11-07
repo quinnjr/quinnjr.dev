@@ -4,13 +4,10 @@
   "newProjectRoot": "projects",
   "cli": {
     "packageManager": "pnpm",
-    "schematicCollections": [
-      "angular-eslint",
-      "@angular-eslint/schematics"
-    ]
+    "schematicCollections": ["angular-eslint", "@angular-eslint/schematics"]
   },
   "projects": {
-    "quinnjr.tech": {
+    "quinnjr.dev": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -22,14 +19,12 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-builders/custom-esbuild:application",
           "options": {
-            "outputPath": "dist/quinnjr.tech",
+            "outputPath": "dist/quinnjr.dev",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
@@ -38,15 +33,14 @@
                 "input": "public"
               }
             ],
-            "styles": [
-              "src/styles.scss"
-            ],
+            "styles": ["src/styles.scss"],
             "scripts": [],
             "server": "src/main.server.ts",
             "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "plugins": ["./esbuild/sri-plugin.mjs"]
           },
           "configurations": {
             "production": {
@@ -56,6 +50,7 @@
               "aot": true,
               "namedChunks": true,
               "subresourceIntegrity": true,
+              "plugins": ["./esbuild/sri-plugin.mjs"],
               "prerender": false,
               "budgets": [
                 {
@@ -75,6 +70,14 @@
               "optimization": false,
               "extractLicenses": false,
               "sourceMap": true
+            },
+            "testing": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true,
+              "tsConfig": "tsconfig.client.json",
+              "server": false,
+              "ssr": false
             }
           },
           "defaultConfiguration": "production"
@@ -83,10 +86,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "quinnjr.tech:build:production"
+              "buildTarget": "quinnjr.dev:build:production"
             },
             "development": {
-              "buildTarget": "quinnjr.tech:build:development"
+              "buildTarget": "quinnjr.dev:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -95,33 +98,18 @@
           "builder": "@angular-devkit/build-angular:extract-i18n"
         },
         "test": {
-          "builder": "@angular-devkit/build-angular:karma",
+          "builder": "@angular/build:unit-test",
           "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
             "tsConfig": "tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "public"
-              }
-            ],
-            "styles": [
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "runner": "vitest",
+            "buildTarget": "quinnjr.dev:build:testing",
+            "exclude": ["**/src/server/**", "**/e2e/**"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": [
-              "src/**/*.ts",
-              "src/**/*.html"
-            ]
+            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
           }
         }
       }

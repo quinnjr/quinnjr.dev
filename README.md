@@ -25,27 +25,43 @@ Run `pnpm test` to execute the unit tests via [Karma](https://karma-runner.githu
 
 ## Docker Deployment
 
-### Build and run with Docker
+### Production with Docker Compose
+
+Build and run the application:
 
 ```bash
-# Build the Docker image
-docker build -t quinnjr.tech:latest .
-
-# Run the container
-docker run -d -p 4000:4000 --name quinnjr-tech quinnjr.tech:latest
-```
-
-### Using Docker Compose
-
-```bash
-# Build and start the container
+# Build and start the service
 docker-compose up -d
 
-# Stop the container
+# Stop the service
 docker-compose down
+
+# View logs
+docker-compose logs -f app
+
+# Rebuild after code changes
+docker-compose up -d --build
 ```
 
 The application will be available at `http://localhost:4000`.
+
+The SQLite database is stored in a Docker volume (`sqlite_data`) which persists even if the container is removed.
+
+### Database Migrations
+
+Run Prisma migrations:
+
+```bash
+# Development (local SQLite)
+DATABASE_URL="file:./data/quinnjr.db" pnpm prisma:migrate
+
+# Seed the database
+DATABASE_URL="file:./data/quinnjr.db" pnpm prisma:seed
+
+# Production (Docker)
+docker-compose exec app pnpm prisma:migrate deploy
+docker-compose exec app pnpm prisma:seed
+```
 
 ## Further help
 

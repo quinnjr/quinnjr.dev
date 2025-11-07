@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -26,7 +26,7 @@ model BlogPost {
   // SEO Fields
   seoTitle        String?         // Custom SEO title (defaults to post title)
   seoDescription  String?         // Meta description
-  seoKeywords     String[]        // Meta keywords
+  seoKeywords     Json?           // Meta keywords (stored as JSON array)
   ogTitle         String?         // Open Graph title
   ogDescription   String?         // Open Graph description
   ogImage         String?         // Open Graph image
@@ -149,9 +149,9 @@ model SeoSettings {
   id              String          @id @default(uuid())
 
   // Global SEO
-  siteName        String          @default("QuinnJR.tech")
+  siteName        String          @default("QuinnJR.dev")
   siteDescription String?
-  siteKeywords    String[]
+  siteKeywords    Json?          // Site keywords (stored as JSON array)
   defaultOgImage  String?
   twitterHandle   String?
 

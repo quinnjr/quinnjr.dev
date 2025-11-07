@@ -1,0 +1,65 @@
+# Angular Rules
+
+## Component Structure
+- Use `OnPush` change detection strategy for better performance
+- Implement `OnInit` and `OnDestroy` lifecycle hooks when needed
+- Use `@Input()` and `@Output()` with proper typing
+- Prefer standalone components over NgModules when possible
+- Use `inject()` function instead of constructor injection when appropriate
+
+## Component Selectors
+- Component selectors must use `app-` prefix
+- Use kebab-case for component selectors: `app-my-component`
+- Directive selectors must use `app` prefix with camelCase: `appMyDirective`
+
+## Templates
+- Use trackBy functions in `*ngFor` loops for performance
+- Avoid complex expressions in templates - move logic to component
+- Use async pipe for observables in templates
+- Keep template complexity low (max cyclomatic complexity: 5)
+- Use structural directives (`*ngIf`, `*ngFor`) appropriately
+
+## Services
+- Use `providedIn: 'root'` for singleton services
+- Mark services with `@Injectable()` decorator
+- Use dependency injection instead of creating instances manually
+- Keep services focused on a single responsibility
+
+## RxJS
+- Always unsubscribe from subscriptions to prevent memory leaks
+- Use `takeUntil` pattern or async pipe when possible
+- Prefer operators over nested subscriptions
+- Use `shareReplay` for expensive operations that multiple subscribers need
+
+## Forms
+- Use reactive forms (`FormBuilder`, `FormGroup`) for complex forms
+- Use template-driven forms only for simple forms
+- Always validate form inputs
+- Provide user-friendly error messages
+
+## Routing
+- Use route guards for authentication/authorization
+- Use route resolvers for data that must be loaded before navigation
+- Keep route configurations in a separate file
+- Use lazy loading for feature modules
+
+## Performance
+- Use `OnPush` change detection strategy
+- Implement `trackBy` functions for `*ngFor`
+- Avoid unnecessary change detection triggers
+- Use `ChangeDetectorRef.detectChanges()` sparingly
+- Prefer observables over event emitters for cross-component communication
+
+## Accessibility
+- Use semantic HTML elements
+- Provide ARIA labels where needed
+- Ensure keyboard navigation works
+- Test with screen readers
+- Use proper heading hierarchy
+
+## Best Practices
+- Keep components small and focused
+- Extract reusable logic into services
+- Use interfaces for component inputs/outputs
+- Avoid direct DOM manipulation - use Angular APIs
+- Use Angular CLI for code generation

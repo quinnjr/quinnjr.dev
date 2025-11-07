@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Deploy quinnjr.tech to DigitalOcean in 5 minutes!
+Deploy quinnjr.dev to DigitalOcean in 5 minutes!
 
 ## Prerequisites
 
@@ -16,7 +16,7 @@ Deploy quinnjr.tech to DigitalOcean in 5 minutes!
 ```
 1. Go to: https://cloud.digitalocean.com/account/api/tokens
 2. Click "Generate New Token"
-3. Name: "Terraform quinnjr.tech"
+3. Name: "Terraform quinnjr.dev"
 4. Scopes: Read & Write
 5. Copy the token (starts with "dop_v1_")
 ```
@@ -37,7 +37,7 @@ Your image needs to be public OR your token needs access:
 
 ```bash
 # Make the package public (easiest)
-1. Go to: https://github.com/quinnjr/quinnjr.tech/pkgs/container/quinnjr.tech
+1. Go to: https://github.com/quinnjr/quinnjr.dev/pkgs/container/quinnjr.dev
 2. Click "Package settings"
 3. Scroll to "Danger Zone"
 4. Click "Change visibility" → Public
@@ -87,28 +87,27 @@ Visit the URL! 🎉
 
 ## What You Just Created
 
-- **PostgreSQL Database**: $15/month
-  - 1 vCPU, 1GB RAM, 10GB SSD
-  - Automatic backups
-  - SSL enabled
-
 - **App Platform Container**: $5/month
   - 512MB RAM, 1 vCPU
   - Auto-deploys from GitHub
   - Managed infrastructure
+  - Persistent volume for SQLite database (1GB included)
 
-- **Total**: ~$20/month
+- **Total**: ~$5/month
+
+**Note**: By using SQLite instead of PostgreSQL, you save $15/month!
 
 ## Next Steps
 
 ### Run Database Migrations
 
 ```bash
-# Export database URL
-export DATABASE_URL=$(terraform output -raw database_url)
+# Set database URL for SQLite
+export DATABASE_URL="file:/data/quinnjr.db"
 
-# Run Prisma migrations
-pnpm prisma migrate deploy
+# Run Prisma migrations (use DigitalOcean console or include in Docker build)
+# Or run migrations locally before deploying:
+DATABASE_URL="file:./data/quinnjr.db" pnpm prisma migrate deploy
 
 # Generate Prisma client
 pnpm prisma generate
@@ -142,7 +141,7 @@ doctl apps logs <app-id> --follow
 
 1. Edit `terraform.tfvars`:
 ```hcl
-domain_name = "quinnjr.tech"
+domain_name = "quinnjr.dev"
 enable_dns  = true
 ```
 
@@ -162,8 +161,8 @@ ns3.digitalocean.com
 
 5. Verify:
 ```bash
-dig quinnjr.tech
-curl https://quinnjr.tech
+dig quinnjr.dev
+curl https://quinnjr.dev
 ```
 
 📖 **Detailed DNS guide**: See [DNS_SETUP.md](./DNS_SETUP.md)
@@ -173,7 +172,7 @@ curl https://quinnjr.tech
 ### "Image not found" error
 - Make sure your package is public
 - Or verify your GitHub token has `read:packages` scope
-- Test: `docker pull ghcr.io/quinnjr/quinnjr.tech:latest`
+- Test: `docker pull ghcr.io/quinnjr/quinnjr.dev:latest`
 
 ### Database connection fails
 ```bash

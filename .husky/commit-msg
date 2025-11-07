@@ -1,0 +1,39 @@
+commit_msg=$(cat "$1")
+
+# Git-flow commit message format: type: description
+# Types: feature, bugfix, release, hotfix, chore, docs, style, refactor, test, perf
+# Examples:
+#   feature: add user authentication
+#   bugfix: fix login redirect issue
+#   release: version 2.0.0
+#   hotfix: fix critical security vulnerability
+
+if ! echo "$commit_msg" | grep -qE "^(feature|bugfix|release|hotfix|chore|docs|style|refactor|test|perf)(/.*)?: .+"; then
+  echo "❌ Invalid commit message format!"
+  echo ""
+  echo "Commit message must follow the format:"
+  echo "  <type>: <description>"
+  echo ""
+  echo "Valid types:"
+  echo "  - feature: New feature"
+  echo "  - bugfix: Bug fix"
+  echo "  - release: Release commit"
+  echo "  - hotfix: Critical hotfix"
+  echo "  - chore: Maintenance tasks"
+  echo "  - docs: Documentation changes"
+  echo "  - style: Code style changes (formatting, etc.)"
+  echo "  - refactor: Code refactoring"
+  echo "  - test: Adding or updating tests"
+  echo "  - perf: Performance improvements"
+  echo ""
+  echo "Examples:"
+  echo "  feature: add user authentication"
+  echo "  bugfix: fix login redirect issue"
+  echo "  release: version 2.0.0"
+  echo "  hotfix: fix critical security vulnerability"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Commit message format is valid"
+

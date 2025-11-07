@@ -5,13 +5,6 @@ on:
     branches:
       - main
       - master
-      - develop
-  pull_request:
-    branches:
-      - main
-      - master
-      - develop
-  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -56,6 +49,20 @@ jobs:
       - name: Run linter
         run: pnpm lint
 
+      - name: Run server unit tests
+        run: pnpm test:server:coverage
+
+      - name: Run client unit tests
+        run: pnpm test:coverage
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          CI: true
+
       - name: Build application
         run: pnpm build
 
@@ -63,7 +70,6 @@ jobs:
     name: Build and Push Docker Image
     needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
     permissions:
       contents: read
@@ -119,11 +125,9 @@ jobs:
     name: Terraform Deploy
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
 
     permissions:
       contents: read
-      pull-requests: write
 
     defaults:
       run:
@@ -144,7 +148,7 @@ jobs:
           do_token        = "${{ secrets.DIGITALOCEAN_TOKEN }}"
           github_token    = "${{ secrets.GH_PAT }}"
           github_username = "${{ github.repository_owner }}"
-          project_name    = "quinnjr-tech"
+          project_name    = "quinnjr-dev"
           region          = "nyc3"
           docker_image    = "ghcr.io/${{ github.repository }}:${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}"
           domain_name     = "${{ secrets.DOMAIN_NAME }}"
@@ -175,29 +179,6 @@ jobs:
         env:
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
-      - name: Comment PR with Plan (if PR)
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const output = `#### Terraform Plan 📖
-            <details><summary>Show Plan</summary>
-
-            \`\`\`terraform
-            ${{ steps.plan.outputs.stdout }}
-            \`\`\`
-
-            </details>
-
-            *Pusher: @${{ github.actor }}, Action: \`${{ github.event_name }}\`, Workflow: \`${{ github.workflow }}\`*`;
-
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: output
-            })
-
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
         env:
@@ -208,4 +189,34 @@ jobs:
           APP_URL=$(terraform output -raw app_url 2>/dev/null || echo "URL not available yet")
           echo "::notice::Application deployed at: $APP_URL"
           echo "APP_URL=$APP_URL" >> $GITHUB_OUTPUT
+
+  tag-release:
+    name: Tag Release Version
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch full history to check merge commits
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Create and push version tag
+        run: node scripts/create-version-tag.mjs
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

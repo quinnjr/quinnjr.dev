@@ -1,19 +1,10 @@
-# Terraform Infrastructure for quinnjr.tech
+# Terraform Infrastructure for quinnjr.dev
 
-This Terraform module deploys the quinnjr.tech application on DigitalOcean with the following resources:
+This Terraform module deploys the quinnjr.dev application on DigitalOcean with the following resources:
 
 ## Resources Created
 
-### 1. **PostgreSQL Database Cluster**
-- **Size**: `db-s-1vcpu-1gb` (smallest available)
-  - 1 vCPU
-  - 1GB RAM
-  - 10GB SSD disk
-  - ~$15/month
-- **Version**: PostgreSQL 16
-- **High Availability**: Single node (for cost optimization)
-
-### 2. **App Platform Application**
+### 1. **App Platform Application**
 - **Size**: `basic-xxs` (smallest available)
   - 512MB RAM
   - 1 vCPU
@@ -21,16 +12,17 @@ This Terraform module deploys the quinnjr.tech application on DigitalOcean with 
 - **Auto-scaling**: Disabled (single instance)
 - **Auto-deploy**: Enabled (deploys when new images are pushed to ghcr.io)
 
-### 3. **Database Firewall**
-- Configured to allow App Platform to access PostgreSQL
+### 2. **Persistent Volume**
+- **SQLite Database Storage**: 1GB persistent volume
+  - Mounted at `/data` in the container
+  - Persists even if the container is removed or recreated
+  - Database file: `/data/quinnjr.db`
 
-### 4. **Environment Variables**
+### 3. **Environment Variables**
 Automatically injected into the Docker container:
-- `DATABASE_URL` - Complete Prisma-compatible connection string
-- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` - Individual connection parameters
+- `DATABASE_URL` - SQLite database file path (`file:/data/quinnjr.db`)
 - `PORT` - Application port (4000)
 - `NODE_ENV` - Node environment (production)
-- `DB_SSL` - SSL mode enabled
 
 ## Prerequisites
 
@@ -56,9 +48,9 @@ Automatically injected into the Docker container:
    sudo mv terraform /usr/local/bin/
    ```
 
-4. **Docker Image**
+3. **Docker Image**
    - Ensure your GitHub Actions workflow has run and pushed the image to ghcr.io
-   - Image should be at: `ghcr.io/quinnjr/quinnjr.tech:latest`
+   - Image should be at: `ghcr.io/quinnjr/quinnjr.dev:latest`
    - Make sure the image is public or your GitHub token has access
 
 ## Setup Instructions
@@ -104,9 +96,8 @@ terraform apply
 Type `yes` when prompted to confirm.
 
 This will:
-- Create the PostgreSQL database cluster (~2-5 minutes)
 - Create the App Platform application
-- Configure database firewall
+- Create a persistent volume for SQLite database
 - Deploy your Docker container
 - Set up all environment variables
 
@@ -118,10 +109,7 @@ terraform output
 
 # View specific output
 terraform output app_url
-terraform output database_url
-
-# View sensitive outputs
-terraform output -json database_password
+terraform output database_path
 ```
 
 ## Accessing Your Application
@@ -131,38 +119,41 @@ After deployment, your application will be available at:
 terraform output app_url
 ```
 
-Example: `https://quinnjr-tech-xxxxx.ondigitalocean.app`
+Example: `https://quinnjr-dev-xxxxx.ondigitalocean.app`
 
 ## Database Connection
 
-The `DATABASE_URL` is automatically injected into your container as an environment variable in the format Prisma expects:
+The `DATABASE_URL` is automatically injected into your container as an environment variable pointing to the SQLite database:
 
 ```
-postgresql://user:password@host:port/database?sslmode=require
+file:/data/quinnjr.db
 ```
 
 Your Prisma schema should use:
 ```prisma
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 ```
+
+The SQLite database is stored in a persistent volume mounted at `/data`, ensuring data persists even if the container is removed or recreated.
 
 ## Running Migrations
 
 You can run Prisma migrations against the deployed database:
 
 ```bash
-# Get the database URL
-export DATABASE_URL=$(terraform output -raw database_url)
+# Connect to the running container
+doctl apps logs <app-id> --follow
 
-# Run migrations
-pnpm prisma migrate deploy
-
-# Or generate Prisma client
-pnpm prisma generate
+# Or use the DigitalOcean dashboard to run commands
+# Navigate to: https://cloud.digitalocean.com/apps
+# Select your app → Settings → Run Console Command
+# Run: pnpm prisma migrate deploy
 ```
+
+Alternatively, you can run migrations locally before deploying, or include them in your Docker image build process.
 
 ## Updating the Application
 
@@ -182,9 +173,11 @@ GitHub Actions will:
 ## Cost Estimation
 
 Monthly costs:
-- PostgreSQL (db-s-1vcpu-1gb): ~$15/month
 - App Platform (basic-xxs): ~$5/month
-- **Total**: ~$20/month
+- Persistent Volume (1GB): Included in App Platform
+- **Total**: ~$5/month
+
+**Note**: By switching from PostgreSQL to SQLite, you save ~$15/month on database hosting costs!
 
 ## Scaling
 
@@ -197,8 +190,12 @@ Edit `tf/main.tf`:
 # For App Platform
 instance_size_slug = "basic-xs" # 1GB RAM, $10/month
 
-# For Database
-size = "db-s-2vcpu-2gb" # 2 vCPU, 2GB RAM, ~$30/month
+# For SQLite volume (if you need more storage)
+volume {
+  name         = "sqlite-data"
+  mount_path   = "/data"
+  size_gigabytes = 5  # Increase to 5GB if needed
+}
 ```
 
 ### Horizontal Scaling (More Instances)
@@ -225,9 +222,11 @@ terraform destroy
 ```
 
 ⚠️ **WARNING**: This will permanently delete:
-- The database and all data
 - The application
+- The persistent volume and all SQLite database data
 - All configurations
+
+**Important**: Make sure to backup your SQLite database before destroying the infrastructure!
 
 ## Troubleshooting
 
@@ -242,16 +241,16 @@ doctl apps logs <app-id> --follow
 
 ### Database connection issues
 ```bash
-# Verify database is running
-terraform output database_host
+# Verify database path
+terraform output database_path
 
-# Test connection
-psql $(terraform output -raw database_url)
+# Check if database file exists in the container
+# Use DigitalOcean dashboard console or doctl to access the container
 ```
 
 ### Image pull errors
 - Verify your GitHub token has `read:packages` permission
-- Make sure the image exists: `docker pull ghcr.io/quinnjr/quinnjr.tech:latest`
+- Make sure the image exists: `docker pull ghcr.io/quinnjr/quinnjr.dev:latest`
 - Check if the image is public or token has access
 
 ## Custom Domain
@@ -262,7 +261,7 @@ Terraform is now configured to automatically manage your custom domain and DNS r
 
 1. Edit `terraform.tfvars`:
 ```hcl
-domain_name = "quinnjr.tech"  # Your domain
+domain_name = "quinnjr.dev"  # Your domain
 enable_dns  = true            # Enable DNS management
 ```
 
@@ -279,7 +278,7 @@ ns3.digitalocean.com
 ```
 
 Terraform will automatically create:
-- ✅ A record for apex domain (quinnjr.tech)
+- ✅ A record for apex domain (quinnjr.dev)
 - ✅ CNAME record for www subdomain
 - ✅ SSL certificate (via Let's Encrypt)
 - ✅ Domain verification records
@@ -295,11 +294,19 @@ See [DNS_SETUP.md](./DNS_SETUP.md) for:
 
 ## Backup
 
-DigitalOcean automatically backs up your database. To create a manual backup:
+Since SQLite is a file-based database, you can backup the database file directly:
 
 ```bash
-# Using doctl CLI
-doctl databases backup <database-id>
+# Using doctl CLI to access the container
+doctl apps logs <app-id> --follow
+
+# Or use the DigitalOcean dashboard console to copy the database file
+# The database is located at: /data/quinnjr.db
+
+# For automated backups, consider:
+# 1. Setting up a cron job in the container to periodically copy the database file
+# 2. Using DigitalOcean Spaces to store backups
+# 3. Implementing a backup script that runs on container startup
 ```
 
 ## Monitoring

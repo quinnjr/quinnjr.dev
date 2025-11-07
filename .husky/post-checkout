@@ -1,0 +1,16 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Update package.json version when checking out a release branch
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+
+if [ -n "$current_branch" ]; then
+  if echo "$current_branch" | grep -qE "^release/"; then
+    echo "🔖 Release branch detected: $current_branch"
+    echo "📦 Updating package.json version..."
+    node scripts/update-version-from-branch.mjs "$current_branch" || {
+      echo "⚠️  Failed to update version, but continuing checkout..."
+    }
+  fi
+fi
+

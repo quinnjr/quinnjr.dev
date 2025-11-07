@@ -1,0 +1,20 @@
+/* Client-only TypeScript configuration for Angular tests */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/client",
+    "types": []
+  },
+  "include": ["src/app/**/*.ts", "src/main.ts", "src/environments/**/*.ts"],
+  "exclude": [
+    "src/server/**",
+    "src/server.ts",
+    "src/main.server.ts",
+    "src/app/app.config.server.ts",
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__tests__/**",
+    "e2e/**",
+    "node_modules/**"
+  ]
+}

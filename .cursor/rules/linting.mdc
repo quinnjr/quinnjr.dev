@@ -1,0 +1,97 @@
+# Linting Rules
+
+## ESLint Configuration
+- Use TypeScript ESLint with strict type checking
+- Enable all security rules
+- Enable code quality rules (SonarJS)
+- Enforce import organization
+- Integrate Prettier for formatting
+
+## TypeScript Rules
+- **Error**: `no-explicit-any`, `no-unsafe-*`, `no-floating-promises`
+- **Error**: `prefer-nullish-coalescing`, `prefer-optional-chain`
+- **Error**: `consistent-type-imports`, `switch-exhaustiveness-check`
+- **Warning**: `prefer-on-push-component-change-detection` (Angular)
+- **Off**: `explicit-function-return-type` (too strict for existing codebase)
+
+## Import Organization
+- Group imports: builtin → external → internal → parent → sibling → index
+- Alphabetize imports within groups
+- Add newlines between import groups
+- Use type-only imports: `import type { ... }`
+- Detect and prevent import cycles (max depth: 3)
+
+## Security Rules
+- Detect object injection vulnerabilities
+- Detect unsafe regex patterns
+- Detect eval usage (error)
+- Detect timing attack vulnerabilities (warn)
+- Detect unsafe random number generation (error)
+
+## Code Quality (SonarJS)
+- Cognitive complexity limit: 15
+- Duplicate string threshold: 3
+- Detect identical functions
+- Detect redundant code
+- Detect unused collections
+
+## Angular Rules
+- Enforce component/directive selector prefixes
+- Require lifecycle interfaces
+- Enforce output naming conventions
+- Template accessibility rules
+- Template complexity limits
+
+## Prettier Integration
+- Enforce consistent code formatting
+- Single quotes for strings
+- Semicolons required
+- Trailing commas (ES5)
+- 100 character line width
+- 2 space indentation
+
+## Pre-commit Hook
+The pre-commit hook runs:
+1. Prisma client generation
+2. Code formatting (Prettier)
+3. Linting (ESLint)
+4. Server tests
+
+## Fixing Issues
+- Run `pnpm lint:fix` to auto-fix issues
+- Run `pnpm format` to format code
+- Fix remaining issues manually
+- Review auto-fixes before committing
+
+## Best Practices
+- Fix linting errors immediately
+- Don't disable rules without good reason
+- Use `eslint-disable` comments sparingly
+- Add comments explaining why rules are disabled
+- Keep linting configuration consistent across the project
+
+## Common Issues and Fixes
+
+### Type Safety
+- Replace `any` with proper types
+- Use type guards for `unknown` types
+- Add type assertions where needed
+
+### Promise Handling
+- Add `await` to async operations
+- Add `.catch()` for error handling
+- Use `void` for intentionally unhandled promises
+
+### Nullish Coalescing
+- Replace `||` with `??` for default values
+- Use `??` when checking for null/undefined specifically
+
+### Import Organization
+- Group imports correctly
+- Add newlines between groups
+- Use type-only imports for types
+
+### Angular Best Practices
+- Add `OnPush` change detection
+- Use lifecycle interfaces
+- Fix template accessibility issues
