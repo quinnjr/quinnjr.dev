@@ -7,8 +7,8 @@ export function createMockPrismaClient() {
   return {
     blogPost: {
       findMany: vi.fn() as MockedFunction<() => Promise<unknown[]>>,
-      findUnique: vi.fn() as MockedFunction<() => Promise<unknown | null>>,
-      findFirst: vi.fn() as MockedFunction<() => Promise<unknown | null>>,
+      findUnique: vi.fn() as MockedFunction<() => Promise<unknown>>,
+      findFirst: vi.fn() as MockedFunction<() => Promise<unknown>>,
       create: vi.fn() as MockedFunction<() => Promise<unknown>>,
       update: vi.fn() as MockedFunction<() => Promise<unknown>>,
       delete: vi.fn() as MockedFunction<() => Promise<unknown>>,
@@ -24,4 +24,3 @@ export function createMockPrismaClient() {
     },
   };
 }
-
