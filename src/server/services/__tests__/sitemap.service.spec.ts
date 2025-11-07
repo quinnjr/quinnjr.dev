@@ -1,31 +1,32 @@
-// Mock PrismaClient before importing services
-jest.mock('../../../generated/prisma/client', () => ({
-  PrismaClient: jest.fn(),
-}));
-
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { vi } from 'vitest';
 import { PrismaClient } from '../../../generated/prisma/client';
 import { SitemapService } from '../sitemap.service';
 import { DatabaseService } from '../database.service';
+import { createMockPrismaClient } from './helpers';
+
+// Mock PrismaClient before importing services
+vi.mock('../../../generated/prisma/client', () => ({
+  PrismaClient: vi.fn(),
+}));
 
 describe('SitemapService', () => {
   let service: SitemapService;
-  let mockDatabaseService: jest.Mocked<DatabaseService>;
-  let mockPrismaClient: DeepMockProxy<PrismaClient>;
+  let mockDatabaseService: { getClient: ReturnType<typeof vi.fn> };
+  let mockPrismaClient: ReturnType<typeof createMockPrismaClient>;
 
   beforeEach(() => {
-    // Create deep mock Prisma client using jest-mock-extended
-    mockPrismaClient = mockDeep<PrismaClient>();
+    // Create mock Prisma client
+    mockPrismaClient = createMockPrismaClient();
 
     mockDatabaseService = {
-      getClient: jest.fn().mockReturnValue(mockPrismaClient),
-    } as unknown as jest.Mocked<DatabaseService>;
+      getClient: vi.fn().mockReturnValue(mockPrismaClient as unknown as PrismaClient),
+    };
 
-    service = new SitemapService(mockDatabaseService);
+    service = new SitemapService(mockDatabaseService as unknown as DatabaseService);
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
   });
 
   describe('generateSitemapUrls', () => {
@@ -35,7 +36,7 @@ describe('SitemapService', () => {
       mockPrismaClient.sitemapConfig.findMany.mockResolvedValue([
         { url: '/', changefreq: 'daily', priority: 1.0 },
         { url: '/about', changefreq: 'monthly', priority: 0.8 },
-      ] as never);
+      ]);
 
       mockPrismaClient.blogPost.findMany.mockResolvedValue([
         {
@@ -43,15 +44,15 @@ describe('SitemapService', () => {
           updatedAt: new Date('2025-01-01'),
           publishedAt: new Date('2025-01-01'),
         },
-      ] as never);
+      ]);
 
       mockPrismaClient.category.findMany.mockResolvedValue([
         { slug: 'tech', updatedAt: new Date('2025-01-01') },
-      ] as never);
+      ]);
 
       mockPrismaClient.tag.findMany.mockResolvedValue([
         { slug: 'javascript', updatedAt: new Date('2025-01-01') },
-      ] as never);
+      ]);
 
       const urls = await service.generateSitemapUrls(baseUrl);
 

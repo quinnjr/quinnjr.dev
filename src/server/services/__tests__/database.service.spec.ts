@@ -1,22 +1,27 @@
-import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { vi, type MockedFunction } from 'vitest';
 import { PrismaClient } from '../../../generated/prisma/client';
 import { DatabaseService } from '../database.service';
 
 // Mock PrismaClient before importing DatabaseService
-jest.mock('../../../generated/prisma/client', () => ({
-  PrismaClient: jest.fn(),
+vi.mock('../../../generated/prisma/client', () => ({
+  PrismaClient: vi.fn(),
 }));
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
-  let mockPrismaClient: DeepMockProxy<PrismaClient>;
+  let mockPrismaClient: {
+    $connect: MockedFunction<() => Promise<void>>;
+    $disconnect: MockedFunction<() => Promise<void>>;
+    $queryRaw: MockedFunction<() => Promise<unknown[]>>;
+  };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    mockPrismaClient = mockDeep<PrismaClient>();
-    mockPrismaClient.$connect.mockResolvedValue(undefined);
-    mockPrismaClient.$disconnect.mockResolvedValue(undefined);
-    mockPrismaClient.$queryRaw.mockResolvedValue([{ '?column?': 1 }] as never);
+    vi.clearAllMocks();
+    mockPrismaClient = {
+      $connect: vi.fn().mockResolvedValue(undefined),
+      $disconnect: vi.fn().mockResolvedValue(undefined),
+      $queryRaw: vi.fn().mockResolvedValue([{ '?column?': 1 }]),
+    };
 
     // Replace the client in the service with our mock
     service = new DatabaseService();
@@ -59,7 +64,7 @@ describe('DatabaseService', () => {
 
     it('should return false when database connection fails', async () => {
       // Suppress console.error for this test since we're testing the error case
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {
         // Suppress error output in tests
       });
 
