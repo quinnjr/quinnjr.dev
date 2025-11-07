@@ -9,7 +9,7 @@ const sitemapService = container.resolve(SitemapService);
 /**
  * Generate sitemap.xml with static Angular routes and dynamic blog posts
  */
-router.get('/sitemap.xml', async (req, res) => {
+router.get('/sitemap.xml', async (req, res): Promise<void> => {
   try {
     const { protocol } = req;
     const host = req.get('host');
@@ -29,10 +29,14 @@ router.get('/sitemap.xml', async (req, res) => {
 /**
  * Generate robots.txt
  */
-router.get('/robots.txt', async (req, res) => {
+router.get('/robots.txt', (req, res): void => {
   try {
     const { protocol } = req;
     const host = req.get('host');
+    if (!host) {
+      res.status(500).send('Error generating robots.txt: Host header missing');
+      return;
+    }
     const baseUrl = `${protocol}://${host}`;
 
     const robotsTxt = sitemapService.generateRobotsTxt(baseUrl);

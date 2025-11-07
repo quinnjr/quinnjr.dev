@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthButtonComponent } from '../../../components/auth-button/auth-button.component';
@@ -7,6 +7,7 @@ import { AuthButtonComponent } from '../../../components/auth-button/auth-button
   selector: 'app-admin-layout',
   standalone: true,
   imports: [RouterOutlet, RouterLink, RouterLinkActive, AuthButtonComponent],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
       <!-- Admin Header -->

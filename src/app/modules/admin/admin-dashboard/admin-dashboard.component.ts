@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
@@ -7,6 +7,7 @@ import { AuthService } from '@auth0/auth0-angular';
   selector: 'app-admin-dashboard',
   standalone: true,
   imports: [CommonModule, RouterLink],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
       <div class="container mx-auto px-4 py-8">

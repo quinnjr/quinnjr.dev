@@ -15,8 +15,10 @@ export class DatabaseService {
     });
 
     // Graceful shutdown
-    process.on('beforeExit', async () => {
-      await this.disconnect();
+    process.on('beforeExit', () => {
+      this.disconnect().catch(() => {
+        // Disconnect error handled
+      });
     });
   }
 

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
@@ -7,6 +7,7 @@ import { AuthService } from '@auth0/auth0-angular';
   selector: 'app-login',
   standalone: true,
   imports: [CommonModule],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
       class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
@@ -115,7 +116,9 @@ export class LoginComponent implements OnInit {
     this.auth.isAuthenticated$.subscribe(isAuthenticated => {
       if (isAuthenticated) {
         setTimeout(() => {
-          this.router.navigate(['/admin']);
+          this.router.navigate(['/admin']).catch(() => {
+            // Navigation error handled
+          });
         }, 1500);
       }
     });

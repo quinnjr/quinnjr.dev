@@ -45,7 +45,7 @@ export class BlogService {
   /**
    * Get all published blog posts
    */
-  async getPublishedPosts() {
+  getPublishedPosts(): Promise<unknown[]> {
     return this.prisma.blogPost.findMany({
       where: {
         status: 'PUBLISHED',
@@ -140,13 +140,13 @@ export class BlogService {
         scheduledFor: data.scheduledFor,
         seoTitle: data.seoTitle,
         seoDescription: data.seoDescription,
-        seoKeywords: data.seoKeywords || [],
+        seoKeywords: data.seoKeywords ?? [],
         ogTitle: data.ogTitle,
         ogDescription: data.ogDescription,
         ogImage: data.ogImage,
         canonicalUrl: data.canonicalUrl,
-        noIndex: data.noIndex || false,
-        noFollow: data.noFollow || false,
+        noIndex: data.noIndex ?? false,
+        noFollow: data.noFollow ?? false,
         authorId: data.authorId,
         categoryId: data.categoryId,
         tags: {
@@ -155,7 +155,7 @@ export class BlogService {
               tag: {
                 connect: { id: tagId },
               },
-            })) || [],
+            })) ?? [],
         },
       },
       include: {
@@ -233,7 +233,7 @@ export class BlogService {
   /**
    * Delete a blog post
    */
-  async deletePost(id: string) {
+  deletePost(id: string): Promise<unknown> {
     return this.prisma.blogPost.delete({
       where: { id },
     });
@@ -242,7 +242,7 @@ export class BlogService {
   /**
    * Get all categories
    */
-  async getCategories() {
+  getCategories(): Promise<unknown[]> {
     return this.prisma.category.findMany({
       include: {
         _count: {
@@ -258,7 +258,7 @@ export class BlogService {
   /**
    * Get all tags
    */
-  async getTags() {
+  getTags(): Promise<unknown[]> {
     return this.prisma.tag.findMany({
       include: {
         _count: {

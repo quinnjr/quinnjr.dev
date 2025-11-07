@@ -14,6 +14,7 @@ export function initializeContainer(): void {
   container.registerSingleton(BlogService);
   container.registerSingleton(SitemapService);
 
+  // eslint-disable-next-line no-console
   console.log('✓ Dependency injection container initialized');
 }
 

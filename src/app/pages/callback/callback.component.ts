@@ -1,10 +1,11 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
   selector: 'app-callback',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
       <div class="text-center">
@@ -28,8 +29,10 @@ export class CallbackComponent implements OnInit {
     // Auth0 will handle the callback automatically
     // Then redirect to the intended destination
     this.auth.appState$.subscribe(appState => {
-      const target = appState?.target || '/admin';
-      this.router.navigate([target]);
+      const target = (appState as { target?: string } | null)?.target ?? '/admin';
+      this.router.navigate([target]).catch(() => {
+        // Navigation error handled
+      });
     });
   }
 }

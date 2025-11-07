@@ -1,7 +1,6 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { FlowbiteService } from '../../services/flowbite.service';
 import { AuthButtonComponent } from '../auth-button/auth-button.component';
 
 @Component({
@@ -10,8 +9,9 @@ import { AuthButtonComponent } from '../auth-button/auth-button.component';
   imports: [RouterLink, AuthButtonComponent],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class NavigationComponent implements OnInit {
+export class NavigationComponent {
   public navbarItems = signal([
     {
       title: 'Home',
@@ -45,12 +45,4 @@ export class NavigationComponent implements OnInit {
       external: true,
     },
   ]);
-
-  private flowbiteService = inject(FlowbiteService);
-
-  public ngOnInit() {
-    this.flowbiteService.loadFlowbite(flowbite => {
-      flowbite.init();
-    });
-  }
 }

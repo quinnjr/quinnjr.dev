@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 
 @Component({
   selector: 'app-articles',
@@ -6,5 +6,6 @@ import { Component } from '@angular/core';
   imports: [],
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ArticlesComponent {}

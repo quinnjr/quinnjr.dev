@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { map, Observable } from 'rxjs';
 
@@ -13,11 +13,14 @@ import { NavigationComponent } from './components/navigation/navigation.componen
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   animations: [slideInAnimation],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppComponent {
   private activatedRoute = inject(ActivatedRoute);
 
   public getRouteAnimationData(): Observable<string | undefined> {
-    return this.activatedRoute.data.pipe(map(data => data['animation']));
+    return this.activatedRoute.data.pipe(
+      map((data: Record<string, unknown>) => data['animation'] as string | undefined)
+    );
   }
 }
