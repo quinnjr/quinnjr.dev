@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { AuthButtonComponent } from '../auth-button/auth-button.component';
 import { FlowbiteService } from '../../services/flowbite.service';
+import { AuthButtonComponent } from '../auth-button/auth-button.component';
 
 @Component({
   selector: 'app-naviation',

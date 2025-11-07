@@ -28,7 +28,7 @@ export default function sriPlugin() {
 
           // Find the index.html file in the output directory
           const indexPath = join(outdir, 'index.html');
-          
+
           if (!existsSync(indexPath)) {
             return;
           }
@@ -79,10 +79,10 @@ export default function sriPlugin() {
 
               // Update the script tag with integrity and crossorigin
               let newAttributes = script.attributes;
-              
+
               // Add integrity attribute
               newAttributes = `${newAttributes} integrity="${integrity}"`;
-              
+
               // Add crossorigin if not present
               if (!newAttributes.includes('crossorigin=')) {
                 newAttributes = `${newAttributes} crossorigin="anonymous"`;

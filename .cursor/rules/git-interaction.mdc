@@ -53,6 +53,20 @@ Before pushing:
 - Review commit messages
 - Verify branch name follows convention
 
+## Git Hooks and Verification
+
+**CRITICAL: NEVER use `--no-verify` or `--skip-hooks` on any git command**
+
+- The project uses Husky git hooks to enforce code quality
+- Pre-commit hooks run linting, formatting, and tests
+- Pre-push hooks enforce tests and linting before remote pushes
+- Commit-msg hooks validate commit message format
+- Bypassing these hooks undermines the project's quality standards
+- If hooks are failing, fix the underlying issues instead of bypassing them
+- The project's integrity and CI/CD pipeline depend on these automated checks
+- Never use `git commit --no-verify` or `git push --no-verify`
+- Never use `git commit --skip-hooks` or similar bypass flags
+
 ## Merge Practices
 - Use "Squash and merge" for feature branches
 - Use "Merge commit" for release branches
