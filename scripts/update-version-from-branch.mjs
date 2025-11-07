@@ -26,6 +26,7 @@ function getCurrentBranch() {
  * Extract version from release branch name
  * Examples:
  *   release/v2.0.0 -> 2.0.0
+ *   release/2.0.0 -> 2.0.0
  *   release/1.5.3 -> 1.5.3
  */
 function extractVersionFromBranch(branchName) {
@@ -34,7 +35,12 @@ function extractVersionFromBranch(branchName) {
     return null;
   }
 
-  const version = releaseMatch[1];
+  // Remove 'v' prefix if present
+  let version = releaseMatch[1];
+  if (version.startsWith('v')) {
+    version = version.substring(1);
+  }
+
   // Validate version format (semver)
   const semverRegex = /^\d+\.\d+\.\d+(-[a-zA-Z0-9.-]+)?(\+[a-zA-Z0-9.-]+)?$/;
   if (!semverRegex.test(version)) {
