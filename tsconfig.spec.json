@@ -2,8 +2,14 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "./out-tsc/spec",
-    "types": ["jest"]
+    "types": ["vitest/globals", "@angular/platform-browser-dynamic/testing"]
   },
   "include": ["src/app/**/*.spec.ts", "src/**/*.d.ts"],
-  "exclude": ["src/server/**/*"]
+  "exclude": [
+    "src/server/**/*",
+    "src/server.ts",
+    "src/main.server.ts",
+    "e2e/**/*",
+    "node_modules/**/*"
+  ]
 }
