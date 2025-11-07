@@ -1,53 +1,22 @@
+// Mock PrismaClient before importing services
+jest.mock('../../../generated/prisma/client', () => ({
+  PrismaClient: jest.fn(),
+}));
+
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { PrismaClient } from '../../../generated/prisma/client';
 import { BlogService } from '../blog.service';
 import { DatabaseService } from '../database.service';
 import { PostStatus } from '../../../generated/prisma/client';
 
-interface MockPrismaClient {
-  blogPost: {
-    findMany: jest.Mock;
-    findUnique: jest.Mock;
-    findFirst: jest.Mock;
-    create: jest.Mock;
-    update: jest.Mock;
-    delete: jest.Mock;
-  };
-  blogPostTag: {
-    deleteMany: jest.Mock;
-  };
-  category: {
-    findMany: jest.Mock;
-  };
-  tag: {
-    findMany: jest.Mock;
-  };
-}
-
 describe('BlogService', () => {
   let service: BlogService;
   let mockDatabaseService: jest.Mocked<DatabaseService>;
-  let mockPrismaClient: MockPrismaClient;
+  let mockPrismaClient: DeepMockProxy<PrismaClient>;
 
   beforeEach(() => {
-    // Create mock Prisma client
-    mockPrismaClient = {
-      blogPost: {
-        findMany: jest.fn(),
-        findUnique: jest.fn(),
-        findFirst: jest.fn(),
-        create: jest.fn(),
-        update: jest.fn(),
-        delete: jest.fn(),
-      },
-      blogPostTag: {
-        deleteMany: jest.fn(),
-      },
-      category: {
-        findMany: jest.fn(),
-      },
-      tag: {
-        findMany: jest.fn(),
-      },
-    };
+    // Create deep mock Prisma client using jest-mock-extended
+    mockPrismaClient = mockDeep<PrismaClient>();
 
     // Create mock DatabaseService
     mockDatabaseService = {
@@ -73,7 +42,7 @@ describe('BlogService', () => {
         },
       ];
 
-      mockPrismaClient.blogPost.findMany.mockResolvedValue(mockPosts);
+      mockPrismaClient.blogPost.findMany.mockResolvedValue(mockPosts as never);
 
       const result = await service.getPublishedPosts();
 
@@ -100,11 +69,11 @@ describe('BlogService', () => {
         viewCount: 5,
       };
 
-      mockPrismaClient.blogPost.findUnique.mockResolvedValue(mockPost);
+      mockPrismaClient.blogPost.findUnique.mockResolvedValue(mockPost as never);
       mockPrismaClient.blogPost.update.mockResolvedValue({
         ...mockPost,
         viewCount: 6,
-      });
+      } as never);
 
       const result = await service.getPostBySlug('test-post');
 
@@ -124,7 +93,7 @@ describe('BlogService', () => {
     });
 
     it('should return null if post not found', async () => {
-      mockPrismaClient.blogPost.findUnique.mockResolvedValue(null);
+      mockPrismaClient.blogPost.findUnique.mockResolvedValue(null as never);
 
       const result = await service.getPostBySlug('non-existent');
 
@@ -148,8 +117,8 @@ describe('BlogService', () => {
         slug: 'new-post',
       };
 
-      mockPrismaClient.blogPost.findUnique.mockResolvedValue(null);
-      mockPrismaClient.blogPost.create.mockResolvedValue(mockCreatedPost);
+      mockPrismaClient.blogPost.findUnique.mockResolvedValue(null as never);
+      mockPrismaClient.blogPost.create.mockResolvedValue(mockCreatedPost as never);
 
       const result = await service.createPost(createDto);
 
@@ -168,7 +137,7 @@ describe('BlogService', () => {
       mockPrismaClient.blogPost.findUnique.mockResolvedValue({
         id: '1',
         slug: 'existing-post',
-      });
+      } as never);
 
       await expect(service.createPost(createDto)).rejects.toThrow(
         'A post with this title already exists'
@@ -191,8 +160,8 @@ describe('BlogService', () => {
         content: 'Updated content',
       };
 
-      mockPrismaClient.blogPost.findFirst.mockResolvedValue(null);
-      mockPrismaClient.blogPost.update.mockResolvedValue(mockUpdatedPost);
+      mockPrismaClient.blogPost.findFirst.mockResolvedValue(null as never);
+      mockPrismaClient.blogPost.update.mockResolvedValue(mockUpdatedPost as never);
 
       const result = await service.updatePost(updateDto);
 
@@ -209,7 +178,7 @@ describe('BlogService', () => {
       mockPrismaClient.blogPost.findFirst.mockResolvedValue({
         id: '2',
         slug: 'conflicting-title',
-      });
+      } as never);
 
       await expect(service.updatePost(updateDto)).rejects.toThrow(
         'A post with this title already exists'
@@ -221,7 +190,7 @@ describe('BlogService', () => {
     it('should delete a blog post', async () => {
       const postId = '1';
 
-      mockPrismaClient.blogPost.delete.mockResolvedValue({ id: postId });
+      mockPrismaClient.blogPost.delete.mockResolvedValue({ id: postId } as never);
 
       const result = await service.deletePost(postId);
 
@@ -235,9 +204,23 @@ describe('BlogService', () => {
   describe('getCategories', () => {
     it('should return all categories with post counts', async () => {
       const mockCategories = [
-        { id: '1', name: 'Tech', slug: 'tech', _count: { blogPosts: 5 } },
-        { id: '2', name: 'News', slug: 'news', _count: { blogPosts: 3 } },
-      ];
+        {
+          id: '1',
+          name: 'Tech',
+          slug: 'tech',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          _count: { blogPosts: 5 }
+        },
+        {
+          id: '2',
+          name: 'News',
+          slug: 'news',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          _count: { blogPosts: 3 }
+        },
+      ] as never;
 
       mockPrismaClient.category.findMany.mockResolvedValue(mockCategories);
 
@@ -251,9 +234,23 @@ describe('BlogService', () => {
   describe('getTags', () => {
     it('should return all tags with post counts', async () => {
       const mockTags = [
-        { id: '1', name: 'JavaScript', slug: 'javascript', _count: { blogPosts: 10 } },
-        { id: '2', name: 'TypeScript', slug: 'typescript', _count: { blogPosts: 8 } },
-      ];
+        {
+          id: '1',
+          name: 'JavaScript',
+          slug: 'javascript',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          _count: { blogPosts: 10 }
+        },
+        {
+          id: '2',
+          name: 'TypeScript',
+          slug: 'typescript',
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          _count: { blogPosts: 8 }
+        },
+      ] as never;
 
       mockPrismaClient.tag.findMany.mockResolvedValue(mockTags);
 

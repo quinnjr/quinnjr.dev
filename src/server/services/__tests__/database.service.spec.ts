@@ -1,18 +1,27 @@
+import { mockDeep, DeepMockProxy } from 'jest-mock-extended';
+import { PrismaClient } from '../../../generated/prisma/client';
 import { DatabaseService } from '../database.service';
+
+// Mock PrismaClient before importing DatabaseService
+jest.mock('../../../generated/prisma/client', () => ({
+  PrismaClient: jest.fn(),
+}));
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
-  let mockPrismaClient: {
-    $connect: jest.Mock;
-    $disconnect: jest.Mock;
-    $queryRaw: jest.Mock;
-  };
+  let mockPrismaClient: DeepMockProxy<PrismaClient>;
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockPrismaClient = mockDeep<PrismaClient>();
+    mockPrismaClient.$connect.mockResolvedValue(undefined);
+    mockPrismaClient.$disconnect.mockResolvedValue(undefined);
+    mockPrismaClient.$queryRaw.mockResolvedValue([{ '?column?': 1 }] as never);
+
+    // Replace the client in the service with our mock
     service = new DatabaseService();
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    mockPrismaClient = (service as any).client;
+    (service as any).client = mockPrismaClient;
   });
 
   afterEach(async () => {
@@ -49,7 +58,7 @@ describe('DatabaseService', () => {
     });
 
     it('should return false when database connection fails', async () => {
-      mockPrismaClient.$queryRaw = jest.fn().mockRejectedValue(new Error('Connection failed'));
+      mockPrismaClient.$queryRaw.mockRejectedValue(new Error('Connection failed'));
 
       const result = await service.healthCheck();
       expect(result).toBe(false);
