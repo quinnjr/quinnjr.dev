@@ -53,7 +53,7 @@ jobs:
         run: pnpm test:server:coverage
 
       - name: Run client unit tests
-        run: ng test --no-watch --coverage
+        run: pnpm test -- --no-watch --coverage
 
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
