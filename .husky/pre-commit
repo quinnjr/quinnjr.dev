@@ -6,14 +6,19 @@ pnpm format || exit 1
 
 echo "🔍 Running linter..."
 pnpm lint || {
-  echo "⚠️  Linting found issues but allowing commit for configuration setup."
-  echo "Please fix linting errors before pushing to remote."
+  echo ""
+  echo "❌ Linting failed!"
+  echo "Please fix linting errors before committing."
   echo "Run 'pnpm lint:fix' to auto-fix some issues."
-  # Temporarily allow commit to save linting configuration
-  # TODO: Re-enable strict linting after fixing existing issues
+  exit 1
 }
 
 echo "🧪 Running server tests..."
-pnpm test:server || exit 1
+pnpm test:server || {
+  echo ""
+  echo "❌ Tests failed!"
+  echo "Please fix test failures before committing."
+  exit 1
+}
 
 echo "✅ Pre-commit checks passed!"
