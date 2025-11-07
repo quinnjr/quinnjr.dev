@@ -1,0 +1,75 @@
+# Git Interaction Rules
+
+## Branch Naming
+All branches must follow git-flow convention:
+- **feature/name**: New features (e.g., `feature/user-authentication`)
+- **bugfix/name**: Bug fixes (e.g., `bugfix/login-redirect`)
+- **hotfix/name**: Critical hotfixes (e.g., `hotfix/security-patch`)
+- **release/name**: Release branches (e.g., `release/v2.0.0`)
+
+## Protected Branches
+- **Never push directly to `main` or `master`**
+- **Never push directly to `develop`**
+- Always create a feature/bugfix/hotfix/release branch
+- Use pull requests to merge into protected branches
+
+## Commit Practices
+- Make small, focused commits
+- One logical change per commit
+- Write clear commit messages following the commit message format
+- Don't commit broken code
+- Don't commit commented-out code
+- Don't commit debug statements or console.logs (except intentional ones)
+
+## Pull Requests
+- Create PRs for all changes to main/develop
+- Write descriptive PR titles and descriptions
+- Reference related issues in PR description
+- Ensure all tests pass before requesting review
+- Ensure linting passes before requesting review
+- Keep PRs focused and reasonably sized
+
+## Workflow
+1. Create a feature branch from main/develop
+2. Make changes and commit frequently
+3. Push branch to remote
+4. Create pull request
+5. Address review feedback
+6. Merge after approval
+
+## Pre-commit Checks
+Before committing:
+- Run linter: `pnpm lint`
+- Run tests: `pnpm test:server`
+- Format code: `pnpm format`
+- Check for console.logs and debug statements
+- Verify all files are saved
+
+## Pre-push Checks
+Before pushing:
+- Ensure all tests pass
+- Ensure linting passes
+- Ensure code is formatted
+- Review commit messages
+- Verify branch name follows convention
+
+## Merge Practices
+- Use "Squash and merge" for feature branches
+- Use "Merge commit" for release branches
+- Delete branch after merge
+- Update version numbers appropriately
+
+## Conflict Resolution
+- Pull latest changes before starting work
+- Rebase feature branches before merging
+- Resolve conflicts carefully
+- Test after resolving conflicts
+- Don't force push to shared branches
+
+## Best Practices
+- Commit often with meaningful messages
+- Keep commits atomic (one logical change)
+- Use `.gitignore` appropriately
+- Don't commit sensitive data (API keys, passwords)
+- Review changes with `git diff` before committing
+- Use `git status` frequently to track changes

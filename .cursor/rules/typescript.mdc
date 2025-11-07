@@ -1,0 +1,51 @@
+# TypeScript Rules
+
+## Type Safety
+- Always use explicit types instead of `any`
+- Use `unknown` when the type is truly unknown, then narrow with type guards
+- Prefer `interface` over `type` for object shapes
+- Use type-only imports: `import type { ... }` when importing only types
+- Avoid `@ts-ignore` and `@ts-nocheck` - fix the underlying issue instead
+
+## Type Definitions
+- Define interfaces for all data structures
+- Use discriminated unions for related types with different shapes
+- Prefer readonly properties when values shouldn't change
+- Use `const` assertions for literal types: `as const`
+
+## Null Safety
+- Use nullish coalescing (`??`) instead of logical OR (`||`) for default values
+- Use optional chaining (`?.`) to safely access nested properties
+- Explicitly handle `null` and `undefined` cases
+- Avoid non-null assertions (`!`) - handle nullability properly
+
+## Async/Promises
+- Always handle promise rejections with `.catch()` or `try/catch`
+- Use `async/await` instead of `.then()` chains when possible
+- Mark functions as `async` only when they use `await`
+- Use `void` operator for intentionally unhandled promises: `void promiseFunction()`
+
+## Code Organization
+- Group imports: builtin → external → internal → parent → sibling → index
+- Use consistent import ordering (alphabetical within groups)
+- Separate type imports from value imports
+- Keep functions focused and single-purpose
+
+## Best Practices
+- Use `const` for variables that don't change
+- Use arrow functions for callbacks to preserve `this` context
+- Prefer template literals over string concatenation
+- Use object destructuring for cleaner code
+- Prefer `switch` statements with exhaustiveness checking for multiple conditions
+
+## Error Handling
+- Always type error parameters: `catch (error: unknown)`
+- Use type guards to narrow error types
+- Provide meaningful error messages
+- Log errors appropriately (console.error for errors, console.warn for warnings)
+
+## Performance
+- Avoid unnecessary type assertions
+- Use `as const` for immutable data structures
+- Prefer `Map` and `Set` for large collections
+- Use `readonly` arrays when arrays shouldn't be mutated
