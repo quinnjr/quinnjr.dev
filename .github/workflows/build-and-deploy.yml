@@ -55,6 +55,14 @@ jobs:
       - name: Run client unit tests
         run: pnpm test -- --no-watch --code-coverage --browsers=ChromeHeadless
 
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: pnpm test:e2e
+        env:
+          CI: true
+
       - name: Build application
         run: pnpm build
 

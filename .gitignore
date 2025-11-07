@@ -52,3 +52,8 @@ Thumbs.db
 .terraform.lock.hcl
 crash.log
 crash.*.log
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
