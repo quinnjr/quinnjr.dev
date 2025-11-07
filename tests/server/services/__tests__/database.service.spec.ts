@@ -1,9 +1,9 @@
 import { vi, type MockedFunction } from 'vitest';
-import { PrismaClient } from '../../../generated/prisma/client';
-import { DatabaseService } from '../database.service';
+import { PrismaClient } from '../../../../src/generated/prisma/client';
+import { DatabaseService } from '../../../../src/server/services/database.service';
 
 // Mock PrismaClient before importing DatabaseService
-vi.mock('../../../generated/prisma/client', () => ({
+vi.mock('../../../../src/generated/prisma/client', () => ({
   PrismaClient: vi.fn(),
 }));
 

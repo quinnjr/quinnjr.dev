@@ -9,9 +9,8 @@ export default defineConfig({
   test: {
     // Only run tests in the server directory
     include: [
-      'src/server/**/__tests__/**/*.test.ts',
-      'src/server/**/__tests__/**/*.spec.ts',
-      'src/server/**/*.spec.ts',
+      'tests/server/**/*.test.ts',
+      'tests/server/**/*.spec.ts',
     ],
     exclude: [
       'node_modules/**',
@@ -39,7 +38,7 @@ export default defineConfig({
     },
 
     // Setup files
-    setupFiles: ['./src/server/__tests__/setup.ts'],
+    setupFiles: ['./tests/server/__tests__/setup.ts'],
 
     // Test timeout
     testTimeout: 10000,

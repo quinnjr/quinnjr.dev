@@ -1,11 +1,11 @@
 import { vi } from 'vitest';
-import { PrismaClient } from '../../../generated/prisma/client';
-import { SitemapService } from '../sitemap.service';
-import { DatabaseService } from '../database.service';
+import { PrismaClient } from '../../../../src/generated/prisma/client';
+import { SitemapService } from '../../../../src/server/services/sitemap.service';
+import { DatabaseService } from '../../../../src/server/services/database.service';
 import { createMockPrismaClient } from './helpers';
 
 // Mock PrismaClient before importing services
-vi.mock('../../../generated/prisma/client', () => ({
+vi.mock('../../../../src/generated/prisma/client', () => ({
   PrismaClient: vi.fn(),
 }));
 

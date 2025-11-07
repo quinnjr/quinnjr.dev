@@ -7,12 +7,21 @@
     "types": ["node"]
   },
   "files": ["src/main.ts"],
-  "include": ["src/app/**/*.ts", "src/app/**/*.d.ts"],
+  "include": [
+    "src/app/**/*.ts",
+    "!src/app/**/*.spec.ts",
+    "!src/app/**/*.test.ts",
+    "src/**/*.d.ts"
+  ],
   "exclude": [
-    "src/server/**/*",
+    "src/server/**",
     "src/server.ts",
     "src/main.server.ts",
     "src/app/app.config.server.ts",
-    "**/*.spec.ts"
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/__tests__/**",
+    "e2e/**",
+    "node_modules/**"
   ]
 }

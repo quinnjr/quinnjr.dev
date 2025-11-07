@@ -7,6 +7,9 @@
   "include": ["src/app/**/*.spec.ts", "src/**/*.d.ts"],
   "exclude": [
     "src/server/**/*",
+    "src/server/**/*.spec.ts",
+    "src/server/**/*.test.ts",
+    "src/server/**/__tests__/**",
     "src/server.ts",
     "src/main.server.ts",
     "e2e/**/*",

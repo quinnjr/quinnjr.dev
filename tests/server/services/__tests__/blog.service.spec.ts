@@ -1,12 +1,12 @@
 import { vi } from 'vitest';
-import { PrismaClient } from '../../../generated/prisma/client';
-import { BlogService } from '../blog.service';
-import { DatabaseService } from '../database.service';
-import { PostStatus } from '../../../generated/prisma/client';
+import { PrismaClient } from '../../../../src/generated/prisma/client';
+import { BlogService } from '../../../../src/server/services/blog.service';
+import { DatabaseService } from '../../../../src/server/services/database.service';
+import { PostStatus } from '../../../../src/generated/prisma/client';
 import { createMockPrismaClient } from './helpers';
 
 // Mock PrismaClient before importing services
-vi.mock('../../../generated/prisma/client', () => ({
+vi.mock('../../../../src/generated/prisma/client', () => ({
   PrismaClient: vi.fn(),
 }));
 
