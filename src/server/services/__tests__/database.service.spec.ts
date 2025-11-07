@@ -2,7 +2,7 @@ import { DatabaseService } from '../database.service';
 import { PrismaClient } from '../../../generated/prisma/client';
 
 // Mock PrismaClient
-jest.mock('../../../generated/prisma', () => {
+jest.mock('../../../generated/prisma/client', () => {
   return {
     PrismaClient: jest.fn().mockImplementation(() => ({
       $connect: jest.fn().mockResolvedValue(undefined),

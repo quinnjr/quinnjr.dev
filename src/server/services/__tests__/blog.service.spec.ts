@@ -1,6 +1,6 @@
 import { BlogService } from '../blog.service';
 import { DatabaseService } from '../database.service';
-import { PostStatus } from '../../../generated/prisma';
+import { PostStatus } from '../../../generated/prisma/client';
 
 interface MockPrismaClient {
   blogPost: {

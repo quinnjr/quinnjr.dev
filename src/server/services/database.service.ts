@@ -1,5 +1,5 @@
 import { singleton } from 'tsyringe';
-import { PrismaClient } from '../../generated/prisma';
+import { PrismaClient } from '../../generated/prisma/client';
 
 /**
  * Database service that provides a singleton Prisma client instance

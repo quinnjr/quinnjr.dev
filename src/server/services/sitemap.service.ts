@@ -32,7 +32,7 @@ export class SitemapService {
       where: { isStatic: true }
     });
 
-    staticRoutes.forEach((route) => {
+    staticRoutes.forEach((route: { url: string; changefreq: string; priority: number }) => {
       urls.push({
         loc: `${baseUrl}${route.url}`,
         changefreq: route.changefreq,
@@ -56,7 +56,7 @@ export class SitemapService {
       },
     });
 
-    blogPosts.forEach((post) => {
+    blogPosts.forEach((post: { slug: string; updatedAt: Date; publishedAt: Date | null }) => {
       urls.push({
         loc: `${baseUrl}/blog/${post.slug}`,
         lastmod: post.updatedAt.toISOString(),
@@ -73,7 +73,7 @@ export class SitemapService {
       },
     });
 
-    categories.forEach((category) => {
+    categories.forEach((category: { slug: string; updatedAt: Date }) => {
       urls.push({
         loc: `${baseUrl}/blog/category/${category.slug}`,
         lastmod: category.updatedAt.toISOString(),
@@ -90,7 +90,7 @@ export class SitemapService {
       },
     });
 
-    tags.forEach((tag) => {
+    tags.forEach((tag: { slug: string; updatedAt: Date }) => {
       urls.push({
         loc: `${baseUrl}/blog/tag/${tag.slug}`,
         lastmod: tag.updatedAt.toISOString(),

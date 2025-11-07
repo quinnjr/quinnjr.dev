@@ -1,0 +1,49 @@
+# Get the current branch name
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+
+# Prevent pushing directly to main or develop
+protected_branches=("main" "master" "develop")
+
+for branch in "${protected_branches[@]}"; do
+  if [ "$current_branch" = "$branch" ]; then
+    echo "❌ You cannot push directly to '$branch' branch!"
+    echo ""
+    echo "Please create a feature/bugfix/hotfix/release branch instead:"
+    echo "  git checkout -b feature/your-feature-name"
+    echo "  git checkout -b bugfix/your-bugfix-name"
+    echo "  git checkout -b hotfix/your-hotfix-name"
+    echo "  git checkout -b release/your-release-name"
+    echo ""
+    exit 1
+  fi
+done
+
+# Enforce git-flow branch naming convention
+# Valid patterns:
+# - feature/name
+# - bugfix/name
+# - hotfix/name
+# - release/name
+# - develop (protected, but valid)
+# - main/master (protected, but valid)
+
+if ! echo "$current_branch" | grep -qE "^(feature|bugfix|hotfix|release|develop|main|master)(/.*)?$"; then
+  echo "❌ Invalid branch name: '$current_branch'"
+  echo ""
+  echo "Branch names must follow git-flow convention:"
+  echo "  - feature/name (for new features)"
+  echo "  - bugfix/name (for bug fixes)"
+  echo "  - hotfix/name (for critical hotfixes)"
+  echo "  - release/name (for release branches)"
+  echo ""
+  echo "Examples:"
+  echo "  feature/user-authentication"
+  echo "  bugfix/login-redirect"
+  echo "  hotfix/security-patch"
+  echo "  release/v2.0.0"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Branch name is valid: $current_branch"
+
