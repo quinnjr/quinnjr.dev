@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { container } from 'tsyringe';
+
 import { SitemapService } from '../services/sitemap.service';
 
 const router = Router();
@@ -10,7 +11,7 @@ const sitemapService = container.resolve(SitemapService);
  */
 router.get('/sitemap.xml', async (req, res) => {
   try {
-    const protocol = req.protocol;
+    const { protocol } = req;
     const host = req.get('host');
     const baseUrl = `${protocol}://${host}`;
 
@@ -30,7 +31,7 @@ router.get('/sitemap.xml', async (req, res) => {
  */
 router.get('/robots.txt', async (req, res) => {
   try {
-    const protocol = req.protocol;
+    const { protocol } = req;
     const host = req.get('host');
     const baseUrl = `${protocol}://${host}`;
 
@@ -45,4 +46,3 @@ router.get('/robots.txt', async (req, res) => {
 });
 
 export default router;
-

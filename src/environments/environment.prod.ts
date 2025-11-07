@@ -7,10 +7,7 @@ export const environment = {
       redirect_uri: 'https://quinnjr.dev',
     },
     httpInterceptor: {
-      allowedList: [
-        'https://quinnjr.dev/api/*'
-      ],
+      allowedList: ['https://quinnjr.dev/api/*'],
     },
   },
 };
-

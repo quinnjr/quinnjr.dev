@@ -18,7 +18,7 @@ import { AuthService } from '@auth0/auth0-angular';
       </div>
     </div>
   `,
-  styles: []
+  styles: [],
 })
 export class CallbackComponent implements OnInit {
   private auth = inject(AuthService);
@@ -27,10 +27,9 @@ export class CallbackComponent implements OnInit {
   ngOnInit(): void {
     // Auth0 will handle the callback automatically
     // Then redirect to the intended destination
-    this.auth.appState$.subscribe((appState) => {
+    this.auth.appState$.subscribe(appState => {
       const target = appState?.target || '/admin';
       this.router.navigate([target]);
     });
   }
 }
-

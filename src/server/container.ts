@@ -1,7 +1,8 @@
 import 'reflect-metadata';
 import { container } from 'tsyringe';
-import { DatabaseService } from './services/database.service';
+
 import { BlogService } from './services/blog.service';
+import { DatabaseService } from './services/database.service';
 import { SitemapService } from './services/sitemap.service';
 
 /**
@@ -24,4 +25,3 @@ export function getService<T>(token: new (...args: unknown[]) => T): T {
 }
 
 export { container };
-

@@ -1,4 +1,5 @@
 import { inject, singleton } from 'tsyringe';
+
 import { DatabaseService } from './database.service';
 
 export interface SitemapUrl {
@@ -13,9 +14,7 @@ export interface SitemapUrl {
  */
 @singleton()
 export class SitemapService {
-  constructor(
-    @inject(DatabaseService) private readonly db: DatabaseService
-  ) {}
+  constructor(@inject(DatabaseService) private readonly db: DatabaseService) {}
 
   private get prisma() {
     return this.db.getClient();
@@ -29,7 +28,7 @@ export class SitemapService {
 
     // Get static routes from SitemapConfig
     const staticRoutes = await this.prisma.sitemapConfig.findMany({
-      where: { isStatic: true }
+      where: { isStatic: true },
     });
 
     staticRoutes.forEach((route: { url: string; changefreq: string; priority: number }) => {
@@ -106,24 +105,26 @@ export class SitemapService {
    * Generate XML sitemap
    */
   generateSitemapXml(urls: SitemapUrl[]): string {
-    const urlEntries = urls.map((url) => {
-      let entry = `  <url>\n    <loc>${this.escapeXml(url.loc)}</loc>\n`;
+    const urlEntries = urls
+      .map(url => {
+        let entry = `  <url>\n    <loc>${this.escapeXml(url.loc)}</loc>\n`;
 
-      if (url.lastmod) {
-        entry += `    <lastmod>${url.lastmod}</lastmod>\n`;
-      }
+        if (url.lastmod) {
+          entry += `    <lastmod>${url.lastmod}</lastmod>\n`;
+        }
 
-      if (url.changefreq) {
-        entry += `    <changefreq>${url.changefreq}</changefreq>\n`;
-      }
+        if (url.changefreq) {
+          entry += `    <changefreq>${url.changefreq}</changefreq>\n`;
+        }
 
-      if (url.priority !== undefined) {
-        entry += `    <priority>${url.priority}</priority>\n`;
-      }
+        if (url.priority !== undefined) {
+          entry += `    <priority>${url.priority}</priority>\n`;
+        }
 
-      entry += '  </url>';
-      return entry;
-    }).join('\n');
+        entry += '  </url>';
+        return entry;
+      })
+      .join('\n');
 
     return `<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -160,4 +161,3 @@ Disallow: /callback
       .replace(/'/g, '&apos;');
   }
 }
-

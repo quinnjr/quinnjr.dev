@@ -1,4 +1,5 @@
 import { singleton } from 'tsyringe';
+
 import { PrismaClient } from '../../generated/prisma/client';
 
 /**
@@ -10,9 +11,7 @@ export class DatabaseService {
 
   constructor() {
     this.client = new PrismaClient({
-      log: process.env['NODE_ENV'] === 'development'
-        ? ['query', 'error', 'warn']
-        : ['error'],
+      log: process.env['NODE_ENV'] === 'development' ? ['query', 'error', 'warn'] : ['error'],
     });
 
     // Graceful shutdown
@@ -55,4 +54,3 @@ export class DatabaseService {
     }
   }
 }
-

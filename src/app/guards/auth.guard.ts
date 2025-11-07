@@ -6,10 +6,10 @@ export const authGuard = () => {
   const authService = inject(AuthService);
 
   return authService.isAuthenticated$.pipe(
-    map((isAuthenticated) => {
+    map(isAuthenticated => {
       if (!isAuthenticated) {
         authService.loginWithRedirect({
-          appState: { target: window.location.pathname }
+          appState: { target: window.location.pathname },
         });
         return false;
       }
@@ -17,4 +17,3 @@ export const authGuard = () => {
     })
   );
 };
-

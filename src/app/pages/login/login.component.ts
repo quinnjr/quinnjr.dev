@@ -1,5 +1,5 @@
-import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, inject, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
@@ -8,7 +8,9 @@ import { AuthService } from '@auth0/auth0-angular';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8">
+    <div
+      class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4 sm:px-6 lg:px-8"
+    >
       <div class="max-w-md w-full space-y-8">
         <div>
           <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
@@ -47,7 +49,8 @@ import { AuthService } from '@auth0/auth0-angular';
                   <button
                     type="button"
                     (click)="loginWithRedirect()"
-                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors">
+                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                  >
                     <span class="absolute left-0 inset-y-0 flex items-center pl-3">
                       <i class="fas fa-lock text-blue-500 group-hover:text-blue-400"></i>
                     </span>
@@ -64,7 +67,10 @@ import { AuthService } from '@auth0/auth0-angular';
             </div>
 
             <div class="text-center">
-              <a routerLink="/" class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+              <a
+                routerLink="/"
+                class="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
+              >
                 <i class="fas fa-arrow-left mr-2"></i>
                 Back to home
               </a>
@@ -98,7 +104,7 @@ import { AuthService } from '@auth0/auth0-angular';
       </div>
     </div>
   `,
-  styles: []
+  styles: [],
 })
 export class LoginComponent implements OnInit {
   public auth = inject(AuthService);
@@ -117,8 +123,7 @@ export class LoginComponent implements OnInit {
 
   loginWithRedirect(): void {
     this.auth.loginWithRedirect({
-      appState: { target: '/admin' }
+      appState: { target: '/admin' },
     });
   }
 }
-

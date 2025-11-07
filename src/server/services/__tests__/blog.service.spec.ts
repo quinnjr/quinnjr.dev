@@ -210,7 +210,7 @@ describe('BlogService', () => {
           slug: 'tech',
           createdAt: new Date(),
           updatedAt: new Date(),
-          _count: { blogPosts: 5 }
+          _count: { blogPosts: 5 },
         },
         {
           id: '2',
@@ -218,7 +218,7 @@ describe('BlogService', () => {
           slug: 'news',
           createdAt: new Date(),
           updatedAt: new Date(),
-          _count: { blogPosts: 3 }
+          _count: { blogPosts: 3 },
         },
       ] as never;
 
@@ -240,7 +240,7 @@ describe('BlogService', () => {
           slug: 'javascript',
           createdAt: new Date(),
           updatedAt: new Date(),
-          _count: { blogPosts: 10 }
+          _count: { blogPosts: 10 },
         },
         {
           id: '2',
@@ -248,7 +248,7 @@ describe('BlogService', () => {
           slug: 'typescript',
           createdAt: new Date(),
           updatedAt: new Date(),
-          _count: { blogPosts: 8 }
+          _count: { blogPosts: 8 },
         },
       ] as never;
 
@@ -261,4 +261,3 @@ describe('BlogService', () => {
     });
   });
 });
-

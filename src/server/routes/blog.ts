@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { container } from 'tsyringe';
+
 import { BlogService } from '../services/blog.service';
 
 const router = Router();
@@ -124,4 +125,3 @@ router.get('/tags', async (req, res) => {
 });
 
 export default router;
-

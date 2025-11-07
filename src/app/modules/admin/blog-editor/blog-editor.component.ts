@@ -1,5 +1,5 @@
-import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
@@ -23,7 +23,8 @@ import { QuillModule } from 'ngx-quill';
           </div>
           <button
             (click)="goBack()"
-            class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors">
+            class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors"
+          >
             <i class="fas fa-arrow-left mr-2"></i>Back
           </button>
         </div>
@@ -38,7 +39,10 @@ import { QuillModule } from 'ngx-quill';
 
             <!-- Title -->
             <div class="mb-4">
-              <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                for="title"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Title *
               </label>
               <input
@@ -46,7 +50,8 @@ import { QuillModule } from 'ngx-quill';
                 type="text"
                 formControlName="title"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter post title" />
+                placeholder="Enter post title"
+              />
               @if (postForm.get('title')?.invalid && postForm.get('title')?.touched) {
                 <p class="mt-1 text-sm text-red-600">Title is required</p>
               }
@@ -56,7 +61,8 @@ import { QuillModule } from 'ngx-quill';
             @if (postForm.get('title')?.value) {
               <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                 <p class="text-sm text-gray-600 dark:text-gray-400">
-                  URL: <span class="font-mono text-blue-600 dark:text-blue-400">
+                  URL:
+                  <span class="font-mono text-blue-600 dark:text-blue-400">
                     /blog/{{ generateSlug(postForm.get('title')?.value) }}
                   </span>
                 </p>
@@ -65,7 +71,10 @@ import { QuillModule } from 'ngx-quill';
 
             <!-- Content Editor -->
             <div class="mb-4">
-              <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label
+                for="content"
+                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+              >
                 Content *
               </label>
               <quill-editor
@@ -73,7 +82,8 @@ import { QuillModule } from 'ngx-quill';
                 formControlName="content"
                 [modules]="quillModules"
                 [styles]="{ height: '400px' }"
-                class="bg-white dark:bg-gray-700 rounded-md">
+                class="bg-white dark:bg-gray-700 rounded-md"
+              >
               </quill-editor>
               @if (postForm.get('content')?.invalid && postForm.get('content')?.touched) {
                 <p class="mt-1 text-sm text-red-600">Content is required</p>
@@ -82,18 +92,22 @@ import { QuillModule } from 'ngx-quill';
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+          <div
+            class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
+          >
             <button
               type="button"
               (click)="goBack()"
-              class="px-6 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors">
+              class="px-6 py-2 text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-md transition-colors"
+            >
               Cancel
             </button>
 
             <button
               type="submit"
               [disabled]="postForm.invalid || isSubmitting"
-              class="px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+              class="px-6 py-2 text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            >
               @if (isSubmitting) {
                 <i class="fas fa-spinner fa-spin mr-2"></i>Saving...
               } @else {
@@ -105,7 +119,7 @@ import { QuillModule } from 'ngx-quill';
       </div>
     </div>
   `,
-  styles: []
+  styles: [],
 })
 export class BlogEditorComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -124,8 +138,8 @@ export class BlogEditorComponent implements OnInit {
       [{ header: 1 }, { header: 2 }],
       [{ list: 'ordered' }, { list: 'bullet' }],
       ['clean'],
-      ['link', 'image']
-    ]
+      ['link', 'image'],
+    ],
   };
 
   ngOnInit(): void {
@@ -151,7 +165,9 @@ export class BlogEditorComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.postForm.invalid || this.isSubmitting) return;
+    if (this.postForm.invalid || this.isSubmitting) {
+      return;
+    }
     this.isSubmitting = true;
     console.log('Submitting:', this.postForm.value);
     setTimeout(() => {

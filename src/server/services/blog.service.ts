@@ -1,7 +1,9 @@
-import { inject, singleton } from 'tsyringe';
-import { DatabaseService } from './database.service';
-import { PostStatus } from '../../generated/prisma/client';
 import slugify from 'slugify';
+import { inject, singleton } from 'tsyringe';
+
+import { PostStatus } from '../../generated/prisma/client';
+
+import { DatabaseService } from './database.service';
 
 export interface CreateBlogPostDto {
   title: string;
@@ -34,9 +36,7 @@ export interface UpdateBlogPostDto extends Partial<CreateBlogPostDto> {
  */
 @singleton()
 export class BlogService {
-  constructor(
-    @inject(DatabaseService) private readonly db: DatabaseService
-  ) {}
+  constructor(@inject(DatabaseService) private readonly db: DatabaseService) {}
 
   private get prisma() {
     return this.db.getClient();
@@ -150,11 +150,12 @@ export class BlogService {
         authorId: data.authorId,
         categoryId: data.categoryId,
         tags: {
-          create: data.tagIds?.map((tagId) => ({
-            tag: {
-              connect: { id: tagId },
-            },
-          })) || [],
+          create:
+            data.tagIds?.map(tagId => ({
+              tag: {
+                connect: { id: tagId },
+              },
+            })) || [],
         },
       },
       include: {
@@ -209,7 +210,7 @@ export class BlogService {
         ...(slug && { slug }),
         ...(tagIds && {
           tags: {
-            create: tagIds.map((tagId) => ({
+            create: tagIds.map(tagId => ({
               tag: {
                 connect: { id: tagId },
               },
@@ -281,4 +282,3 @@ export class BlogService {
     });
   }
 }
-

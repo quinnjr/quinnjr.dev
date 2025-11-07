@@ -12,7 +12,8 @@ async function main() {
     create: {
       id: 'default',
       siteName: 'quinnjr.dev',
-      siteDescription: 'Personal website of Joseph R. Quinn, Esq. - Developer, Lawyer, and Tech Enthusiast',
+      siteDescription:
+        'Personal website of Joseph R. Quinn, Esq. - Developer, Lawyer, and Tech Enthusiast',
       siteKeywords: ['joseph quinn', 'developer', 'attorney', 'software engineer', 'tech blog'],
       organizationName: 'quinnjr.dev',
     },
@@ -104,11 +105,10 @@ async function main() {
 }
 
 main()
-  .catch((e) => {
+  .catch(e => {
     console.error('Error seeding database:', e);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
   });
-

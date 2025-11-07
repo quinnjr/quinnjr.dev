@@ -89,9 +89,7 @@ describe('SitemapService', () => {
     });
 
     it('should escape XML special characters', () => {
-      const urls = [
-        { loc: 'https://example.com/test?param=1&other=2', priority: 0.5 },
-      ];
+      const urls = [{ loc: 'https://example.com/test?param=1&other=2', priority: 0.5 }];
 
       const xml = service.generateSitemapXml(urls);
 
@@ -114,4 +112,3 @@ describe('SitemapService', () => {
     });
   });
 });
-

@@ -1,49 +1,49 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
-
-import { FlowbiteService } from '../services/flowbite.service';
 import { RouterLink } from '@angular/router';
+
 import { AuthButtonComponent } from '../components/auth-button/auth-button.component';
+import { FlowbiteService } from '../services/flowbite.service';
 
 @Component({
   selector: 'app-naviation',
   standalone: true,
   imports: [RouterLink, AuthButtonComponent],
   templateUrl: './navigation.component.html',
-  styleUrl: './navigation.component.scss'
+  styleUrl: './navigation.component.scss',
 })
 export class NavigationComponent implements OnInit {
   public navbarItems = signal([
     {
       title: 'Home',
       link: '/',
-      icon: 'fas fa-home'
+      icon: 'fas fa-home',
     },
     {
       title: 'Articles',
       link: '/articles',
-      icon: 'fas fa-newspaper'
+      icon: 'fas fa-newspaper',
     },
     {
       title: 'Resume',
       link: '/resume',
-      icon: 'fas fa-user-graduate'
+      icon: 'fas fa-user-graduate',
     },
     {
       title: 'Projects',
       link: '/projects',
-      icon: 'fas fa-project-diagram'
+      icon: 'fas fa-project-diagram',
     },
     {
       title: 'Admin',
       link: '/admin',
-      icon: 'fas fa-shield-alt'
+      icon: 'fas fa-shield-alt',
     },
     {
       title: 'Github',
       link: 'https://github.com/quinnjr',
       icon: 'fab fa-github',
-      external: true
-    }
+      external: true,
+    },
   ]);
 
   private flowbiteService = inject(FlowbiteService);
