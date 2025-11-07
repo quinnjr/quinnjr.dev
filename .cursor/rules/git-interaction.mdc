@@ -5,7 +5,10 @@ All branches must follow git-flow convention:
 - **feature/name**: New features (e.g., `feature/user-authentication`)
 - **bugfix/name**: Bug fixes (e.g., `bugfix/login-redirect`)
 - **hotfix/name**: Critical hotfixes (e.g., `hotfix/security-patch`)
-- **release/name**: Release branches (e.g., `release/v2.0.0`)
+- **release/version**: Release branches (e.g., `release/v2.0.0`)
+  - Version must follow semantic versioning (e.g., `release/v2.1.0`, `release/1.5.3`)
+  - When creating a release branch, `package.json` version is automatically updated via git hook
+  - The version in the branch name should match the intended release version
 
 ## Protected Branches
 - **Never push directly to `main` or `master`**
