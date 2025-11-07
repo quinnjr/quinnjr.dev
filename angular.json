@@ -39,8 +39,7 @@
             "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
-            },
-            "plugins": ["./esbuild/sri-plugin.mjs"]
+            }
           },
           "configurations": {
             "production": {
