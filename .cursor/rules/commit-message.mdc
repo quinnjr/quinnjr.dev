@@ -1,0 +1,66 @@
+# Commit Message Rules
+
+## Format
+All commit messages must follow the format:
+```
+<type>: <description>
+```
+
+## Types
+- **feature**: New feature or functionality
+- **bugfix**: Bug fix or error correction
+- **release**: Release commit (version bumps, release notes)
+- **hotfix**: Critical hotfix for production issues
+- **chore**: Maintenance tasks, dependency updates, configuration changes
+- **docs**: Documentation changes (README, comments, guides)
+- **style**: Code style changes (formatting, whitespace, no logic changes)
+- **refactor**: Code refactoring without changing functionality
+- **test**: Adding or updating tests
+- **perf**: Performance improvements
+
+## Description
+- Use imperative mood: "add feature" not "added feature" or "adds feature"
+- Keep description concise but descriptive
+- Start with lowercase letter
+- No period at the end
+- Maximum 72 characters for the first line
+
+## Examples
+```
+feature: add user authentication
+bugfix: fix login redirect issue
+chore: update dependencies
+docs: add API documentation
+refactor: simplify error handling
+test: add unit tests for blog service
+perf: optimize database queries
+```
+
+## Multi-line Messages
+For detailed explanations, use:
+```
+feature: add user authentication
+
+- Implement Auth0 integration
+- Add login/logout components
+- Add route guards for protected routes
+- Update navigation component
+
+Closes #123
+```
+
+## Breaking Changes
+For breaking changes, use:
+```
+feature: refactor API endpoints
+
+BREAKING CHANGE: API endpoints now require authentication
+All endpoints now require Bearer token in Authorization header
+```
+
+## Best Practices
+- Write clear, descriptive commit messages
+- Reference issue numbers when applicable: `Closes #123`
+- Group related changes in a single commit
+- Don't mix unrelated changes in one commit
+- Use present tense, imperative mood

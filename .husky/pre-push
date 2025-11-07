@@ -1,0 +1,63 @@
+# Get the current branch name
+current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
+
+# Prevent pushing directly to main or develop
+if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ] || [ "$current_branch" = "develop" ]; then
+  echo "❌ You cannot push directly to '$current_branch' branch!"
+  echo ""
+  echo "Please create a feature/bugfix/hotfix/release branch instead:"
+  echo "  git checkout -b feature/your-feature-name"
+  echo "  git checkout -b bugfix/your-bugfix-name"
+  echo "  git checkout -b hotfix/your-hotfix-name"
+  echo "  git checkout -b release/your-release-name"
+  echo ""
+  exit 1
+fi
+
+# Enforce git-flow branch naming convention
+# Valid patterns:
+# - feature/name
+# - bugfix/name
+# - hotfix/name
+# - release/name
+# - develop (protected, but valid)
+# - main/master (protected, but valid)
+
+if ! echo "$current_branch" | grep -qE "^(feature|bugfix|hotfix|release|develop|main|master)(/.*)?$"; then
+  echo "❌ Invalid branch name: '$current_branch'"
+  echo ""
+  echo "Branch names must follow git-flow convention:"
+  echo "  - feature/name (for new features)"
+  echo "  - bugfix/name (for bug fixes)"
+  echo "  - hotfix/name (for critical hotfixes)"
+  echo "  - release/name (for release branches)"
+  echo ""
+  echo "Examples:"
+  echo "  feature/user-authentication"
+  echo "  bugfix/login-redirect"
+  echo "  hotfix/security-patch"
+  echo "  release/v2.0.0"
+  echo ""
+  exit 1
+fi
+
+echo "✅ Branch name is valid: $current_branch"
+
+echo ""
+echo "🧪 Running tests before push..."
+echo "🔧 Generating Prisma client..."
+pnpm prisma:generate || exit 1
+
+echo "🔍 Running linter..."
+pnpm lint || exit 1
+
+echo "🧪 Running server tests..."
+pnpm test:server || {
+  echo ""
+  echo "❌ Tests failed! Cannot push to remote."
+  echo "Please fix all test failures before pushing."
+  exit 1
+}
+
+echo "✅ All tests passed! Proceeding with push..."
+

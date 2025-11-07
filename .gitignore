@@ -35,7 +35,7 @@ yarn-error.log
 .sass-cache/
 /connect.lock
 /coverage
-/libpeerconnection.log
+/coverage/
 testem.log
 /typings
 
@@ -52,3 +52,8 @@ Thumbs.db
 .terraform.lock.hcl
 crash.log
 crash.*.log
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/

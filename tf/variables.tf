@@ -7,7 +7,7 @@ variable "do_token" {
 variable "project_name" {
   description = "Name of the project"
   type        = string
-  default     = "quinnjr-tech"
+  default     = "quinnjr-dev"
 }
 
 variable "region" {
@@ -19,7 +19,7 @@ variable "region" {
 variable "docker_image" {
   description = "Docker image to deploy (from GitHub Container Registry)"
   type        = string
-  default     = "ghcr.io/quinnjr/quinnjr.tech:latest"
+  default     = "ghcr.io/quinnjr/quinnjr.dev:latest"
 }
 
 variable "app_port" {
@@ -28,17 +28,6 @@ variable "app_port" {
   default     = 4000
 }
 
-variable "db_name" {
-  description = "PostgreSQL database name"
-  type        = string
-  default     = "quinnjr_tech_db"
-}
-
-variable "db_user" {
-  description = "PostgreSQL database user"
-  type        = string
-  default     = "quinnjr_tech_user"
-}
 
 variable "github_username" {
   description = "GitHub username for container registry access"
@@ -59,7 +48,7 @@ variable "node_env" {
 }
 
 variable "domain_name" {
-  description = "Custom domain name for the application (e.g., quinnjr.tech)"
+  description = "Custom domain name for the application (e.g., quinnjr.dev)"
   type        = string
   default     = ""
 }

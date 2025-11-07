@@ -1,14 +1,21 @@
+import 'reflect-metadata'; // Must be first import for tsyringe
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr/node';
 import express from 'express';
-import { fileURLToPath } from 'node:url';
-import { dirname, join, resolve } from 'node:path';
+
 import bootstrap from './main.server';
+import { initializeContainer } from './server/container';
 import blogRoutes from './server/routes/blog';
 import sitemapRoutes from './server/routes/sitemap';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
+  // Initialize dependency injection container
+  initializeContainer();
+
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
@@ -30,9 +37,12 @@ export function app(): express.Express {
   server.use('/', sitemapRoutes);
 
   // Serve static files from /browser
-  server.get('*.*', express.static(browserDistFolder, {
-    maxAge: '1y',
-  }));
+  server.get(
+    '*.*',
+    express.static(browserDistFolder, {
+      maxAge: '1y',
+    })
+  );
 
   // All regular routes use the Angular engine
   server.get('**', (req, res, next) => {
@@ -54,11 +64,12 @@ export function app(): express.Express {
 }
 
 function run(): void {
-  const port = process.env['PORT'] || 4000;
+  const port = process.env['PORT'] ?? '4000';
 
   // Start up the Node server
   const server = app();
   server.listen(port, () => {
+    // eslint-disable-next-line no-console
     console.log(`Node Express server listening on http://localhost:${port}`);
   });
 }

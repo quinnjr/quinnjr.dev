@@ -47,6 +47,9 @@ EXPOSE 4000
 ENV NODE_ENV=production
 ENV PORT=4000
 
+# Create directory for SQLite database
+RUN mkdir -p /data
+
 # Start the server
-CMD ["node", "dist/quinnjr.tech/server/server.mjs"]
+CMD ["node", "dist/quinnjr.dev/server/server.mjs"]
 

@@ -1,16 +1,22 @@
 version: '3.8'
 
 services:
-  web:
+  app:
     build:
       context: .
       dockerfile: Dockerfile
-    image: quinnjr.tech:latest
-    container_name: quinnjr-tech
+    image: quinnjr.dev:latest
+    container_name: quinnjr-dev
+    restart: always
     ports:
       - "4000:4000"
     environment:
       - NODE_ENV=production
       - PORT=4000
-    restart: unless-stopped
+      - DATABASE_URL=file:/data/quinnjr.db
+    volumes:
+      - sqlite_data:/data
+
+volumes:
+  sqlite_data:
 
