@@ -8,6 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
+    "test:coverage": "jest --config jest.config.mjs --coverage --watchAll=false",
     "test:server": "jest --config jest.config.server.mjs",
     "test:server:watch": "jest --config jest.config.server.mjs --watch",
     "test:server:coverage": "jest --config jest.config.server.mjs --coverage",
