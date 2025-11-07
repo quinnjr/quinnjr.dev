@@ -56,6 +56,12 @@ jobs:
       - name: Run linter
         run: pnpm lint
 
+      - name: Run server unit tests
+        run: pnpm test:server:coverage
+
+      - name: Run client unit tests
+        run: pnpm test -- --no-watch --code-coverage --browsers=ChromeHeadless
+
       - name: Build application
         run: pnpm build
 
@@ -144,7 +150,7 @@ jobs:
           do_token        = "${{ secrets.DIGITALOCEAN_TOKEN }}"
           github_token    = "${{ secrets.GH_PAT }}"
           github_username = "${{ github.repository_owner }}"
-          project_name    = "quinnjr-tech"
+          project_name    = "quinnjr-dev"
           region          = "nyc3"
           docker_image    = "ghcr.io/${{ github.repository }}:${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}"
           domain_name     = "${{ secrets.DOMAIN_NAME }}"
