@@ -92,11 +92,8 @@
         "test": {
           "builder": "@angular-builders/jest:run",
           "options": {
-            "polyfills": [],
             "tsConfig": "tsconfig.spec.json",
-
-            "styles": ["src/styles.scss"],
-            "scripts": []
+            "configPath": "jest.config.angular.mjs"
           }
         },
         "lint": {

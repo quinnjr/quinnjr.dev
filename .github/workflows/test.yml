@@ -94,7 +94,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run client unit tests
-        run: pnpm test -- --no-watch --code-coverage --browsers=ChromeHeadless
+        run: ng test --no-watch --coverage
 
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
