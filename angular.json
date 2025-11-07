@@ -19,7 +19,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:application",
+          "builder": "@angular-builders/custom-esbuild:application",
           "options": {
             "outputPath": "dist/quinnjr.dev",
             "index": "src/index.html",
@@ -39,7 +39,8 @@
             "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "plugins": ["./esbuild/sri-plugin.mjs"]
           },
           "configurations": {
             "production": {
@@ -49,6 +50,7 @@
               "aot": true,
               "namedChunks": true,
               "subresourceIntegrity": true,
+              "plugins": ["./esbuild/sri-plugin.mjs"],
               "prerender": false,
               "budgets": [
                 {

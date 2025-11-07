@@ -4,7 +4,7 @@ import { ActivatedRoute, RouterOutlet } from '@angular/router';
 import { map, Observable } from 'rxjs';
 
 import { slideInAnimation } from './animations';
-import { NavigationComponent } from './navigation/navigation.component';
+import { NavigationComponent } from './components/navigation/navigation.component';
 
 @Component({
   selector: 'app-root',

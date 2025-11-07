@@ -20,4 +20,3 @@ test.describe('Authentication', () => {
     await expect(page).toHaveURL(/.*callback/);
   });
 });
-

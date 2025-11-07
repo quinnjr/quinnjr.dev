@@ -21,4 +21,3 @@ test.describe('Page Navigation', () => {
     await expect(page).toHaveURL(/.*login/);
   });
 });
-

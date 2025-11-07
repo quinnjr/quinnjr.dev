@@ -34,4 +34,3 @@ test.describe('Navigation', () => {
     await expect(loginButton).toBeVisible();
   });
 });
-

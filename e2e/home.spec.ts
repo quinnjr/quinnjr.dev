@@ -22,4 +22,3 @@ test.describe('Home Page', () => {
     await expect(page).toHaveURL(/.*home/);
   });
 });
-
