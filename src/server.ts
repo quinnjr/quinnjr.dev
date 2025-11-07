@@ -1,3 +1,4 @@
+import 'reflect-metadata'; // Must be first import for tsyringe
 import { APP_BASE_HREF } from '@angular/common';
 import { CommonEngine } from '@angular/ssr/node';
 import express from 'express';
@@ -6,9 +7,13 @@ import { dirname, join, resolve } from 'node:path';
 import bootstrap from './main.server';
 import blogRoutes from './server/routes/blog';
 import sitemapRoutes from './server/routes/sitemap';
+import { initializeContainer } from './server/container';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
+  // Initialize dependency injection container
+  initializeContainer();
+
   const server = express();
   const serverDistFolder = dirname(fileURLToPath(import.meta.url));
   const browserDistFolder = resolve(serverDistFolder, '../browser');
