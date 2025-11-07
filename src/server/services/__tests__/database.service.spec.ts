@@ -58,10 +58,21 @@ describe('DatabaseService', () => {
     });
 
     it('should return false when database connection fails', async () => {
+      // Suppress console.error for this test since we're testing the error case
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {
+        // Suppress error output in tests
+      });
+
       mockPrismaClient.$queryRaw.mockRejectedValue(new Error('Connection failed'));
 
       const result = await service.healthCheck();
       expect(result).toBe(false);
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        'Database health check failed:',
+        expect.any(Error)
+      );
+
+      consoleErrorSpy.mockRestore();
     });
   });
 });
