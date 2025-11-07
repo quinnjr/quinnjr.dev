@@ -5,11 +5,7 @@
     "outDir": "./out-tsc/client",
     "types": []
   },
-  "include": [
-    "src/app/**/*.ts",
-    "src/main.ts",
-    "src/environments/**/*.ts"
-  ],
+  "include": ["src/app/**/*.ts", "src/main.ts", "src/environments/**/*.ts"],
   "exclude": [
     "src/server/**",
     "src/server.ts",
@@ -22,4 +18,3 @@
     "node_modules/**"
   ]
 }
-

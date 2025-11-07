@@ -7,12 +7,7 @@
     "types": ["node"]
   },
   "files": ["src/main.ts"],
-  "include": [
-    "src/app/**/*.ts",
-    "!src/app/**/*.spec.ts",
-    "!src/app/**/*.test.ts",
-    "src/**/*.d.ts"
-  ],
+  "include": ["src/app/**/*.ts", "!src/app/**/*.spec.ts", "!src/app/**/*.test.ts", "src/**/*.d.ts"],
   "exclude": [
     "src/server/**",
     "src/server.ts",
