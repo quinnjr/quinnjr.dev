@@ -1,62 +1,39 @@
 /**
- * Jest configuration for server-side tests only
- * This configuration is separate from Angular/client-side tests
+ * Jest configuration for Angular/client-side tests only
+ * This configuration excludes all server-side tests
  */
 
 const config = {
-  preset: 'ts-jest',
-  testEnvironment: 'node',
+  // Only run tests in the app directory (client-side)
+  roots: ['<rootDir>/src/app'],
   
-  // Only run tests in the server directory
-  roots: ['<rootDir>/src/server'],
+  // Match client-side test files only
+  testMatch: ['<rootDir>/src/app/**/*.spec.ts'],
   
-  // Match server test files only
-  testMatch: [
-    '<rootDir>/src/server/**/__tests__/**/*.test.ts',
-    '<rootDir>/src/server/**/__tests__/**/*.spec.ts',
-    '<rootDir>/src/server/**/*.spec.ts',
-  ],
-  
-  // Explicitly exclude client-side and e2e tests
+  // Explicitly exclude server-side tests and e2e tests
   testPathIgnorePatterns: [
     '/node_modules/',
-    '<rootDir>/src/app/',
+    '<rootDir>/src/server/',
     '<rootDir>/e2e/',
   ],
   
-  // Coverage collection for server code only
+  // Coverage collection for client code only
   collectCoverageFrom: [
-    'src/server/**/*.ts',
-    '!src/server/**/*.d.ts',
-    '!src/server/**/*.interface.ts',
-    '!src/server/routes/*.ts', // Integration tests handled separately
-    '!src/server/**/__tests__/**',
+    'src/app/**/*.ts',
+    '!src/app/**/*.spec.ts',
+    '!src/app/**/*.d.ts',
   ],
   
-  coverageDirectory: 'coverage/server',
+  coverageDirectory: 'coverage/client',
   coverageReporters: ['text', 'lcov', 'html'],
   
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
+  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
   
   transform: {
-    '^.+\\.ts$': [
-      'ts-jest',
-      {
-        tsconfig: {
-          experimentalDecorators: true,
-          emitDecoratorMetadata: true,
-        },
-      },
-    ],
+    '^.+\\.ts$': 'ts-jest',
   },
   
-  transformIgnorePatterns: ['node_modules/(?!(@prisma|.*\\.mjs$))'],
-  
-  moduleNameMapper: {
-    '^(\\.{1,2}/.*)\\.js$': '$1',
-  },
-  
-  setupFilesAfterEnv: ['<rootDir>/src/server/__tests__/setup.ts'],
+  transformIgnorePatterns: ['/node_modules/'],
   
   clearMocks: true,
   resetMocks: true,

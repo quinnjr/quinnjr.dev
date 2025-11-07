@@ -93,7 +93,7 @@
           "builder": "@angular-builders/jest:run",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "configPath": "jest.config.angular.mjs"
+            "configPath": "jest.config.mjs"
           }
         },
         "lint": {
