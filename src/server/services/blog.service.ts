@@ -1,6 +1,6 @@
 import { inject, singleton } from 'tsyringe';
 import { DatabaseService } from './database.service';
-import { BlogPost, Category, Tag, PostStatus } from '../../generated/prisma';
+import { PostStatus } from '../../generated/prisma';
 import slugify from 'slugify';
 
 export interface CreateBlogPostDto {

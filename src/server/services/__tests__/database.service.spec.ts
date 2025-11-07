@@ -19,6 +19,7 @@ describe('DatabaseService', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     service = new DatabaseService();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     mockPrismaClient = (service as any).client;
   });
 

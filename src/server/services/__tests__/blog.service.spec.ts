@@ -2,10 +2,30 @@ import { BlogService } from '../blog.service';
 import { DatabaseService } from '../database.service';
 import { PostStatus } from '../../../generated/prisma';
 
+interface MockPrismaClient {
+  blogPost: {
+    findMany: jest.Mock;
+    findUnique: jest.Mock;
+    findFirst: jest.Mock;
+    create: jest.Mock;
+    update: jest.Mock;
+    delete: jest.Mock;
+  };
+  blogPostTag: {
+    deleteMany: jest.Mock;
+  };
+  category: {
+    findMany: jest.Mock;
+  };
+  tag: {
+    findMany: jest.Mock;
+  };
+}
+
 describe('BlogService', () => {
   let service: BlogService;
   let mockDatabaseService: jest.Mocked<DatabaseService>;
-  let mockPrismaClient: any;
+  let mockPrismaClient: MockPrismaClient;
 
   beforeEach(() => {
     // Create mock Prisma client
@@ -32,7 +52,7 @@ describe('BlogService', () => {
     // Create mock DatabaseService
     mockDatabaseService = {
       getClient: jest.fn().mockReturnValue(mockPrismaClient),
-    } as any;
+    } as unknown as jest.Mocked<DatabaseService>;
 
     service = new BlogService(mockDatabaseService);
   });

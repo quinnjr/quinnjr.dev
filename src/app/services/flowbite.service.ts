@@ -8,9 +8,7 @@ export class FlowbiteService {
 
   private platformId = inject(PLATFORM_ID);
 
-  constructor() {}
-
-  public loadFlowbite(callback: (flowbite: any) => void): void {
+  public loadFlowbite(callback: (flowbite: typeof import('flowbite')) => void): void {
     if (isPlatformBrowser(this.platformId)) {
       import('flowbite').then(flowbite => {
         callback(flowbite);

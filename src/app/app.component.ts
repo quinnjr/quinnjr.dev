@@ -22,9 +22,6 @@ export class AppComponent {
 
   private activatedRoute = inject(ActivatedRoute);
 
-  constructor(
-  ) {}
-
   public getRouteAnimationData(): Observable<string | undefined> {
     return this.activatedRoute.data
       .pipe(

@@ -1,10 +1,25 @@
 import { SitemapService } from '../sitemap.service';
 import { DatabaseService } from '../database.service';
 
+interface MockPrismaClient {
+  sitemapConfig: {
+    findMany: jest.Mock;
+  };
+  blogPost: {
+    findMany: jest.Mock;
+  };
+  category: {
+    findMany: jest.Mock;
+  };
+  tag: {
+    findMany: jest.Mock;
+  };
+}
+
 describe('SitemapService', () => {
   let service: SitemapService;
   let mockDatabaseService: jest.Mocked<DatabaseService>;
-  let mockPrismaClient: any;
+  let mockPrismaClient: MockPrismaClient;
 
   beforeEach(() => {
     mockPrismaClient = {
@@ -24,7 +39,7 @@ describe('SitemapService', () => {
 
     mockDatabaseService = {
       getClient: jest.fn().mockReturnValue(mockPrismaClient),
-    } as any;
+    } as unknown as jest.Mocked<DatabaseService>;
 
     service = new SitemapService(mockDatabaseService);
   });

@@ -19,7 +19,7 @@ export function initializeContainer(): void {
 /**
  * Get a service from the container
  */
-export function getService<T>(token: any): T {
+export function getService<T>(token: new (...args: unknown[]) => T): T {
   return container.resolve<T>(token);
 }
 

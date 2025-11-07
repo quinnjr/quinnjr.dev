@@ -38,10 +38,11 @@ import { QuillModule } from 'ngx-quill';
 
             <!-- Title -->
             <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label for="title" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Title *
               </label>
               <input
+                id="title"
                 type="text"
                 formControlName="title"
                 class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
@@ -64,10 +65,11 @@ import { QuillModule } from 'ngx-quill';
 
             <!-- Content Editor -->
             <div class="mb-4">
-              <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label for="content" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Content *
               </label>
               <quill-editor
+                id="content"
                 formControlName="content"
                 [modules]="quillModules"
                 [styles]="{ height: '400px' }"

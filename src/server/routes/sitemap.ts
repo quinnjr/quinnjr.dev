@@ -5,13 +5,6 @@ import { SitemapService } from '../services/sitemap.service';
 const router = Router();
 const sitemapService = container.resolve(SitemapService);
 
-interface SitemapUrl {
-  loc: string;
-  lastmod?: string;
-  changefreq?: string;
-  priority?: number;
-}
-
 /**
  * Generate sitemap.xml with static Angular routes and dynamic blog posts
  */

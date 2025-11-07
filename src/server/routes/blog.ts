@@ -50,10 +50,11 @@ router.post('/posts', async (req, res) => {
     });
 
     res.status(201).json(post);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error creating blog post:', error);
-    if (error.message === 'A post with this title already exists') {
-      return res.status(400).json({ error: error.message });
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create blog post';
+    if (errorMessage === 'A post with this title already exists') {
+      return res.status(400).json({ error: errorMessage });
     }
     res.status(500).json({ error: 'Failed to create blog post' });
   }
@@ -73,10 +74,11 @@ router.put('/posts/:id', async (req, res) => {
     });
 
     res.json(post);
-  } catch (error: any) {
+  } catch (error) {
     console.error('Error updating blog post:', error);
-    if (error.message === 'A post with this title already exists') {
-      return res.status(400).json({ error: error.message });
+    const errorMessage = error instanceof Error ? error.message : 'Failed to update blog post';
+    if (errorMessage === 'A post with this title already exists') {
+      return res.status(400).json({ error: errorMessage });
     }
     res.status(500).json({ error: 'Failed to update blog post' });
   }

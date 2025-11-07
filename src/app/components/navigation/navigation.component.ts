@@ -48,8 +48,6 @@ export class NavigationComponent implements OnInit {
 
   private flowbiteService = inject(FlowbiteService);
 
-  constructor() {}
-
   public ngOnInit() {
     this.flowbiteService.loadFlowbite(flowbite => {
       flowbite.init();
