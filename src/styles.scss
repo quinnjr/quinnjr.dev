@@ -3,5 +3,11 @@
 @tailwind utilities;
 
 body {
-  @apply dark:bg-gray-900;
+  @apply bg-gray-900 text-white;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
 }
