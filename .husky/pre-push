@@ -47,3 +47,21 @@ fi
 
 echo "✅ Branch name is valid: $current_branch"
 
+echo ""
+echo "🧪 Running tests before push..."
+echo "🔧 Generating Prisma client..."
+pnpm prisma:generate || exit 1
+
+echo "🔍 Running linter..."
+pnpm lint || exit 1
+
+echo "🧪 Running server tests..."
+pnpm test:server || {
+  echo ""
+  echo "❌ Tests failed! Cannot push to remote."
+  echo "Please fix all test failures before pushing."
+  exit 1
+}
+
+echo "✅ All tests passed! Proceeding with push..."
+

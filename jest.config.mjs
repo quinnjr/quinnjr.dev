@@ -22,10 +22,12 @@ const config = {
     }],
   },
   transformIgnorePatterns: [
-    'node_modules/(?!(.*\\.mjs$))',
+    'node_modules/(?!(@prisma|.*\\.mjs$))',
   ],
   moduleNameMapper: {
     '^(\\.{1,2}/.*)\\.js$': '$1',
+    '^../../generated/prisma/client$': '<rootDir>/src/generated/__mocks__/prisma/client',
+    '^../../../generated/prisma/client$': '<rootDir>/src/generated/__mocks__/prisma/client',
   },
   setupFilesAfterEnv: ['<rootDir>/src/server/__tests__/setup.ts'],
   clearMocks: true,

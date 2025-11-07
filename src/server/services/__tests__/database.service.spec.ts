@@ -1,20 +1,12 @@
 import { DatabaseService } from '../database.service';
-import { PrismaClient } from '../../../generated/prisma/client';
-
-// Mock PrismaClient
-jest.mock('../../../generated/prisma/client', () => {
-  return {
-    PrismaClient: jest.fn().mockImplementation(() => ({
-      $connect: jest.fn().mockResolvedValue(undefined),
-      $disconnect: jest.fn().mockResolvedValue(undefined),
-      $queryRaw: jest.fn().mockResolvedValue([{ '?column?': 1 }]),
-    })),
-  };
-});
 
 describe('DatabaseService', () => {
   let service: DatabaseService;
-  let mockPrismaClient: jest.Mocked<PrismaClient>;
+  let mockPrismaClient: {
+    $connect: jest.Mock;
+    $disconnect: jest.Mock;
+    $queryRaw: jest.Mock;
+  };
 
   beforeEach(() => {
     jest.clearAllMocks();

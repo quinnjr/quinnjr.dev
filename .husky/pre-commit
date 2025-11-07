@@ -5,10 +5,6 @@ echo "🔍 Running linter..."
 pnpm lint || exit 1
 
 echo "🧪 Running server tests..."
-pnpm test:server || {
-  echo "⚠️  Tests failed, but continuing commit..."
-  echo "Please fix test failures before pushing to remote."
-  exit 0
-}
+pnpm test:server || exit 1
 
 echo "✅ Pre-commit checks passed!"
