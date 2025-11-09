@@ -60,29 +60,349 @@
       </div>
     </div>
 
-    <!-- Projects Grid Placeholder -->
+    <!-- Projects Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
-      @for (i of [1, 2, 3]; track i) {
-        <div
-          class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20"
-        >
-          <div class="flex items-start justify-between mb-4">
-            <i class="fas fa-folder text-3xl text-purple-400"></i>
-            <i
-              class="fab fa-github text-gray-500 text-xl group-hover:text-purple-400 transition-colors"
-            ></i>
-          </div>
-          <h3 class="text-xl font-bold text-white mb-2">More Projects Coming Soon</h3>
-          <p class="text-gray-400 mb-4">
-            Check back later for more open-source projects and technical contributions
-          </p>
-          <div class="flex flex-wrap gap-2">
-            <span class="px-3 py-1 bg-purple-500/10 text-purple-300 rounded-full text-sm"
-              >In Progress</span
-            >
-          </div>
+      <!-- FruityLoops MCP -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-music text-3xl text-purple-400"></i>
+          <a
+            href="https://github.com/quinnjr/fruityloops-mcp"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-purple-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
         </div>
-      }
+        <h3 class="text-xl font-bold text-white mb-2">FruityLoops MCP</h3>
+        <p class="text-gray-400 mb-4">
+          An MCP server exposing the Fruity Loops Python API for AI-powered music production
+          automation
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-purple-500/10 text-purple-300 rounded-full text-sm"
+            >Python</span
+          >
+          <span class="px-3 py-1 bg-purple-500/10 text-purple-300 rounded-full text-sm">MCP</span>
+        </div>
+      </div>
+
+      <!-- LMMS Claude MCP Improved -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-headphones text-3xl text-blue-400"></i>
+          <a
+            href="https://github.com/quinnjr/lmms-claude-mcp-improved"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-blue-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">LMMS Claude MCP Improved</h3>
+        <p class="text-gray-400 mb-4">
+          Improved version of LMMS-Claude-MCP with dependency fixes for seamless music production
+          integration
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full text-sm">Python</span>
+          <span class="px-3 py-1 bg-blue-500/10 text-blue-300 rounded-full text-sm">MCP</span>
+        </div>
+      </div>
+
+      <!-- ng-indexeddb-signals -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-pink-500 transition-all duration-300 hover:shadow-lg hover:shadow-pink-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-database text-3xl text-pink-400"></i>
+          <a
+            href="https://github.com/quinnjr/ng-indexeddb-signals"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-pink-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">ng-indexeddb-signals</h3>
+        <p class="text-gray-400 mb-4">
+          Angular library leveraging signals for reactive IndexedDB operations and browser storage
+          management
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-pink-500/10 text-pink-300 rounded-full text-sm">Angular</span>
+        </div>
+      </div>
+
+      <!-- Guitar Pro MCP -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-green-500 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-guitar text-3xl text-green-400"></i>
+          <a
+            href="https://github.com/quinnjr/guitar-pro-mcp"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-green-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Guitar Pro MCP</h3>
+        <p class="text-gray-400 mb-4">
+          An MCP server for generating Guitar Pro files, enabling AI-powered music notation and
+          tablature creation
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-green-500/10 text-green-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-green-500/10 text-green-300 rounded-full text-sm">MCP</span>
+        </div>
+      </div>
+
+      <!-- iTunes MTP -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-mobile-alt text-3xl text-orange-400"></i>
+          <a
+            href="https://github.com/quinnjr/itunes-mtp"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-orange-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">iTunes MTP</h3>
+        <p class="text-gray-400 mb-4">
+          Rust implementation for iTunes Media Transfer Protocol interactions and device management
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-orange-500/10 text-orange-300 rounded-full text-sm">Rust</span>
+          <span class="px-3 py-1 bg-orange-500/10 text-orange-300 rounded-full text-sm">MTP</span>
+        </div>
+      </div>
+
+      <!-- Tic-Tac-Toe -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-cyan-500 transition-all duration-300 hover:shadow-lg hover:shadow-cyan-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-gamepad text-3xl text-cyan-400"></i>
+          <a
+            href="https://github.com/quinnjr/tic-tac-toe"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-cyan-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Tic-Tac-Toe</h3>
+        <p class="text-gray-400 mb-4">
+          Interactive tic-tac-toe game built with TypeScript, showcasing game logic and UI patterns
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-cyan-500/10 text-cyan-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-cyan-500/10 text-cyan-300 rounded-full text-sm">Game</span>
+        </div>
+      </div>
+
+      <!-- 8-Game -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-indigo-500 transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-puzzle-piece text-3xl text-indigo-400"></i>
+          <a
+            href="https://github.com/quinnjr/8-game"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-indigo-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">8-Game</h3>
+        <p class="text-gray-400 mb-4">
+          An 8-picture sliding puzzle game written in Angular 19+, demonstrating modern component
+          architecture
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-indigo-500/10 text-indigo-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-indigo-500/10 text-indigo-300 rounded-full text-sm"
+            >Angular</span
+          >
+        </div>
+      </div>
+
+      <!-- PluMA Online -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-yellow-500 transition-all duration-300 hover:shadow-lg hover:shadow-yellow-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-dna text-3xl text-yellow-400"></i>
+            <i class="fas fa-star text-yellow-400 text-sm"></i>
+          </div>
+          <a
+            href="https://github.com/quinnjr/pluma-online"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-yellow-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">PluMA Online</h3>
+        <p class="text-gray-400 mb-4">
+          Online system for the FIU Plugin-based Microbiome Analysis application with 5 stars
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-yellow-500/10 text-yellow-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-yellow-500/10 text-yellow-300 rounded-full text-sm"
+            >Research</span
+          >
+          <span class="px-3 py-1 bg-yellow-500/10 text-yellow-300 rounded-full text-sm"
+            >Bioinformatics</span
+          >
+        </div>
+      </div>
+
+      <!-- Scaramucci JS -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-red-500 transition-all duration-300 hover:shadow-lg hover:shadow-red-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-code text-3xl text-red-400"></i>
+          <a
+            href="https://github.com/quinnjr/scaramucci-js"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-red-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Scaramucci JS</h3>
+        <p class="text-gray-400 mb-4">
+          TypeScript library for advanced JavaScript utilities and functional programming patterns
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-red-500/10 text-red-300 rounded-full text-sm">TypeScript</span>
+          <span class="px-3 py-1 bg-red-500/10 text-red-300 rounded-full text-sm">Library</span>
+        </div>
+      </div>
+
+      <!-- Angular Bulma -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-teal-500 transition-all duration-300 hover:shadow-lg hover:shadow-teal-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex items-center gap-2">
+            <i class="fas fa-layer-group text-3xl text-teal-400"></i>
+            <i class="fas fa-star text-yellow-400 text-sm"></i>
+          </div>
+          <a
+            href="https://github.com/quinnjr/angular-bulma"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-teal-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Angular Bulma</h3>
+        <p class="text-gray-400 mb-4">
+          Monorepo for the angular-bulma project - Angular components for the Bulma CSS framework
+          with 2 stars
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-teal-500/10 text-teal-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-teal-500/10 text-teal-300 rounded-full text-sm">Angular</span>
+          <span class="px-3 py-1 bg-teal-500/10 text-teal-300 rounded-full text-sm">UI</span>
+        </div>
+      </div>
+
+      <!-- NestJS Apollo Client -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-violet-500 transition-all duration-300 hover:shadow-lg hover:shadow-violet-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-project-diagram text-3xl text-violet-400"></i>
+          <a
+            href="https://github.com/quinnjr/nestjs-apollo-client"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-violet-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">NestJS Apollo Client</h3>
+        <p class="text-gray-400 mb-4">
+          An Apollo Client implementation for use on the backend with NestJS framework
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-violet-500/10 text-violet-300 rounded-full text-sm"
+            >TypeScript</span
+          >
+          <span class="px-3 py-1 bg-violet-500/10 text-violet-300 rounded-full text-sm"
+            >NestJS</span
+          >
+          <span class="px-3 py-1 bg-violet-500/10 text-violet-300 rounded-full text-sm"
+            >GraphQL</span
+          >
+        </div>
+      </div>
+
+      <!-- Dotfiles -->
+      <div
+        class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-lime-500 transition-all duration-300 hover:shadow-lg hover:shadow-lime-500/20"
+      >
+        <div class="flex items-start justify-between mb-4">
+          <i class="fas fa-terminal text-3xl text-lime-400"></i>
+          <a
+            href="https://github.com/quinnjr/dotfiles"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-500 text-xl hover:text-lime-400 transition-colors"
+          >
+            <i class="fab fa-github"></i>
+          </a>
+        </div>
+        <h3 class="text-xl font-bold text-white mb-2">Dotfiles</h3>
+        <p class="text-gray-400 mb-4">
+          Personal dotfiles configuration for development environment. Many are like them, but these
+          are mine.
+        </p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-lime-500/10 text-lime-300 rounded-full text-sm">CSS</span>
+          <span class="px-3 py-1 bg-lime-500/10 text-lime-300 rounded-full text-sm">Config</span>
+        </div>
+      </div>
     </div>
 
     <!-- Call to Action -->
