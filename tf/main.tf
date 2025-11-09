@@ -10,6 +10,16 @@ resource "digitalocean_domain" "app_domain" {
   name  = var.domain_name
 }
 
+# Managed PostgreSQL Database
+resource "digitalocean_database_cluster" "quinnjr_postgres" {
+  name       = "${var.project_name}-db"
+  engine     = "pg"
+  version    = "16"
+  size       = "db-s-1vcpu-1gb" # Smallest managed DB: $15/month
+  region     = var.region
+  node_count = 1
+}
+
 # App Platform App
 resource "digitalocean_app" "quinnjr_dev" {
   spec {
@@ -24,6 +34,14 @@ resource "digitalocean_app" "quinnjr_dev" {
         type = "PRIMARY"
         zone = var.domain_name
       }
+    }
+
+    # Database
+    database {
+      name       = "${var.project_name}-db"
+      engine     = "PG"
+      production = false
+      cluster_name = digitalocean_database_cluster.quinnjr_postgres.name
     }
 
     # Service (Docker container)
@@ -71,11 +89,8 @@ resource "digitalocean_app" "quinnjr_dev" {
         value = var.node_env
       }
 
-      # SQLite database URL
-      env {
-        key   = "DATABASE_URL"
-        value = "file:/data/quinnjr.db"
-      }
+      # PostgreSQL database URL (automatically injected by App Platform)
+      # DATABASE_URL will be available as ${db.DATABASE_URL}
 
       # GitHub API token for fetching repositories
       env {
