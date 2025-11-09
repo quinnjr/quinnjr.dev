@@ -28,8 +28,9 @@ FROM node:22-alpine AS production
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and prisma schema
 COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma
 
 # Install pnpm
 RUN npm install -g pnpm@10.13.1
