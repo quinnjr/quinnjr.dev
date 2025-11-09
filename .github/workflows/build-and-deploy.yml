@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -59,7 +59,7 @@ jobs:
         run: pnpm exec playwright install --with-deps chromium
 
       - name: Run E2E tests
-        run: pnpm test:e2e
+        run: pnpm exec playwright test --project=chromium
         env:
           CI: true
 
@@ -145,15 +145,14 @@ jobs:
       - name: Configure Terraform variables
         run: |
           cat > terraform.tfvars <<EOF
-          do_token         = "${{ secrets.DIGITALOCEAN_TOKEN }}"
-          github_token     = "${{ secrets.GH_PAT }}"
-          github_api_token = "${{ secrets.GH_API_TOKEN }}"
-          github_username  = "${{ github.repository_owner }}"
-          project_name     = "quinnjr-dev"
-          region           = "nyc3"
-          docker_image     = "ghcr.io/${{ github.repository }}:${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}"
-          domain_name      = "${{ secrets.DOMAIN_NAME }}"
-          enable_dns       = ${{ secrets.ENABLE_DNS || 'false' }}
+          do_token        = "${{ secrets.DIGITALOCEAN_TOKEN }}"
+          github_token    = "${{ secrets.GH_PAT }}"
+          github_username = "${{ github.repository_owner }}"
+          project_name    = "quinnjr-dev"
+          region          = "nyc3"
+          docker_image    = "ghcr.io/${{ github.repository }}:${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}"
+          domain_name     = "${{ secrets.DOMAIN_NAME }}"
+          enable_dns      = ${{ secrets.ENABLE_DNS || 'false' }}
           EOF
       - name: Configure Spaces Backend
         run: |
@@ -209,7 +208,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Configure Git
         run: |
@@ -220,3 +219,4 @@ jobs:
         run: node scripts/create-version-tag.mjs
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
