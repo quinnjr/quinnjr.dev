@@ -9,6 +9,7 @@ import express from 'express';
 import bootstrap from './main.server';
 import { initializeContainer } from './server/container';
 import blogRoutes from './server/routes/blog';
+import githubRoutes from './server/routes/github';
 import sitemapRoutes from './server/routes/sitemap';
 
 // The Express app is exported so that it can be used by serverless Functions.
@@ -32,6 +33,7 @@ export function app(): express.Express {
 
   // API Routes
   server.use('/api/blog', blogRoutes);
+  server.use('/api/github', githubRoutes);
 
   // SEO Routes (sitemap, robots.txt)
   server.use('/', sitemapRoutes);

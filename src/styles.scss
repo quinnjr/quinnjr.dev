@@ -44,7 +44,10 @@
     color: var(--text-primary);
     margin: 0;
     padding: 0;
-    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1,
+      'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -160,7 +163,8 @@
   }
 
   @keyframes pulse-glow {
-    0%, 100% {
+    0%,
+    100% {
       box-shadow: var(--shadow-glow);
     }
     50% {
@@ -171,7 +175,13 @@
   /* Custom section divider */
   .section-divider {
     height: 1px;
-    background: linear-gradient(90deg, transparent, var(--color-primary), var(--color-accent), transparent);
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-primary),
+      var(--color-accent),
+      transparent
+    );
     margin: 3rem 0;
     opacity: 0.5;
   }

@@ -1,0 +1,23 @@
+# DigitalOcean API token
+# Get it from: https://cloud.digitalocean.com/account/api/tokens
+do_token = "your_digitalocean_api_token_here"
+
+# GitHub Container Registry token (for pulling Docker images)
+# Get it from: https://github.com/settings/tokens
+# Permissions needed: read:packages
+github_token = "your_github_container_registry_token_here"
+
+# GitHub API token (for fetching repository data)
+# Get it from: https://github.com/settings/tokens
+# Permissions needed: public_repo (read-only)
+github_api_token = "your_github_api_token_here"
+
+# Optional: Custom domain configuration
+# domain_name = "quinnjr.dev"
+# enable_dns  = true
+
+# Optional: Override defaults
+# project_name = "quinnjr-dev"
+# region       = "nyc3"
+# app_port     = 4000
+# node_env     = "production"

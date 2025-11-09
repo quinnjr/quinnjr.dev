@@ -77,6 +77,13 @@ resource "digitalocean_app" "quinnjr_dev" {
         value = "file:/data/quinnjr.db"
       }
 
+      # GitHub API token for fetching repositories
+      env {
+        key   = "GITHUB_TOKEN"
+        value = var.github_api_token
+        type  = "SECRET"
+      }
+
       # Volume mount for SQLite database persistence
       volume {
         name      = "sqlite-data"
