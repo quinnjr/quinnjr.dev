@@ -49,6 +49,10 @@ RUN rm -rf src
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
 
+# Copy Prisma engines from builder stage
+COPY --from=builder /app/node_modules/.prisma ./node_modules/.prisma
+COPY --from=builder /app/src/generated/prisma ./src/generated/prisma
+
 # Expose port
 EXPOSE 4000
 
