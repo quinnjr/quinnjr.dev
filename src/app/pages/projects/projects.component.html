@@ -1,18 +1,122 @@
-<div class="min-h-screen">
-  <div class="container mx-auto px-4 py-8">
-    <h1 class="text-4xl font-bold mb-6 dark:text-white">Projects</h1>
-    <div class="prose dark:prose-invert max-w-none">
-      <p>
-        Check out my
-        <a
-          href="https://github.com/quinnjr"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="text-blue-600 dark:text-blue-400 hover:underline"
-          >GitHub profile</a
-        >
-        for my latest projects and contributions!
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+  <div class="container mx-auto px-4 py-12">
+    <!-- Header -->
+    <div class="text-center mb-16">
+      <h1
+        class="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
+      >
+        Projects & Work
+      </h1>
+      <p class="text-xl text-gray-400 max-w-2xl mx-auto">
+        {{ repositories().length }} open-source projects spanning web development, systems
+        programming, bioinformatics, and more
       </p>
+    </div>
+
+    <!-- Loading State -->
+    @if (loading()) {
+      <div class="flex justify-center items-center py-20">
+        <div class="text-center">
+          <div
+            class="w-16 h-16 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"
+          ></div>
+          <p class="text-gray-400">Loading projects from GitHub...</p>
+        </div>
+      </div>
+    }
+
+    <!-- Error State -->
+    @if (error()) {
+      <div class="max-w-2xl mx-auto p-6 bg-red-900/20 border border-red-500 rounded-xl text-center">
+        <i class="fas fa-exclamation-triangle text-red-400 text-3xl mb-4"></i>
+        <h3 class="text-xl font-bold text-white mb-2">Failed to Load Projects</h3>
+        <p class="text-gray-400">{{ error() }}</p>
+      </div>
+    }
+
+    <!-- Projects Grid -->
+    @if (!loading() && !error()) {
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+        @for (repo of repositories(); track repo.name) {
+          <div
+            class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-{{
+              getColorForRepo(repo)
+            }}-500 transition-all duration-300 hover:shadow-lg hover:shadow-{{
+              getColorForRepo(repo)
+            }}-500/20"
+          >
+            <div class="flex items-start justify-between mb-4">
+              @if (repo.stargazerCount > 0) {
+                <div class="flex items-center gap-2">
+                  <i
+                    class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
+                      getColorForRepo(repo)
+                    }}-400"
+                  ></i>
+                  <i class="fas fa-star text-yellow-400 text-sm"></i>
+                </div>
+              } @else {
+                <i
+                  class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
+                    getColorForRepo(repo)
+                  }}-400"
+                ></i>
+              }
+              <a
+                [href]="repo.url"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-gray-500 text-xl hover:text-{{
+                  getColorForRepo(repo)
+                }}-400 transition-colors"
+              >
+                <i class="fab fa-github"></i>
+              </a>
+            </div>
+            <h3 class="text-xl font-bold text-white mb-2">{{ getDisplayName(repo.name) }}</h3>
+            <p class="text-gray-400 mb-4">
+              {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
+              @if (repo.stargazerCount > 0) {
+                <span
+                  >({{ repo.stargazerCount }}
+                  {{ repo.stargazerCount === 1 ? 'star' : 'stars' }})</span
+                >
+              }
+            </p>
+            @if (repo.primaryLanguage) {
+              <div class="flex flex-wrap gap-2">
+                <span
+                  class="px-3 py-1 bg-{{ getColorForRepo(repo) }}-500/10 text-{{
+                    getColorForRepo(repo)
+                  }}-300 rounded-full text-sm"
+                >
+                  {{ repo.primaryLanguage.name }}
+                </span>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Call to Action -->
+    <div
+      class="text-center p-12 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl border border-gray-700"
+    >
+      <i class="fab fa-github text-6xl text-gray-400 mb-6"></i>
+      <h2 class="text-3xl font-bold text-white mb-4">Explore More on GitHub</h2>
+      <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
+        Visit my GitHub profile to see all my public repositories, contributions, and collaborative
+        work
+      </p>
+      <a
+        href="https://github.com/quinnjr"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold text-white hover:shadow-lg hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-200"
+      >
+        <i class="fab fa-github mr-2"></i>View GitHub Profile
+      </a>
     </div>
   </div>
 </div>

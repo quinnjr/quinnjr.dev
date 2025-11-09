@@ -1,62 +1,194 @@
-<div class="min-h-screen">
-  <div class="container mx-auto px-4 py-8">
-    <!-- Intro Section -->
-    <section class="mb-12" id="intro">
-      <h1 class="text-4xl font-bold mb-6 dark:text-white">Welcome to my awesome website!</h1>
-      <div class="flex flex-col md:flex-row gap-6 items-start">
-        <figure class="flex-shrink-0">
-          <img class="w-32 h-32 rounded-full" src="/profile_picture.jpg" alt="My headshot" />
-        </figure>
-        <div class="flex-1">
-          <div class="prose dark:prose-invert max-w-none">
-            <p>Welcome to the personal website of Joseph R. Quinn, Esq.</p>
-            <p>
-              Herein you can find my Curiam Vitae/Resume, musings, tutorials on programming
-              subjects, and links to projects that I've worked on.
-            </p>
-            <p>Please enjoy your stay!</p>
-            <small
-              >PS: The source code for this website is available
-              <a
-                href="https://github.com/quinnjr/quinnjr.dev"
-                target="_blank"
-                class="text-blue-600 dark:text-blue-400 hover:underline"
-                >here</a
-              >.</small
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
+  <!-- Hero Section -->
+  <section class="relative overflow-hidden">
+    <!-- Animated Background -->
+    <div class="absolute inset-0 opacity-20">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 animate-pulse"
+      ></div>
+    </div>
+
+    <div class="container mx-auto px-4 py-20 relative z-10">
+      <div class="flex flex-col lg:flex-row items-center gap-12">
+        <!-- Profile Image -->
+        <div class="relative group">
+          <div
+            class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"
+          ></div>
+          <img
+            class="relative w-48 h-48 rounded-full object-cover ring-4 ring-gray-800"
+            src="/profile_picture.jpg"
+            alt="Joseph R. Quinn"
+          />
+        </div>
+
+        <!-- Hero Content -->
+        <div class="flex-1 text-center lg:text-left">
+          <h1
+            class="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-4"
+          >
+            Joseph R. Quinn, Esq.
+          </h1>
+          <p class="text-2xl md:text-3xl text-gray-300 mb-6">
+            <span class="text-blue-400">Software Engineer</span> •
+            <span class="text-purple-400">Attorney</span> •
+            <span class="text-pink-400">Technologist</span>
+          </p>
+          <p class="text-lg text-gray-400 max-w-2xl mb-8">
+            Bridging the intersection of law and technology. Specializing in full-stack development,
+            systems programming, and cyber law. Building innovative solutions with cutting-edge
+            technologies.
+          </p>
+
+          <!-- CTA Buttons -->
+          <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
+            <a
+              routerLink="/resume"
+              class="px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold text-white hover:shadow-lg hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-200"
+            >
+              View Resume
+            </a>
+            <a
+              routerLink="/projects"
+              class="px-8 py-3 bg-gray-800 rounded-lg font-semibold text-white border border-gray-700 hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-200"
+            >
+              See Projects
+            </a>
+            <a
+              href="https://github.com/quinnjr"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="px-8 py-3 bg-gray-800 rounded-lg font-semibold text-white border border-gray-700 hover:border-purple-500 hover:shadow-lg hover:shadow-purple-500/50 transform hover:-translate-y-1 transition-all duration-200"
+            >
+              <i class="fab fa-github mr-2"></i>GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Skills Section -->
+  <section class="py-20 bg-gray-900/50">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-12 text-white">
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
+          >Tech Stack</span
+        >
+      </h2>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Languages -->
+        <div
+          class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-blue-500 transition-all duration-300 hover:shadow-lg hover:shadow-blue-500/20"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-code text-3xl text-blue-400 mr-3"></i>
+            <h3 class="text-xl font-bold text-white">Languages</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">Rust</span>
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">Go</span>
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm"
+              >TypeScript</span
+            >
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">Python</span>
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">C++</span>
+            <span class="px-3 py-1 bg-blue-500/20 text-blue-300 rounded-full text-sm">C#</span>
+          </div>
+        </div>
+
+        <!-- Frontend -->
+        <div
+          class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300 hover:shadow-lg hover:shadow-purple-500/20"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-palette text-3xl text-purple-400 mr-3"></i>
+            <h3 class="text-xl font-bold text-white">Frontend</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm"
+              >Angular</span
+            >
+            <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm"
+              >Tailwind</span
+            >
+            <span class="px-3 py-1 bg-purple-500/20 text-purple-300 rounded-full text-sm">SSR</span>
+          </div>
+        </div>
+
+        <!-- Backend & Cloud -->
+        <div
+          class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-green-500 transition-all duration-300 hover:shadow-lg hover:shadow-green-500/20"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-server text-3xl text-green-400 mr-3"></i>
+            <h3 class="text-xl font-bold text-white">Backend</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm"
+              >Node.js</span
+            >
+            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm"
+              >Express</span
+            >
+            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm"
+              >Prisma</span
+            >
+            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm">SQL</span>
+            <span class="px-3 py-1 bg-green-500/20 text-green-300 rounded-full text-sm"
+              >NestJS</span
+            >
+          </div>
+        </div>
+
+        <!-- DevOps & Cloud -->
+        <div
+          class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-orange-500 transition-all duration-300 hover:shadow-lg hover:shadow-orange-500/20"
+        >
+          <div class="flex items-center mb-4">
+            <i class="fas fa-cloud text-3xl text-orange-400 mr-3"></i>
+            <h3 class="text-xl font-bold text-white">DevOps & Cloud</h3>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm">AWS</span>
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm"
+              >Digital Ocean</span
+            >
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm"
+              >Docker</span
+            >
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm"
+              >Kubernetes</span
+            >
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm"
+              >Jenkins</span
+            >
+            <span class="px-3 py-1 bg-orange-500/20 text-orange-300 rounded-full text-sm"
+              >Linux</span
             >
           </div>
         </div>
       </div>
-    </section>
+    </div>
+  </section>
 
-    <!-- Info Section with Articles and Projects -->
-    <section class="mb-12" id="info">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <!-- Recent Articles -->
-        <div>
-          <h2 class="text-3xl font-bold mb-4 dark:text-white">Recent Articles</h2>
-          <div class="space-y-4">
-            <p class="text-gray-600 dark:text-gray-400">
-              There are currently no articles to display!
-            </p>
-          </div>
-        </div>
+  <!-- Certifications Section -->
+  <section class="py-20 bg-gray-900">
+    <div class="container mx-auto px-4">
+      <h2 class="text-4xl font-bold text-center mb-4 text-white">
+        <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400"
+          >Certifications</span
+        >
+      </h2>
+      <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
+        Continuous learning and professional development in cutting-edge technologies
+      </p>
 
-        <!-- Recent Work -->
-        <div>
-          <h2 class="text-3xl font-bold mb-4 dark:text-white">Recent Work</h2>
-          <div class="space-y-4">
-            <p class="text-gray-600 dark:text-gray-400">Loading GitHub repositories...</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Badges Section -->
-    <section class="mb-12" id="badges">
-      <h2 class="text-3xl font-bold mb-6 dark:text-white">Certifications</h2>
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="flex justify-center">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
+        >
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -64,7 +196,9 @@
             data-share-badge-host="https://www.credly.com"
           ></div>
         </div>
-        <div class="flex justify-center">
+        <div
+          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
+        >
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -72,7 +206,9 @@
             data-share-badge-host="https://www.credly.com"
           ></div>
         </div>
-        <div class="flex justify-center">
+        <div
+          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
+        >
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -80,7 +216,9 @@
             data-share-badge-host="https://www.credly.com"
           ></div>
         </div>
-        <div class="flex justify-center">
+        <div
+          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
+        >
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -89,6 +227,41 @@
           ></div>
         </div>
       </div>
-    </section>
-  </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <section class="py-12 bg-gray-900/50 border-t border-gray-800">
+    <div class="container mx-auto px-4">
+      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-gray-400 text-sm">
+          © 2025 Joseph R. Quinn, Esq. • Licensed under
+          <a
+            href="https://github.com/quinnjr/quinnjr.dev/blob/main/LICENSE"
+            target="_blank"
+            class="text-blue-400 hover:underline"
+            >MIT License</a
+          >
+        </p>
+        <div class="flex gap-4">
+          <a
+            href="https://github.com/quinnjr"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-400 hover:text-blue-400 transition-colors"
+          >
+            <i class="fab fa-github text-2xl"></i>
+          </a>
+          <a
+            href="https://github.com/quinnjr/quinnjr.dev"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-gray-400 hover:text-purple-400 transition-colors"
+          >
+            <i class="fas fa-code text-2xl"></i>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
 </div>

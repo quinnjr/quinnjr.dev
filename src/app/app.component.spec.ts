@@ -1,4 +1,5 @@
 import { provideHttpClient } from '@angular/common/http';
+import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { provideAuth0 } from '@auth0/auth0-angular';
 import { TestBed } from '@angular/core/testing';
@@ -11,6 +12,7 @@ describe('AppComponent', () => {
       providers: [
         provideHttpClient(),
         provideRouter([]),
+        provideLocationMocks(),
         provideAuth0({
           domain: 'test.auth0.com',
           clientId: 'test-client-id',

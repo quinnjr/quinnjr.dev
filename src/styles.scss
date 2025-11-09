@@ -2,6 +2,187 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply dark:bg-gray-900;
+:root {
+  /* Custom color palette - unique brand colors */
+  --color-primary: #6366f1;
+  --color-primary-dark: #4f46e5;
+  --color-primary-light: #818cf8;
+  --color-accent: #ec4899;
+  --color-accent-dark: #db2777;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+
+  /* Custom backgrounds with subtle gradients */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --bg-card: rgba(30, 41, 59, 0.6);
+  --bg-card-hover: rgba(51, 65, 85, 0.7);
+
+  /* Custom text colors */
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+
+  /* Custom shadows and glows */
+  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
+  --shadow-glow-accent: 0 0 20px rgba(236, 72, 153, 0.3);
+  --shadow-elevation: 0 10px 40px rgba(0, 0, 0, 0.4);
+
+  /* Custom borders */
+  --border-color: rgba(100, 116, 139, 0.2);
+  --border-color-hover: rgba(139, 92, 246, 0.4);
+
+  /* Custom transitions */
+  --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@layer base {
+  body {
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1f35 100%);
+    color: var(--text-primary);
+    margin: 0;
+    padding: 0;
+    font-feature-settings:
+      'kern' 1,
+      'liga' 1,
+      'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
+    border-radius: 5px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: linear-gradient(180deg, var(--color-primary-light), var(--color-accent));
+  }
+}
+
+@layer components {
+  /* Custom card styles */
+  .card-custom {
+    background: var(--bg-card);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--border-color);
+    transition: var(--transition-base);
+  }
+
+  .card-custom:hover {
+    background: var(--bg-card-hover);
+    border-color: var(--border-color-hover);
+    box-shadow: var(--shadow-elevation);
+    transform: translateY(-2px);
+  }
+
+  /* Custom gradient text */
+  .text-gradient-custom {
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Custom button styles */
+  .btn-custom-primary {
+    background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+    color: white;
+    transition: var(--transition-base);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-custom-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s;
+  }
+
+  .btn-custom-primary:hover::before {
+    left: 100%;
+  }
+
+  .btn-custom-primary:hover {
+    box-shadow: var(--shadow-glow);
+    transform: translateY(-2px);
+  }
+
+  /* Custom link styles */
+  .link-custom {
+    color: var(--color-primary-light);
+    text-decoration: none;
+    position: relative;
+    transition: var(--transition-fast);
+  }
+
+  .link-custom::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+    transition: width 0.3s ease;
+  }
+
+  .link-custom:hover {
+    color: var(--color-accent);
+  }
+
+  .link-custom:hover::after {
+    width: 100%;
+  }
+
+  /* Custom glow effect */
+  .glow-effect {
+    box-shadow: var(--shadow-glow);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%,
+    100% {
+      box-shadow: var(--shadow-glow);
+    }
+    50% {
+      box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+    }
+  }
+
+  /* Custom section divider */
+  .section-divider {
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      var(--color-primary),
+      var(--color-accent),
+      transparent
+    );
+    margin: 3rem 0;
+    opacity: 0.5;
+  }
 }
