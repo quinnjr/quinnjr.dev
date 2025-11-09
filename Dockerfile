@@ -31,12 +31,16 @@ WORKDIR /app
 # Copy package files and prisma schema
 COPY package.json pnpm-lock.yaml ./
 COPY prisma ./prisma
+COPY src ./src
 
 # Install pnpm
 RUN npm install -g pnpm@10.13.1
 
-# Install only production dependencies
+# Install only production dependencies (Prisma needs src directory for generation)
 RUN pnpm install --prod --frozen-lockfile
+
+# Remove src directory (no longer needed after Prisma generation)
+RUN rm -rf src
 
 # Copy built application from builder stage
 COPY --from=builder /app/dist ./dist
