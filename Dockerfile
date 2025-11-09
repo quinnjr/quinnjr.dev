@@ -4,16 +4,18 @@ FROM node:22-alpine AS builder
 # Set working directory
 WORKDIR /app
 
-# Copy package files
+# Copy package files and necessary source files first
 COPY package.json pnpm-lock.yaml ./
+COPY prisma ./prisma
+COPY src ./src
 
 # Install pnpm
 RUN npm install -g pnpm@10.13.1
 
-# Install dependencies
-RUN pnpm install --frozen-lockfile
+# Install dependencies (skip prepare script to avoid husky issues)
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
-# Copy source code
+# Copy remaining source code
 COPY . .
 
 # Generate Prisma Client
