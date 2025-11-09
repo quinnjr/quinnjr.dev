@@ -83,13 +83,6 @@ resource "digitalocean_app" "quinnjr_dev" {
         value = var.github_api_token
         type  = "SECRET"
       }
-
-      # Volume mount for SQLite database persistence
-      volume {
-        name      = "sqlite-data"
-        mount_path = "/data"
-        size_gigabytes = 1
-      }
     }
 
     # Alerts
