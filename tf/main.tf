@@ -1,9 +1,3 @@
-# Container Registry credentials for GitHub Container Registry
-resource "digitalocean_container_registry_docker_credentials" "github_registry" {
-  registry_name = "ghcr.io"
-  write         = false
-}
-
 # Domain Resource (if using DigitalOcean DNS)
 resource "digitalocean_domain" "app_domain" {
   count = var.enable_dns && var.domain_name != "" ? 1 : 0
@@ -61,8 +55,8 @@ resource "digitalocean_app" "quinnjr_dev" {
           enabled = true
         }
 
-        # GitHub Container Registry credentials
-        registry_credentials = var.github_token
+        # GitHub Container Registry credentials (format: username:token)
+        registry_credentials = "${var.github_username}:${var.github_token}"
       }
 
       # Health check
