@@ -24,8 +24,5 @@ terraform {
     skip_region_validation      = true
     skip_s3_checksum            = true
     region                      = "us-east-1"
-
-    # Enable state locking with a lockfile (prevents concurrent modifications)
-    use_lockfile = true
   }
 }
