@@ -41,6 +41,12 @@ variable "github_token" {
   sensitive   = true
 }
 
+variable "github_api_token" {
+  description = "GitHub Personal Access Token for API access (fetching repositories)"
+  type        = string
+  sensitive   = true
+}
+
 variable "node_env" {
   description = "Node environment (production/development)"
   type        = string
