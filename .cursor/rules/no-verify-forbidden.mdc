@@ -1,0 +1,50 @@
+# Never Use --no-verify Flag
+
+## Rule
+**NEVER use `--no-verify` flag with any git commands.**
+
+## Rationale
+The `--no-verify` flag bypasses:
+- Pre-commit hooks (linting, formatting, tests)
+- Pre-push hooks (additional validation)
+- Commit message validation
+- Security checks
+
+These hooks are essential for maintaining code quality and preventing broken code from entering the repository.
+
+## Correct Usage
+
+### ❌ WRONG - Never do this:
+```bash
+git push --no-verify
+git commit --no-verify
+git push origin main --no-verify
+```
+
+### ✅ CORRECT - Always let hooks run:
+```bash
+git push
+git commit -m "message"
+git push origin main
+```
+
+## What to Do Instead
+
+If hooks are failing:
+1. **Fix the actual issue** - Don't bypass validation
+2. **Review the error messages** - They indicate real problems
+3. **Run commands locally** - `pnpm lint:fix`, `pnpm test`, `pnpm format`
+4. **Only commit when all checks pass**
+
+## Exceptions
+There are **NO exceptions** to this rule. If you need to bypass hooks, you must:
+1. Explicitly ask the user for permission
+2. Explain why it's necessary
+3. Get explicit user approval before proceeding
+
+## Why This Matters
+- Ensures code quality standards are met
+- Prevents broken builds in CI/CD
+- Maintains commit message consistency
+- Catches issues early before they reach the repository
+- Protects against accidentally committing secrets or sensitive data
