@@ -37,7 +37,9 @@ COPY src ./src
 RUN npm install -g pnpm@10.13.1
 
 # Install only production dependencies (Prisma needs src directory for generation)
-RUN pnpm install --prod --frozen-lockfile
+# Skip prepare script (husky is dev-only)
+RUN pnpm install --prod --frozen-lockfile --ignore-scripts && \
+    pnpm prisma:generate
 
 # Remove src directory (no longer needed after Prisma generation)
 RUN rm -rf src
