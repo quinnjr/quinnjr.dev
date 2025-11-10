@@ -1,6 +1,3 @@
-#!/usr/bin/env sh
-. "$(dirname -- "$0")/_/husky.sh"
-
 # Update package.json version when checking out a release branch
 current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
