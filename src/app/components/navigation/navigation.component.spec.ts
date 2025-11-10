@@ -35,4 +35,24 @@ describe('NavgiationComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('should have 6 navigation items', () => {
+    expect(component.navbarItems().length).toBe(6);
+  });
+
+  it('should have LinkedIn link', () => {
+    const linkedInItem = component.navbarItems().find(item => item.title === 'LinkedIn');
+    expect(linkedInItem).toBeDefined();
+    expect(linkedInItem?.link).toBe('https://www.linkedin.com/in/quinnjosephr/');
+    expect(linkedInItem?.icon).toBe('fab fa-linkedin');
+    expect(linkedInItem?.external).toBe(true);
+  });
+
+  it('should have Github link', () => {
+    const githubItem = component.navbarItems().find(item => item.title === 'Github');
+    expect(githubItem).toBeDefined();
+    expect(githubItem?.link).toBe('https://github.com/quinnjr');
+    expect(githubItem?.icon).toBe('fab fa-github');
+    expect(githubItem?.external).toBe(true);
+  });
 });
