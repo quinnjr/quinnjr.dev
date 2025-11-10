@@ -1,6 +1,6 @@
 output "app_url" {
   description = "URL of the deployed application"
-  value       = "https://${digitalocean_app.quinnjr_dev.default_ingress}"
+  value       = digitalocean_app.quinnjr_dev.live_url
 }
 
 output "app_live_url" {
