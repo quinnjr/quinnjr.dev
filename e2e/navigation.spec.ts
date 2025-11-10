@@ -46,7 +46,7 @@ test.describe('Navigation', () => {
     await expect(page).toHaveURL(/.*articles/);
   });
 
-  test('should have auth button component', async ({ page }) => {
+  test('should show login button when not authenticated', async ({ page }) => {
     // v2.0.0 uses auth-button component which may show Login or user info
     // Just verify the auth button component is present
     const authButton = page.locator('app-auth-button');
