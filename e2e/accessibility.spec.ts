@@ -6,12 +6,12 @@ test.describe('Accessibility', () => {
     // Wait for Angular to bootstrap - check for router outlet or app component
     await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
-    // Wait for home component content
-    await page.waitForSelector('[id="intro"]', { timeout: 10000 });
+    // Wait for home component content - v2.0.0 has hero section with gradient text
+    await page.waitForSelector('h1', { timeout: 10000 });
 
-    // Check for main content area - home component uses divs, not main tag
-    const mainContent = page.locator('[id="intro"]');
-    await expect(mainContent).toBeVisible({ timeout: 10000 });
+    // Check for main hero heading
+    const heroHeading = page.locator('h1').first();
+    await expect(heroHeading).toBeVisible({ timeout: 10000 });
   });
 
   test('should have accessible navigation', async ({ page }) => {
