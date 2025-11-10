@@ -19,11 +19,6 @@ export class NavigationComponent {
       icon: 'fas fa-home',
     },
     {
-      title: 'Articles',
-      link: '/articles',
-      icon: 'fas fa-newspaper',
-    },
-    {
       title: 'Resume',
       link: '/resume',
       icon: 'fas fa-user-graduate',
@@ -34,9 +29,9 @@ export class NavigationComponent {
       icon: 'fas fa-project-diagram',
     },
     {
-      title: 'Admin',
-      link: '/admin',
-      icon: 'fas fa-shield-alt',
+      title: 'Articles',
+      link: '/articles',
+      icon: 'fas fa-newspaper',
     },
     {
       title: 'Github',

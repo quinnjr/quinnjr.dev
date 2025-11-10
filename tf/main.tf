@@ -1,13 +1,17 @@
-# Container Registry credentials for GitHub Container Registry
-resource "digitalocean_container_registry_docker_credentials" "github_registry" {
-  registry_name = "ghcr.io"
-  write         = false
-}
-
 # Domain Resource (if using DigitalOcean DNS)
 resource "digitalocean_domain" "app_domain" {
   count = var.enable_dns && var.domain_name != "" ? 1 : 0
   name  = var.domain_name
+}
+
+# Managed PostgreSQL Database
+resource "digitalocean_database_cluster" "quinnjr_postgres" {
+  name       = "${var.project_name}-db"
+  engine     = "pg"
+  version    = "16"
+  size       = "db-s-1vcpu-1gb" # Smallest managed DB: $15/month
+  region     = var.region
+  node_count = 1
 }
 
 # App Platform App
@@ -26,6 +30,14 @@ resource "digitalocean_app" "quinnjr_dev" {
       }
     }
 
+    # Database
+    database {
+      name       = "${var.project_name}-db"
+      engine     = "PG"
+      production = false
+      cluster_name = digitalocean_database_cluster.quinnjr_postgres.name
+    }
+
     # Service (Docker container)
     service {
       name               = "${var.project_name}-web"
@@ -37,14 +49,14 @@ resource "digitalocean_app" "quinnjr_dev" {
         registry_type = "GHCR"
         registry      = "ghcr.io"
         repository    = "${var.github_username}/quinnjr.dev"
-        tag           = "latest"
+        tag           = "main"
 
         deploy_on_push {
           enabled = true
         }
 
-        # GitHub Container Registry credentials
-        registry_credentials = var.github_token
+        # GitHub Container Registry credentials (format: username:token)
+        registry_credentials = "${var.github_username}:${var.github_token}"
       }
 
       # Health check
@@ -71,10 +83,11 @@ resource "digitalocean_app" "quinnjr_dev" {
         value = var.node_env
       }
 
-      # SQLite database URL
+      # PostgreSQL database URL
       env {
         key   = "DATABASE_URL"
-        value = "file:/data/quinnjr.db"
+        value = digitalocean_database_cluster.quinnjr_postgres.uri
+        type  = "SECRET"
       }
 
       # GitHub API token for fetching repositories
@@ -82,13 +95,6 @@ resource "digitalocean_app" "quinnjr_dev" {
         key   = "GITHUB_TOKEN"
         value = var.github_api_token
         type  = "SECRET"
-      }
-
-      # Volume mount for SQLite database persistence
-      volume {
-        name      = "sqlite-data"
-        mount_path = "/data"
-        size_gigabytes = 1
       }
     }
 
