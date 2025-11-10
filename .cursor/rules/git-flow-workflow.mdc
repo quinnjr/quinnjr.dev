@@ -1,0 +1,150 @@
+# Git Flow Workflow
+
+## Branch Strategy
+
+This project follows **Git Flow** branching model. You MUST follow this workflow.
+
+### Main Branches
+
+1. **`main`** - Production-ready code only
+   - Only accepts merges from `release/*` or `hotfix/*` branches
+   - Protected branch - no direct commits or pushes
+   - Tagged with version numbers (e.g., `v2.0.0`)
+
+2. **`develop`** - Integration branch for features
+   - Default target for all feature and bugfix branches
+   - Where active development happens
+   - Protected branch - no direct commits or pushes
+
+### Supporting Branches
+
+1. **`feature/*`** - New features
+   - Branch from: `develop`
+   - Merge back to: `develop`
+   - Examples: `feature/user-authentication`, `feature/dark-mode`
+
+2. **`bugfix/*`** - Bug fixes
+   - Branch from: `develop`
+   - Merge back to: `develop`
+   - Examples: `bugfix/login-redirect`, `bugfix/broken-navigation`
+
+3. **`hotfix/*`** - Critical production fixes
+   - Branch from: `main`
+   - Merge back to: `main` AND `develop`
+   - Examples: `hotfix/security-patch`, `hotfix/critical-error`
+
+4. **`release/*`** - Release preparation
+   - Branch from: `develop`
+   - Merge back to: `main` AND `develop`
+   - Examples: `release/v2.0.0`, `release/v2.1.0`
+
+## Workflow Rules
+
+### ❌ NEVER DO THIS:
+```bash
+# Never merge feature/bugfix branches directly to main
+gh pr create --base main --head feature/my-feature  # WRONG!
+gh pr create --base main --head bugfix/my-fix       # WRONG!
+```
+
+### ✅ ALWAYS DO THIS:
+```bash
+# Feature/Bugfix branches go to develop
+gh pr create --base develop --head feature/my-feature  # CORRECT!
+gh pr create --base develop --head bugfix/my-fix       # CORRECT!
+
+# Only release branches go to main
+gh pr create --base main --head release/v2.0.0         # CORRECT!
+```
+
+## Complete Workflow Examples
+
+### Adding a New Feature
+```bash
+# 1. Start from develop
+git checkout develop
+git pull origin develop
+
+# 2. Create feature branch
+git checkout -b feature/new-awesome-feature
+
+# 3. Do your work, commit changes
+git add .
+git commit -m "feature: add awesome feature"
+
+# 4. Push and create PR to DEVELOP
+git push origin feature/new-awesome-feature
+gh pr create --base develop --head feature/new-awesome-feature
+
+# 5. After PR approval, squash merge to develop
+gh pr merge <PR#> --squash
+```
+
+### Fixing a Bug
+```bash
+# Same as feature, but use bugfix/* branch name
+git checkout -b bugfix/fix-the-problem
+# ... do work ...
+gh pr create --base develop --head bugfix/fix-the-problem
+```
+
+### Creating a Release
+```bash
+# 1. Create release branch from develop
+git checkout develop
+git pull origin develop
+git checkout -b release/v2.1.0
+
+# 2. Update version numbers, changelog, final fixes
+npm version 2.1.0
+git commit -am "release: prepare v2.1.0"
+
+# 3. Create PR to main
+git push origin release/v2.1.0
+gh pr create --base main --head release/v2.1.0
+
+# 4. After merge to main, also merge back to develop
+git checkout develop
+git merge release/v2.1.0
+git push origin develop
+
+# 5. Tag the release on main
+git checkout main
+git pull origin main
+git tag -a v2.1.0 -m "Release v2.1.0"
+git push origin v2.1.0
+```
+
+### Emergency Hotfix
+```bash
+# 1. Branch from main (production)
+git checkout main
+git pull origin main
+git checkout -b hotfix/critical-security-fix
+
+# 2. Fix the issue
+git commit -am "hotfix: fix critical security issue"
+
+# 3. Create PR to main
+git push origin hotfix/critical-security-fix
+gh pr create --base main --head hotfix/critical-security-fix
+
+# 4. After merge to main, ALSO merge to develop
+gh pr create --base develop --head hotfix/critical-security-fix
+```
+
+## Pre-Push Hook Protection
+
+The `.husky/pre-push` hook automatically prevents:
+- Direct pushes to `main`
+- Direct pushes to `develop`
+- Invalid branch names (must match git-flow convention)
+
+## Summary
+
+**Remember:**
+- `feature/*` → `develop`
+- `bugfix/*` → `develop`
+- `hotfix/*` → `main` (and then `develop`)
+- `release/*` → `main` (and then `develop`)
+- **NEVER** merge feature/bugfix directly to `main`!
