@@ -83,8 +83,12 @@ resource "digitalocean_app" "quinnjr_dev" {
         value = var.node_env
       }
 
-      # PostgreSQL database URL (automatically injected by App Platform)
-      # DATABASE_URL will be available as ${db.DATABASE_URL}
+      # PostgreSQL database URL
+      env {
+        key   = "DATABASE_URL"
+        value = digitalocean_database_cluster.quinnjr_postgres.uri
+        type  = "SECRET"
+      }
 
       # GitHub API token for fetching repositories
       env {
