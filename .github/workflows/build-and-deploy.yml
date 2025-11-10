@@ -116,6 +116,7 @@ jobs:
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
+        continue-on-error: true  # Don't block deployment if attestation fails
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.meta.outputs.digest }}
@@ -154,16 +155,11 @@ jobs:
           domain_name     = "${{ secrets.DOMAIN_NAME }}"
           enable_dns      = ${{ secrets.ENABLE_DNS || 'false' }}
           EOF
-      - name: Configure Spaces Backend
-        run: |
-          export AWS_ACCESS_KEY_ID="${{ secrets.SPACES_ACCESS_KEY }}"
-          export AWS_SECRET_ACCESS_KEY="${{ secrets.SPACES_SECRET_KEY }}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
       - name: Terraform Init
         run: terraform init
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
       - name: Terraform Format Check
@@ -175,13 +171,17 @@ jobs:
 
       - name: Terraform Plan
         id: plan
-        run: terraform plan -no-color -out=tfplan
+        run: terraform plan -no-color -out=tfplan -var="github_api_token=${{ secrets.GH_API_TOKEN }}"
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
       - name: Terraform Apply
         run: terraform apply -auto-approve tfplan
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
       - name: Output Application URL

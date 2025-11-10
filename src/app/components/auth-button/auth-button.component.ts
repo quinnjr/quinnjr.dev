@@ -1,5 +1,6 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject, Injector, PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
@@ -9,7 +10,7 @@ import { AuthService } from '@auth0/auth0-angular';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-center gap-2">
-      @if (auth.isAuthenticated$ | async) {
+      @if (isBrowser && auth && (auth.isAuthenticated$ | async)) {
         <!-- User is logged in -->
         <div class="flex items-center gap-3">
           @if (auth.user$ | async; as user) {
@@ -35,10 +36,11 @@ import { AuthService } from '@auth0/auth0-angular';
           </button>
         </div>
       } @else {
-        <!-- User is not logged in -->
+        <!-- User is not logged in or SSR -->
         <button
           (click)="login()"
           class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+          [disabled]="!isBrowser"
         >
           <i class="fas fa-sign-in-alt"></i>
           <span class="ml-2 hidden md:inline">Login</span>
@@ -49,17 +51,41 @@ import { AuthService } from '@auth0/auth0-angular';
   styles: [],
 })
 export class AuthButtonComponent {
-  public auth = inject(AuthService);
+  private platformId = inject(PLATFORM_ID);
+  private injector = inject(Injector);
+  private router = inject(Router);
+  public isBrowser = isPlatformBrowser(this.platformId);
+  // Inject AuthService optionally - it won't be available during SSR
+  public auth: AuthService | null = null;
+
+  constructor() {
+    if (this.isBrowser) {
+      // Only inject Auth0 in browser context using Injector
+      try {
+        this.auth = this.injector.get(AuthService, null);
+      } catch {
+        // Auth0 not available (SSR context)
+        this.auth = null;
+      }
+    }
+  }
 
   login(): void {
-    this.auth.loginWithRedirect();
+    // Navigate to admin page, which will trigger auth if needed
+    if (this.isBrowser) {
+      this.router.navigate(['/admin']).catch((err: unknown) => {
+        console.error('Navigation failed:', err);
+      });
+    }
   }
 
   logout(): void {
-    this.auth.logout({
-      logoutParams: {
-        returnTo: window.location.origin,
-      },
-    });
+    if (this.auth && this.isBrowser) {
+      this.auth.logout({
+        logoutParams: {
+          returnTo: window.location.origin,
+        },
+      });
+    }
   }
 }

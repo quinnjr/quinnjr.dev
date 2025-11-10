@@ -1,6 +1,6 @@
 output "app_url" {
   description = "URL of the deployed application"
-  value       = "https://${digitalocean_app.quinnjr_dev.default_ingress}"
+  value       = digitalocean_app.quinnjr_dev.live_url
 }
 
 output "app_live_url" {
@@ -8,9 +8,20 @@ output "app_live_url" {
   value       = digitalocean_app.quinnjr_dev.live_url
 }
 
-output "database_path" {
-  description = "SQLite database file path"
-  value       = "/data/quinnjr.db"
+output "database_host" {
+  description = "PostgreSQL database host"
+  value       = digitalocean_database_cluster.quinnjr_postgres.host
+  sensitive   = true
+}
+
+output "database_port" {
+  description = "PostgreSQL database port"
+  value       = digitalocean_database_cluster.quinnjr_postgres.port
+}
+
+output "database_name" {
+  description = "PostgreSQL database name"
+  value       = digitalocean_database_cluster.quinnjr_postgres.database
 }
 
 output "custom_domain" {
