@@ -34,6 +34,12 @@ export class NavigationComponent {
       icon: 'fas fa-newspaper',
     },
     {
+      title: 'LinkedIn',
+      link: 'https://www.linkedin.com/in/quinnjosephr/',
+      icon: 'fab fa-linkedin',
+      external: true,
+    },
+    {
       title: 'Github',
       link: 'https://github.com/quinnjr',
       icon: 'fab fa-github',
