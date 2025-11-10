@@ -1,5 +1,6 @@
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, Injector, PLATFORM_ID } from '@angular/core';
+import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
 @Component({
@@ -52,6 +53,7 @@ import { AuthService } from '@auth0/auth0-angular';
 export class AuthButtonComponent {
   private platformId = inject(PLATFORM_ID);
   private injector = inject(Injector);
+  private router = inject(Router);
   public isBrowser = isPlatformBrowser(this.platformId);
   // Inject AuthService optionally - it won't be available during SSR
   public auth: AuthService | null = null;
@@ -69,8 +71,11 @@ export class AuthButtonComponent {
   }
 
   login(): void {
-    if (this.auth && this.isBrowser) {
-      this.auth.loginWithRedirect();
+    // Navigate to admin page, which will trigger auth if needed
+    if (this.isBrowser) {
+      this.router.navigate(['/admin']).catch((err: unknown) => {
+        console.error('Navigation failed:', err);
+      });
     }
   }
 
