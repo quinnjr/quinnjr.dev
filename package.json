@@ -46,7 +46,7 @@
     "@angular/ssr": "^20.0.0",
     "@auth0/auth0-angular": "^2.3.0",
     "@prisma/client": "^6.17.1",
-    "express": "^4.18.2",
+    "express": "^4.22.1",
     "ngx-quill": "^28.0.1",
     "prisma": "^6.17.1",
     "quill": "^2.0.3",
