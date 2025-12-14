@@ -1,0 +1,207 @@
+# No Automatic Markdown Generation
+
+## Core Rule
+
+**DO NOT create, generate, or write markdown files unless explicitly requested by the user.**
+
+## What This Means
+
+### ❌ Never Auto-Generate These Files
+
+- `README.md` (unless user explicitly asks)
+- `CHANGELOG.md` (unless user explicitly asks)
+- `CONTRIBUTING.md` (unless user explicitly asks)
+- `MIGRATION.md` (unless user explicitly asks)
+- `UPGRADE.md` (unless user explicitly asks)
+- Any `*-GUIDE.md` files (unless user explicitly asks)
+- Any `*-INSTRUCTIONS.md` files (unless user explicitly asks)
+- Any documentation files with `.md` extension (unless user explicitly asks)
+- Summary documents after completing tasks (unless user explicitly asks)
+
+### ✅ Only Create Markdown When
+
+The user explicitly requests it with phrases like:
+- "Create a README"
+- "Write documentation for..."
+- "Generate a changelog"
+- "Make a markdown file explaining..."
+- "Document this in a README"
+- "Create an upgrade guide"
+
+### Exceptions
+
+The following are acceptable to create/modify without explicit request:
+- **Cursor rules** (`.cursor/rules/*.mdc` files) - These are project configuration
+- **Inline code comments** - Regular code documentation
+- **Commit messages** - Part of git workflow
+- **Existing markdown files** - If user asks to update or fix existing files
+
+## Why This Rule Exists
+
+1. **Avoid Clutter** - Projects don't need documentation files after every task
+2. **User Control** - User decides when documentation is needed
+3. **Stay Focused** - Complete the actual work, not documentation about the work
+4. **Less Noise** - Reduces unnecessary file creation
+
+## Examples
+
+### ❌ Bad - Auto-Generated Documentation
+
+```
+Agent: "I've upgraded Tailwind to v4. Let me create an UPGRADE.md
+        documenting the changes..."
+```
+
+**Wrong!** User didn't ask for documentation.
+
+### ✅ Good - Focus on the Work
+
+```
+Agent: "I've upgraded Tailwind to v4. Here's what changed:
+        - Updated package.json
+        - Converted styles.scss to v4 syntax
+        - All builds passing"
+```
+
+**Correct!** Provide summary in conversation, no markdown file.
+
+### ✅ Good - User Requested Documentation
+
+```
+User: "Create a README explaining the Tailwind upgrade"
+Agent: "I'll create a README.md documenting the upgrade..."
+```
+
+**Correct!** User explicitly asked for it.
+
+## What to Do Instead
+
+When completing a task, provide information in the **conversation**:
+
+### Instead of Creating Files
+
+```markdown
+# BAD - Creating TASK-SUMMARY.md
+```
+
+### Provide Info in Response
+
+```
+Good approach - Just tell the user:
+
+✅ Task completed!
+
+Changes made:
+- Updated dependencies
+- Fixed configuration
+- All tests passing
+
+Commit: abc1234
+Branch: feature/task-name
+```
+
+## Documentation That IS Allowed
+
+### 1. Code Comments
+```typescript
+// This is fine - inline documentation
+function processData() {
+  // Explain complex logic here
+}
+```
+
+### 2. JSDoc/TSDoc
+```typescript
+/**
+ * This is fine - API documentation in code
+ * @param data The input data
+ * @returns Processed result
+ */
+function process(data: Data): Result {
+  // ...
+}
+```
+
+### 3. Existing Files
+If `README.md` already exists and needs updating:
+- User asks: "Update the README with the new API"
+- This is fine - modifying existing file per request
+
+### 4. Cursor Rules
+Creating `.cursor/rules/*.mdc` files is always allowed:
+- These are project configuration
+- Part of the development environment
+- Not "documentation" in the traditional sense
+
+## Special Cases
+
+### Configuration Files (Not Markdown)
+These are ALWAYS fine to create when needed:
+- `.prettierrc`
+- `.eslintrc.json`
+- `tsconfig.json`
+- `package.json`
+- `.gitignore`
+- etc.
+
+These are not documentation - they're configuration.
+
+### When in Doubt
+
+Ask yourself:
+1. Did the user explicitly request this file?
+2. Is this a `.cursor/rules/*.mdc` file?
+3. Am I modifying an existing file the user asked about?
+
+If all answers are "no" → **Don't create the markdown file**
+
+## Implementation for AI Agents
+
+When you (the AI assistant) complete a task:
+
+### ✅ DO
+- Provide a summary in the conversation
+- List what changed
+- Show commit information
+- Explain any important details
+- Offer to create documentation if user wants it
+
+### ❌ DON'T
+- Create `README.md` automatically
+- Create `UPGRADE.md` automatically
+- Create `MIGRATION.md` automatically
+- Create any `*.md` file automatically
+- Create summary documents
+- Create guide documents
+
+### Example Response Pattern
+
+```
+✅ Tailwind v4 upgrade complete!
+
+Changes:
+- package.json: Updated to v4.1.18
+- styles.scss: Converted to @import syntax
+- tailwind.config.mjs: Simplified config
+
+Build status: ✅ Passing
+Tests: ✅ 25/25 passing
+Commit: abc1234
+Branch: feature/tailwind-v4-upgrade
+
+[Don't create TAILWIND-UPGRADE.md unless user asks]
+```
+
+## Reminder Checklist
+
+Before creating any `.md` file, verify:
+
+- [ ] User explicitly requested this file
+- [ ] OR this is a `.cursor/rules/*.mdc` file
+- [ ] OR this is modifying an existing file per user request
+
+If none apply → **Don't create the file**
+
+---
+
+**Summary:** Focus on doing the work and communicating results. Let the user decide when they need written documentation.

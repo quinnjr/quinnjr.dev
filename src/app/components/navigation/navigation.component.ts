@@ -45,5 +45,21 @@ export class NavigationComponent {
       icon: 'fab fa-github',
       external: true,
     },
+    {
+      title: 'Pegasus Heavy',
+      link: 'https://pegausheavy.dev',
+      icon: 'fas fa-building',
+      external: true,
+    },
   ]);
+
+  public isMenuOpen = signal(false);
+
+  toggleMenu(): void {
+    this.isMenuOpen.update(value => !value);
+  }
+
+  closeMenu(): void {
+    this.isMenuOpen.set(false);
+  }
 }

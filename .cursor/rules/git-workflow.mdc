@@ -1,0 +1,268 @@
+# Git Workflow and Branch Management
+
+## Branch Strategy
+
+When working on any task, **always** follow this branching strategy:
+
+### Branch Naming Convention
+
+Create appropriate feature branches based on the type of work:
+
+- `feature/` - New features or enhancements
+  - Example: `feature/tailwind-v4-upgrade`, `feature/user-authentication`
+- `bugfix/` - Bug fixes
+  - Example: `bugfix/login-redirect`, `bugfix/memory-leak`
+- `hotfix/` - Critical production fixes
+  - Example: `hotfix/security-patch`, `hotfix/critical-crash`
+- `refactor/` - Code refactoring
+  - Example: `refactor/api-service`, `refactor/component-structure`
+- `chore/` - Maintenance tasks, dependency updates
+  - Example: `chore/update-dependencies`, `chore/cleanup-logs`
+- `docs/` - Documentation changes
+  - Example: `docs/api-documentation`, `docs/readme-update`
+- `test/` - Adding or updating tests
+  - Example: `test/unit-tests`, `test/e2e-coverage`
+- `perf/` - Performance improvements
+  - Example: `perf/optimize-queries`, `perf/reduce-bundle-size`
+
+### Branch Naming Rules
+
+- Use lowercase with hyphens
+- Be descriptive but concise
+- Use the issue/ticket number if available: `feature/PROJ-123-user-auth`
+
+## Workflow Process
+
+### 1. Before Starting Any Work
+
+**ALWAYS check if you're on a feature branch:**
+
+```bash
+git branch --show-current
+```
+
+**If on `main`, `master`, or `develop`, create a new branch:**
+
+```bash
+# Create and switch to new branch
+git checkout -b feature/descriptive-name
+```
+
+### 2. During Work
+
+- Make logical, atomic commits as you progress
+- Don't wait until the end to commit everything
+
+### 3. After Completing Task
+
+**ALWAYS commit your changes when finished:**
+
+```bash
+# Stage all relevant files
+git add <files>
+
+# Commit with proper format
+git commit -m "type: description"
+```
+
+### 4. Commit Message Format
+
+Follow the project's commit message convention:
+
+```
+<type>: <description>
+
+[optional body]
+```
+
+**Valid types:**
+- `feature` - New feature
+- `bugfix` - Bug fix
+- `release` - Release commit
+- `hotfix` - Critical hotfix
+- `chore` - Maintenance tasks
+- `docs` - Documentation changes
+- `style` - Code style changes (formatting)
+- `refactor` - Code refactoring
+- `test` - Adding or updating tests
+- `perf` - Performance improvements
+
+**Examples:**
+```
+feature: add user authentication system
+bugfix: fix login redirect issue
+chore: update dependencies to latest versions
+refactor: simplify API service architecture
+```
+
+## Automatic Commit Requirements
+
+### When to Commit
+
+**ALWAYS commit when:**
+1. A task is completed
+2. A logical unit of work is finished
+3. Tests are passing
+4. The code is in a stable state
+5. Before switching context to a different task
+
+### What to Include
+
+**Stage and commit:**
+- All files directly related to the current task
+- Updated tests
+- Updated documentation if applicable
+- Configuration changes
+
+**Do NOT commit:**
+- Unrelated changes from other tasks
+- Temporary/debug files
+- Work-in-progress that breaks tests
+- Files unrelated to the current branch's purpose
+
+## Pre-Commit Checks
+
+The project has pre-commit hooks that will automatically run:
+
+1. ✅ Prisma client generation
+2. ✅ Code formatting (Prettier)
+3. ✅ Linting (ESLint)
+4. ✅ Server tests (Vitest)
+5. ✅ Commit message validation
+
+**If pre-commit checks fail:**
+- Fix the issues
+- Stage the fixes
+- Attempt commit again
+
+## Branch Cleanup
+
+After the branch is merged:
+
+```bash
+# Switch back to main
+git checkout main
+
+# Pull latest changes
+git pull
+
+# Delete the merged branch locally
+git branch -d feature/branch-name
+
+# Delete the remote branch (if pushed)
+git push origin --delete feature/branch-name
+```
+
+## Complete Workflow Example
+
+```bash
+# 1. Starting new work - create branch
+git checkout -b feature/add-dark-mode
+
+# 2. Make changes, write code...
+
+# 3. Commit logical units as you go
+git add src/styles.scss src/app/theme.service.ts
+git commit -m "feature: implement dark mode theme service"
+
+# 4. Continue working...
+git add src/app/components/theme-toggle.component.ts
+git commit -m "feature: add dark mode toggle component"
+
+# 5. Task complete - final commit if needed
+git add README.md
+git commit -m "docs: add dark mode usage instructions"
+
+# 6. Push to remote
+git push -u origin feature/add-dark-mode
+
+# 7. Create PR (via GitHub/GitLab UI or CLI)
+```
+
+## Important Reminders
+
+### ⚠️ Never Work Directly on Main/Master
+
+- **ALWAYS** create a feature branch
+- **NEVER** commit directly to `main`, `master`, or `develop`
+- If you accidentally commit to main, create a branch and reset main:
+  ```bash
+  git branch feature/my-work
+  git reset --hard origin/main
+  git checkout feature/my-work
+  ```
+
+### ✅ Always Commit When Done
+
+- **DO** commit completed work immediately
+- **DO** write clear, descriptive commit messages
+- **DO** ensure tests pass before committing
+- **DO** stage only relevant files
+
+### 🔄 Commit Often
+
+- Small, frequent commits are better than large ones
+- Each commit should represent a logical change
+- Makes code review easier
+- Makes debugging easier with `git bisect`
+
+## Agent Instructions
+
+When you (the AI agent) complete any task:
+
+1. **Check current branch** - If on main/master/develop, create appropriate feature branch
+2. **Stage relevant files** - Only files related to the current task
+3. **Write descriptive commit** - Follow the commit message format
+4. **Handle pre-commit hooks** - Fix any issues that arise
+5. **Confirm commit success** - Show commit hash and summary
+6. **Report status** - Tell user about the branch and commit
+
+**Example agent workflow:**
+
+```
+Task: "Add dark mode support"
+
+1. git checkout -b feature/dark-mode
+2. [Make changes to files]
+3. git add [relevant files]
+4. git commit -m "feature: implement dark mode with theme toggle"
+5. Report: "✅ Committed to feature/dark-mode (commit abc1234)"
+```
+
+## Exception Cases
+
+### Working on Documentation Only
+
+For small documentation fixes, you may use:
+- `docs/update-readme` or similar branch
+- Single commit for the change
+
+### Hotfixes
+
+For critical production issues:
+- Branch from `main`: `git checkout -b hotfix/critical-issue`
+- Commit immediately after fix
+- Push and merge ASAP
+
+### Exploratory/Experimental Work
+
+For experimental changes:
+- Use `experiment/` prefix: `experiment/new-architecture`
+- Commit frequently to save progress
+- May be discarded or cherry-picked later
+
+## Summary Checklist
+
+Before finishing any task, ensure:
+
+- [ ] Created appropriate feature/bugfix/etc branch
+- [ ] Made logical, atomic commits during work
+- [ ] All tests passing
+- [ ] Code formatted and linted
+- [ ] Commit messages follow format
+- [ ] Final commit includes all task-related changes
+- [ ] Branch ready for PR or merge
+
+---
+
+**Remember:** Good git hygiene makes collaboration easier, debugging faster, and code review more efficient. Always branch, always commit!
