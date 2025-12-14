@@ -8,30 +8,7 @@
 @theme {
   /* Custom animations */
   --animate-tilt: tilt 10s infinite linear;
-}
 
-/* Custom keyframes for tilt animation */
-@keyframes tilt {
-  0%,
-  50%,
-  100% {
-    transform: rotate(0deg);
-  }
-  25% {
-    transform: rotate(1deg);
-  }
-  75% {
-    transform: rotate(-1deg);
-  }
-}
-
-/* Import Tailwind plugins via @plugin directive (v4 feature) */
-@plugin '@tailwindcss/typography';
-@plugin '@tailwindcss/forms';
-@plugin '@tailwindcss/aspect-ratio';
-@plugin 'flowbite/plugin';
-
-:root {
   /* Custom color palette - unique brand colors */
   --color-primary: #6366f1;
   --color-primary-dark: #4f46e5;
@@ -66,6 +43,27 @@
   --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Custom keyframes for tilt animation */
+@keyframes tilt {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(1deg);
+  }
+  75% {
+    transform: rotate(-1deg);
+  }
+}
+
+/* Import Tailwind plugins via @plugin directive (v4 feature) */
+@plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/aspect-ratio';
+@plugin 'flowbite/plugin';
 
 @layer base {
   body {
