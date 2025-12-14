@@ -1,8 +1,14 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* Tailwind CSS v4 - Using @import for compatibility with Tailwind's PostCSS plugin */
+/* Note: Sass @import is used here instead of @use because Tailwind v4's PostCSS plugin
+   requires @import to properly process the directive. The @use statement doesn't work
+   with PostCSS-based transformations. */
+@import 'tailwindcss';
 
-:root {
+/* Tailwind v4 CSS-based theme configuration */
+@theme {
+  /* Custom animations */
+  --animate-tilt: tilt 10s infinite linear;
+
   /* Custom color palette - unique brand colors */
   --color-primary: #6366f1;
   --color-primary-dark: #4f46e5;
@@ -37,6 +43,27 @@
   --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+/* Custom keyframes for tilt animation */
+@keyframes tilt {
+  0%,
+  50%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(1deg);
+  }
+  75% {
+    transform: rotate(-1deg);
+  }
+}
+
+/* Import Tailwind plugins via @plugin directive (v4 feature) */
+@plugin '@tailwindcss/typography';
+@plugin '@tailwindcss/forms';
+@plugin '@tailwindcss/aspect-ratio';
+@plugin 'flowbite/plugin';
 
 @layer base {
   body {

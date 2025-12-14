@@ -1,0 +1,130 @@
+# Pull Request Merge Policy
+
+## Rule
+**NEVER merge Pull Requests until ALL GitHub Actions checks have completed successfully.**
+
+## Rationale
+Merging PRs before CI/CD checks complete can introduce:
+- **Broken code** into protected branches (`main`, `develop`)
+- **Failed tests** that aren't caught until after merge
+- **Build failures** that block deployments
+- **Security vulnerabilities** that bypass linting/security scans
+
+## Best Practices
+
+### ✅ CORRECT Workflow:
+1. **Create PR**: `gh pr create --base develop --head feature/my-feature`
+2. **Wait for Checks**: Monitor GitHub Actions until all checks pass
+   ```bash
+   gh pr checks <PR_NUMBER>
+   ```
+3. **Verify All Green**: Ensure all required checks show "pass"
+   - Client Tests
+   - Server Tests
+   - E2E Tests
+   - Linting
+   - Build
+4. **Merge PR**: Only after all checks pass
+   ```bash
+   gh pr merge <PR_NUMBER> --squash --delete-branch
+   ```
+
+### ❌ WRONG - Never do this:
+```bash
+# DON'T merge immediately after creating PR
+gh pr create ... && gh pr merge --auto
+
+# DON'T merge with failing checks
+gh pr merge <PR_NUMBER>  # when checks are still running or failed
+```
+
+## Monitoring PR Checks
+
+### Check PR Status
+```bash
+# View all checks for a PR
+gh pr checks <PR_NUMBER>
+
+# Watch checks in real-time
+gh pr checks <PR_NUMBER> --watch
+
+# View PR details
+gh pr view <PR_NUMBER>
+```
+
+### Interpreting Check Results
+- ✅ **pass** - Check completed successfully
+- ❌ **fail** - Check failed, must be fixed before merging
+- 🟡 **pending** - Check is still running, wait for completion
+- ⏸️ **skipped** - Check was skipped (verify this is intentional)
+
+## GitHub Branch Protection
+
+### Current Configuration
+Both `main` and `develop` branches have branch protection enabled, but **required status checks are not configured**.
+
+### Required Status Checks to Enable
+
+Navigate to: **Settings → Branches → Branch protection rules** for each branch
+
+#### For `main` branch:
+- ✅ Require status checks to pass before merging
+- ✅ Require branches to be up to date before merging
+- Required checks:
+  - `Client Tests`
+  - `Server Tests`
+  - `E2E Tests`
+  - `Linting`
+  - `Build`
+
+#### For `develop` branch:
+- ✅ Require status checks to pass before merging
+- ✅ Require branches to be up to date before merging
+- Required checks:
+  - `Client Tests`
+  - `Server Tests`
+  - `E2E Tests`
+  - `Linting`
+  - `Build`
+
+### Enable via GitHub CLI (Optional)
+```bash
+# Enable required status checks for main
+gh api --method PUT /repos/quinnjr/quinnjr.dev/branches/main/protection \
+  --field required_status_checks='{"strict":true,"checks":[{"context":"Client Tests"},{"context":"Server Tests"},{"context":"E2E Tests"}]}'
+
+# Enable required status checks for develop
+gh api --method PUT /repos/quinnjr/quinnjr.dev/branches/develop/protection \
+  --field required_status_checks='{"strict":true,"checks":[{"context":"Client Tests"},{"context":"Server Tests"},{"context":"E2E Tests"}]}'
+```
+
+## Auto-Merge Feature
+
+The `--auto` flag can be used **IF AND ONLY IF** branch protection with required status checks is enabled:
+
+```bash
+# Safe to use --auto when branch protection is configured
+gh pr merge <PR_NUMBER> --squash --delete-branch --auto
+```
+
+This will queue the PR to merge automatically once all required checks pass.
+
+## Emergency Situations
+
+In rare emergency situations where a hotfix is critical and checks are failing due to unrelated issues:
+
+1. **Document the reason** in the PR description
+2. **Get explicit approval** from team lead
+3. **Create a follow-up issue** to fix the failing checks
+4. **Only then** consider bypassing checks
+
+**NEVER bypass checks without documentation and approval.**
+
+## Summary
+
+- ✅ Always wait for all GitHub Actions checks to complete
+- ✅ Verify all checks show "pass" before merging
+- ✅ Use `gh pr checks <PR_NUMBER>` to monitor status
+- ✅ Enable branch protection with required status checks
+- ❌ Never merge with failing or pending checks
+- ❌ Never use `--auto` without branch protection configured
