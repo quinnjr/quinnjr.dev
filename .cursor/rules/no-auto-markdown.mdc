@@ -48,7 +48,7 @@ The following are acceptable to create/modify without explicit request:
 ### ❌ Bad - Auto-Generated Documentation
 
 ```
-Agent: "I've upgraded Tailwind to v4. Let me create an UPGRADE.md 
+Agent: "I've upgraded Tailwind to v4. Let me create an UPGRADE.md
         documenting the changes..."
 ```
 
