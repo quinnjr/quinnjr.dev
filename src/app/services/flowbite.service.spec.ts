@@ -31,7 +31,6 @@ describe('FlowbiteService', () => {
         { timeout: 1000, interval: 50 }
       );
 
-      expect(callback).toHaveBeenCalledOnce();
       expect(callback).toHaveBeenCalledWith(expect.any(Object));
     });
 

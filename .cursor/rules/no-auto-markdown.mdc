@@ -21,6 +21,7 @@
 ### ✅ Only Create Markdown When
 
 The user explicitly requests it with phrases like:
+
 - "Create a README"
 - "Write documentation for..."
 - "Generate a changelog"
@@ -31,6 +32,7 @@ The user explicitly requests it with phrases like:
 ### Exceptions
 
 The following are acceptable to create/modify without explicit request:
+
 - **Cursor rules** (`.cursor/rules/*.mdc` files) - These are project configuration
 - **Inline code comments** - Regular code documentation
 - **Commit messages** - Part of git workflow
@@ -103,6 +105,7 @@ Branch: feature/task-name
 ## Documentation That IS Allowed
 
 ### 1. Code Comments
+
 ```typescript
 // This is fine - inline documentation
 function processData() {
@@ -111,6 +114,7 @@ function processData() {
 ```
 
 ### 2. JSDoc/TSDoc
+
 ```typescript
 /**
  * This is fine - API documentation in code
@@ -123,12 +127,16 @@ function process(data: Data): Result {
 ```
 
 ### 3. Existing Files
+
 If `README.md` already exists and needs updating:
+
 - User asks: "Update the README with the new API"
 - This is fine - modifying existing file per request
 
 ### 4. Cursor Rules
+
 Creating `.cursor/rules/*.mdc` files is always allowed:
+
 - These are project configuration
 - Part of the development environment
 - Not "documentation" in the traditional sense
@@ -136,7 +144,9 @@ Creating `.cursor/rules/*.mdc` files is always allowed:
 ## Special Cases
 
 ### Configuration Files (Not Markdown)
+
 These are ALWAYS fine to create when needed:
+
 - `.prettierrc`
 - `.eslintrc.json`
 - `tsconfig.json`
@@ -149,6 +159,7 @@ These are not documentation - they're configuration.
 ### When in Doubt
 
 Ask yourself:
+
 1. Did the user explicitly request this file?
 2. Is this a `.cursor/rules/*.mdc` file?
 3. Am I modifying an existing file the user asked about?
@@ -160,6 +171,7 @@ If all answers are "no" → **Don't create the markdown file**
 When you (the AI assistant) complete a task:
 
 ### ✅ DO
+
 - Provide a summary in the conversation
 - List what changed
 - Show commit information
@@ -167,6 +179,7 @@ When you (the AI assistant) complete a task:
 - Offer to create documentation if user wants it
 
 ### ❌ DON'T
+
 - Create `README.md` automatically
 - Create `UPGRADE.md` automatically
 - Create `MIGRATION.md` automatically
