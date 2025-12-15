@@ -36,8 +36,8 @@ describe('NavgiationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 6 navigation items', () => {
-    expect(component.navbarItems().length).toBe(6);
+  it('should have 7 navigation items', () => {
+    expect(component.navbarItems().length).toBe(7);
   });
 
   it('should have LinkedIn link', () => {
@@ -54,5 +54,13 @@ describe('NavgiationComponent', () => {
     expect(githubItem?.link).toBe('https://github.com/quinnjr');
     expect(githubItem?.icon).toBe('fab fa-github');
     expect(githubItem?.external).toBe(true);
+  });
+
+  it('should have Pegasus Heavy link', () => {
+    const pegasusItem = component.navbarItems().find(item => item.title === 'Pegasus Heavy');
+    expect(pegasusItem).toBeDefined();
+    expect(pegasusItem?.link).toBe('https://pegausheavy.dev');
+    expect(pegasusItem?.icon).toBe('fas fa-building');
+    expect(pegasusItem?.external).toBe(true);
   });
 });

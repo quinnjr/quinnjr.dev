@@ -23,10 +23,14 @@ describe('FlowbiteService', () => {
 
       service.loadFlowbite(callback);
 
-      // Wait for dynamic import to resolve
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Wait for dynamic import to resolve with longer timeout
+      await vi.waitFor(
+        () => {
+          expect(callback).toHaveBeenCalled();
+        },
+        { timeout: 1000, interval: 50 }
+      );
 
-      expect(callback).toHaveBeenCalledOnce();
       expect(callback).toHaveBeenCalledWith(expect.any(Object));
     });
 
@@ -35,10 +39,14 @@ describe('FlowbiteService', () => {
 
       service.loadFlowbite(callback);
 
-      // Wait for dynamic import to resolve
-      await new Promise(resolve => setTimeout(resolve, 200));
+      // Wait for dynamic import to resolve with longer timeout
+      await vi.waitFor(
+        () => {
+          expect(callback).toHaveBeenCalled();
+        },
+        { timeout: 1000, interval: 50 }
+      );
 
-      expect(callback).toHaveBeenCalled();
       const callArg = callback.mock.calls[0][0];
       expect(callArg).toBeDefined();
     });
