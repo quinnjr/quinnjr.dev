@@ -76,6 +76,7 @@ Follow the project's commit message convention:
 ```
 
 **Valid types:**
+
 - `feature` - New feature
 - `bugfix` - Bug fix
 - `release` - Release commit
@@ -88,6 +89,7 @@ Follow the project's commit message convention:
 - `perf` - Performance improvements
 
 **Examples:**
+
 ```
 feature: add user authentication system
 bugfix: fix login redirect issue
@@ -100,6 +102,7 @@ refactor: simplify API service architecture
 ### When to Commit
 
 **ALWAYS commit when:**
+
 1. A task is completed
 2. A logical unit of work is finished
 3. Tests are passing
@@ -109,12 +112,14 @@ refactor: simplify API service architecture
 ### What to Include
 
 **Stage and commit:**
+
 - All files directly related to the current task
 - Updated tests
 - Updated documentation if applicable
 - Configuration changes
 
 **Do NOT commit:**
+
 - Unrelated changes from other tasks
 - Temporary/debug files
 - Work-in-progress that breaks tests
@@ -131,6 +136,7 @@ The project has pre-commit hooks that will automatically run:
 5. ✅ Commit message validation
 
 **If pre-commit checks fail:**
+
 - Fix the issues
 - Stage the fixes
 - Attempt commit again
@@ -234,12 +240,14 @@ Task: "Add dark mode support"
 ### Working on Documentation Only
 
 For small documentation fixes, you may use:
+
 - `docs/update-readme` or similar branch
 - Single commit for the change
 
 ### Hotfixes
 
 For critical production issues:
+
 - Branch from `main`: `git checkout -b hotfix/critical-issue`
 - Commit immediately after fix
 - Push and merge ASAP
@@ -247,6 +255,7 @@ For critical production issues:
 ### Exploratory/Experimental Work
 
 For experimental changes:
+
 - Use `experiment/` prefix: `experiment/new-architecture`
 - Commit frequently to save progress
 - May be discarded or cherry-picked later

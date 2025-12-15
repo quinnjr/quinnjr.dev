@@ -13,7 +13,9 @@ test.describe('Home Page', () => {
     await page.goto('/home');
     await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
-    await expect(page).toHaveTitle(/Joseph R\. Quinn.*Full-Stack Software Engineer/i, { timeout: 10000 });
+    await expect(page).toHaveTitle(/Joseph R\. Quinn.*Full-Stack Software Engineer/i, {
+      timeout: 10000,
+    });
   });
 
   test('should have navigation visible', async ({ page }) => {
