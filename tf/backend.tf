@@ -15,7 +15,7 @@ terraform {
     bucket = "quinnjr-terraform"
 
     # State file path (can use directories like "production/terraform.tfstate")
-    key    = "terraform.tfstate"
+    key = "terraform.tfstate"
 
     # Deactivate AWS-specific checks
     skip_credentials_validation = true

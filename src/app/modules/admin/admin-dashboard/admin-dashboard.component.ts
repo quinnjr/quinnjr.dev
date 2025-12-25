@@ -3,10 +3,24 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
+import {
+  ButtonComponent,
+  CardComponent,
+  CardBodyComponent,
+  BadgeComponent,
+} from '../../../shared/components/ui';
+
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [
+    CommonModule,
+    RouterLink,
+    ButtonComponent,
+    CardComponent,
+    CardBodyComponent,
+    BadgeComponent,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -37,11 +51,11 @@ import { AuthService } from '@auth0/auth0-angular';
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.name }}</h3>
                 <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
                 @if (user.email_verified) {
-                  <span
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200 mt-2"
-                  >
-                    <i class="fas fa-check-circle mr-1"></i>Verified
-                  </span>
+                  <div class="mt-2">
+                    <app-badge variant="success" badgeStyle="soft">
+                      <i class="fas fa-check-circle mr-1"></i>Verified
+                    </app-badge>
+                  </div>
                 }
               </div>
             </div>
@@ -128,31 +142,20 @@ import { AuthService } from '@auth0/auth0-angular';
             <i class="fas fa-bolt mr-2"></i>Quick Actions
           </h2>
           <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a
-              routerLink="/admin/articles/new"
-              class="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
-            >
-              <i class="fas fa-plus"></i>
-              <span>New Article</span>
+            <a routerLink="/admin/articles/new">
+              <app-button variant="primary" [fullWidth]="true">
+                <i class="fas fa-plus mr-2"></i>New Article
+              </app-button>
             </a>
-            <button
-              class="flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
-            >
-              <i class="fas fa-folder-plus"></i>
-              <span>New Project</span>
-            </button>
-            <button
-              class="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors"
-            >
-              <i class="fas fa-cog"></i>
-              <span>Settings</span>
-            </button>
-            <button
-              class="flex items-center justify-center gap-2 px-4 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-lg transition-colors"
-            >
-              <i class="fas fa-chart-bar"></i>
-              <span>Analytics</span>
-            </button>
+            <app-button variant="success" [fullWidth]="true">
+              <i class="fas fa-folder-plus mr-2"></i>New Project
+            </app-button>
+            <app-button variant="secondary" [fullWidth]="true">
+              <i class="fas fa-cog mr-2"></i>Settings
+            </app-button>
+            <app-button variant="ghost" [fullWidth]="true">
+              <i class="fas fa-chart-bar mr-2"></i>Analytics
+            </app-button>
           </div>
         </div>
       </div>
