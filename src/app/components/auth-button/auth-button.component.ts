@@ -3,10 +3,12 @@ import { ChangeDetectionStrategy, Component, inject, Injector, PLATFORM_ID } fro
 import { Router } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
 
+import { ButtonComponent } from '../../shared/components/ui';
+
 @Component({
   selector: 'app-auth-button',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-center gap-2">
@@ -27,24 +29,17 @@ import { AuthService } from '@auth0/auth0-angular';
               </span>
             </div>
           }
-          <button
-            (click)="logout()"
-            class="px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
-          >
+          <app-button (click)="logout()" variant="danger" size="sm">
             <i class="fas fa-sign-out-alt"></i>
             <span class="ml-2 hidden md:inline">Logout</span>
-          </button>
+          </app-button>
         </div>
       } @else {
         <!-- User is not logged in or SSR -->
-        <button
-          (click)="login()"
-          class="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
-          [disabled]="!isBrowser"
-        >
+        <app-button (click)="login()" variant="primary" size="sm" [disabled]="!isBrowser">
           <i class="fas fa-sign-in-alt"></i>
           <span class="ml-2 hidden md:inline">Login</span>
-        </button>
+        </app-button>
       }
     </div>
   `,
