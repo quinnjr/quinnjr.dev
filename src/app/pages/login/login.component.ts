@@ -1,12 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '@auth0/auth0-angular';
+
+import { ButtonComponent } from '../../shared/components/ui';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div
@@ -47,16 +49,15 @@ import { AuthService } from '@auth0/auth0-angular';
             <div class="rounded-md shadow-sm -space-y-px">
               <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg">
                 <div class="space-y-4">
-                  <button
+                  <app-button
                     type="button"
                     (click)="loginWithRedirect()"
-                    class="group relative w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                    variant="primary"
+                    size="lg"
+                    [fullWidth]="true"
                   >
-                    <span class="absolute left-0 inset-y-0 flex items-center pl-3">
-                      <i class="fas fa-lock text-blue-500 group-hover:text-blue-400"></i>
-                    </span>
-                    Sign in with Auth0
-                  </button>
+                    <i class="fas fa-lock mr-2"></i>Sign in with Auth0
+                  </app-button>
 
                   <div class="text-center">
                     <p class="text-xs text-gray-500 dark:text-gray-400">

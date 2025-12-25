@@ -38,63 +38,71 @@
     @if (!loading() && !error()) {
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
         @for (repo of repositories(); track repo.name) {
-          <div
-            class="group p-6 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-{{
-              getColorForRepo(repo)
-            }}-500 transition-all duration-300 hover:shadow-lg hover:shadow-{{
-              getColorForRepo(repo)
-            }}-500/20"
-          >
-            <div class="flex items-start justify-between mb-4">
-              @if (repo.stargazerCount > 0) {
-                <div class="flex items-center gap-2">
+          <app-card variant="default" classOverride="group">
+            <app-card-body>
+              <div class="flex items-start justify-between mb-4">
+                @if (repo.stargazerCount > 0) {
+                  <div class="flex items-center gap-2">
+                    <i
+                      class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
+                        getColorForRepo(repo)
+                      }}-400"
+                    ></i>
+                    <i class="fas fa-star text-yellow-400 text-sm"></i>
+                  </div>
+                } @else {
                   <i
                     class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
                       getColorForRepo(repo)
                     }}-400"
                   ></i>
-                  <i class="fas fa-star text-yellow-400 text-sm"></i>
-                </div>
-              } @else {
-                <i
-                  class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
+                }
+                <a
+                  [href]="repo.url"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-gray-500 text-xl hover:text-{{
                     getColorForRepo(repo)
-                  }}-400"
-                ></i>
-              }
-              <a
-                [href]="repo.url"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-gray-500 text-xl hover:text-{{
-                  getColorForRepo(repo)
-                }}-400 transition-colors"
-              >
-                <i class="fab fa-github"></i>
-              </a>
-            </div>
-            <h3 class="text-xl font-bold text-white mb-2">{{ getDisplayName(repo.name) }}</h3>
-            <p class="text-gray-400 mb-4">
-              {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
-              @if (repo.stargazerCount > 0) {
-                <span
-                  >({{ repo.stargazerCount }}
-                  {{ repo.stargazerCount === 1 ? 'star' : 'stars' }})</span
+                  }}-400 transition-colors"
                 >
-              }
-            </p>
-            @if (repo.primaryLanguage) {
-              <div class="flex flex-wrap gap-2">
-                <span
-                  class="px-3 py-1 bg-{{ getColorForRepo(repo) }}-500/10 text-{{
-                    getColorForRepo(repo)
-                  }}-300 rounded-full text-sm"
-                >
-                  {{ repo.primaryLanguage.name }}
-                </span>
+                  <i class="fab fa-github"></i>
+                </a>
               </div>
-            }
-          </div>
+              <h3 class="text-xl font-bold text-white mb-2">{{ getDisplayName(repo.name) }}</h3>
+              <p class="text-gray-400 mb-4">
+                {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
+                @if (repo.stargazerCount > 0) {
+                  <span
+                    >({{ repo.stargazerCount }}
+                    {{ repo.stargazerCount === 1 ? 'star' : 'stars' }})</span
+                  >
+                }
+              </p>
+              @if (repo.primaryLanguage) {
+                <div class="flex flex-wrap gap-2">
+                  <app-badge
+                    [variant]="
+                      getColorForRepo(repo) === 'blue'
+                        ? 'primary'
+                        : getColorForRepo(repo) === 'purple'
+                          ? 'secondary'
+                          : getColorForRepo(repo) === 'green'
+                            ? 'success'
+                            : getColorForRepo(repo) === 'yellow' ||
+                                getColorForRepo(repo) === 'orange'
+                              ? 'warning'
+                              : getColorForRepo(repo) === 'red'
+                                ? 'danger'
+                                : 'info'
+                    "
+                    badgeStyle="soft"
+                  >
+                    {{ repo.primaryLanguage.name }}
+                  </app-badge>
+                </div>
+              }
+            </app-card-body>
+          </app-card>
         }
       </div>
     }
@@ -109,13 +117,10 @@
         Visit my GitHub profile to see all my public repositories, contributions, and collaborative
         work
       </p>
-      <a
-        href="https://github.com/quinnjr"
-        target="_blank"
-        rel="noopener noreferrer"
-        class="inline-block px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-lg font-semibold text-white hover:shadow-lg hover:shadow-blue-500/50 transform hover:-translate-y-1 transition-all duration-200"
-      >
-        <i class="fab fa-github mr-2"></i>View GitHub Profile
+      <a href="https://github.com/quinnjr" target="_blank" rel="noopener noreferrer">
+        <app-button variant="primary" size="lg">
+          <i class="fab fa-github mr-2"></i>View GitHub Profile
+        </app-button>
       </a>
     </div>
   </div>
