@@ -2,10 +2,12 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { ButtonComponent } from '../../../shared/components/ui';
+
 @Component({
   selector: 'app-blog-list',
   standalone: true,
-  imports: [CommonModule, RouterLink],
+  imports: [CommonModule, RouterLink, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
@@ -18,11 +20,8 @@ import { RouterLink } from '@angular/router';
             </h1>
             <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your blog posts</p>
           </div>
-          <a
-            routerLink="/admin/articles/new"
-            class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
-          >
-            <i class="fas fa-plus mr-2"></i>New Article
+          <a routerLink="/admin/articles/new">
+            <app-button variant="primary"> <i class="fas fa-plus mr-2"></i>New Article </app-button>
           </a>
         </div>
 
@@ -33,11 +32,10 @@ import { RouterLink } from '@angular/router';
           <p class="text-gray-600 dark:text-gray-400 mb-6">
             Get started by creating your first blog post
           </p>
-          <a
-            routerLink="/admin/articles/new"
-            class="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
-          >
-            <i class="fas fa-plus mr-2"></i>Create Your First Article
+          <a routerLink="/admin/articles/new">
+            <app-button variant="primary" size="lg">
+              <i class="fas fa-plus mr-2"></i>Create Your First Article
+            </app-button>
           </a>
         </div>
       </div>
