@@ -78,3 +78,4 @@ export class ButtonComponent {
     return `${baseClasses} ${variantClasses[this.variant]} ${sizeClasses[this.size]} ${widthClass} ${this.classOverride}`.trim();
   }
 }
+
