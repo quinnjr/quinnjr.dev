@@ -2,11 +2,17 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 
 import { GitHubRepository, GitHubService } from '../../services/github.service';
+import {
+  ButtonComponent,
+  CardComponent,
+  CardBodyComponent,
+  BadgeComponent,
+} from '../../shared/components/ui';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ButtonComponent, CardComponent, CardBodyComponent, BadgeComponent],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

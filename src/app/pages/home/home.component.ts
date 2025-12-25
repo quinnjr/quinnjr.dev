@@ -8,6 +8,13 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import {
+  ButtonComponent,
+  CardComponent,
+  CardBodyComponent,
+  BadgeComponent,
+} from '../../shared/components/ui';
+
 // Interface for window with Credly
 interface WindowWithCredly extends Window {
   CredlyBadge?: {
@@ -18,7 +25,7 @@ interface WindowWithCredly extends Window {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, ButtonComponent, CardComponent, CardBodyComponent, BadgeComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
