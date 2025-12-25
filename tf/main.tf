@@ -32,9 +32,9 @@ resource "digitalocean_app" "quinnjr_dev" {
 
     # Database
     database {
-      name       = "${var.project_name}-db"
-      engine     = "PG"
-      production = false
+      name         = "${var.project_name}-db"
+      engine       = "PG"
+      production   = false
       cluster_name = digitalocean_database_cluster.quinnjr_postgres.name
     }
 
