@@ -29,3 +29,4 @@ export const UI_COMPONENTS = [
   CardSubtitleComponent,
   BadgeComponent,
 ] as const;
+
