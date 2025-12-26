@@ -49,7 +49,7 @@ resource "digitalocean_app" "quinnjr_dev" {
         registry_type = "GHCR"
         registry      = "ghcr.io"
         repository    = "${var.github_username}/quinnjr.dev"
-        tag           = "main"
+        tag           = var.docker_image_tag
 
         deploy_on_push {
           enabled = true
