@@ -186,9 +186,9 @@ jobs:
 
       - name: Output Application URL
         run: |
-          APP_URL=$(terraform output -raw app_url 2>/dev/null || echo "URL not available yet")
+          APP_URL=$(terraform output -raw app_url 2>/dev/null || echo "not-available")
           echo "::notice::Application deployed at: $APP_URL"
-          echo "APP_URL=$APP_URL" >> $GITHUB_OUTPUT
+          echo "APP_URL=${APP_URL}" >> $GITHUB_OUTPUT
 
   tag-release:
     name: Tag Release Version
