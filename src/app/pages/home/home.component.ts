@@ -41,16 +41,20 @@ export class HomeComponent implements AfterViewInit {
     }
   }
 
-  private loadCredlyBadges(): void {
+  private loadCredlyBadges(retryCount = 0): void {
     // Check if Credly script is loaded
     const windowWithCredly = window as WindowWithCredly;
     if (typeof window !== 'undefined' && windowWithCredly.CredlyBadge) {
-      // Trigger badge rendering
-      windowWithCredly.CredlyBadge.init();
-    } else {
-      // If script not loaded yet, wait and try again
+      try {
+        // Trigger badge rendering
+        windowWithCredly.CredlyBadge.init();
+      } catch {
+        // Silently fail - badges will not render
+      }
+    } else if (retryCount < 50) {
+      // If script not loaded yet, wait and try again (max 5 seconds)
       setTimeout(() => {
-        this.loadCredlyBadges();
+        this.loadCredlyBadges(retryCount + 1);
       }, 100);
     }
   }
