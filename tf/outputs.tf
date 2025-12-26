@@ -31,7 +31,7 @@ output "custom_domain" {
 
 output "dns_nameservers" {
   description = "DigitalOcean nameservers for domain configuration"
-  value       = var.enable_dns && var.domain_name != "" ? digitalocean_domain.app_domain[0].name : "DNS not managed by DigitalOcean"
+  value       = var.enable_dns && var.domain_name != "" ? data.digitalocean_domain.app_domain[0].name : "DNS not managed by DigitalOcean"
 }
 
 output "dns_records" {
