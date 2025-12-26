@@ -110,13 +110,13 @@ resource "digitalocean_app" "quinnjr_dev" {
 }
 
 # DNS Records for the custom domain
-# A record for apex domain (e.g., quinnjr.dev)
+# CNAME record for apex domain (e.g., quinnjr.dev) - using @ for apex
 resource "digitalocean_record" "apex" {
   count  = var.enable_dns && var.domain_name != "" ? 1 : 0
   domain = data.digitalocean_domain.app_domain[0].name
-  type   = "A"
+  type   = "CNAME"
   name   = "@"
-  value  = digitalocean_app.quinnjr_dev.default_ingress
+  value  = "${digitalocean_app.quinnjr_dev.default_ingress}."
   ttl    = 300
 
   depends_on = [digitalocean_app.quinnjr_dev]
