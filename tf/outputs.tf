@@ -35,11 +35,13 @@ output "dns_nameservers" {
 }
 
 output "dns_records" {
-  description = "DNS records created for the domain"
-  value = var.enable_dns && var.domain_name != "" ? {
-    apex_record = "@ -> ${digitalocean_app.quinnjr_dev.default_ingress}"
-    www_record  = "www -> ${digitalocean_app.quinnjr_dev.default_ingress}"
-  } : {}
+  description = "DNS records are managed by DigitalOcean App Platform"
+  value = var.domain_name != "" ? {
+    note = "DNS records are automatically managed by App Platform for ${var.domain_name}"
+    app_url = digitalocean_app.quinnjr_dev.default_ingress
+  } : {
+    note = "No custom domain configured"
+  }
 }
 
 output "app_default_url" {

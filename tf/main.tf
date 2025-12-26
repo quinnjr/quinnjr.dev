@@ -109,40 +109,8 @@ resource "digitalocean_app" "quinnjr_dev" {
   }
 }
 
-# DNS Records for the custom domain
-# CNAME record for apex domain (e.g., quinnjr.dev) - using @ for apex
-resource "digitalocean_record" "apex" {
-  count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = data.digitalocean_domain.app_domain[0].name
-  type   = "CNAME"
-  name   = "@"
-  value  = "${digitalocean_app.quinnjr_dev.default_ingress}."
-  ttl    = 300
-
-  depends_on = [digitalocean_app.quinnjr_dev]
-}
-
-# CNAME record for www subdomain
-resource "digitalocean_record" "www" {
-  count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = data.digitalocean_domain.app_domain[0].name
-  type   = "CNAME"
-  name   = "www"
-  value  = "${digitalocean_app.quinnjr_dev.default_ingress}."
-  ttl    = 300
-
-  depends_on = [digitalocean_app.quinnjr_dev]
-}
-
-# TXT record for domain verification (if needed by App Platform)
-resource "digitalocean_record" "verification" {
-  count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = data.digitalocean_domain.app_domain[0].name
-  type   = "TXT"
-  name   = "_app"
-  value  = digitalocean_app.quinnjr_dev.id
-  ttl    = 300
-
-  depends_on = [digitalocean_app.quinnjr_dev]
-}
+# Note: DNS records are managed automatically by DigitalOcean App Platform
+# when a custom domain is configured in the app spec.
+# Manual DNS record creation is not needed as App Platform handles this
+# through its domain configuration and provides the necessary CNAME/A records.
 
