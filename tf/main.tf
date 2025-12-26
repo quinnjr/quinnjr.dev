@@ -1,5 +1,5 @@
-# Domain Resource (if using DigitalOcean DNS)
-resource "digitalocean_domain" "app_domain" {
+# Domain Data Source (reference existing domain)
+data "digitalocean_domain" "app_domain" {
   count = var.enable_dns && var.domain_name != "" ? 1 : 0
   name  = var.domain_name
 }
