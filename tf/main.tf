@@ -113,7 +113,7 @@ resource "digitalocean_app" "quinnjr_dev" {
 # A record for apex domain (e.g., quinnjr.dev)
 resource "digitalocean_record" "apex" {
   count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = digitalocean_domain.app_domain[0].name
+  domain = data.digitalocean_domain.app_domain[0].name
   type   = "A"
   name   = "@"
   value  = digitalocean_app.quinnjr_dev.default_ingress
@@ -125,7 +125,7 @@ resource "digitalocean_record" "apex" {
 # CNAME record for www subdomain
 resource "digitalocean_record" "www" {
   count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = digitalocean_domain.app_domain[0].name
+  domain = data.digitalocean_domain.app_domain[0].name
   type   = "CNAME"
   name   = "www"
   value  = "${digitalocean_app.quinnjr_dev.default_ingress}."
@@ -137,7 +137,7 @@ resource "digitalocean_record" "www" {
 # TXT record for domain verification (if needed by App Platform)
 resource "digitalocean_record" "verification" {
   count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = digitalocean_domain.app_domain[0].name
+  domain = data.digitalocean_domain.app_domain[0].name
   type   = "TXT"
   name   = "_app"
   value  = digitalocean_app.quinnjr_dev.id
