@@ -185,10 +185,15 @@ jobs:
           DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
 
       - name: Output Application URL
+        continue-on-error: true
         run: |
-          APP_URL=$(terraform output -raw app_url 2>/dev/null || echo "not-available")
-          echo "::notice::Application deployed at: $APP_URL"
-          echo "APP_URL=${APP_URL}" >> $GITHUB_OUTPUT
+          if APP_URL=$(terraform output -raw app_url 2>&1); then
+            echo "::notice::Application deployed at: $APP_URL"
+            echo "APP_URL=${APP_URL}" >> $GITHUB_OUTPUT
+          else
+            echo "::warning::Unable to retrieve application URL from Terraform outputs"
+            echo "APP_URL=pending" >> $GITHUB_OUTPUT
+          fi
 
   tag-release:
     name: Tag Release Version
