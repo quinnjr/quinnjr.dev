@@ -98,4 +98,3 @@ export class BadgeComponent {
     return `w-2 h-2 rounded-full ${dotColors[this.variant]} animate-pulse`;
   }
 }
-
