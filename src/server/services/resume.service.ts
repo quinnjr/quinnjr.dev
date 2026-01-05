@@ -1,4 +1,5 @@
 import { injectable } from 'tsyringe';
+import type { Prisma } from '../../generated/prisma/client';
 
 import { DatabaseService } from './database.service';
 
@@ -129,15 +130,15 @@ export class ResumeService {
       website: data.website,
       company: data.company,
       profilePicture: data.profilePicture,
-      summary: data.summary as unknown,
-      barAdmission: (data.barAdmission || []) as unknown,
-      interests: (data.interests || []) as unknown,
-      experience: data.experience as unknown,
-      education: data.education as unknown,
-      projects: (data.projects || []) as unknown,
-      skills: data.skills as unknown,
-      certifications: data.certifications as unknown,
-      memberships: (data.memberships || []) as unknown,
+      summary: data.summary as Prisma.InputJsonValue,
+      barAdmission: (data.barAdmission || []) as Prisma.InputJsonValue,
+      interests: (data.interests || []) as Prisma.InputJsonValue,
+      experience: data.experience as Prisma.InputJsonValue,
+      education: data.education as Prisma.InputJsonValue,
+      projects: (data.projects || []) as Prisma.InputJsonValue,
+      skills: data.skills as Prisma.InputJsonValue,
+      certifications: data.certifications as Prisma.InputJsonValue,
+      memberships: (data.memberships || []) as Prisma.InputJsonValue,
       userId: data.userId,
       version: existingResume ? existingResume.version + 1 : 1,
     };
