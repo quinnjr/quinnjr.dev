@@ -65,7 +65,7 @@ RUN mkdir -p /data && chmod 777 /data
 
 # Healthcheck
 HEALTHCHECK --interval=30s --timeout=3s --start-period=40s --retries=3 \
-  CMD curl -f http://localhost:4000/api/resume/public || exit 1
+  CMD curl -f http://localhost:4000/ || exit 1
 
 # Start the server with migrations
 CMD ["sh", "-c", "pnpm prisma migrate deploy && node dist/quinnjr.dev/server/server.mjs"]

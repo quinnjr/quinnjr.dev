@@ -8,43 +8,53 @@
 @theme {
   /* Custom animations */
   --animate-tilt: tilt 10s infinite linear;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2.5s linear infinite;
 
-  /* Custom color palette - unique brand colors */
-  --color-primary: #6366f1;
-  --color-primary-dark: #4f46e5;
-  --color-primary-light: #818cf8;
-  --color-accent: #ec4899;
-  --color-accent-dark: #db2777;
-  --color-success: #10b981;
-  --color-warning: #f59e0b;
+  /* Professional color palette - sophisticated navy, teal, and gold */
+  --color-primary: #0f766e; /* Teal 700 - Professional yet modern */
+  --color-primary-dark: #115e59; /* Teal 800 */
+  --color-primary-light: #14b8a6; /* Teal 500 */
+  --color-accent: #d97706; /* Amber 600 - Elegant gold accent */
+  --color-accent-dark: #b45309; /* Amber 700 */
+  --color-accent-light: #f59e0b; /* Amber 500 */
+  --color-success: #059669; /* Emerald 600 */
+  --color-info: #0891b2; /* Cyan 600 */
+  --color-warning: #dc2626; /* Red 600 for important warnings */
 
-  /* Custom backgrounds with subtle gradients */
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --bg-tertiary: #334155;
-  --bg-card: rgba(30, 41, 59, 0.6);
-  --bg-card-hover: rgba(51, 65, 85, 0.7);
+  /* Sophisticated backgrounds */
+  --bg-primary: #0a1929; /* Deep navy */
+  --bg-secondary: #132f4c; /* Navy blue */
+  --bg-tertiary: #1e4976; /* Medium navy */
+  --bg-card: rgba(19, 47, 76, 0.8);
+  --bg-card-hover: rgba(30, 73, 118, 0.9);
+  --bg-glass: rgba(15, 118, 110, 0.05);
 
-  /* Custom text colors */
-  --text-primary: #f1f5f9;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  /* Professional text colors */
+  --text-primary: #f8fafc; /* Slate 50 */
+  --text-secondary: #e2e8f0; /* Slate 200 */
+  --text-muted: #94a3b8; /* Slate 400 */
+  --text-accent: #fbbf24; /* Amber 400 for highlights */
 
-  /* Custom shadows and glows */
-  --shadow-glow: 0 0 20px rgba(99, 102, 241, 0.3);
-  --shadow-glow-accent: 0 0 20px rgba(236, 72, 153, 0.3);
-  --shadow-elevation: 0 10px 40px rgba(0, 0, 0, 0.4);
+  /* Refined shadows and glows */
+  --shadow-glow: 0 0 30px rgba(15, 118, 110, 0.25);
+  --shadow-glow-accent: 0 0 25px rgba(217, 119, 6, 0.3);
+  --shadow-elevation-sm: 0 4px 20px rgba(0, 0, 0, 0.3);
+  --shadow-elevation: 0 10px 40px rgba(0, 0, 0, 0.5);
+  --shadow-elevation-lg: 0 20px 60px rgba(0, 0, 0, 0.6);
 
-  /* Custom borders */
-  --border-color: rgba(100, 116, 139, 0.2);
-  --border-color-hover: rgba(139, 92, 246, 0.4);
+  /* Professional borders */
+  --border-color: rgba(148, 163, 184, 0.15);
+  --border-color-hover: rgba(20, 184, 166, 0.5);
+  --border-accent: rgba(217, 119, 6, 0.4);
 
-  /* Custom transitions */
+  /* Smooth, professional transitions */
   --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-fast: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-smooth: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* Custom keyframes for tilt animation */
+/* Custom keyframes for animations */
 @keyframes tilt {
   0%,
   50%,
@@ -52,10 +62,29 @@
     transform: rotate(0deg);
   }
   25% {
-    transform: rotate(1deg);
+    transform: rotate(0.5deg);
   }
   75% {
-    transform: rotate(-1deg);
+    transform: rotate(-0.5deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
   }
 }
 
@@ -67,7 +96,7 @@
 
 @layer base {
   body {
-    background: linear-gradient(135deg, var(--bg-primary) 0%, #1a1f35 100%);
+    background: linear-gradient(135deg, var(--bg-primary) 0%, #0c1a2a 50%, var(--bg-secondary) 100%);
     color: var(--text-primary);
     margin: 0;
     padding: 0;
@@ -77,63 +106,104 @@
       'calt' 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.01em;
   }
 
   html {
     scroll-behavior: smooth;
   }
 
-  /* Custom scrollbar */
+  /* Enhanced typography */
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  /* Custom scrollbar - professional style */
   ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 12px;
+    height: 12px;
   }
 
   ::-webkit-scrollbar-track {
-    background: var(--bg-secondary);
+    background: var(--bg-primary);
+    border-left: 1px solid var(--border-color);
   }
 
   ::-webkit-scrollbar-thumb {
-    background: linear-gradient(180deg, var(--color-primary), var(--color-accent));
-    border-radius: 5px;
+    background: linear-gradient(180deg, var(--color-primary), var(--color-primary-dark));
+    border-radius: 6px;
+    border: 2px solid var(--bg-primary);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(180deg, var(--color-primary-light), var(--color-accent));
+    background: linear-gradient(180deg, var(--color-primary-light), var(--color-primary));
   }
 }
 
 @layer components {
-  /* Custom card styles */
+  /* Professional card styles with glassmorphism */
   .card-custom {
     background: var(--bg-card);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(12px) saturate(180%);
     border: 1px solid var(--border-color);
-    transition: var(--transition-base);
+    transition: var(--transition-smooth);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card-custom::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-primary-light), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
   }
 
   .card-custom:hover {
     background: var(--bg-card-hover);
     border-color: var(--border-color-hover);
     box-shadow: var(--shadow-elevation);
-    transform: translateY(-2px);
+    transform: translateY(-4px);
   }
 
-  /* Custom gradient text */
+  .card-custom:hover::before {
+    opacity: 1;
+  }
+
+  /* Sophisticated gradient text */
   .text-gradient-custom {
-    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent) 100%);
+    background: linear-gradient(135deg, var(--color-primary-light) 0%, var(--color-accent-light) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
-  /* Custom button styles */
+  .text-gradient-professional {
+    background: linear-gradient(135deg, var(--text-primary) 0%, var(--color-primary-light) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  /* Professional button styles */
   .btn-custom-primary {
     background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
     color: white;
     transition: var(--transition-base);
     position: relative;
     overflow: hidden;
+    font-weight: 600;
+    letter-spacing: 0.025em;
   }
 
   .btn-custom-primary::before {
@@ -143,8 +213,8 @@
     left: -100%;
     width: 100%;
     height: 100%;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-    transition: left 0.5s;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent);
+    transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-custom-primary:hover::before {
@@ -153,15 +223,30 @@
 
   .btn-custom-primary:hover {
     box-shadow: var(--shadow-glow);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.02);
   }
 
-  /* Custom link styles */
+  .btn-custom-accent {
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-dark) 100%);
+    color: white;
+    transition: var(--transition-base);
+    box-shadow: 0 4px 14px rgba(217, 119, 6, 0.3);
+    font-weight: 600;
+    letter-spacing: 0.025em;
+  }
+
+  .btn-custom-accent:hover {
+    box-shadow: var(--shadow-glow-accent);
+    transform: translateY(-2px) scale(1.02);
+  }
+
+  /* Refined link styles */
   .link-custom {
     color: var(--color-primary-light);
     text-decoration: none;
     position: relative;
     transition: var(--transition-fast);
+    font-weight: 500;
   }
 
   .link-custom::after {
@@ -171,22 +256,22 @@
     left: 0;
     width: 0;
     height: 2px;
-    background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, var(--color-primary-light), var(--color-accent-light));
+    transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .link-custom:hover {
-    color: var(--color-accent);
+    color: var(--color-accent-light);
   }
 
   .link-custom:hover::after {
     width: 100%;
   }
 
-  /* Custom glow effect */
+  /* Professional glow effect */
   .glow-effect {
     box-shadow: var(--shadow-glow);
-    animation: pulse-glow 3s ease-in-out infinite;
+    animation: pulse-glow 4s ease-in-out infinite;
   }
 
   @keyframes pulse-glow {
@@ -195,13 +280,13 @@
       box-shadow: var(--shadow-glow);
     }
     50% {
-      box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+      box-shadow: 0 0 40px rgba(15, 118, 110, 0.4);
     }
   }
 
-  /* Custom section divider */
+  /* Elegant section divider */
   .section-divider {
-    height: 1px;
+    height: 2px;
     background: linear-gradient(
       90deg,
       transparent,
@@ -209,7 +294,48 @@
       var(--color-accent),
       transparent
     );
-    margin: 3rem 0;
-    opacity: 0.5;
+    margin: 4rem 0;
+    opacity: 0.4;
+    position: relative;
+  }
+
+  .section-divider::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 8px;
+    height: 8px;
+    background: var(--color-accent);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--color-accent);
+  }
+
+  /* Professional badge with shimmer */
+  .badge-professional {
+    background: var(--bg-glass);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(8px);
+    transition: var(--transition-base);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .badge-professional::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(20, 184, 166, 0.1), transparent);
+    animation: shimmer 2.5s infinite;
+  }
+
+  .badge-professional:hover {
+    border-color: var(--border-color-hover);
+    background: var(--bg-card);
+    transform: scale(1.05);
   }
 }
