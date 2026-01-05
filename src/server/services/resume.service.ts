@@ -116,7 +116,7 @@ export class ResumeService {
    * Create or update resume
    */
   async upsertResume(data: ResumeData): Promise<ResumeData> {
-    const existingResume = await this.db.prisma.resume.findFirst({
+    const existingResume = await this.prisma.resume.findFirst({
       where: { userId: data.userId },
       orderBy: { updatedAt: 'desc' },
     });
@@ -143,11 +143,11 @@ export class ResumeService {
     };
 
     const resume = existingResume
-      ? await this.db.prisma.resume.update({
+      ? await this.prisma.resume.update({
           where: { id: existingResume.id },
           data: resumeData,
         })
-      : await this.db.prisma.resume.create({
+      : await this.prisma.resume.create({
           data: resumeData,
         });
 
@@ -158,7 +158,7 @@ export class ResumeService {
    * Update partial resume data
    */
   async updateResume(userId: string, updates: Partial<ResumeData>): Promise<ResumeData> {
-    const existingResume = await this.db.prisma.resume.findFirst({
+    const existingResume = await this.prisma.resume.findFirst({
       where: { userId },
       orderBy: { updatedAt: 'desc' },
     });
@@ -189,7 +189,7 @@ export class ResumeService {
     if (updates.certifications !== undefined) updateData['certifications'] = updates.certifications;
     if (updates.memberships !== undefined) updateData['memberships'] = updates.memberships;
 
-    const resume = await this.db.prisma.resume.update({
+    const resume = await this.prisma.resume.update({
       where: { id: existingResume.id },
       data: updateData,
     });
@@ -201,20 +201,20 @@ export class ResumeService {
    * Get resume version history
    */
   async getResumeHistory(userId: string, limit = 10): Promise<ResumeData[]> {
-    const resumes = await this.db.prisma.resume.findMany({
+    const resumes = await this.prisma.resume.findMany({
       where: { userId },
       orderBy: { updatedAt: 'desc' },
       take: limit,
     });
 
-    return resumes.map(resume => this.mapToResumeData(resume));
+    return resumes.map((resume) => this.mapToResumeData(resume));
   }
 
   /**
    * Delete resume
    */
   async deleteResume(userId: string, resumeId: string): Promise<void> {
-    await this.db.prisma.resume.delete({
+    await this.prisma.resume.delete({
       where: {
         id: resumeId,
         userId,
