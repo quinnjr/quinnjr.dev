@@ -5,7 +5,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -183,4 +183,41 @@ model SitemapConfig {
 
   @@unique([url])
   @@map("sitemap_config")
+}
+
+// Resume Model - Single record for the site owner's resume
+model Resume {
+  id              String          @id @default(uuid())
+
+  // Contact Information
+  name            String
+  email           String
+  linkedin        String?
+  github          String?
+  website         String?
+  company         String?
+  profilePicture  String?
+
+  // Profile Summary
+  summary         Json            // Array of summary paragraphs
+  barAdmission    Json?           // Array of bar admissions
+  interests       Json?           // Array of special interests
+
+  // Experience, Education, Skills, etc. stored as JSON
+  experience      Json            // Array of Experience objects
+  education       Json            // Array of Education objects
+  projects        Json?           // Array of Project objects
+  skills          Json            // Array of Skill objects
+  certifications  Json            // Array of Certification objects
+  memberships     Json?           // Array of Professional Membership objects
+
+  // Metadata
+  userId          String          // Owner's user ID (Auth0)
+  version         Int             @default(1) // For version tracking
+
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  @@index([userId])
+  @@map("resumes")
 }

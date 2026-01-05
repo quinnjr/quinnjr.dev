@@ -1,0 +1,30 @@
+# Digital Ocean Configuration
+# Copy this file to terraform.tfvars and update with your values
+
+# Required: Get from https://cloud.digitalocean.com/account/api/tokens
+do_token = "your_digitalocean_api_token_here"
+
+# Droplet Configuration
+droplet_name = "quinnjr-dev"
+region       = "nyc3"  # Choose: nyc1, nyc3, sfo3, lon1, fra1, tor1, sgp1, blr1, ams3
+droplet_size = "s-1vcpu-1gb"  # $6/month - cheapest option
+
+# SSH Configuration (adjust if using different key)
+ssh_key_name         = "quinnjr-deployment"
+ssh_public_key_path  = "~/.ssh/id_ed25519.pub"
+
+# Domain Configuration (optional)
+# Leave empty to use IP address only
+domain_name = ""  # e.g., "quinnjr.dev"
+
+# Project Configuration
+create_project = true
+project_name   = "quinnjr-dev"
+environment    = "Production"  # Development, Staging, or Production
+
+# Backups (optional)
+# Note: Costs $1.20/month - we use free DIY backups instead
+enable_backups = false
+
+# Tags
+tags = ["quinnjr-dev", "production", "terraform"]

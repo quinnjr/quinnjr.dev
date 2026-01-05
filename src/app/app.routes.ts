@@ -64,6 +64,13 @@ export const routes: Routes = [
             m => m.BlogEditorComponent
           ),
       },
+      {
+        path: 'resume',
+        loadComponent: () =>
+          import('./modules/admin/resume-editor/resume-editor.component').then(
+            m => m.ResumeEditorComponent
+          ),
+      },
     ],
   },
   {

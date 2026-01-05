@@ -7,6 +7,7 @@ export const environment = {
       redirect_uri:
         typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4200',
     },
+    audience: 'https://quinnjr.dev', // Auth0 API identifier
     httpInterceptor: {
       allowedList: ['/api/*'],
     },

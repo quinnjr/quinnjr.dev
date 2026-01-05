@@ -1,0 +1,65 @@
+#cloud-config
+# Cloud-init configuration for initial droplet setup
+
+packages:
+  - curl
+  - git
+  - apt-transport-https
+  - ca-certificates
+  - software-properties-common
+
+package_update: true
+package_upgrade: true
+
+runcmd:
+  # Install Docker
+  - curl -fsSL https://get.docker.com -o /tmp/get-docker.sh
+  - sh /tmp/get-docker.sh
+  - rm /tmp/get-docker.sh
+
+  # Install Docker Compose
+  - curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+  - chmod +x /usr/local/bin/docker-compose
+
+  # Create application directory
+  - mkdir -p /opt/quinnjr.dev
+  - mkdir -p /opt/quinnjr.dev/data
+  - mkdir -p /opt/quinnjr.dev/backups
+  - mkdir -p /opt/quinnjr.dev/logs
+  - chmod 777 /opt/quinnjr.dev/data
+
+  # Enable swap (helps with 1GB RAM)
+  - fallocate -l 2G /swapfile
+  - chmod 600 /swapfile
+  - mkswap /swapfile
+  - swapon /swapfile
+  - echo '/swapfile none swap sw 0 0' >> /etc/fstab
+
+  # Create marker file
+  - touch /opt/quinnjr.dev/.cloud-init-complete
+
+# Enable automatic security updates
+apt:
+  sources:
+    docker:
+      source: "deb [arch=amd64] https://download.docker.com/linux/ubuntu $RELEASE stable"
+      keyid: 9DC858229FC7DD38854AE2D88D81803C0EBFCD88
+
+# Set timezone
+timezone: America/New_York
+
+# Disable password authentication
+ssh_pwauth: false
+
+# Enable firewall (will be managed by Terraform, but set defaults)
+write_files:
+  - path: /opt/quinnjr.dev/.terraform-managed
+    content: |
+      This droplet was created and is managed by Terraform.
+      Infrastructure as Code repository: [your-repo-url]
+
+      To update infrastructure, use Terraform:
+        terraform plan
+        terraform apply
+
+      Manual changes may be overwritten by Terraform!

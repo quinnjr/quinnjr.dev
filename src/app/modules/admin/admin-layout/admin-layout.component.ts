@@ -42,6 +42,13 @@ import { AuthButtonComponent } from '../../../components/auth-button/auth-button
                   <i class="fas fa-project-diagram mr-1"></i>Projects
                 </a>
                 <a
+                  routerLink="/admin/resume"
+                  routerLinkActive="text-blue-600 dark:text-blue-400"
+                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+                >
+                  <i class="fas fa-file-alt mr-1"></i>Resume
+                </a>
+                <a
                   routerLink="/admin/settings"
                   routerLinkActive="text-blue-600 dark:text-blue-400"
                   class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"

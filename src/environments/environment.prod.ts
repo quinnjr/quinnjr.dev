@@ -6,6 +6,7 @@ export const environment = {
     authorizationParams: {
       redirect_uri: 'https://quinnjr.dev',
     },
+    audience: 'https://quinnjr.dev', // Auth0 API identifier
     httpInterceptor: {
       allowedList: ['https://quinnjr.dev/api/*'],
     },

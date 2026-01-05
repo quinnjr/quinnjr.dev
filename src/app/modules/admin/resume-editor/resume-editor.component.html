@@ -1,0 +1,127 @@
+<div class="container mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Resume Editor</h1>
+    <p class="text-gray-600 dark:text-gray-400">
+      Edit your resume information. Changes are saved immediately.
+    </p>
+  </div>
+
+  @if (resumeData$ | async; as resume) {
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- Sidebar Navigation -->
+      <aside class="lg:col-span-1">
+        <nav class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4 sticky top-4">
+          <h2 class="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase mb-3">
+            Sections
+          </h2>
+          <ul class="space-y-1">
+            <li>
+              <button
+                (click)="setActiveSection('contact')"
+                [class.bg-blue-50]="activeSection === 'contact'"
+                [class.dark:bg-blue-900]="activeSection === 'contact'"
+                [class.text-blue-700]="activeSection === 'contact'"
+                [class.dark:text-blue-300]="activeSection === 'contact'"
+                class="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <i class="fas fa-address-card mr-2"></i>
+                Contact Info
+              </button>
+            </li>
+            <li>
+              <button
+                (click)="setActiveSection('profile')"
+                [class.bg-blue-50]="activeSection === 'profile'"
+                [class.dark:bg-blue-900]="activeSection === 'profile'"
+                [class.text-blue-700]="activeSection === 'profile'"
+                [class.dark:text-blue-300]="activeSection === 'profile'"
+                class="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <i class="fas fa-user mr-2"></i>
+                Profile
+              </button>
+            </li>
+            <li>
+              <button
+                (click)="setActiveSection('experience')"
+                [class.bg-blue-50]="activeSection === 'experience'"
+                [class.dark:bg-blue-900]="activeSection === 'experience'"
+                [class.text-blue-700]="activeSection === 'experience'"
+                [class.dark:text-blue-300]="activeSection === 'experience'"
+                class="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <i class="fas fa-briefcase mr-2"></i>
+                Experience
+              </button>
+            </li>
+            <li>
+              <button
+                (click)="setActiveSection('education')"
+                [class.bg-blue-50]="activeSection === 'education'"
+                [class.dark:bg-blue-900]="activeSection === 'education'"
+                [class.text-blue-700]="activeSection === 'education'"
+                [class.dark:text-blue-300]="activeSection === 'education'"
+                class="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <i class="fas fa-graduation-cap mr-2"></i>
+                Education
+              </button>
+            </li>
+            <li>
+              <button
+                (click)="setActiveSection('projects')"
+                [class.bg-blue-50]="activeSection === 'projects'"
+                [class.dark:bg-blue-900]="activeSection === 'projects'"
+                [class.text-blue-700]="activeSection === 'projects'"
+                [class.dark:text-blue-300]="activeSection === 'projects'"
+                class="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <i class="fas fa-project-diagram mr-2"></i>
+                Projects
+              </button>
+            </li>
+            <li>
+              <button
+                (click)="setActiveSection('skills')"
+                [class.bg-blue-50]="activeSection === 'skills'"
+                [class.dark:bg-blue-900]="activeSection === 'skills'"
+                [class.text-blue-700]="activeSection === 'skills'"
+                [class.dark:text-blue-300]="activeSection === 'skills'"
+                class="w-full text-left px-3 py-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              >
+                <i class="fas fa-code mr-2"></i>
+                Skills
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+
+      <!-- Main Content -->
+      <div class="lg:col-span-3">
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+          @switch (activeSection) {
+            @case ('contact') {
+              <app-contact-editor [contact]="resume.contact" (save)="saveSuccess()" />
+            }
+            @case ('profile') {
+              <app-profile-editor [profile]="resume.profile" (save)="saveSuccess()" />
+            }
+            @case ('experience') {
+              <app-experience-editor [experiences]="resume.experience" (save)="saveSuccess()" />
+            }
+            @case ('education') {
+              <app-education-editor [education]="resume.education" (save)="saveSuccess()" />
+            }
+            @case ('projects') {
+              <app-projects-editor [projects]="resume.projects || []" (save)="saveSuccess()" />
+            }
+            @case ('skills') {
+              <app-skills-editor [skills]="resume.skills" (save)="saveSuccess()" />
+            }
+          }
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -147,9 +147,11 @@ import {
                 <i class="fas fa-plus mr-2"></i>New Article
               </app-button>
             </a>
-            <app-button variant="success" [fullWidth]="true">
-              <i class="fas fa-folder-plus mr-2"></i>New Project
-            </app-button>
+            <a routerLink="/admin/resume">
+              <app-button variant="success" [fullWidth]="true">
+                <i class="fas fa-file-alt mr-2"></i>Edit Resume
+              </app-button>
+            </a>
             <app-button variant="secondary" [fullWidth]="true">
               <i class="fas fa-cog mr-2"></i>Settings
             </app-button>
