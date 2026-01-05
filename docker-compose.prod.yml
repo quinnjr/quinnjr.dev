@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: ghcr.io/quinnjr/quinnjr.dev:latest
+    image: ${DOCKER_IMAGE:-ghcr.io/quinnjr/quinnjr.dev:latest}
     container_name: quinnjr-dev
     restart: unless-stopped
     ports:
