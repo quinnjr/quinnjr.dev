@@ -35,7 +35,7 @@ docker-compose -f docker-compose.prod.yml down || true
 
 # Start new container
 echo "🚀 Starting new container..."
-docker-compose -f docker-compose.prod.yml up -d
+DOCKER_IMAGE="${FULL_IMAGE}" docker-compose -f docker-compose.prod.yml up -d
 
 # Wait for application to be healthy
 echo "⏳ Waiting for application to be healthy..."
