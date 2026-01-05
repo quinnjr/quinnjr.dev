@@ -35,7 +35,7 @@ router.get(
   extractUserId,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.auth!.userId as string;
+      const userId = req.auth!['userId'] as string;
       const resume = await resumeService.getResume(userId);
 
       if (!resume) {
@@ -60,7 +60,7 @@ router.put(
   extractUserId,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.auth!.userId as string;
+      const userId = req.auth!['userId'] as string;
 
       const resumeData: ResumeData = {
         ...req.body,
@@ -86,7 +86,7 @@ router.patch(
   extractUserId,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.auth!.userId as string;
+      const userId = req.auth!['userId'] as string;
       const updates: Partial<ResumeData> = req.body;
       const resume = await resumeService.updateResume(userId, updates);
 
@@ -114,7 +114,7 @@ router.get(
   extractUserId,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.auth!.userId as string;
+      const userId = req.auth!['userId'] as string;
       const limit = parseInt(req.query['limit'] as string) || 10;
 
       const history = await resumeService.getResumeHistory(userId, limit);
@@ -135,7 +135,7 @@ router.delete(
   extractUserId,
   async (req: Request, res: Response): Promise<void> => {
     try {
-      const userId = req.auth!.userId as string;
+      const userId = req.auth!['userId'] as string;
       const resumeId = req.params['id'];
 
       await resumeService.deleteResume(userId, resumeId);

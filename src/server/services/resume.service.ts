@@ -77,11 +77,15 @@ export interface ProfessionalMembership {
 export class ResumeService {
   constructor(private db: DatabaseService) {}
 
+  private get prisma() {
+    return this.db.getClient();
+  }
+
   /**
    * Get the resume (returns the most recent one for the user)
    */
   async getResume(userId: string): Promise<ResumeData | null> {
-    const resume = await this.db.prisma.resume.findFirst({
+    const resume = await this.prisma.resume.findFirst({
       where: { userId },
       orderBy: { updatedAt: 'desc' },
     });
@@ -97,7 +101,7 @@ export class ResumeService {
    * Get the public resume (no userId filter, returns the latest)
    */
   async getPublicResume(): Promise<ResumeData | null> {
-    const resume = await this.db.prisma.resume.findFirst({
+    const resume = await this.prisma.resume.findFirst({
       orderBy: { updatedAt: 'desc' },
     });
 

@@ -77,7 +77,7 @@ export const extractUserId = (req: Request, res: Response, next: NextFunction): 
   if (req.auth?.sub) {
     // Auth0 sub format: "auth0|userId" or "google-oauth2|userId"
     // Store the full sub as userId for consistency
-    req.auth.userId = req.auth.sub;
+    req.auth['userId'] = req.auth.sub;
     next();
   } else {
     res.status(401).json({
