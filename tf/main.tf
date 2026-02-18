@@ -1,148 +1,136 @@
-# Domain Resource (if using DigitalOcean DNS)
-resource "digitalocean_domain" "app_domain" {
-  count = var.enable_dns && var.domain_name != "" ? 1 : 0
-  name  = var.domain_name
+# quinnjr.dev — Local Docker Deployment
+# Builds from local Dockerfile and runs behind Ferron reverse proxy
+
+# =============================================================================
+# Network
+# =============================================================================
+
+resource "docker_network" "app" {
+  name = "${var.app_name}-network"
 }
 
-# Managed PostgreSQL Database
-resource "digitalocean_database_cluster" "quinnjr_postgres" {
-  name       = "${var.project_name}-db"
-  engine     = "pg"
-  version    = "16"
-  size       = "db-s-1vcpu-1gb" # Smallest managed DB: $15/month
-  region     = var.region
-  node_count = 1
+# =============================================================================
+# PostgreSQL
+# =============================================================================
+
+resource "docker_image" "postgres" {
+  name = "postgres:16-alpine"
 }
 
-# App Platform App
-resource "digitalocean_app" "quinnjr_dev" {
-  spec {
-    name   = var.project_name
-    region = var.region
+resource "docker_container" "postgres" {
+  name  = "${var.app_name}-postgres"
+  image = docker_image.postgres.image_id
 
-    # Custom domain configuration
-    dynamic "domain" {
-      for_each = var.domain_name != "" ? [1] : []
-      content {
-        name = var.domain_name
-        type = "PRIMARY"
-        zone = var.domain_name
-      }
-    }
+  restart = "unless-stopped"
 
-    # Database
-    database {
-      name         = "${var.project_name}-db"
-      engine       = "PG"
-      production   = false
-      cluster_name = digitalocean_database_cluster.quinnjr_postgres.name
-    }
+  networks_advanced {
+    name = docker_network.app.name
+  }
 
-    # Service (Docker container)
-    service {
-      name               = "${var.project_name}-web"
-      instance_count     = 1
-      instance_size_slug = "basic-xxs" # Smallest: $5/month, 512MB RAM, 1 vCPU
+  ports {
+    internal = 5432
+    external = var.postgres_port
+    ip       = "127.0.0.1"
+  }
 
-      # Docker image from GitHub Container Registry
-      image {
-        registry_type = "GHCR"
-        registry      = "ghcr.io"
-        repository    = "${var.github_username}/quinnjr.dev"
-        tag           = "main"
+  volumes {
+    host_path      = "${var.data_dir}/postgres"
+    container_path = "/var/lib/postgresql/data"
+  }
 
-        deploy_on_push {
-          enabled = true
-        }
+  env = [
+    "POSTGRES_DB=quinnjr",
+    "POSTGRES_USER=quinnjr",
+    "POSTGRES_PASSWORD=${var.postgres_password}",
+  ]
 
-        # GitHub Container Registry credentials (format: username:token)
-        registry_credentials = "${var.github_username}:${var.github_token}"
-      }
+  healthcheck {
+    test         = ["CMD-SHELL", "pg_isready -U quinnjr"]
+    interval     = "10s"
+    timeout      = "5s"
+    retries      = 5
+    start_period = "30s"
+  }
 
-      # Health check
-      health_check {
-        http_path             = "/"
-        initial_delay_seconds = 30
-        period_seconds        = 10
-        timeout_seconds       = 5
-        success_threshold     = 1
-        failure_threshold     = 3
-      }
+  must_run = true
+}
 
-      # HTTP port
-      http_port = var.app_port
+# =============================================================================
+# Application
+# =============================================================================
 
-      # Environment variables
-      env {
-        key   = "PORT"
-        value = tostring(var.app_port)
-      }
+resource "docker_image" "app" {
+  name = "${var.app_name}:${var.docker_image_tag}"
 
-      env {
-        key   = "NODE_ENV"
-        value = var.node_env
-      }
+  build {
+    context    = var.repo_path
+    dockerfile = "Dockerfile"
+    tag        = ["${var.app_name}:${var.docker_image_tag}"]
+  }
 
-      # PostgreSQL database URL
-      env {
-        key   = "DATABASE_URL"
-        value = digitalocean_database_cluster.quinnjr_postgres.uri
-        type  = "SECRET"
-      }
-
-      # GitHub API token for fetching repositories
-      env {
-        key   = "GITHUB_TOKEN"
-        value = var.github_api_token
-        type  = "SECRET"
-      }
-    }
-
-    # Alerts
-    alert {
-      rule = "DEPLOYMENT_FAILED"
-    }
-
-    alert {
-      rule = "DOMAIN_FAILED"
-    }
+  triggers = {
+    dockerfile_hash = filesha256("${var.repo_path}/Dockerfile")
+    pnpm_lock_hash  = filesha256("${var.repo_path}/pnpm-lock.yaml")
+    schema_hash     = filesha256("${var.repo_path}/prisma/schema.prisma")
   }
 }
 
-# DNS Records for the custom domain
-# A record for apex domain (e.g., quinnjr.dev)
-resource "digitalocean_record" "apex" {
-  count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = digitalocean_domain.app_domain[0].name
-  type   = "A"
-  name   = "@"
-  value  = digitalocean_app.quinnjr_dev.default_ingress
-  ttl    = 300
+resource "docker_container" "app" {
+  name  = var.app_name
+  image = docker_image.app.image_id
 
-  depends_on = [digitalocean_app.quinnjr_dev]
+  restart = "unless-stopped"
+
+  depends_on = [docker_container.postgres]
+
+  networks_advanced {
+    name = docker_network.app.name
+  }
+
+  ports {
+    internal = 4000
+    external = var.host_port
+    ip       = "127.0.0.1"
+  }
+
+  env = [
+    "NODE_ENV=production",
+    "PORT=4000",
+    "DATABASE_URL=postgresql://quinnjr:${var.postgres_password}@${var.app_name}-postgres:5432/quinnjr?schema=public",
+    "GITHUB_TOKEN=${var.github_token}",
+  ]
+
+  healthcheck {
+    test         = ["CMD", "node", "-e", "fetch('http://localhost:4000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+    interval     = "30s"
+    timeout      = "10s"
+    retries      = 3
+    start_period = "60s"
+  }
+
+  must_run = true
 }
 
-# CNAME record for www subdomain
-resource "digitalocean_record" "www" {
-  count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = digitalocean_domain.app_domain[0].name
-  type   = "CNAME"
-  name   = "www"
-  value  = "${digitalocean_app.quinnjr_dev.default_ingress}."
-  ttl    = 300
+# =============================================================================
+# Outputs
+# =============================================================================
 
-  depends_on = [digitalocean_app.quinnjr_dev]
+output "container_id" {
+  description = "Docker container ID"
+  value       = docker_container.app.id
 }
 
-# TXT record for domain verification (if needed by App Platform)
-resource "digitalocean_record" "verification" {
-  count  = var.enable_dns && var.domain_name != "" ? 1 : 0
-  domain = digitalocean_domain.app_domain[0].name
-  type   = "TXT"
-  name   = "_app"
-  value  = digitalocean_app.quinnjr_dev.id
-  ttl    = 300
-
-  depends_on = [digitalocean_app.quinnjr_dev]
+output "container_name" {
+  description = "Docker container name"
+  value       = docker_container.app.name
 }
 
+output "local_url" {
+  description = "Local URL (behind Ferron reverse proxy)"
+  value       = "http://127.0.0.1:${var.host_port}"
+}
+
+output "postgres_container" {
+  description = "PostgreSQL container name"
+  value       = docker_container.postgres.name
+}
