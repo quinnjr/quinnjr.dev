@@ -1,3 +1,4 @@
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import {
   Component,
   ElementRef,
@@ -11,7 +12,6 @@ import {
   ChangeDetectionStrategy,
   signal,
 } from '@angular/core';
-import { isPlatformBrowser, CommonModule } from '@angular/common';
 import * as THREE from 'three';
 
 @Component({
@@ -83,8 +83,12 @@ import * as THREE from 'three';
       }
 
       @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
       }
 
       .static-fallback {
@@ -93,8 +97,9 @@ import * as THREE from 'three';
         left: 0;
         width: 100%;
         height: 100%;
-        background: radial-gradient(ellipse at center bottom, rgba(201, 168, 76, 0.06) 0%, transparent 60%),
-                    linear-gradient(180deg, #0a0a0f 0%, #050508 100%);
+        background:
+          radial-gradient(ellipse at center bottom, rgba(201, 168, 76, 0.06) 0%, transparent 60%),
+          linear-gradient(180deg, #0a0a0f 0%, #050508 100%);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -123,18 +128,18 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
   isLoading = signal(true);
   prefersReducedMotion = signal(false);
 
-  private scene!: THREE.Scene;
-  private camera!: THREE.PerspectiveCamera;
-  private renderer!: THREE.WebGLRenderer;
+  private scene: THREE.Scene | null = null;
+  private camera: THREE.PerspectiveCamera | null = null;
+  private renderer: THREE.WebGLRenderer | null = null;
   private animationFrameId: number | null = null;
   private isRunning = false;
 
   // Scene objects
-  private sigilMesh!: THREE.Mesh;
-  private sigilMaterial!: THREE.ShaderMaterial;
+  private sigilMesh: THREE.Mesh | null = null;
+  private sigilMaterial: THREE.ShaderMaterial | null = null;
   private pillarLights: THREE.PointLight[] = [];
   private debrisParticles: THREE.Points | null = null;
-  private groundDisc!: THREE.Mesh;
+  private groundDisc: THREE.Mesh | null = null;
 
   // Camera parallax
   private mouseX = 0;
@@ -205,21 +210,27 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
   `;
 
   ngOnInit(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
     const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
     this.prefersReducedMotion.set(mq.matches);
 
-    mq.addEventListener('change', (event) => {
+    mq.addEventListener('change', event => {
       this.ngZone.run(() => {
         this.prefersReducedMotion.set(event.matches);
-        if (event.matches) this.cleanup();
+        if (event.matches) {
+          this.cleanup();
+        }
       });
     });
   }
 
   ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
     if (this.prefersReducedMotion()) {
       this.isLoading.set(false);
@@ -311,7 +322,7 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private createPillars(): void {
-    const pillarPositions: [number, number, number][] = [
+    const pillarPositions: Array<[number, number, number]> = [
       [-4, 0, -3],
       [0, 0, -5],
       [4, 0, -3],
@@ -338,7 +349,11 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
 
       // Small amber ember on pillar top
       const capGeo = new THREE.SphereGeometry(0.12, 8, 8);
-      const capMat = new THREE.MeshBasicMaterial({ color: 0xe8c46a, transparent: true, opacity: 0.8 });
+      const capMat = new THREE.MeshBasicMaterial({
+        color: 0xe8c46a,
+        transparent: true,
+        opacity: 0.8,
+      });
       const cap = new THREE.Mesh(capGeo, capMat);
       cap.position.set(x, 4.05, z);
       this.scene.add(cap);
@@ -400,12 +415,15 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
     window.addEventListener('mousemove', this.boundMouseMove);
 
     this.boundVisibilityChange = () => {
-      if (document.hidden) this.pauseAnimation();
-      else this.startAnimation();
+      if (document.hidden) {
+        this.pauseAnimation();
+      } else {
+        this.startAnimation();
+      }
     };
     document.addEventListener('visibilitychange', this.boundVisibilityChange);
 
-    this.resizeObserver = new ResizeObserver((entries) => {
+    this.resizeObserver = new ResizeObserver(entries => {
       for (const entry of entries) {
         const { width, height } = entry.contentRect;
         if (this.camera && this.renderer && width > 0 && height > 0) {
@@ -419,7 +437,9 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private startAnimation(): void {
-    if (this.isRunning) return;
+    if (this.isRunning) {
+      return;
+    }
     this.isRunning = true;
     this.animate();
   }
@@ -433,7 +453,9 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private animate = (): void => {
-    if (!this.isRunning) return;
+    if (!this.isRunning) {
+      return;
+    }
     this.animationFrameId = requestAnimationFrame(this.animate);
 
     const time = performance.now() * 0.001;
@@ -495,13 +517,15 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
       (this.debrisParticles.material as THREE.Material).dispose();
     }
 
-    this.scene?.traverse((obj) => {
+    this.scene?.traverse(obj => {
       if (obj instanceof THREE.Mesh) {
-        obj.geometry?.dispose();
+        (obj.geometry as THREE.BufferGeometry).dispose();
         if (Array.isArray(obj.material)) {
-          obj.material.forEach((m) => m.dispose());
+          (obj.material as THREE.Material[]).forEach((m: THREE.Material) => {
+            m.dispose();
+          });
         } else {
-          (obj.material as THREE.Material)?.dispose();
+          (obj.material as THREE.Material).dispose();
         }
       }
     });
