@@ -1,12 +1,7 @@
-# quinnjr.dev — Local Docker Deployment
-# Builds from local Dockerfile and runs behind Ferron reverse proxy
-
-# =============================================================================
-# Network
-# =============================================================================
-
-resource "docker_network" "app" {
-  name = "${var.app_name}-network"
+# Domain Data Source (reference existing domain)
+data "digitalocean_domain" "app_domain" {
+  count = var.enable_dns && var.domain_name != "" ? 1 : 0
+  name  = var.domain_name
 }
 
 # =============================================================================
@@ -23,9 +18,13 @@ resource "docker_container" "postgres" {
 
   restart = "unless-stopped"
 
-  networks_advanced {
-    name = docker_network.app.name
-  }
+    # Database
+    database {
+      name         = "${var.project_name}-db"
+      engine       = "PG"
+      production   = false
+      cluster_name = digitalocean_database_cluster.quinnjr_postgres.name
+    }
 
   ports {
     internal = 5432
@@ -33,10 +32,12 @@ resource "docker_container" "postgres" {
     ip       = "127.0.0.1"
   }
 
-  volumes {
-    host_path      = "${var.data_dir}/postgres"
-    container_path = "/var/lib/postgresql/data"
-  }
+      # Docker image from GitHub Container Registry
+      image {
+        registry_type = "GHCR"
+        registry      = "ghcr.io"
+        repository    = "${var.github_username}/quinnjr.dev"
+        tag           = var.docker_image_tag
 
   env = [
     "POSTGRES_DB=quinnjr",
@@ -75,55 +76,10 @@ resource "docker_image" "app" {
   }
 }
 
-resource "docker_container" "app" {
-  name  = var.app_name
-  image = docker_image.app.image_id
-
-  restart = "unless-stopped"
-
-  depends_on = [docker_container.postgres]
-
-  networks_advanced {
-    name = docker_network.app.name
-  }
-
-  ports {
-    internal = 4000
-    external = var.host_port
-    ip       = "127.0.0.1"
-  }
-
-  env = [
-    "NODE_ENV=production",
-    "PORT=4000",
-    "DATABASE_URL=postgresql://quinnjr:${var.postgres_password}@${var.app_name}-postgres:5432/quinnjr?schema=public",
-    "GITHUB_TOKEN=${var.github_token}",
-  ]
-
-  healthcheck {
-    test         = ["CMD", "node", "-e", "fetch('http://localhost:4000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
-    interval     = "30s"
-    timeout      = "10s"
-    retries      = 3
-    start_period = "60s"
-  }
-
-  must_run = true
-}
-
-# =============================================================================
-# Outputs
-# =============================================================================
-
-output "container_id" {
-  description = "Docker container ID"
-  value       = docker_container.app.id
-}
-
-output "container_name" {
-  description = "Docker container name"
-  value       = docker_container.app.name
-}
+# Note: DNS records are managed automatically by DigitalOcean App Platform
+# when a custom domain is configured in the app spec.
+# Manual DNS record creation is not needed as App Platform handles this
+# through its domain configuration and provides the necessary CNAME/A records.
 
 output "local_url" {
   description = "Local URL (behind Ferron reverse proxy)"

@@ -1,10 +1,12 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 
+import { AuthButtonComponent } from '../auth-button/auth-button.component';
+
 @Component({
   selector: 'app-naviation',
   standalone: true,
-  imports: [RouterLink, RouterLinkActive],
+  imports: [RouterLink, RouterLinkActive, AuthButtonComponent],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -47,6 +49,12 @@ export class NavigationComponent {
       title: 'Forge',
       link: 'https://pegausheavy.dev',
       icon: 'fas fa-shield-alt',
+      external: true,
+    },
+    {
+      title: 'Pegasus Heavy',
+      link: 'https://pegausheavy.dev',
+      icon: 'fas fa-building',
       external: true,
     },
   ]);
