@@ -38,7 +38,7 @@ test.describe('Navigation', () => {
   });
 
   test('should navigate to articles page', async ({ page }) => {
-    const articlesLink = page.getByRole('link', { name: /articles/i });
+    const articlesLink = page.getByRole('link', { name: /chronicles/i });
     await articlesLink.click({ timeout: 10000 });
     await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });

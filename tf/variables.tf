@@ -16,8 +16,14 @@ variable "docker_image_tag" {
   default     = "latest"
 }
 
-variable "host_port" {
-  description = "Host port to expose the app on (behind Ferron)"
+variable "docker_image_tag" {
+  description = "Docker image tag to deploy (e.g., main-sha-abc1234)"
+  type        = string
+  default     = "main"
+}
+
+variable "app_port" {
+  description = "Port the application runs on"
   type        = number
   default     = 4300
 }

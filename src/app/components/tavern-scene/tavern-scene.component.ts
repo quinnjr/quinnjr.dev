@@ -290,7 +290,7 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
     this.groundDisc = new THREE.Mesh(geo, mat);
     this.groundDisc.position.set(0, -1, 0);
     this.groundDisc.receiveShadow = true;
-    this.scene.add(this.groundDisc);
+    this.scene?.add(this.groundDisc);
   }
 
   private createSigil(): void {
@@ -307,7 +307,7 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sigilMesh = new THREE.Mesh(geo, this.sigilMaterial);
     this.sigilMesh.rotation.x = -Math.PI / 2;
     this.sigilMesh.position.set(0, -0.94, 0);
-    this.scene.add(this.sigilMesh);
+    this.scene?.add(this.sigilMesh);
 
     // Emissive glow beneath the sigil
     const glowGeo = new THREE.CylinderGeometry(3.2, 3.4, 0.02, 48);
@@ -318,7 +318,7 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
     });
     const glow = new THREE.Mesh(glowGeo, glowMat);
     glow.position.set(0, -0.95, 0);
-    this.scene.add(glow);
+    this.scene?.add(glow);
   }
 
   private createPillars(): void {
@@ -339,12 +339,12 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
       const pillar = new THREE.Mesh(pillarGeo, pillarMat);
       pillar.position.set(x, 1.5, z);
       pillar.castShadow = true;
-      this.scene.add(pillar);
+      this.scene?.add(pillar);
 
       // Amber point light at pillar base
       const light = new THREE.PointLight(0xc9a84c, 2, 8);
       light.position.set(x, -0.3, z);
-      this.scene.add(light);
+      this.scene?.add(light);
       this.pillarLights.push(light);
 
       // Small amber ember on pillar top
@@ -356,7 +356,7 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
       });
       const cap = new THREE.Mesh(capGeo, capMat);
       cap.position.set(x, 4.05, z);
-      this.scene.add(cap);
+      this.scene?.add(cap);
     });
   }
 
@@ -404,7 +404,7 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
     });
 
     this.debrisParticles = new THREE.Points(geo, mat);
-    this.scene.add(this.debrisParticles);
+    this.scene?.add(this.debrisParticles);
   }
 
   private setupEventListeners(): void {
@@ -457,6 +457,10 @@ export class TavernSceneComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     this.animationFrameId = requestAnimationFrame(this.animate);
+
+    if (!this.camera || !this.renderer || !this.scene) {
+      return;
+    }
 
     const time = performance.now() * 0.001;
 
