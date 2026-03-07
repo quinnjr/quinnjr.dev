@@ -59,7 +59,9 @@
   font-weight: 600;
   color: #e8dcc8;
   letter-spacing: 0.06em;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
 
   .nav-logo-link:hover & {
     color: #c9a84c;
@@ -90,6 +92,23 @@
   &:focus {
     outline: 2px solid #c9a84c;
     outline-offset: 2px;
+  }
+}
+
+// ── Mobile menu wrapper ───────────────────────────────────────────────────
+
+.nav-menu-wrapper {
+  display: none;
+  width: 100%;
+
+  &.nav-menu-open {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    display: flex;
+    width: auto;
+    align-items: center;
   }
 }
 
