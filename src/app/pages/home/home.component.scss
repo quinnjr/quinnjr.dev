@@ -211,7 +211,9 @@
 .skill-fa-icon {
   font-size: 3rem;
   color: var(--color-amber);
-  transition: color 0.3s ease, filter 0.3s ease;
+  transition:
+    color 0.3s ease,
+    filter 0.3s ease;
 }
 
 .skill-svg-icon {
@@ -307,7 +309,9 @@
 .footer-icon {
   color: var(--color-muted);
   font-size: 1.25rem;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
   text-decoration: none;
 
   &:hover {

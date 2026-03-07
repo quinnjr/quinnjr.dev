@@ -32,7 +32,9 @@
             font-family="Cinzel Decorative, serif"
             font-size="9.5"
             font-weight="700"
-          >JRQ</text>
+          >
+            JRQ
+          </text>
         </svg>
         <span class="nav-site-name">quinnjr.tech</span>
       </div>
@@ -48,22 +50,42 @@
     >
       <span class="sr-only">{{ isMenuOpen() ? 'Close main menu' : 'Open main menu' }}</span>
       @if (isMenuOpen()) {
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
         </svg>
       } @else {
-        <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
+        <svg
+          class="w-5 h-5"
+          aria-hidden="true"
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 17 14"
+        >
+          <path
+            stroke="currentColor"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M1 1h15M1 7h15M1 13h15"
+          />
         </svg>
       }
     </button>
 
     <!-- Navigation Menu -->
-    <div
-      [class.hidden]="!isMenuOpen()"
-      class="w-full md:flex md:w-auto md:items-center"
-      id="navbar-default"
-    >
+    <div [class.nav-menu-open]="isMenuOpen()" class="nav-menu-wrapper" id="navbar-default">
       <ul class="nav-menu">
         @for (item of navbarItems(); track $index) {
           <li>

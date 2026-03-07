@@ -35,10 +35,12 @@ export class HomeComponent implements AfterViewInit {
   @ViewChildren('revealTarget') revealTargets!: QueryList<ElementRef<Element>>;
 
   ngAfterViewInit(): void {
-    if (!isPlatformBrowser(this.platformId)) return;
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
 
     // Wire up scroll reveal for all marked elements
-    this.revealTargets.forEach((ref) => {
+    this.revealTargets.forEach(ref => {
       this.scrollReveal.observe(ref.nativeElement);
     });
 

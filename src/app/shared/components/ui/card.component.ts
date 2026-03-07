@@ -1,7 +1,14 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-export type CardVariant = 'default' | 'elevated' | 'outlined' | 'ghost' | 'parchment' | 'wood' | 'tavern';
+export type CardVariant =
+  | 'default'
+  | 'elevated'
+  | 'outlined'
+  | 'ghost'
+  | 'parchment'
+  | 'wood'
+  | 'tavern';
 
 @Component({
   selector: 'app-card',
@@ -22,6 +29,8 @@ export class CardComponent {
 
   get cardClasses(): string {
     const baseClasses = 'rounded-xl transition-all duration-300';
+    const blueHover =
+      'hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1';
 
     const variantClasses: Record<CardVariant, string> = {
       default: 'bg-gray-800/50 backdrop-blur-sm border border-gray-700',
@@ -30,20 +39,21 @@ export class CardComponent {
       ghost: 'bg-transparent',
       parchment:
         'bg-gradient-to-br from-amber-100 via-amber-50 to-amber-200 border-4 border-amber-800 shadow-lg shadow-black/30 text-amber-900',
-      wood:
-        'bg-gradient-to-b from-amber-700 via-amber-800 to-amber-900 border-4 border-amber-950 shadow-lg shadow-black/40 text-amber-100',
+      wood: 'bg-gradient-to-b from-amber-700 via-amber-800 to-amber-900 border-4 border-amber-950 shadow-lg shadow-black/40 text-amber-100',
       tavern:
         'bg-amber-950/90 backdrop-blur-sm border-2 border-amber-800 shadow-lg shadow-orange-900/30 text-amber-100',
     };
 
     const hoverClassesByVariant: Record<CardVariant, string> = {
-      default: 'hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1',
-      elevated: 'hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1',
-      outlined: 'hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1',
+      default: blueHover,
+      elevated: blueHover,
+      outlined: blueHover,
       ghost: 'hover:bg-gray-800/20',
-      parchment: 'hover:shadow-xl hover:shadow-orange-500/20 hover:-translate-y-1 hover:border-orange-600',
+      parchment:
+        'hover:shadow-xl hover:shadow-orange-500/20 hover:-translate-y-1 hover:border-orange-600',
       wood: 'hover:shadow-xl hover:shadow-orange-500/30 hover:-translate-y-1',
-      tavern: 'hover:border-orange-500 hover:shadow-xl hover:shadow-orange-500/20 hover:-translate-y-1',
+      tavern:
+        'hover:border-orange-500 hover:shadow-xl hover:shadow-orange-500/20 hover:-translate-y-1',
     };
 
     const hoverClasses = this.hover ? hoverClassesByVariant[this.variant] : '';
