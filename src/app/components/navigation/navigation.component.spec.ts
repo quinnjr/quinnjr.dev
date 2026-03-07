@@ -36,23 +36,23 @@ describe('NavgiationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 7 navigation items', () => {
-    expect(component.navbarItems().length).toBe(7);
+  it('should have 8 navigation items', () => {
+    expect(component.navbarItems().length).toBe(8);
   });
 
-  it('should have LinkedIn link', () => {
-    const linkedInItem = component.navbarItems().find(item => item.title === 'LinkedIn');
+  it('should have Guild Hall (LinkedIn) link', () => {
+    const linkedInItem = component.navbarItems().find(item => item.title === 'Guild Hall');
     expect(linkedInItem).toBeDefined();
     expect(linkedInItem?.link).toBe('https://www.linkedin.com/in/quinnjosephr/');
-    expect(linkedInItem?.icon).toBe('fab fa-linkedin');
+    expect(linkedInItem?.icon).toBe('fas fa-users');
     expect(linkedInItem?.external).toBe(true);
   });
 
-  it('should have Github link', () => {
-    const githubItem = component.navbarItems().find(item => item.title === 'Github');
+  it('should have Arcane Repository (GitHub) link', () => {
+    const githubItem = component.navbarItems().find(item => item.title === 'Arcane Repository');
     expect(githubItem).toBeDefined();
     expect(githubItem?.link).toBe('https://github.com/quinnjr');
-    expect(githubItem?.icon).toBe('fab fa-github');
+    expect(githubItem?.icon).toBe('fas fa-code-branch');
     expect(githubItem?.external).toBe(true);
   });
 

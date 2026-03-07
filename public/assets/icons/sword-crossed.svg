@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .sword-l { transform-origin: 40px 40px; animation: cross-l 3s ease-in-out infinite; }
+    .sword-r { transform-origin: 40px 40px; animation: cross-r 3s ease-in-out infinite; }
+    .spark   { animation: spark-flash 3s ease-out infinite; transform-origin: 40px 40px; }
+    @keyframes cross-l {
+      0%   { transform: rotate(-50deg); }
+      35%  { transform: rotate(-18deg); }
+      65%  { transform: rotate(-18deg); }
+      100% { transform: rotate(-50deg); }
+    }
+    @keyframes cross-r {
+      0%   { transform: rotate(50deg); }
+      35%  { transform: rotate(18deg); }
+      65%  { transform: rotate(18deg); }
+      100% { transform: rotate(50deg); }
+    }
+    @keyframes spark-flash {
+      0%, 30%  { opacity: 0; transform: scale(0.2); }
+      38%      { opacity: 1; transform: scale(1); }
+      48%      { opacity: 0; transform: scale(1.6); }
+      100%     { opacity: 0; transform: scale(0.2); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .sword-l { transform: rotate(-18deg); animation: none; }
+      .sword-r { transform: rotate(18deg);  animation: none; }
+      .spark   { animation: none; opacity: 0; }
+    }
+  </style>
+  <!-- Left sword -->
+  <g class="sword-l">
+    <!-- Blade -->
+    <line x1="40" y1="10" x2="40" y2="55" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+    <!-- Tip bevel -->
+    <path d="M38,55 L40,62 L42,55" fill="#c9a84c" opacity="0.8"/>
+    <!-- Crossguard -->
+    <line x1="30" y1="48" x2="50" y2="48" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Grip wrap -->
+    <rect x="38.5" y="49" width="3" height="10" rx="1" fill="rgba(10,10,20,0.7)" stroke="#c9a84c" stroke-width="1"/>
+    <line x1="38.5" y1="52" x2="41.5" y2="52" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+    <line x1="38.5" y1="55" x2="41.5" y2="55" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+    <!-- Pommel -->
+    <circle cx="40" cy="60" r="3" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+    <!-- Fuller (blade groove) -->
+    <line x1="40" y1="14" x2="40" y2="46" stroke="#e8c46a" stroke-width="0.6" opacity="0.4"/>
+  </g>
+  <!-- Right sword -->
+  <g class="sword-r">
+    <line x1="40" y1="10" x2="40" y2="55" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+    <path d="M38,55 L40,62 L42,55" fill="#c9a84c" opacity="0.8"/>
+    <line x1="30" y1="48" x2="50" y2="48" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+    <rect x="38.5" y="49" width="3" height="10" rx="1" fill="rgba(10,10,20,0.7)" stroke="#c9a84c" stroke-width="1"/>
+    <line x1="38.5" y1="52" x2="41.5" y2="52" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+    <line x1="38.5" y1="55" x2="41.5" y2="55" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+    <circle cx="40" cy="60" r="3" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+    <line x1="40" y1="14" x2="40" y2="46" stroke="#e8c46a" stroke-width="0.6" opacity="0.4"/>
+  </g>
+  <!-- Spark at crossing point -->
+  <g class="spark">
+    <line x1="40" y1="34" x2="40" y2="28" stroke="#e8c46a" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="40" y1="34" x2="46" y2="30" stroke="#e8c46a" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="40" y1="34" x2="34" y2="30" stroke="#e8c46a" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="40" y1="34" x2="44" y2="38" stroke="#e8c46a" stroke-width="1"   stroke-linecap="round" opacity="0.7"/>
+    <line x1="40" y1="34" x2="36" y2="38" stroke="#e8c46a" stroke-width="1"   stroke-linecap="round" opacity="0.7"/>
+    <circle cx="40" cy="34" r="2.5" fill="#e8c46a" opacity="0.9"/>
+  </g>
+</svg>

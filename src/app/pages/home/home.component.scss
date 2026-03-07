@@ -1,0 +1,333 @@
+.tavern-page {
+  min-height: 100vh;
+  background: var(--bg-void, #0a0a0f);
+}
+
+// ── Hero Section ──────────────────────────────────────────────────────────
+
+.tavern-hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+}
+
+// ── Profile frame ─────────────────────────────────────────────────────────
+
+.profile-frame {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  flex-shrink: 0;
+}
+
+.profile-ring {
+  position: absolute;
+  inset: -10px;
+  width: calc(100% + 20px);
+  height: calc(100% + 20px);
+  animation: rotate 20s linear infinite;
+  pointer-events: none;
+}
+
+.profile-hex-clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  clip-path: polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%);
+  overflow: hidden;
+
+  &:hover .profile-scan-overlay {
+    animation: scan-line 2s ease infinite;
+  }
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-scan-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(74, 158, 255, 0.07) 50%,
+    transparent 60%
+  );
+  top: -10%;
+  pointer-events: none;
+}
+
+// ── Hero card ─────────────────────────────────────────────────────────────
+
+.hero-card {
+  max-width: 660px;
+  padding: 2.5rem;
+  background: var(--bg-panel);
+  border: 1px solid var(--color-edge);
+  box-shadow:
+    inset 0 1px 0 rgba(201, 168, 76, 0.1),
+    0 8px 40px rgba(0, 0, 0, 0.7);
+}
+
+.hero-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--color-parchment);
+  text-shadow: 0 0 30px rgba(201, 168, 76, 0.25);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+
+  @media (min-width: 768px) {
+    font-size: 2.8rem;
+  }
+}
+
+// ── Role badges ───────────────────────────────────────────────────────────
+
+.title-roles {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.role-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.75rem;
+  background: rgba(10, 10, 20, 0.8);
+  border: 1px solid var(--color-edge);
+  color: var(--color-parchment);
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  letter-spacing: 0.04em;
+}
+
+.role-divider {
+  color: var(--color-amber);
+  opacity: 0.6;
+  font-size: 0.6rem;
+}
+
+// ── Hero description ──────────────────────────────────────────────────────
+
+.hero-description {
+  color: var(--color-muted);
+  font-family: 'Crimson Text', serif;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 2rem;
+}
+
+// ── CTA buttons ───────────────────────────────────────────────────────────
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+// ── Sections ─────────────────────────────────────────────────────────────
+
+.rpg-section {
+  padding: 5rem 0;
+
+  &.alt {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.section-header {
+  margin-bottom: 3rem;
+}
+
+.section-header-inner {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 1.9rem;
+  font-weight: 700;
+  color: var(--color-parchment);
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  font-family: 'Crimson Text', serif;
+  font-size: 1.05rem;
+  color: var(--color-muted);
+}
+
+// ── Skills grid ───────────────────────────────────────────────────────────
+
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.5rem;
+}
+
+.skill-card {
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: default;
+
+  &.card-stone:hover {
+    .skill-fa-icon {
+      color: var(--color-amber-bright);
+      filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.5));
+    }
+
+    .skill-svg-icon {
+      filter: drop-shadow(0 0 12px rgba(201, 168, 76, 0.6)) brightness(1.25);
+    }
+  }
+}
+
+.skill-icon-wrap {
+  margin-bottom: 1.25rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80px;
+}
+
+.skill-fa-icon {
+  font-size: 3rem;
+  color: var(--color-amber);
+  transition:
+    color 0.3s ease,
+    filter 0.3s ease;
+}
+
+.skill-svg-icon {
+  transition: filter 0.3s ease;
+}
+
+.skill-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+
+.skill-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+// ── Certifications ────────────────────────────────────────────────────────
+
+.certifications-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.cert-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  min-width: 180px;
+
+  // Achievement gold notch top-left
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 12px solid var(--color-amber);
+    border-right: 12px solid transparent;
+  }
+}
+
+// ── Footer ────────────────────────────────────────────────────────────────
+
+.rpg-footer {
+  background: rgba(5, 5, 12, 0.9);
+  border-top: 1px solid rgba(201, 168, 76, 0.15);
+  padding: 2rem 0;
+}
+
+.footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  align-items: center;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+.footer-copyright {
+  font-family: 'Crimson Text', serif;
+  color: var(--color-muted);
+  font-size: 0.9rem;
+}
+
+.footer-tagline {
+  font-family: 'Crimson Text', serif;
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+.footer-links {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+}
+
+.footer-icon {
+  color: var(--color-muted);
+  font-size: 1.25rem;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-amber);
+    text-shadow: 0 0 10px rgba(201, 168, 76, 0.5);
+  }
+}
+
+.footer-border {
+  height: 1px;
+  margin-top: 2rem;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(201, 168, 76, 0.3) 40%,
+    rgba(201, 168, 76, 0.3) 60%,
+    transparent
+  );
+}

@@ -1,593 +1,843 @@
-<div class="min-h-screen">
+<div class="character-sheet">
   <div class="container mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-8">
-      <!-- Sidebar Navigation -->
+    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+      <!-- ── Sidebar ─────────────────────────────────────────────────────── -->
       <aside class="lg:col-span-1">
-        <nav class="sticky top-4 space-y-2">
-          <ul class="space-y-2">
+        <nav class="sidebar card-stone p-4">
+          <div class="sidebar-brand">
+            <span class="sidebar-brand-text">CHARACTER LOG</span>
+          </div>
+          <ul class="sidebar-links">
             <li>
-              <a
-                href="#profile"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Profile</a
+              <a href="#profile" class="sidebar-link"
+                ><i class="fas fa-user-circle sidebar-icon"></i><span>Profile</span></a
               >
             </li>
             <li>
-              <a
-                href="#skills"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Skills</a
+              <a href="#skills" class="sidebar-link"
+                ><i class="fas fa-chart-bar sidebar-icon"></i><span>Abilities</span></a
               >
             </li>
             <li>
-              <a
-                href="#experience"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Experience</a
+              <a href="#experience" class="sidebar-link"
+                ><i class="fas fa-briefcase sidebar-icon"></i><span>Experience</span></a
               >
             </li>
             <li>
-              <a
-                href="#education"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Education</a
+              <a href="#education" class="sidebar-link"
+                ><i class="fas fa-graduation-cap sidebar-icon"></i><span>Training</span></a
               >
             </li>
             <li>
-              <a
-                href="#certifications"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Certifications</a
+              <a href="#certifications" class="sidebar-link"
+                ><i class="fas fa-medal sidebar-icon"></i><span>Achievements</span></a
               >
             </li>
             <li>
-              <a
-                href="#projects"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Projects</a
+              <a href="#projects" class="sidebar-link"
+                ><i class="fas fa-code-branch sidebar-icon"></i><span>Projects</span></a
               >
             </li>
             <li>
-              <a
-                href="#volunteering"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Volunteering</a
+              <a href="#volunteering" class="sidebar-link"
+                ><i class="fas fa-hands-helping sidebar-icon"></i><span>Service</span></a
               >
             </li>
             <li>
-              <a
-                href="#professional"
-                class="block px-4 py-2 rounded hover:bg-gray-100 dark:hover:bg-gray-800 dark:text-white"
-                >Professional Memberships</a
+              <a href="#professional" class="sidebar-link"
+                ><i class="fas fa-users sidebar-icon"></i><span>Guilds</span></a
               >
             </li>
           </ul>
         </nav>
       </aside>
 
-      <!-- Main Content -->
+      <!-- ── Main Panel ──────────────────────────────────────────────────── -->
       <div class="lg:col-span-4">
-        <div class="prose dark:prose-invert max-w-none">
-          <!-- Header with Contact Info -->
-          <section class="mb-8 pb-6 border-b border-gray-300 dark:border-gray-700">
-            <h1 class="text-4xl font-bold mb-2 dark:text-white">Joseph R. Quinn, Esq.</h1>
-            <p class="text-xl text-gray-600 dark:text-gray-400 mb-4">
-              Development Manager - Acting CTO - AI/ML - Senior DevOps
+        <div class="main-panel card-stone p-8 md:p-10">
+          <!-- Character Header -->
+          <header class="char-header" id="profile">
+            <h1 class="char-name">Joseph R. Quinn<span class="char-suffix">, Esq.</span></h1>
+            <p class="char-title">
+              Development Manager · Acting CTO · AI/ML Specialist · Senior DevOps
             </p>
-            <p class="text-gray-500 dark:text-gray-500 mb-4">Miami, Florida, United States</p>
-            <div class="flex flex-wrap gap-4 text-sm">
-              <a
-                href="mailto:joseph@quinnjr.tech"
-                class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                <i class="fas fa-envelope"></i>
-                <span>joseph&#64;quinnjr.tech</span>
+
+            <!-- HUD stat bar -->
+            <div class="stat-bar">
+              <span class="hud-stat"><span>EXP</span> 15+ YRS</span>
+              <span class="stat-sep">·</span>
+              <span class="hud-stat"><span>LEVEL</span> SENIOR</span>
+              <span class="stat-sep">·</span>
+              <span class="hud-stat"><span>CLASS</span> ENGINEER/ATTORNEY</span>
+              <span class="stat-sep">·</span>
+              <span class="hud-stat"><span>BASE</span> MIAMI, FL</span>
+            </div>
+
+            <!-- Contact links -->
+            <div class="contact-links">
+              <a href="mailto:joseph@quinnjr.tech" class="contact-link">
+                <i class="fas fa-envelope" aria-hidden="true"></i>joseph&#64;quinnjr.tech
               </a>
               <a
                 href="https://www.linkedin.com/in/quinnjosephr/"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
+                class="contact-link"
               >
-                <i class="fab fa-linkedin"></i>
-                <span>linkedin.com/in/quinnjosephr</span>
+                <i class="fab fa-linkedin" aria-hidden="true"></i>LinkedIn
               </a>
               <a
                 href="https://github.com/quinnjr"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
+                class="contact-link"
               >
-                <i class="fab fa-github"></i>
-                <span>github.com/quinnjr</span>
+                <i class="fab fa-github" aria-hidden="true"></i>GitHub
               </a>
-              <a
-                href="https://quinnjr.tech"
-                class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                <i class="fas fa-globe"></i>
-                <span>quinnjr.tech</span>
+              <a href="https://quinnjr.tech" class="contact-link">
+                <i class="fas fa-globe" aria-hidden="true"></i>quinnjr.tech
               </a>
               <a
                 href="https://pegasusheavy.dev"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="flex items-center gap-2 text-blue-600 dark:text-blue-400 hover:underline"
+                class="contact-link"
               >
-                <i class="fas fa-building"></i>
-                <span>pegasusheavy.dev</span>
+                <i class="fas fa-shield-alt" aria-hidden="true"></i>The Forge
               </a>
             </div>
-          </section>
+          </header>
 
-          <!-- Profile Section -->
-          <section class="mb-12" id="profile">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Profile</h2>
-            <article class="flex flex-col md:flex-row gap-6 items-start">
-              <figure class="flex-shrink-0">
-                <img src="/profile_picture.jpg" alt="Joseph Quinn" class="w-32 h-32 rounded-lg shadow-md" />
+          <div class="section-divider-rpg revealed"></div>
+
+          <!-- Profile -->
+          <section class="char-section" id="profile-text">
+            <h2 class="section-heading">
+              <img
+                src="assets/icons/scroll-quill.svg"
+                class="section-svg-icon"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                alt=""
+              />Profile
+            </h2>
+            <div class="profile-content">
+              <figure class="profile-portrait">
+                <img src="/profile_picture.jpg" alt="Joseph Quinn" />
               </figure>
-              <div class="flex-1">
-                <p class="mb-4">
-                  A <em>dedicated, versatile, fast-learner</em> anxious to expand his professional
-                  skills and make an immediate contribution. Able to efficiently juggle workloads,
-                  prevail over deadlines, and adapt to new and challenging environments.
+              <div class="profile-text">
+                <p>
+                  A <em class="text-amber">dedicated, versatile, fast-learner</em> anxious to expand
+                  his professional skills and make an immediate contribution. Able to efficiently
+                  juggle workloads, prevail over deadlines, and adapt to new and challenging
+                  environments.
                 </p>
-                <p class="mb-4">
+                <p>
                   A <strong>strong team player</strong> with great ethical standards, communication
                   skills, and respect for confidentiality.
                 </p>
-                <ul class="list-disc list-inside space-y-1">
-                  <li>Florida Bar Member - September 2016</li>
+                <ul class="trait-list">
                   <li>
-                    Special interests in Open Source technologies, Intellectual Property, Cyber Law,
-                    AI/ML, DevOps, Cloud Architecture, and Systems Programming
+                    <i class="fas fa-balance-scale trait-icon" aria-hidden="true"></i>Florida Bar
+                    Member — September 2016
                   </li>
-                  <li>Languages: English (Native), Spanish (Intermediate)</li>
-                </ul>
-              </div>
-            </article>
-          </section>
-
-          <!-- Skills Section -->
-          <section class="mb-12" id="skills">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Skills</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 class="font-bold mb-3 text-lg dark:text-white">Programming Languages</h3>
-                <ul class="list-disc list-inside space-y-1 text-sm">
-                  <li>Rust, Go, TypeScript/JavaScript</li>
-                  <li>C++/C, Python, Node.js</li>
-                  <li>C#, F#, PHP</li>
-                  <li>SQL, NoSQL</li>
-                </ul>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 class="font-bold mb-3 text-lg dark:text-white">DevOps &amp; Cloud</h3>
-                <ul class="list-disc list-inside space-y-1 text-sm">
-                  <li>Amazon Web Services (AWS)</li>
-                  <li>Kubernetes, Docker</li>
-                  <li>CI/CD, Jenkins/JenkinsX</li>
-                  <li>Linux System Administration</li>
-                  <li>Network Administration</li>
-                </ul>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 class="font-bold mb-3 text-lg dark:text-white">Methodologies &amp; Tools</h3>
-                <ul class="list-disc list-inside space-y-1 text-sm">
-                  <li>Agile Methodologies <span class="text-green-600 dark:text-green-400 text-xs">(LinkedIn Verified)</span></li>
-                  <li>Software Development</li>
-                  <li>Project Management</li>
-                  <li>Team Leadership</li>
-                </ul>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 class="font-bold mb-3 text-lg dark:text-white">Specializations</h3>
-                <ul class="list-disc list-inside space-y-1 text-sm">
-                  <li>AI/ML Development</li>
-                  <li>SaaS Architecture</li>
-                  <li>Multi-tenancy Solutions</li>
-                  <li>Bioinformatics</li>
-                </ul>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 class="font-bold mb-3 text-lg dark:text-white">Legal Expertise</h3>
-                <ul class="list-disc list-inside space-y-1 text-sm">
-                  <li>Cyber Law</li>
-                  <li>Intellectual Property</li>
-                  <li>Administrative Law</li>
-                  <li>Legal Technology</li>
-                </ul>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h3 class="font-bold mb-3 text-lg dark:text-white">Communication</h3>
-                <ul class="list-disc list-inside space-y-1 text-sm">
-                  <li>English (Native)</li>
-                  <li>Spanish (Intermediate)</li>
-                  <li>Remote Collaboration Tools</li>
+                  <li>
+                    <i class="fas fa-lightbulb trait-icon" aria-hidden="true"></i>Special interests
+                    in Open Source, IP, Cyber Law, AI/ML, DevOps, and Systems Programming
+                  </li>
+                  <li>
+                    <i class="fas fa-language trait-icon" aria-hidden="true"></i>Languages: English
+                    (Native), Spanish (Intermediate)
+                  </li>
                 </ul>
               </div>
             </div>
           </section>
 
-          <!-- Experience Section -->
-          <section class="mb-12" id="experience">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Experience</h2>
+          <div class="section-divider-rpg revealed"></div>
 
-            <article class="mb-8 border-l-4 border-blue-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Owner</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">Pegasus Heavy Industries LLC</h4>
+          <!-- Skills / Ability Scores -->
+          <section class="char-section" id="skills">
+            <h2 class="section-heading">
+              <i class="fas fa-chart-bar section-icon" aria-hidden="true"></i>Abilities &amp;
+              Proficiencies
+            </h2>
+            <div class="ability-grid">
+              <div class="ability-category">
+                <h3 class="ability-title">
+                  <img
+                    src="assets/icons/go-gopher.svg"
+                    class="ability-svg-icon"
+                    width="18"
+                    height="18"
+                    aria-hidden="true"
+                    alt=""
+                  />
+                  Languages
+                </h3>
+                <div class="ability-bars">
+                  <div class="ability-row">
+                    <span class="ability-label">Rust / Go</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 90%"></div>
+                    </div>
+                    <span class="ability-pct">90%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">TypeScript / JS</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 95%"></div>
+                    </div>
+                    <span class="ability-pct">95%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">Python / C++</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 80%"></div>
+                    </div>
+                    <span class="ability-pct">80%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">C# / SQL</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 75%"></div>
+                    </div>
+                    <span class="ability-pct">75%</span>
+                  </div>
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">Dec 2025 - Present</span>
+                <div class="skill-badges mt-3">
+                  <span class="badge-token">Rust</span>
+                  <span class="badge-token">Go</span>
+                  <span class="badge-token">TypeScript</span>
+                  <span class="badge-token">Python</span>
+                  <span class="badge-token">C++</span>
+                  <span class="badge-token">C#</span>
+                  <span class="badge-token">PHP</span>
+                </div>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Contract | Miami, Florida | Remote</p>
-              <p>
-                Lead technology owner and developer. Developing Open Source and SaaS products for
-                type-safe, efficient languages like Rust, Go, and TypeScript.
-              </p>
+
+              <div class="ability-category">
+                <h3 class="ability-title">
+                  <img
+                    src="assets/icons/docker-whale.svg"
+                    class="ability-svg-icon"
+                    width="18"
+                    height="18"
+                    aria-hidden="true"
+                    alt=""
+                  />
+                  Infrastructure
+                </h3>
+                <div class="ability-bars">
+                  <div class="ability-row">
+                    <span class="ability-label">AWS</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 88%"></div>
+                    </div>
+                    <span class="ability-pct">88%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">Kubernetes</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 82%"></div>
+                    </div>
+                    <span class="ability-pct">82%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">Docker / CI/CD</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 90%"></div>
+                    </div>
+                    <span class="ability-pct">90%</span>
+                  </div>
+                </div>
+                <div class="skill-badges mt-3">
+                  <span class="badge-token">AWS</span>
+                  <span class="badge-token">Kubernetes</span>
+                  <span class="badge-token">Docker</span>
+                  <span class="badge-token">Jenkins</span>
+                  <span class="badge-token">Linux</span>
+                </div>
+              </div>
+
+              <div class="ability-category">
+                <h3 class="ability-title">
+                  <img
+                    src="assets/icons/scales-law.svg"
+                    class="ability-svg-icon"
+                    width="18"
+                    height="18"
+                    aria-hidden="true"
+                    alt=""
+                  />
+                  Legal Expertise
+                </h3>
+                <div class="ability-bars">
+                  <div class="ability-row">
+                    <span class="ability-label">Cyber Law</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 92%"></div>
+                    </div>
+                    <span class="ability-pct">92%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">IP Law</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 88%"></div>
+                    </div>
+                    <span class="ability-pct">88%</span>
+                  </div>
+                  <div class="ability-row">
+                    <span class="ability-label">Legal Tech</span>
+                    <div class="skill-bar-track">
+                      <div class="skill-bar-fill" style="--skill-pct: 95%"></div>
+                    </div>
+                    <span class="ability-pct">95%</span>
+                  </div>
+                </div>
+                <div class="skill-badges mt-3">
+                  <span class="badge-token">Cyber Law</span>
+                  <span class="badge-token">IP</span>
+                  <span class="badge-token">Admin Law</span>
+                  <span class="badge-token">Legal Tech</span>
+                </div>
+              </div>
+
+              <div class="ability-category">
+                <h3 class="ability-title">
+                  <img
+                    src="assets/icons/brain-neural.svg"
+                    class="ability-svg-icon"
+                    width="18"
+                    height="18"
+                    aria-hidden="true"
+                    alt=""
+                  />
+                  Methodologies
+                </h3>
+                <div class="skill-badges">
+                  <span class="badge-token">Agile <span class="text-amber">✓</span></span>
+                  <span class="badge-token">Software Dev</span>
+                  <span class="badge-token">Project Mgmt</span>
+                  <span class="badge-token">Team Leadership</span>
+                  <span class="badge-token">AI/ML</span>
+                  <span class="badge-token">SaaS Architecture</span>
+                  <span class="badge-token">Multi-tenancy</span>
+                  <span class="badge-token">Bioinformatics</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <div class="section-divider-rpg revealed"></div>
+
+          <!-- Experience -->
+          <section class="char-section" id="experience">
+            <h2 class="section-heading">
+              <i class="fas fa-briefcase section-icon" aria-hidden="true"></i>Experience
+            </h2>
+
+            <article class="quest-entry active-quest">
+              <div class="quest-left-bar"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">
+                      <span class="status-dot" aria-label="Current position"></span>
+                      Owner
+                    </h3>
+                    <h4 class="quest-org">Pegasus Heavy Industries LLC</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>Dec 2025 – Present</span
+                  >
+                </div>
+                <p class="quest-meta">Contract · Miami, Florida · Remote</p>
+                <p class="quest-desc">
+                  Lead technology owner and developer. Developing Open Source and SaaS products for
+                  type-safe, efficient languages like Rust, Go, and TypeScript.
+                </p>
+              </div>
             </article>
 
-            <article class="mb-8 border-l-4 border-blue-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Acting Chief Technology Officer</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">Advita, LLC</h4>
+            <article class="quest-entry active-quest">
+              <div class="quest-left-bar"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">
+                      <span class="status-dot" aria-label="Current position"></span>
+                      Acting Chief Technology Officer
+                    </h3>
+                    <h4 class="quest-org">Advita, LLC</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>Oct 2023 – Present</span
+                  >
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">Oct 2023 - Present</span>
-              </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Full-time | Miami, Florida | Remote</p>
-              <p>
-                Leading technology strategy and development initiatives. Overseeing technical architecture
-                and engineering teams. Driving innovation in AI/ML and cloud infrastructure.
-              </p>
-            </article>
-
-            <article class="mb-8 border-l-4 border-blue-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Lead Development Manager</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">Lexmata LLC</h4>
-                </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">Oct 2023 - Present</span>
-              </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Full-time | Miami, Florida | Remote</p>
-              <p>
-                Managing development teams and implementing Agile methodologies. Building legal technology
-                solutions and SaaS platforms. Architecting multi-tenant cloud infrastructure.
-              </p>
-              <div class="mt-2">
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Agile Methodologies</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Software Development</span>
+                <p class="quest-meta">Full-time · Miami, Florida · Remote</p>
+                <p class="quest-desc">
+                  Leading technology strategy and development initiatives. Overseeing technical
+                  architecture and engineering teams. Driving innovation in AI/ML and cloud
+                  infrastructure.
+                </p>
               </div>
             </article>
 
-            <article class="mb-8 border-l-4 border-gray-400 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Technical Consultant</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">Agineek/SkillCourt</h4>
+            <article class="quest-entry active-quest">
+              <div class="quest-left-bar"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">
+                      <span class="status-dot" aria-label="Current position"></span>
+                      Lead Development Manager
+                    </h3>
+                    <h4 class="quest-org">Lexmata LLC</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>Oct 2023 – Present</span
+                  >
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">May 2021 - Nov 2024</span>
-              </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Part-time | Deerfield Beach, Florida</p>
-              <p>
-                Consulting on multi-platform development projects. Administrating AWS server infrastructure.
-                Developing IoT firmware and mobile applications.
-              </p>
-              <div class="mt-2">
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">DevOps</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">AWS</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Kubernetes</span>
+                <p class="quest-meta">Full-time · Miami, Florida · Remote</p>
+                <p class="quest-desc">
+                  Managing development teams and implementing Agile methodologies. Building legal
+                  technology solutions and SaaS platforms. Architecting multi-tenant cloud
+                  infrastructure.
+                </p>
+                <div class="quest-tags">
+                  <span class="badge-token">Agile</span>
+                  <span class="badge-token">SaaS</span>
+                  <span class="badge-token">Legal Tech</span>
+                </div>
               </div>
             </article>
 
-            <article class="mb-8 border-l-4 border-gray-400 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Project Manager</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">SkillCourt</h4>
+            <article class="quest-entry">
+              <div class="quest-left-bar past"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">Technical Consultant</h3>
+                    <h4 class="quest-org">Agineek / SkillCourt</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>May 2021 – Nov 2024</span
+                  >
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">May 2021 - Nov 2024</span>
+                <p class="quest-meta">Part-time · Deerfield Beach, Florida</p>
+                <p class="quest-desc">
+                  Consulting on multi-platform development projects. Administrating AWS server
+                  infrastructure. Developing IoT firmware and mobile applications.
+                </p>
+                <div class="quest-tags">
+                  <span class="badge-token">DevOps</span>
+                  <span class="badge-token">AWS</span>
+                  <span class="badge-token">Kubernetes</span>
+                </div>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Part-time | Deerfield Beach, Florida</p>
-              <p>
-                Managing development projects and coordinating cross-functional teams. Mentoring FIU
-                Capstone development students. Overseeing product development lifecycle.
-              </p>
             </article>
 
-            <article class="mb-8 border-l-4 border-gray-400 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Learning Assistant</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">Florida International University</h4>
+            <article class="quest-entry">
+              <div class="quest-left-bar past"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">Project Manager</h3>
+                    <h4 class="quest-org">SkillCourt</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>May 2021 – Nov 2024</span
+                  >
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">Aug 2020 - May 2022</span>
+                <p class="quest-meta">Part-time · Deerfield Beach, Florida</p>
+                <p class="quest-desc">
+                  Managing development projects and coordinating cross-functional teams. Mentoring
+                  FIU Capstone development students. Overseeing product development lifecycle.
+                </p>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Miami, Florida</p>
-              <p>
-                Assisted supervising Professor with running class; mentored and aided students.
-                Achieved high levels of class passing grades.
-              </p>
             </article>
 
-            <article class="mb-8 border-l-4 border-gray-400 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Extern</h3>
-                  <h4 class="text-lg text-blue-600 dark:text-blue-400">Cristol Bankruptcy Pro Bono Assistance Clinic</h4>
+            <article class="quest-entry">
+              <div class="quest-left-bar past"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">Learning Assistant</h3>
+                    <h4 class="quest-org">Florida International University</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>Aug 2020 – May 2022</span
+                  >
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400 mt-1 md:mt-0">Aug 2014 - May 2015</span>
+                <p class="quest-meta">Miami, Florida</p>
+                <p class="quest-desc">
+                  Assisted supervising Professor with running class; mentored and aided students.
+                  Achieved high levels of class passing grades.
+                </p>
               </div>
-              <p class="text-gray-600 dark:text-gray-400 text-sm mb-2">Miami, Florida</p>
-              <p>
-                Reviewed documentation, completed bankruptcy filings, attended trustee meetings.
-              </p>
+            </article>
+
+            <article class="quest-entry">
+              <div class="quest-left-bar past"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">Extern</h3>
+                    <h4 class="quest-org">Cristol Bankruptcy Pro Bono Assistance Clinic</h4>
+                  </div>
+                  <span class="quest-date"
+                    ><i class="fas fa-clock" aria-hidden="true"></i>Aug 2014 – May 2015</span
+                  >
+                </div>
+                <p class="quest-meta">Miami, Florida</p>
+                <p class="quest-desc">
+                  Reviewed documentation, completed bankruptcy filings, attended trustee meetings.
+                </p>
+              </div>
             </article>
           </section>
 
-          <!-- Education Section -->
-          <section class="mb-12" id="education">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Education</h2>
+          <div class="section-divider-rpg revealed"></div>
 
-            <!-- FIU -->
-            <article class="flex flex-col md:flex-row gap-6 items-start mb-8">
-              <figure class="flex-shrink-0">
-                <img src="/fiu.jpg" alt="Florida International University" class="w-24 h-24 rounded-lg object-cover" />
-              </figure>
-              <div class="flex-1">
-                <h3 class="text-xl font-bold dark:text-white">Florida International University</h3>
-                <p class="text-blue-600 dark:text-blue-400 font-semibold">
+          <!-- Education -->
+          <section class="char-section" id="education">
+            <h2 class="section-heading">
+              <i class="fas fa-graduation-cap section-icon" aria-hidden="true"></i>Training &amp;
+              Education
+            </h2>
+
+            <article class="education-entry">
+              <div class="school-emblem">
+                <img src="/fiu.jpg" alt="Florida International University" />
+              </div>
+              <div class="education-content">
+                <h3 class="school-name">Florida International University</h3>
+                <p class="degree">
                   Master of Science in Computer Science
-                  <span class="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full px-2 py-0.5 text-xs ml-2">In Progress</span>
+                  <span class="status-badge in-progress">In Progress</span>
                 </p>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">Fall 2022 - Present</p>
-                <p class="text-blue-600 dark:text-blue-400 font-semibold mt-3">Bachelor of Science in Computer Science</p>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">Aug 2018 - May 2022</p>
-                <p class="font-semibold mt-2 mb-1">Activities &amp; Organizations:</p>
-                <ul class="list-disc list-inside text-sm space-y-1">
-                  <li>
-                    <a
-                      href="https://biorg.cs.fiu.edu/pluma/"
-                      class="text-blue-600 dark:text-blue-400 hover:underline"
-                      >FIU Bioinformatics Research Group</a
-                    >
-                    - Lead Student Developer
-                  </li>
-                  <li>Google DSC</li>
-                  <li>Upsilon Pi Epsilon</li>
-                  <li>The National Society of Leadership and Success</li>
-                </ul>
-                <div class="mt-2">
-                  <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Linux System Administration</span>
-                  <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">C++</span>
-                  <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Advanced Database Management</span>
+                <p class="edu-date">Fall 2022 – Present</p>
+                <p class="degree">Bachelor of Science in Computer Science</p>
+                <p class="edu-date">Aug 2018 – May 2022</p>
+                <div class="edu-details">
+                  <p class="edu-activities-label">Activities &amp; Organizations:</p>
+                  <ul>
+                    <li>
+                      <a
+                        href="https://biorg.cs.fiu.edu/pluma/"
+                        class="link-tavern"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        >FIU Bioinformatics Research Group</a
+                      >
+                      — Lead Student Developer
+                    </li>
+                    <li>
+                      Google DSC · Upsilon Pi Epsilon · The National Society of Leadership and
+                      Success
+                    </li>
+                  </ul>
+                </div>
+                <div class="skill-badges mt-3">
+                  <span class="badge-token">Linux</span>
+                  <span class="badge-token">C++</span>
+                  <span class="badge-token">Advanced DB</span>
                 </div>
               </div>
             </article>
 
-            <!-- UM Law -->
-            <article class="flex flex-col md:flex-row gap-6 items-start mb-8">
-              <figure class="flex-shrink-0">
-                <img src="/um.jpg" alt="University of Miami School of Law" class="w-24 h-24 rounded-lg object-cover" />
-              </figure>
-              <div class="flex-1">
-                <h3 class="text-xl font-bold dark:text-white">University of Miami School of Law</h3>
-                <p class="text-blue-600 dark:text-blue-400 font-semibold">Juris Doctorate (J.D.)</p>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">2012 - 2015</p>
-                <p class="font-semibold mt-2 mb-1">Activities &amp; Organizations:</p>
-                <ul class="list-disc list-inside text-sm space-y-1">
-                  <li>International Law Society - Co-Vice President, Parliamentarian</li>
-                  <li>Michigan State University Intellectual Property Law Summer Institute, Rijeka, Croatia (Summer 2014)</li>
-                  <li>Irish American Law Student Association</li>
-                </ul>
-                <div class="mt-2">
-                  <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Administrative Law</span>
-                  <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Cyber Law</span>
+            <article class="education-entry">
+              <div class="school-emblem">
+                <img src="/um.jpg" alt="University of Miami School of Law" />
+              </div>
+              <div class="education-content">
+                <h3 class="school-name">University of Miami School of Law</h3>
+                <p class="degree">Juris Doctorate (J.D.)</p>
+                <p class="edu-date">2012 – 2015</p>
+                <div class="edu-details">
+                  <p class="edu-activities-label">Activities &amp; Organizations:</p>
+                  <ul>
+                    <li>International Law Society — Co-Vice President, Parliamentarian</li>
+                    <li>
+                      Michigan State University IP Law Summer Institute, Rijeka, Croatia (Summer
+                      2014)
+                    </li>
+                    <li>Irish American Law Student Association</li>
+                  </ul>
+                </div>
+                <div class="skill-badges mt-3">
+                  <span class="badge-token">Admin Law</span>
+                  <span class="badge-token">Cyber Law</span>
                 </div>
               </div>
             </article>
 
-            <!-- Michigan -->
-            <article class="flex flex-col md:flex-row gap-6 items-start mb-8">
-              <figure class="flex-shrink-0">
-                <img src="/msu.jpg" alt="Michigan State University" class="w-24 h-24 rounded-lg object-cover" />
-              </figure>
-              <div class="flex-1">
-                <h3 class="text-xl font-bold dark:text-white">Michigan State University School of Law</h3>
-                <p class="text-blue-600 dark:text-blue-400 font-semibold">Summer Abroad - IP &amp; Cybercrime Institute</p>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">Summer 2014 | Rijeka/Dubrovnik, Croatia</p>
-                <p class="text-sm">
-                  Visiting Juris Doctorate Candidate focusing on Intellectual Property and Cybercrime law.
+            <article class="education-entry">
+              <div class="school-emblem">
+                <img src="/msu.jpg" alt="Michigan State University" />
+              </div>
+              <div class="education-content">
+                <h3 class="school-name">Michigan State University School of Law</h3>
+                <p class="degree">Summer Abroad — IP &amp; Cybercrime Institute</p>
+                <p class="edu-date">Summer 2014 · Rijeka/Dubrovnik, Croatia</p>
+                <p class="edu-description">
+                  Visiting Juris Doctorate Candidate focusing on Intellectual Property and
+                  Cybercrime law.
                 </p>
               </div>
             </article>
 
-            <!-- Belmont -->
-            <article class="flex flex-col md:flex-row gap-6 items-start mb-8">
-              <figure class="flex-shrink-0">
-                <img src="/belmont.jpg" alt="Belmont University" class="w-24 h-24 rounded-lg object-cover" />
-              </figure>
-              <div class="flex-1">
-                <h3 class="text-xl font-bold dark:text-white">Belmont University</h3>
-                <p class="text-blue-600 dark:text-blue-400 font-semibold">Bachelor of Arts in Politics and Public Law</p>
-                <p class="text-gray-500 dark:text-gray-400 text-sm mb-2">Fall 2008 - Fall 2011</p>
-                <p class="font-semibold mt-2 mb-1">Activities &amp; Organizations:</p>
-                <ul class="list-disc list-inside text-sm space-y-1">
-                  <li>Dean's List (2 semesters)</li>
-                  <li>Pre-Law Society - President</li>
-                  <li>Phi Mu Alpha Sinfonia Fraternity - Vice President, Province Council Representative</li>
-                  <li>James Madison Society</li>
-                  <li><em>The Vision</em> Student Newspaper</li>
-                </ul>
+            <article class="education-entry">
+              <div class="school-emblem">
+                <img src="/belmont.jpg" alt="Belmont University" />
+              </div>
+              <div class="education-content">
+                <h3 class="school-name">Belmont University</h3>
+                <p class="degree">Bachelor of Arts in Politics and Public Law</p>
+                <p class="edu-date">Fall 2008 – Fall 2011</p>
+                <div class="edu-details">
+                  <p class="edu-activities-label">Activities &amp; Organizations:</p>
+                  <ul>
+                    <li>Dean's List (2 semesters) · Pre-Law Society — President</li>
+                    <li>
+                      Phi Mu Alpha Sinfonia Fraternity — Vice President, Province Council
+                      Representative
+                    </li>
+                    <li>James Madison Society · <em>The Vision</em> Student Newspaper</li>
+                  </ul>
+                </div>
               </div>
             </article>
           </section>
 
-          <!-- Certifications Section -->
-          <section class="mb-12" id="certifications">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Licenses &amp; Certifications</h2>
+          <div class="section-divider-rpg revealed"></div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">Building Modern Node.js Applications on AWS</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Coursera | Issued Apr 2023</p>
-                <p class="text-xs text-gray-500">Credential ID: LS6M6QHNSB8M</p>
-                <span class="inline-block bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-full px-2 py-1 text-xs mt-2">AWS</span>
+          <!-- Certifications -->
+          <section class="char-section" id="certifications">
+            <h2 class="section-heading">
+              <img
+                src="assets/icons/shield-cyber.svg"
+                class="section-svg-icon"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                alt=""
+              />Achievements &amp; Certifications
+            </h2>
+
+            <div class="certs-grid">
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">Building Modern Node.js Applications on AWS</h4>
+                <p class="cert-issuer">Coursera · Apr 2023</p>
+                <p class="cert-id">ID: LS6M6QHNSB8M</p>
+                <span class="badge-token">AWS</span>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">LFS258: Kubernetes Fundamentals</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">The Linux Foundation | Issued May 2022</p>
-                <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full px-2 py-1 text-xs mt-2">Kubernetes</span>
-                <span class="inline-block bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-200 rounded-full px-2 py-1 text-xs mt-2">AWS</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">LFS258: Kubernetes Fundamentals</h4>
+                <p class="cert-issuer">The Linux Foundation · May 2022</p>
+                <div class="skill-badges mt-2">
+                  <span class="badge-token">Kubernetes</span>
+                  <span class="badge-token">AWS</span>
+                </div>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">LFS261: DevOps and SRE Fundamentals</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">The Linux Foundation</p>
-                <span class="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full px-2 py-1 text-xs mt-2">DevOps</span>
-                <span class="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full px-2 py-1 text-xs mt-2">SRE</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">LFS261: DevOps and SRE Fundamentals</h4>
+                <p class="cert-issuer">The Linux Foundation</p>
+                <div class="skill-badges mt-2">
+                  <span class="badge-token">DevOps</span>
+                  <span class="badge-token">SRE</span>
+                </div>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">LFD254: Containers for Developers and QA</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">The Linux Foundation</p>
-                <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full px-2 py-1 text-xs mt-2">Docker</span>
-                <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full px-2 py-1 text-xs mt-2">Containers</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">LFD254: Containers for Developers and QA</h4>
+                <p class="cert-issuer">The Linux Foundation</p>
+                <div class="skill-badges mt-2">
+                  <span class="badge-token">Docker</span>
+                  <span class="badge-token">Containers</span>
+                </div>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">LFD259: Kubernetes for Developers</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">The Linux Foundation</p>
-                <span class="inline-block bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-full px-2 py-1 text-xs mt-2">Kubernetes</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">LFD259: Kubernetes for Developers</h4>
+                <p class="cert-issuer">The Linux Foundation</p>
+                <span class="badge-token">Kubernetes</span>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">LFD103: Beginner's Guide to Linux Kernel Development</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">The Linux Foundation</p>
-                <span class="inline-block bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-200 rounded-full px-2 py-1 text-xs mt-2">Linux</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">LFD103: Beginner's Guide to Linux Kernel Development</h4>
+                <p class="cert-issuer">The Linux Foundation</p>
+                <span class="badge-token">Linux</span>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">Fundamentals of Accelerated Computing with CUDA</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">NVIDIA Deep Learning Institute</p>
-                <span class="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full px-2 py-1 text-xs mt-2">CUDA</span>
-                <span class="inline-block bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-full px-2 py-1 text-xs mt-2">GPU Programming</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">Fundamentals of Accelerated Computing with CUDA</h4>
+                <p class="cert-issuer">NVIDIA Deep Learning Institute</p>
+                <div class="skill-badges mt-2">
+                  <span class="badge-token">CUDA</span>
+                  <span class="badge-token">GPU</span>
+                </div>
               </div>
-
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">Open Water Scuba Instructor</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">PADI International</p>
-                <span class="inline-block bg-cyan-100 dark:bg-cyan-900 text-cyan-800 dark:text-cyan-200 rounded-full px-2 py-1 text-xs mt-2">Scuba</span>
+              <div class="cert-tile card-stone">
+                <h4 class="cert-name">Open Water Scuba Instructor</h4>
+                <p class="cert-issuer">PADI International</p>
+                <span class="badge-token">Scuba</span>
               </div>
             </div>
           </section>
 
-          <!-- Projects Section -->
-          <section class="mb-12" id="projects">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Projects</h2>
+          <div class="section-divider-rpg revealed"></div>
 
-            <article class="mb-6 border-l-4 border-green-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <h3 class="text-xl font-bold dark:text-white">PluMA</h3>
-                <span class="text-sm text-gray-500 dark:text-gray-400">Jan 2020 - Present</span>
+          <!-- Projects -->
+          <section class="char-section" id="projects">
+            <h2 class="section-heading">
+              <img
+                src="assets/icons/brain-neural.svg"
+                class="section-svg-icon"
+                width="20"
+                height="20"
+                aria-hidden="true"
+                alt=""
+              />Crafted Works
+            </h2>
+
+            <article class="project-entry">
+              <div class="project-header">
+                <h3 class="project-title">PluMA</h3>
+                <span class="project-date">Jan 2020 – Present</span>
               </div>
-              <p class="mb-2">
+              <p class="project-desc">
                 Bioinformatics pipeline software for computational biology research. Contributing to
                 open-source development and cloud infrastructure.
               </p>
-              <div class="mt-2">
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">AWS</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Kubernetes</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Bioinformatics</span>
+              <div class="skill-badges mt-2">
+                <span class="badge-token">AWS</span>
+                <span class="badge-token">Kubernetes</span>
+                <span class="badge-token">Bioinformatics</span>
               </div>
             </article>
 
-            <article class="mb-6 border-l-4 border-green-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <h3 class="text-xl font-bold dark:text-white">SkillCourt Platform</h3>
-                <span class="text-sm text-gray-500 dark:text-gray-400">May 2021 - Nov 2024</span>
+            <article class="project-entry">
+              <div class="project-header">
+                <h3 class="project-title">SkillCourt Platform</h3>
+                <span class="project-date">May 2021 – Nov 2024</span>
               </div>
-              <p class="mb-2">
-                IoT-enabled sports training platform with mobile and web applications.
-                Led development of firmware, cloud infrastructure, and client applications.
+              <p class="project-desc">
+                IoT-enabled sports training platform with mobile and web applications. Led
+                development of firmware, cloud infrastructure, and client applications.
               </p>
-              <div class="mt-2">
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">AWS</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Kubernetes</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">IoT</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Mobile Development</span>
+              <div class="skill-badges mt-2">
+                <span class="badge-token">AWS</span>
+                <span class="badge-token">Kubernetes</span>
+                <span class="badge-token">IoT</span>
+                <span class="badge-token">Mobile</span>
               </div>
             </article>
 
-            <article class="mb-6 border-l-4 border-green-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <h3 class="text-xl font-bold dark:text-white">Open Source Contributions</h3>
-                <span class="text-sm text-gray-500 dark:text-gray-400">Ongoing</span>
+            <article class="project-entry">
+              <div class="project-header">
+                <h3 class="project-title">Open Source Contributions</h3>
+                <span class="project-date">Ongoing</span>
               </div>
-              <p class="mb-2">
+              <p class="project-desc">
                 Active contributor to open source projects including NestJS multi-tenant solutions,
-                Bitbucket CLI tools, Armature Framework (Rust HTTP framework), and LinkedIn MCP Server.
+                Bitbucket CLI tools, Armature Framework (Rust HTTP framework), and LinkedIn MCP
+                Server.
               </p>
-              <div class="mt-2">
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Rust</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">TypeScript</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">NestJS</span>
-                <span class="inline-block bg-gray-200 dark:bg-gray-700 rounded-full px-3 py-1 text-xs mr-2 mb-2">Open Source</span>
+              <div class="skill-badges mt-2">
+                <span class="badge-token">Rust</span>
+                <span class="badge-token">TypeScript</span>
+                <span class="badge-token">NestJS</span>
+                <span class="badge-token">Open Source</span>
               </div>
             </article>
           </section>
 
-          <!-- Volunteering Section -->
-          <section class="mb-12" id="volunteering">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Volunteering</h2>
+          <div class="section-divider-rpg revealed"></div>
 
-            <article class="border-l-4 border-purple-500 pl-6">
-              <div class="flex flex-col md:flex-row md:justify-between md:items-start mb-2">
-                <div>
-                  <h3 class="text-xl font-bold dark:text-white">Senior Software Engineer</h3>
-                  <h4 class="text-lg text-purple-600 dark:text-purple-400">Florida International University Bioinformatics Research Group</h4>
+          <!-- Volunteering -->
+          <section class="char-section" id="volunteering">
+            <h2 class="section-heading">
+              <i class="fas fa-hands-helping section-icon" aria-hidden="true"></i>Service &amp;
+              Volunteering
+            </h2>
+
+            <article class="quest-entry">
+              <div class="quest-left-bar"></div>
+              <div class="quest-body">
+                <div class="quest-header">
+                  <div class="quest-title-group">
+                    <h3 class="quest-title">Senior Software Engineer</h3>
+                    <h4 class="quest-org">FIU Bioinformatics Research Group</h4>
+                  </div>
+                  <span class="quest-date">Jan 2019 – Present</span>
                 </div>
-                <span class="text-sm text-gray-500 dark:text-gray-400">Jan 2019 - Present</span>
+                <p class="quest-desc">
+                  Developing bioinformatics pipeline software. Developing and administrating
+                  website. Mentoring other student developers.
+                </p>
               </div>
-              <p>
-                Developing Bioinformatics pipeline software. Developing and administrating website.
-                Mentoring other student developers.
-              </p>
             </article>
           </section>
 
-          <!-- Professional Memberships Section -->
-          <section class="mb-12" id="professional">
-            <h2 class="text-3xl font-bold mb-6 dark:text-white">Professional Memberships</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">Florida Bar</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Member since September 2016</p>
+          <div class="section-divider-rpg revealed"></div>
+
+          <!-- Guild Memberships -->
+          <section class="char-section" id="professional">
+            <h2 class="section-heading">
+              <i class="fas fa-users section-icon" aria-hidden="true"></i>Guild Memberships
+            </h2>
+            <div class="guilds-grid">
+              <div class="guild-tile card-stone">
+                <img
+                  src="assets/icons/scales-law.svg"
+                  class="guild-svg-icon"
+                  width="40"
+                  height="40"
+                  aria-hidden="true"
+                  alt=""
+                />
+                <h4 class="guild-name">Florida Bar</h4>
+                <p class="guild-info">Member since September 2016</p>
               </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">American Bar Association</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Member</p>
+              <div class="guild-tile card-stone">
+                <img
+                  src="assets/icons/sword-crossed.svg"
+                  class="guild-svg-icon"
+                  width="40"
+                  height="40"
+                  aria-hidden="true"
+                  alt=""
+                />
+                <h4 class="guild-name">American Bar Association</h4>
+                <p class="guild-info">Member</p>
               </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">Linux Foundation</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Member since Aug 2017</p>
+              <div class="guild-tile card-stone">
+                <img
+                  src="assets/icons/terminal-cursor.svg"
+                  class="guild-svg-icon"
+                  width="40"
+                  height="40"
+                  aria-hidden="true"
+                  alt=""
+                />
+                <h4 class="guild-name">Linux Foundation</h4>
+                <p class="guild-info">Member since Aug 2017</p>
               </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">National Society of Leadership and Success</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Member since May 2022</p>
+              <div class="guild-tile card-stone">
+                <i class="fas fa-crown guild-icon" aria-hidden="true"></i>
+                <h4 class="guild-name">National Society of Leadership and Success</h4>
+                <p class="guild-info">Member since May 2022</p>
               </div>
-              <div class="bg-gray-50 dark:bg-gray-800 p-4 rounded-lg">
-                <h4 class="font-bold dark:text-white">PADI International</h4>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Emergency First Response Instructor</p>
+              <div class="guild-tile card-stone">
+                <i class="fas fa-water guild-icon" aria-hidden="true"></i>
+                <h4 class="guild-name">PADI International</h4>
+                <p class="guild-info">Emergency First Response Instructor</p>
               </div>
             </div>
           </section>
         </div>
+        <!-- /main-panel -->
       </div>
     </div>
+    <!-- /grid -->
   </div>
 </div>

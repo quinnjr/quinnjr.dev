@@ -1,0 +1,231 @@
+.tavern-nav {
+  background: rgba(5, 5, 15, 0.92);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.12);
+  position: relative;
+
+  // Angular bracket chrome — top-right corner
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    border-top: 1px solid rgba(201, 168, 76, 0.6);
+    border-right: 1px solid rgba(201, 168, 76, 0.6);
+    pointer-events: none;
+  }
+
+  // Angular bracket chrome — bottom-right corner
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 24px;
+    height: 24px;
+    border-bottom: 1px solid rgba(201, 168, 76, 0.6);
+    border-right: 1px solid rgba(201, 168, 76, 0.6);
+    pointer-events: none;
+  }
+}
+
+// ── Logo ──────────────────────────────────────────────────────────────────
+
+.nav-logo-link {
+  text-decoration: none;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+}
+
+.nav-shield {
+  transition: filter 0.3s ease;
+  flex-shrink: 0;
+
+  .nav-logo-link:hover & {
+    filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.65));
+  }
+}
+
+.nav-site-name {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #e8dcc8;
+  letter-spacing: 0.06em;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
+
+  .nav-logo-link:hover & {
+    color: #c9a84c;
+    text-shadow: 0 0 12px rgba(201, 168, 76, 0.45);
+  }
+}
+
+// ── Mobile menu button ────────────────────────────────────────────────────
+
+.nav-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: #e8dcc8;
+  background: rgba(10, 10, 20, 0.8);
+  border: 1px solid rgba(201, 168, 76, 0.3);
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #c9a84c;
+    color: #c9a84c;
+    box-shadow: 0 0 10px rgba(201, 168, 76, 0.15);
+  }
+
+  &:focus {
+    outline: 2px solid #c9a84c;
+    outline-offset: 2px;
+  }
+}
+
+// ── Mobile menu wrapper ───────────────────────────────────────────────────
+
+.nav-menu-wrapper {
+  display: none;
+  width: 100%;
+
+  &.nav-menu-open {
+    display: block;
+  }
+
+  @media (min-width: 768px) {
+    display: flex;
+    width: auto;
+    align-items: center;
+  }
+}
+
+// ── Nav menu list ─────────────────────────────────────────────────────────
+
+.nav-menu {
+  display: flex;
+  flex-direction: column;
+  padding: 0.75rem;
+  margin-top: 0.5rem;
+  background: rgba(5, 5, 15, 0.97);
+  border: 1px solid rgba(201, 168, 76, 0.2);
+  gap: 0.125rem;
+  list-style: none;
+
+  @media (min-width: 768px) {
+    flex-direction: row;
+    padding: 0;
+    margin-top: 0;
+    background: transparent;
+    border: none;
+    gap: 0;
+    align-items: center;
+  }
+}
+
+// ── Nav links ─────────────────────────────────────────────────────────────
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.7rem 0.9rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #8a7a6a;
+  text-decoration: none;
+  letter-spacing: 0.07em;
+  white-space: nowrap;
+  position: relative;
+  transition: color 0.2s ease;
+
+  // Amber underline draw-in
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 6px;
+    left: 0.9rem;
+    height: 1px;
+    width: 0;
+    background: #c9a84c;
+    transition: width 0.2s ease;
+  }
+
+  &:hover {
+    color: #e8dcc8;
+
+    &::after {
+      width: calc(100% - 1.8rem);
+    }
+  }
+
+  @media (min-width: 768px) {
+    padding: 0.5rem 0.75rem;
+
+    &::after {
+      bottom: 3px;
+      left: 0.75rem;
+    }
+
+    &:hover::after {
+      width: calc(100% - 1.5rem);
+    }
+  }
+}
+
+// Active-route dot indicator
+.nav-active-dot {
+  display: none;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #c9a84c;
+  box-shadow: 0 0 6px rgba(201, 168, 76, 0.7);
+  flex-shrink: 0;
+}
+
+.nav-link-active {
+  color: #c9a84c !important;
+  text-shadow: 0 0 12px rgba(201, 168, 76, 0.5);
+
+  .nav-active-dot {
+    display: inline-block;
+  }
+
+  &::after {
+    width: calc(100% - 1.8rem) !important;
+  }
+
+  @media (min-width: 768px) {
+    &::after {
+      width: calc(100% - 1.5rem) !important;
+    }
+  }
+}
+
+// ── Amber bottom edge ─────────────────────────────────────────────────────
+
+.nav-border {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(201, 168, 76, 0.35) 25%,
+    rgba(201, 168, 76, 0.5) 50%,
+    rgba(201, 168, 76, 0.35) 75%,
+    transparent 100%
+  );
+}

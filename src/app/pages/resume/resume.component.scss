@@ -1,0 +1,687 @@
+.character-sheet {
+  min-height: 100vh;
+  background: var(--bg-void, #0a0a0f);
+  padding-top: 1rem;
+}
+
+// ── Sidebar ───────────────────────────────────────────────────────────────
+
+.sidebar {
+  position: sticky;
+  top: 5rem;
+}
+
+.sidebar-brand {
+  padding: 0.5rem 0 1rem;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.2);
+  margin-bottom: 0.75rem;
+}
+
+.sidebar-brand-text {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: rgba(201, 168, 76, 0.55);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.sidebar-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 0.75rem;
+  font-family: 'Cinzel', serif;
+  font-size: 0.75rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  transition:
+    color 0.2s ease,
+    border-left-color 0.2s ease;
+  border-left: 3px solid transparent;
+
+  &:hover {
+    color: var(--color-parchment);
+    border-left-color: rgba(201, 168, 76, 0.4);
+
+    .sidebar-icon {
+      color: var(--color-amber);
+      filter: drop-shadow(0 0 5px rgba(201, 168, 76, 0.5));
+    }
+  }
+
+  &.active {
+    color: var(--color-amber);
+    border-left-color: var(--color-amber);
+    text-shadow: 0 0 10px rgba(201, 168, 76, 0.4);
+  }
+}
+
+.sidebar-icon {
+  font-size: 0.8rem;
+  color: var(--color-muted);
+  transition:
+    color 0.2s ease,
+    filter 0.2s ease;
+  flex-shrink: 0;
+  width: 16px;
+  text-align: center;
+}
+
+// ── Main Panel ────────────────────────────────────────────────────────────
+
+.main-panel {
+  min-height: 80vh;
+}
+
+// ── Character Header ──────────────────────────────────────────────────────
+
+.char-header {
+  margin-bottom: 1.5rem;
+}
+
+.char-name {
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-parchment);
+  text-shadow: 0 0 30px rgba(201, 168, 76, 0.2);
+  line-height: 1.15;
+  margin-bottom: 0.5rem;
+
+  @media (min-width: 768px) {
+    font-size: 2.5rem;
+  }
+}
+
+.char-suffix {
+  font-size: 0.7em;
+  opacity: 0.8;
+}
+
+.char-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.85rem;
+  color: var(--color-amber);
+  letter-spacing: 0.06em;
+  margin-bottom: 1.25rem;
+}
+
+// ── Stat bar ──────────────────────────────────────────────────────────────
+
+.stat-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  padding: 0.6rem 0;
+  border-top: 1px solid rgba(201, 168, 76, 0.15);
+  border-bottom: 1px solid rgba(201, 168, 76, 0.15);
+}
+
+.stat-sep {
+  color: rgba(201, 168, 76, 0.35);
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.75rem;
+}
+
+// ── Contact links ─────────────────────────────────────────────────────────
+
+.contact-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.78rem;
+  color: var(--color-muted);
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  i {
+    font-size: 0.85rem;
+  }
+
+  &:hover {
+    color: var(--color-amber);
+  }
+}
+
+// ── Section layout ────────────────────────────────────────────────────────
+
+.char-section {
+  margin-bottom: 2rem;
+}
+
+.section-heading {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-amber);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.section-icon {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.section-svg-icon {
+  flex-shrink: 0;
+  opacity: 0.85;
+}
+
+// ── Profile section ───────────────────────────────────────────────────────
+
+.profile-content {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.profile-portrait {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid var(--color-edge);
+  box-shadow:
+    0 0 0 4px rgba(201, 168, 76, 0.08),
+    0 4px 20px rgba(0, 0, 0, 0.5);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.profile-text {
+  flex: 1;
+  min-width: 240px;
+
+  p {
+    font-family: 'Crimson Text', serif;
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 0.75rem;
+  }
+
+  em {
+    font-style: italic;
+  }
+  strong {
+    color: var(--color-parchment);
+    font-weight: 600;
+  }
+}
+
+.trait-list {
+  list-style: none;
+  padding: 0;
+  margin: 0.75rem 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  li {
+    font-family: 'Crimson Text', serif;
+    color: var(--color-muted);
+    font-size: 0.95rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+}
+
+.trait-icon {
+  color: var(--color-amber);
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  flex-shrink: 0;
+}
+
+// ── Abilities grid ────────────────────────────────────────────────────────
+
+.ability-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.ability-category {
+  background: rgba(5, 5, 12, 0.5);
+  border: 1px solid rgba(201, 168, 76, 0.15);
+  padding: 1.25rem;
+}
+
+.ability-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  letter-spacing: 0.08em;
+  margin-bottom: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+
+  i {
+    color: var(--color-amber);
+  }
+}
+
+.ability-svg-icon {
+  flex-shrink: 0;
+}
+
+.ability-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin-bottom: 0.75rem;
+}
+
+.ability-row {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.ability-label {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+}
+
+.ability-pct {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--color-amber);
+  min-width: 2.5rem;
+  text-align: right;
+}
+
+.skill-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+// ── Experience entries ────────────────────────────────────────────────────
+
+.quest-entry {
+  display: flex;
+  gap: 0;
+  margin-bottom: 1.25rem;
+  position: relative;
+}
+
+.quest-left-bar {
+  width: 3px;
+  background: var(--color-amber);
+  flex-shrink: 0;
+  border-radius: 2px;
+  margin-right: 1rem;
+
+  &.past {
+    background: rgba(181, 166, 66, 0.35);
+  }
+}
+
+.quest-body {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  background: rgba(10, 10, 20, 0.5);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  border-left: none;
+}
+
+.active-quest .quest-left-bar {
+  background: var(--color-amber);
+  box-shadow: 0 0 8px rgba(201, 168, 76, 0.5);
+}
+
+.quest-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.4rem;
+}
+
+.quest-title-group {
+  flex: 1;
+}
+
+.quest-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.2rem;
+}
+
+.quest-org {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  color: var(--color-amber);
+  font-weight: 500;
+}
+
+.quest-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+
+  i {
+    opacity: 0.6;
+  }
+}
+
+.quest-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: rgba(138, 122, 106, 0.7);
+  margin-bottom: 0.6rem;
+}
+
+.quest-desc {
+  font-family: 'Crimson Text', serif;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.6rem;
+}
+
+.quest-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+// ── Education entries ─────────────────────────────────────────────────────
+
+.education-entry {
+  display: flex;
+  gap: 1.25rem;
+  padding: 1.25rem;
+  background: rgba(10, 10, 20, 0.5);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  margin-bottom: 1rem;
+  align-items: flex-start;
+}
+
+.school-emblem {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 1px solid var(--color-edge);
+  box-shadow: 0 0 0 3px rgba(201, 168, 76, 0.1);
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.education-content {
+  flex: 1;
+}
+
+.school-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  margin-bottom: 0.35rem;
+}
+
+.degree {
+  font-family: 'Crimson Text', serif;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  margin-bottom: 0.2rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.edu-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: rgba(138, 122, 106, 0.7);
+  margin-bottom: 0.5rem;
+}
+
+.edu-description {
+  font-family: 'Crimson Text', serif;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+}
+
+.edu-details {
+  margin-top: 0.6rem;
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+
+    li {
+      font-family: 'Crimson Text', serif;
+      color: var(--color-muted);
+      font-size: 0.9rem;
+      padding: 0.15rem 0;
+    }
+  }
+}
+
+.edu-activities-label {
+  font-family: 'Cinzel', serif;
+  font-size: 0.72rem;
+  color: rgba(201, 168, 76, 0.6);
+  letter-spacing: 0.06em;
+  margin-bottom: 0.3rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.15rem 0.5rem;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.05em;
+  border-radius: 2px;
+
+  &.in-progress {
+    background: rgba(74, 158, 255, 0.12);
+    border: 1px solid rgba(74, 158, 255, 0.4);
+    color: #4a9eff;
+  }
+}
+
+// ── Certifications grid ───────────────────────────────────────────────────
+
+.certs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.cert-tile {
+  padding: 1.25rem;
+  position: relative;
+
+  // Gold top-left notch
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    border-top: 10px solid var(--color-amber);
+    border-right: 10px solid transparent;
+  }
+}
+
+.cert-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  line-height: 1.3;
+  margin-bottom: 0.4rem;
+}
+
+.cert-issuer {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.7rem;
+  color: var(--color-muted);
+  margin-bottom: 0.3rem;
+}
+
+.cert-id {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.65rem;
+  color: rgba(138, 122, 106, 0.6);
+  margin-bottom: 0.4rem;
+}
+
+// ── Projects ──────────────────────────────────────────────────────────────
+
+.project-entry {
+  padding: 1.25rem;
+  background: rgba(10, 10, 20, 0.5);
+  border: 1px solid rgba(201, 168, 76, 0.12);
+  margin-bottom: 1rem;
+}
+
+.project-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.project-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+}
+
+.project-date {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--color-muted);
+}
+
+.project-desc {
+  font-family: 'Crimson Text', serif;
+  color: var(--color-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin-bottom: 0.5rem;
+}
+
+// ── Guilds grid ───────────────────────────────────────────────────────────
+
+.guilds-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.guild-tile {
+  padding: 1.25rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.guild-icon {
+  font-size: 1.5rem;
+  color: var(--color-amber);
+  margin-bottom: 0.25rem;
+}
+
+.guild-svg-icon {
+  margin-bottom: 0.25rem;
+  transition: filter 0.3s ease;
+
+  .guild-tile:hover & {
+    filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.5)) brightness(1.2);
+  }
+}
+
+.guild-name {
+  font-family: 'Cinzel', serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.guild-info {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--color-muted);
+  text-align: center;
+}
+
+// ── Utility ───────────────────────────────────────────────────────────────
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.mt-3 {
+  margin-top: 0.75rem;
+}
