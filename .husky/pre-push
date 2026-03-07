@@ -1,15 +1,12 @@
 # Get the current branch name
 current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
-# Prevent pushing directly to main or develop
-if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ] || [ "$current_branch" = "develop" ]; then
+# Prevent pushing directly to main/master — use a PR.
+# develop is the git-flow integration branch; back-merges from main are pushed here directly.
+if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ]; then
   echo "❌ You cannot push directly to '$current_branch' branch!"
   echo ""
-  echo "Please create a feature/bugfix/hotfix/release branch instead:"
-  echo "  git checkout -b feature/your-feature-name"
-  echo "  git checkout -b bugfix/your-bugfix-name"
-  echo "  git checkout -b hotfix/your-hotfix-name"
-  echo "  git checkout -b release/your-release-name"
+  echo "Please open a pull request instead."
   echo ""
   exit 1
 fi
