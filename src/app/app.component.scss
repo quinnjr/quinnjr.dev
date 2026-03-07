@@ -1,0 +1,82 @@
+.skip-link {
+  position: absolute;
+  top: -100px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 9999;
+  padding: 1rem 2rem;
+  background: #c9a84c;
+  color: #0a0a0f;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  text-decoration: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  transition: top 0.2s ease;
+
+  &:focus {
+    top: 0;
+    outline: 2px solid #e8c46a;
+    outline-offset: 2px;
+  }
+}
+
+main:focus {
+  outline: none;
+}
+
+// ── HUD chrome overlay ─────────────────────────────────────────────────────
+
+.hud-chrome {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9998;
+}
+
+.hud-corner {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+}
+
+.hud-corner-tl {
+  top: 0;
+  left: 0;
+  border-top: 1px solid rgba(201, 168, 76, 0.45);
+  border-left: 1px solid rgba(201, 168, 76, 0.45);
+}
+
+.hud-corner-tr {
+  top: 0;
+  right: 0;
+  border-top: 1px solid rgba(201, 168, 76, 0.45);
+  border-right: 1px solid rgba(201, 168, 76, 0.45);
+}
+
+.hud-corner-bl {
+  bottom: 0;
+  left: 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.45);
+  border-left: 1px solid rgba(201, 168, 76, 0.45);
+}
+
+.hud-corner-br {
+  bottom: 0;
+  right: 0;
+  border-bottom: 1px solid rgba(201, 168, 76, 0.45);
+  border-right: 1px solid rgba(201, 168, 76, 0.45);
+}
+
+.hud-scanlines {
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 2px,
+    rgba(0, 0, 0, 0.018) 2px,
+    rgba(0, 0, 0, 0.018) 4px
+  );
+  pointer-events: none;
+}

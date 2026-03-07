@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .cursor { animation: blink 1s step-end infinite; }
+    .bracket-l { animation: glow-l 2.5s ease-in-out infinite; }
+    .bracket-r { animation: glow-r 2.5s ease-in-out infinite; }
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50%      { opacity: 0; }
+    }
+    @keyframes glow-l {
+      0%, 100% { opacity: 0.4; }
+      30%      { opacity: 1; filter: drop-shadow(0 0 4px #c9a84c); }
+    }
+    @keyframes glow-r {
+      0%, 100% { opacity: 0.4; }
+      60%      { opacity: 1; filter: drop-shadow(0 0 4px #c9a84c); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .cursor { animation: none; }
+      .bracket-l, .bracket-r { animation: none; opacity: 0.8; }
+    }
+  </style>
+  <!-- Terminal frame -->
+  <rect x="8" y="10" width="64" height="60" rx="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Title bar dots -->
+  <circle cx="18" cy="20" r="2.5" fill="#c9a84c" opacity="0.4"/>
+  <circle cx="26" cy="20" r="2.5" fill="#c9a84c" opacity="0.25"/>
+  <circle cx="34" cy="20" r="2.5" fill="#c9a84c" opacity="0.15"/>
+  <!-- Title bar separator -->
+  <line x1="8" y1="27" x2="72" y2="27" stroke="#c9a84c" stroke-width="0.75" opacity="0.4"/>
+  <!-- Prompt text (simplified as lines) -->
+  <line x1="14" y1="37" x2="24" y2="37" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.5"/>
+  <line x1="26" y1="37" x2="38" y2="37" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.35"/>
+  <!-- Prompt symbol -->
+  <path d="M14,48 L18,44 L14,40" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Brackets -->
+  <g class="bracket-l">
+    <path d="M24,40 L20,40 L20,48 L24,48" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <g class="bracket-r">
+    <path d="M46,40 L50,40 L50,48 L46,48" fill="none" stroke="#c9a84c" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  </g>
+  <!-- Text inside brackets -->
+  <line x1="27" y1="44" x2="43" y2="44" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round" opacity="0.6"/>
+  <!-- Cursor -->
+  <rect class="cursor" x="54" y="40" width="7" height="10" rx="1" fill="#c9a84c" opacity="0.9"/>
+  <!-- Bottom line -->
+  <line x1="14" y1="59" x2="40" y2="59" stroke="#c9a84c" stroke-width="1" stroke-linecap="round" opacity="0.2"/>
+</svg>

@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .ring { transform-origin: 40px 40px; }
+    .ring-1 { animation: pulse-out 2.4s ease-out infinite; }
+    .ring-2 { animation: pulse-out 2.4s ease-out 0.8s infinite; }
+    .ring-3 { animation: pulse-out 2.4s ease-out 1.6s infinite; }
+    @keyframes pulse-out {
+      0%   { transform: scale(0.6); opacity: 0.9; }
+      100% { transform: scale(1.5); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .ring-1, .ring-2, .ring-3 { animation: none; opacity: 0; }
+    }
+  </style>
+  <!-- Pulse rings -->
+  <rect class="ring ring-1" x="18" y="18" width="44" height="44" rx="5" fill="none" stroke="#c9a84c" stroke-width="1"/>
+  <rect class="ring ring-2" x="18" y="18" width="44" height="44" rx="5" fill="none" stroke="#c9a84c" stroke-width="1"/>
+  <rect class="ring ring-3" x="18" y="18" width="44" height="44" rx="5" fill="none" stroke="#c9a84c" stroke-width="1"/>
+  <!-- TS box -->
+  <rect x="16" y="16" width="48" height="48" rx="6" fill="rgba(10,10,20,0.85)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- T: horizontal bar -->
+  <line x1="21" y1="29" x2="41" y2="29" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- T: vertical stem -->
+  <line x1="31" y1="29" x2="31" y2="53" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- S: two arcs approximated -->
+  <path d="M44,53 L52,53 Q59,53 59,48 Q59,43 50,40.5 Q44,38 44,33 Q44,27 52,27 L58,27"
+        fill="none" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
