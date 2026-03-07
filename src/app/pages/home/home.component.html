@@ -1,5 +1,4 @@
 <div class="tavern-page">
-
   <!-- ── Hero Section ─────────────────────────────────────────────────── -->
   <section class="tavern-hero">
     <app-tavern-scene></app-tavern-scene>
@@ -7,10 +6,14 @@
     <div class="hero-content">
       <div class="container mx-auto px-4 py-20 relative z-10">
         <div class="flex flex-col lg:flex-row items-center gap-12">
-
           <!-- Profile Image — hexagonal frame with rotating amber ring -->
           <div class="profile-frame">
-            <svg class="profile-ring" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <svg
+              class="profile-ring"
+              viewBox="0 0 200 200"
+              xmlns="http://www.w3.org/2000/svg"
+              aria-hidden="true"
+            >
               <polygon
                 points="100,4 188,52 188,148 100,196 12,148 12,52"
                 fill="none"
@@ -27,11 +30,7 @@
               />
             </svg>
             <div class="profile-hex-clip">
-              <img
-                class="profile-image"
-                src="/profile_picture.jpg"
-                alt="Joseph R. Quinn"
-              />
+              <img class="profile-image" src="/profile_picture.jpg" alt="Joseph R. Quinn" />
               <div class="profile-scan-overlay" aria-hidden="true"></div>
             </div>
           </div>
@@ -58,9 +57,9 @@
             </div>
 
             <p class="hero-description">
-              Bridging the realms of law and technology. Specializing in full-stack
-              development, systems programming, and the arcane arts of cyber law.
-              Crafting innovative solutions with cutting-edge technologies.
+              Bridging the realms of law and technology. Specializing in full-stack development,
+              systems programming, and the arcane arts of cyber law. Crafting innovative solutions
+              with cutting-edge technologies.
             </p>
 
             <!-- CTA Buttons -->
@@ -101,7 +100,6 @@
   <!-- ── Systems & Abilities ───────────────────────────────────────────── -->
   <section class="rpg-section">
     <div class="container mx-auto px-4">
-
       <div class="section-header" #revealTarget>
         <div class="section-header-inner reveal-target">
           <h2 class="section-title">Systems <span class="text-amber">& Abilities</span></h2>
@@ -111,11 +109,17 @@
       </div>
 
       <div class="skills-grid">
-
         <!-- Languages -->
         <div class="skill-card card-stone reveal-target reveal-delay-1" #revealTarget>
           <div class="skill-icon-wrap">
-            <img src="assets/icons/rust-gear.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+            <img
+              src="assets/icons/rust-gear.svg"
+              class="skill-svg-icon"
+              width="72"
+              height="72"
+              aria-hidden="true"
+              alt=""
+            />
           </div>
           <h3 class="skill-title">Languages</h3>
           <div class="skill-badges">
@@ -131,7 +135,14 @@
         <!-- Frontend -->
         <div class="skill-card card-stone reveal-target reveal-delay-2" #revealTarget>
           <div class="skill-icon-wrap">
-            <img src="assets/icons/typescript-pulse.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+            <img
+              src="assets/icons/typescript-pulse.svg"
+              class="skill-svg-icon"
+              width="72"
+              height="72"
+              aria-hidden="true"
+              alt=""
+            />
           </div>
           <h3 class="skill-title">Frontend</h3>
           <div class="skill-badges">
@@ -145,7 +156,14 @@
         <!-- Backend -->
         <div class="skill-card card-stone reveal-target reveal-delay-3" #revealTarget>
           <div class="skill-icon-wrap">
-            <img src="assets/icons/database-rings.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+            <img
+              src="assets/icons/database-rings.svg"
+              class="skill-svg-icon"
+              width="72"
+              height="72"
+              aria-hidden="true"
+              alt=""
+            />
           </div>
           <h3 class="skill-title">Backend</h3>
           <div class="skill-badges">
@@ -160,7 +178,14 @@
         <!-- Infrastructure -->
         <div class="skill-card card-stone reveal-target reveal-delay-4" #revealTarget>
           <div class="skill-icon-wrap">
-            <img src="assets/icons/cloud-nodes.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+            <img
+              src="assets/icons/cloud-nodes.svg"
+              class="skill-svg-icon"
+              width="72"
+              height="72"
+              aria-hidden="true"
+              alt=""
+            />
           </div>
           <h3 class="skill-title">Infrastructure</h3>
           <div class="skill-badges">
@@ -171,7 +196,6 @@
             <span class="badge-token">Linux</span>
           </div>
         </div>
-
       </div>
     </div>
   </section>
@@ -179,7 +203,6 @@
   <!-- ── Commendations ─────────────────────────────────────────────────── -->
   <section class="rpg-section alt">
     <div class="container mx-auto px-4">
-
       <div class="section-header" #revealTarget>
         <div class="section-header-inner reveal-target">
           <h2 class="section-title">Commendations</h2>
@@ -237,7 +260,8 @@
               target="_blank"
               rel="noopener noreferrer"
               class="link-tavern"
-            >MIT License</a>
+              >MIT License</a
+            >
           </p>
           <p class="footer-tagline">
             Forged at
@@ -246,7 +270,8 @@
               target="_blank"
               rel="noopener noreferrer"
               class="link-tavern"
-            >Pegasus Heavy Industries</a>
+              >Pegasus Heavy Industries</a
+            >
           </p>
         </div>
         <div class="footer-links">
@@ -282,5 +307,4 @@
     </div>
     <div class="footer-border"></div>
   </footer>
-
 </div>

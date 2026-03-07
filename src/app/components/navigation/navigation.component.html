@@ -85,11 +85,7 @@
     </button>
 
     <!-- Navigation Menu -->
-    <div
-      [class.nav-menu-open]="isMenuOpen()"
-      class="nav-menu-wrapper"
-      id="navbar-default"
-    >
+    <div [class.nav-menu-open]="isMenuOpen()" class="nav-menu-wrapper" id="navbar-default">
       <ul class="nav-menu">
         @for (item of navbarItems(); track $index) {
           <li>

@@ -68,8 +68,7 @@ export class ButtonComponent {
       link: 'bg-transparent text-blue-400 hover:text-blue-300 hover:underline focus:ring-blue-500 px-0',
       tavern:
         'bg-gradient-to-b from-amber-700 to-amber-900 text-amber-100 border-2 border-amber-950 shadow-inner hover:from-amber-800 hover:to-amber-700 hover:shadow-lg hover:shadow-orange-500/30 hover:-translate-y-0.5 focus:ring-amber-500 font-serif',
-      gold:
-        'bg-gradient-to-b from-yellow-500 to-amber-600 text-amber-950 border-2 border-amber-800 shadow-inner hover:from-amber-400 hover:to-yellow-500 hover:shadow-lg hover:shadow-yellow-400/40 hover:-translate-y-0.5 focus:ring-yellow-400 font-serif font-bold',
+      gold: 'bg-gradient-to-b from-yellow-500 to-amber-600 text-amber-950 border-2 border-amber-800 shadow-inner hover:from-amber-400 hover:to-yellow-500 hover:shadow-lg hover:shadow-yellow-400/40 hover:-translate-y-0.5 focus:ring-yellow-400 font-serif font-bold',
       parchment:
         'bg-gradient-to-b from-amber-100 to-amber-200 text-amber-900 border-2 border-amber-700 shadow-inner hover:from-amber-50 hover:to-amber-100 hover:shadow-lg hover:shadow-amber-400/30 hover:-translate-y-0.5 focus:ring-amber-400 font-serif',
     };

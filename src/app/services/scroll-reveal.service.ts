@@ -1,5 +1,5 @@
-import { Injectable, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
+import { Injectable, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
 
 /**
  * ScrollRevealService uses IntersectionObserver to add a `.revealed` class to
@@ -15,7 +15,7 @@ export class ScrollRevealService implements OnDestroy {
   constructor() {
     if (isPlatformBrowser(this.platformId)) {
       this.observer = new IntersectionObserver(
-        (entries) => {
+        entries => {
           for (const entry of entries) {
             if (entry.isIntersecting) {
               entry.target.classList.add('revealed');
