@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .ring-top    { transform-origin: 40px 24px; animation: spin-cw  4s linear infinite; }
+    .ring-bottom { transform-origin: 40px 56px; animation: spin-ccw 4s linear infinite; }
+    @keyframes spin-cw  { to { transform: rotate(360deg); } }
+    @keyframes spin-ccw { to { transform: rotate(-360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .ring-top, .ring-bottom { animation: none; }
+    }
+  </style>
+  <!-- Cylinder body sides -->
+  <line x1="14" y1="24" x2="14" y2="56" stroke="#c9a84c" stroke-width="1.5" opacity="0.8"/>
+  <line x1="66" y1="24" x2="66" y2="56" stroke="#c9a84c" stroke-width="1.5" opacity="0.8"/>
+  <!-- Mid ring (static) -->
+  <ellipse cx="40" cy="40" rx="26" ry="8" fill="rgba(10,10,20,0.85)" stroke="#c9a84c" stroke-width="1.5"/>
+  <line x1="14" y1="40" x2="66" y2="40" stroke="#c9a84c" stroke-width="0.5" opacity="0.2"/>
+  <!-- Bottom cap -->
+  <ellipse cx="40" cy="56" rx="26" ry="8" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Bottom rotating ring -->
+  <ellipse class="ring-bottom" cx="40" cy="56" rx="22" ry="5" fill="none" stroke="#c9a84c" stroke-width="1" stroke-dasharray="6,10" opacity="0.7"/>
+  <!-- Top cap -->
+  <ellipse cx="40" cy="24" rx="26" ry="8" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Top rotating ring -->
+  <ellipse class="ring-top" cx="40" cy="24" rx="22" ry="5" fill="none" stroke="#c9a84c" stroke-width="1" stroke-dasharray="6,10" opacity="0.7"/>
+  <!-- Glint on top -->
+  <path d="M26,22 Q40,17 54,22" fill="none" stroke="#e8c46a" stroke-width="1" opacity="0.4" stroke-linecap="round"/>
+</svg>

@@ -1,4 +1,20 @@
+<a href="#main-content" class="skip-link" aria-label="Skip to main content">
+  Skip to main content
+</a>
+
+<!-- HUD corner chrome — fixed viewport overlays, pointer-events none -->
+<div class="hud-chrome" aria-hidden="true">
+  <div class="hud-corner hud-corner-tl"></div>
+  <div class="hud-corner hud-corner-tr"></div>
+  <div class="hud-corner hud-corner-bl"></div>
+  <div class="hud-corner hud-corner-br"></div>
+  <!-- Very faint scanline texture -->
+  <div class="hud-scanlines"></div>
+</div>
+
 <div [@routeAnimations]="getRouteAnimationData() | async">
   <app-naviation />
-  <router-outlet />
+  <main id="main-content" tabindex="-1">
+    <router-outlet />
+  </main>
 </div>

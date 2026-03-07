@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .scan { animation: sweep 2.4s linear infinite; }
+    .scan-glow { animation: sweep-glow 2.4s linear infinite; }
+    @keyframes sweep {
+      0%   { transform: translateY(0); opacity: 0.9; }
+      85%  { transform: translateY(46px); opacity: 0.9; }
+      90%  { transform: translateY(46px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 0; }
+    }
+    @keyframes sweep-glow {
+      0%   { transform: translateY(0); opacity: 0.3; }
+      85%  { transform: translateY(46px); opacity: 0.3; }
+      90%  { transform: translateY(46px); opacity: 0; }
+      100% { transform: translateY(0); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scan, .scan-glow { animation: none; opacity: 0; }
+    }
+  </style>
+  <defs>
+    <!-- Clip to shield shape -->
+    <clipPath id="shield-clip">
+      <path d="M40 8 L68 18 L68 42 C68 58 54 70 40 74 C26 70 12 58 12 42 L12 18 Z"/>
+    </clipPath>
+  </defs>
+  <!-- Shield outline -->
+  <path d="M40 8 L68 18 L68 42 C68 58 54 70 40 74 C26 70 12 58 12 42 L12 18 Z"
+        fill="rgba(10,10,20,0.88)" stroke="#c9a84c" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- Inner circuit lines -->
+  <path d="M30,30 L40,22 L50,30" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+  <path d="M26,40 L40,32 L54,40" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.3" stroke-linecap="round"/>
+  <line x1="40" y1="22" x2="40" y2="58" stroke="#c9a84c" stroke-width="1" opacity="0.25"/>
+  <circle cx="40" cy="46" r="8" fill="none" stroke="#c9a84c" stroke-width="1.2" opacity="0.5"/>
+  <circle cx="40" cy="46" r="3" fill="#c9a84c" opacity="0.7"/>
+  <!-- Scan line clipped inside shield -->
+  <g clip-path="url(#shield-clip)">
+    <rect class="scan-glow" x="12" y="18" width="56" height="6" fill="#c9a84c" opacity="0.3"/>
+    <line class="scan" x1="12" y1="18" x2="68" y2="18" stroke="#c9a84c" stroke-width="1.5" opacity="0.9"/>
+  </g>
+  <!-- Corner marks on shield -->
+  <path d="M20,22 L20,28 L26,28" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.6" stroke-linecap="round"/>
+  <path d="M60,22 L60,28 L54,28" fill="none" stroke="#c9a84c" stroke-width="1" opacity="0.6" stroke-linecap="round"/>
+</svg>
