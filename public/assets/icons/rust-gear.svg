@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .g-out { animation: spin-cw 9s linear infinite; transform-origin: 40px 40px; }
+    .g-in  { animation: spin-ccw 6s linear infinite; transform-origin: 40px 40px; }
+    @keyframes spin-cw  { to { transform: rotate(360deg); } }
+    @keyframes spin-ccw { to { transform: rotate(-360deg); } }
+    @media (prefers-reduced-motion: reduce) {
+      .g-out, .g-in { animation: none; }
+    }
+  </style>
+  <!-- Outer gear (8-tooth star polygon) -->
+  <polygon class="g-out"
+    points="70,40 60.33,48.43 61.21,61.21 48.43,60.33 40,70 31.57,60.33 18.79,61.21 19.67,48.43 10,40 19.67,31.57 18.79,18.79 31.57,19.67 40,10 48.43,19.67 61.21,18.79 60.33,31.57"
+    fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Outer gear inner ring -->
+  <circle class="g-out" cx="40" cy="40" r="20" fill="none" stroke="#c9a84c" stroke-width="0.75" opacity="0.5"/>
+  <!-- Inner gear (8-tooth, smaller) -->
+  <polygon class="g-in"
+    points="54,40 49.66,44.14 50.17,49.83 44.48,50.33 40,54 35.52,50.33 29.83,49.83 30.34,44.14 26,40 30.34,35.86 29.83,30.17 35.52,29.67 40,26 44.48,29.67 50.17,30.17 49.66,35.86"
+    fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- Center bolt -->
+  <circle cx="40" cy="40" r="4" fill="#c9a84c"/>
+  <circle cx="40" cy="40" r="2" fill="#0a0a0f"/>
+</svg>

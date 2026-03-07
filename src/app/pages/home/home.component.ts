@@ -3,19 +3,17 @@ import {
   AfterViewInit,
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
   inject,
   PLATFORM_ID,
+  QueryList,
+  ViewChildren,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import {
-  ButtonComponent,
-  CardComponent,
-  CardBodyComponent,
-  BadgeComponent,
-} from '../../shared/components/ui';
+import { TavernSceneComponent } from '../../components/tavern-scene/tavern-scene.component';
+import { ScrollRevealService } from '../../services/scroll-reveal.service';
 
-// Interface for window with Credly
 interface WindowWithCredly extends Window {
   CredlyBadge?: {
     init: () => void;
@@ -25,34 +23,37 @@ interface WindowWithCredly extends Window {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, ButtonComponent, CardComponent, CardBodyComponent, BadgeComponent],
+  imports: [RouterLink, TavernSceneComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements AfterViewInit {
-  private platformId = inject(PLATFORM_ID);
+  private readonly platformId = inject(PLATFORM_ID);
+  private readonly scrollReveal = inject(ScrollRevealService);
+
+  @ViewChildren('revealTarget') revealTargets!: QueryList<ElementRef<Element>>;
 
   ngAfterViewInit(): void {
-    // Only run in browser (not during SSR)
-    if (isPlatformBrowser(this.platformId)) {
-      // Reinitialize Credly badges after view is loaded
-      this.loadCredlyBadges();
-    }
+    if (!isPlatformBrowser(this.platformId)) return;
+
+    // Wire up scroll reveal for all marked elements
+    this.revealTargets.forEach((ref) => {
+      this.scrollReveal.observe(ref.nativeElement);
+    });
+
+    this.loadCredlyBadges();
   }
 
   private loadCredlyBadges(retryCount = 0): void {
-    // Check if Credly script is loaded
     const windowWithCredly = window as WindowWithCredly;
     if (typeof window !== 'undefined' && windowWithCredly.CredlyBadge) {
       try {
-        // Trigger badge rendering
         windowWithCredly.CredlyBadge.init();
       } catch {
-        // Silently fail - badges will not render
+        // Silently fail — badges will not render
       }
     } else if (retryCount < 50) {
-      // If script not loaded yet, wait and try again (max 5 seconds)
       setTimeout(() => {
         this.loadCredlyBadges(retryCount + 1);
       }, 100);

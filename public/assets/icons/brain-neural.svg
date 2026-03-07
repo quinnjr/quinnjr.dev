@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .node { animation: activate 3.6s ease-in-out infinite; }
+    .n1 { animation-delay: 0s; }
+    .n2 { animation-delay: 0.4s; }
+    .n3 { animation-delay: 0.8s; }
+    .n4 { animation-delay: 1.2s; }
+    .n5 { animation-delay: 1.6s; }
+    .n6 { animation-delay: 2.0s; }
+    .n7 { animation-delay: 2.4s; }
+    .edge { opacity: 0.2; }
+    @keyframes activate {
+      0%, 80%, 100% { opacity: 0.3; r: 4; }
+      10%           { opacity: 1;   r: 6; }
+      25%           { opacity: 0.6; r: 4.5; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .node { animation: none; opacity: 0.7; }
+    }
+  </style>
+  <!-- Edges (connections) -->
+  <!-- Left input layer to hidden -->
+  <line class="edge" x1="16" y1="24" x2="36" y2="20" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="16" y1="24" x2="36" y2="40" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="16" y1="24" x2="36" y2="60" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="16" y1="56" x2="36" y2="20" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="16" y1="56" x2="36" y2="40" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="16" y1="56" x2="36" y2="60" stroke="#c9a84c" stroke-width="1"/>
+  <!-- Hidden to output -->
+  <line class="edge" x1="36" y1="20" x2="56" y2="30" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="36" y1="20" x2="56" y2="50" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="36" y1="40" x2="56" y2="30" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="36" y1="40" x2="56" y2="50" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="36" y1="60" x2="56" y2="30" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="36" y1="60" x2="56" y2="50" stroke="#c9a84c" stroke-width="1"/>
+  <!-- Output to final -->
+  <line class="edge" x1="56" y1="30" x2="70" y2="40" stroke="#c9a84c" stroke-width="1"/>
+  <line class="edge" x1="56" y1="50" x2="70" y2="40" stroke="#c9a84c" stroke-width="1"/>
+
+  <!-- Input layer -->
+  <circle class="node n1" cx="16" cy="24" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <circle class="node n2" cx="16" cy="56" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Hidden layer -->
+  <circle class="node n3" cx="36" cy="20" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <circle class="node n4" cx="36" cy="40" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <circle class="node n5" cx="36" cy="60" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Output layer -->
+  <circle class="node n6" cx="56" cy="30" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <circle class="node n7" cx="56" cy="50" r="4" fill="rgba(10,10,20,0.9)" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Final output -->
+  <circle cx="70" cy="40" r="5" fill="#c9a84c" opacity="0.8"/>
+</svg>

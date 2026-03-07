@@ -1,172 +1,195 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-  <!-- Hero Section -->
-  <section class="relative overflow-hidden">
-    <!-- Animated Background -->
-    <div class="absolute inset-0 opacity-20">
-      <div
-        class="absolute inset-0 bg-gradient-to-r from-blue-600 to-purple-600 animate-pulse"
-      ></div>
-    </div>
+<div class="tavern-page">
 
-    <div class="container mx-auto px-4 py-20 relative z-10">
-      <div class="flex flex-col lg:flex-row items-center gap-12">
-        <!-- Profile Image -->
-        <div class="relative group">
-          <div
-            class="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-200 animate-tilt"
-          ></div>
-          <img
-            class="relative w-48 h-48 rounded-full object-cover ring-4 ring-gray-800"
-            src="/profile_picture.jpg"
-            alt="Joseph R. Quinn"
-          />
-        </div>
+  <!-- ── Hero Section ─────────────────────────────────────────────────── -->
+  <section class="tavern-hero">
+    <app-tavern-scene></app-tavern-scene>
 
-        <!-- Hero Content -->
-        <div class="flex-1 text-center lg:text-left">
-          <h1
-            class="text-5xl md:text-6xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 mb-4"
-          >
-            Joseph R. Quinn, Esq.
-          </h1>
-          <p class="text-2xl md:text-3xl text-gray-300 mb-6">
-            <span class="text-blue-400">Software Engineer</span> •
-            <span class="text-purple-400">Attorney</span> •
-            <span class="text-pink-400">Technologist</span>
-          </p>
-          <p class="text-lg text-gray-400 max-w-2xl mb-8">
-            Bridging the intersection of law and technology. Specializing in full-stack development,
-            systems programming, and cyber law. Building innovative solutions with cutting-edge
-            technologies.
-          </p>
+    <div class="hero-content">
+      <div class="container mx-auto px-4 py-20 relative z-10">
+        <div class="flex flex-col lg:flex-row items-center gap-12">
 
-          <!-- CTA Buttons -->
-          <div class="flex flex-wrap gap-4 justify-center lg:justify-start">
-            <a routerLink="/resume">
-              <app-button variant="primary" size="lg">
-                <i class="fas fa-file-alt mr-2"></i>View Resume
-              </app-button>
-            </a>
-            <a
-              href="https://www.linkedin.com/in/quinnjosephr/"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <app-button variant="info" size="lg">
-                <i class="fab fa-linkedin mr-2"></i>LinkedIn Profile
-              </app-button>
-            </a>
-            <a routerLink="/projects">
-              <app-button variant="outline" size="lg"> See Projects </app-button>
-            </a>
-            <a href="https://github.com/quinnjr" target="_blank" rel="noopener noreferrer">
-              <app-button variant="outline" size="lg">
-                <i class="fab fa-github mr-2"></i>GitHub
-              </app-button>
-            </a>
+          <!-- Profile Image — hexagonal frame with rotating amber ring -->
+          <div class="profile-frame">
+            <svg class="profile-ring" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <polygon
+                points="100,4 188,52 188,148 100,196 12,148 12,52"
+                fill="none"
+                stroke="#c9a84c"
+                stroke-width="1.5"
+                stroke-dasharray="6 4"
+                opacity="0.7"
+              />
+              <polygon
+                points="100,14 180,57 180,143 100,186 20,143 20,57"
+                fill="none"
+                stroke="rgba(201,168,76,0.3)"
+                stroke-width="1"
+              />
+            </svg>
+            <div class="profile-hex-clip">
+              <img
+                class="profile-image"
+                src="/profile_picture.jpg"
+                alt="Joseph R. Quinn"
+              />
+              <div class="profile-scan-overlay" aria-hidden="true"></div>
+            </div>
+          </div>
+
+          <!-- Hero Content -->
+          <div class="hero-card flex-1">
+            <h1 class="hero-name">Joseph R. Quinn, Esq.</h1>
+
+            <div class="title-roles">
+              <span class="role-badge">
+                <span class="status-dot"></span>
+                Software Engineer
+              </span>
+              <span class="role-divider">◆</span>
+              <span class="role-badge">
+                <span class="status-dot"></span>
+                Attorney
+              </span>
+              <span class="role-divider">◆</span>
+              <span class="role-badge">
+                <span class="status-dot"></span>
+                Technologist
+              </span>
+            </div>
+
+            <p class="hero-description">
+              Bridging the realms of law and technology. Specializing in full-stack
+              development, systems programming, and the arcane arts of cyber law.
+              Crafting innovative solutions with cutting-edge technologies.
+            </p>
+
+            <!-- CTA Buttons -->
+            <div class="hero-actions">
+              <a routerLink="/resume" class="btn-rpg btn-rpg-primary">
+                <i class="fas fa-scroll" aria-hidden="true"></i>
+                Resume
+              </a>
+              <a
+                href="https://www.linkedin.com/in/quinnjosephr/"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-rpg"
+              >
+                <i class="fab fa-linkedin" aria-hidden="true"></i>
+                LinkedIn
+              </a>
+              <a routerLink="/projects" class="btn-rpg">
+                <i class="fas fa-hammer" aria-hidden="true"></i>
+                Projects
+              </a>
+              <a
+                href="https://github.com/quinnjr"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn-rpg"
+              >
+                <i class="fab fa-github" aria-hidden="true"></i>
+                GitHub
+              </a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Skills Section -->
-  <section class="py-20 bg-gray-900/50">
+  <!-- ── Systems & Abilities ───────────────────────────────────────────── -->
+  <section class="rpg-section">
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-12 text-white">
-        <span class="bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-purple-400"
-          >Tech Stack</span
-        >
-      </h2>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="section-header" #revealTarget>
+        <div class="section-header-inner reveal-target">
+          <h2 class="section-title">Systems <span class="text-amber">& Abilities</span></h2>
+          <p class="section-subtitle">Technologies mastered through countless engagements</p>
+        </div>
+        <div class="section-divider-rpg revealed"></div>
+      </div>
+
+      <div class="skills-grid">
+
         <!-- Languages -->
-        <app-card variant="default" classOverride="group">
-          <app-card-body>
-            <div class="flex items-center mb-4">
-              <i class="fas fa-code text-3xl text-blue-400 mr-3"></i>
-              <h3 class="text-xl font-bold text-white">Languages</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <app-badge variant="primary" badgeStyle="soft">Rust</app-badge>
-              <app-badge variant="primary" badgeStyle="soft">Go</app-badge>
-              <app-badge variant="primary" badgeStyle="soft">TypeScript</app-badge>
-              <app-badge variant="primary" badgeStyle="soft">Python</app-badge>
-              <app-badge variant="primary" badgeStyle="soft">C++</app-badge>
-              <app-badge variant="primary" badgeStyle="soft">C#</app-badge>
-            </div>
-          </app-card-body>
-        </app-card>
+        <div class="skill-card card-stone reveal-target reveal-delay-1" #revealTarget>
+          <div class="skill-icon-wrap">
+            <img src="assets/icons/rust-gear.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+          </div>
+          <h3 class="skill-title">Languages</h3>
+          <div class="skill-badges">
+            <span class="badge-token">Rust</span>
+            <span class="badge-token">Go</span>
+            <span class="badge-token">TypeScript</span>
+            <span class="badge-token">Python</span>
+            <span class="badge-token">C++</span>
+            <span class="badge-token">C#</span>
+          </div>
+        </div>
 
         <!-- Frontend -->
-        <app-card variant="default" classOverride="group">
-          <app-card-body>
-            <div class="flex items-center mb-4">
-              <i class="fas fa-palette text-3xl text-purple-400 mr-3"></i>
-              <h3 class="text-xl font-bold text-white">Frontend</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <app-badge variant="secondary" badgeStyle="soft">Angular</app-badge>
-              <app-badge variant="secondary" badgeStyle="soft">Tailwind</app-badge>
-              <app-badge variant="secondary" badgeStyle="soft">SSR</app-badge>
-            </div>
-          </app-card-body>
-        </app-card>
+        <div class="skill-card card-stone reveal-target reveal-delay-2" #revealTarget>
+          <div class="skill-icon-wrap">
+            <img src="assets/icons/typescript-pulse.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+          </div>
+          <h3 class="skill-title">Frontend</h3>
+          <div class="skill-badges">
+            <span class="badge-token">Angular</span>
+            <span class="badge-token">Tailwind</span>
+            <span class="badge-token">SSR</span>
+            <span class="badge-token">WebGL</span>
+          </div>
+        </div>
 
-        <!-- Backend & Cloud -->
-        <app-card variant="default" classOverride="group">
-          <app-card-body>
-            <div class="flex items-center mb-4">
-              <i class="fas fa-server text-3xl text-green-400 mr-3"></i>
-              <h3 class="text-xl font-bold text-white">Backend</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <app-badge variant="success" badgeStyle="soft">Node.js</app-badge>
-              <app-badge variant="success" badgeStyle="soft">Express</app-badge>
-              <app-badge variant="success" badgeStyle="soft">Prisma</app-badge>
-              <app-badge variant="success" badgeStyle="soft">SQL</app-badge>
-              <app-badge variant="success" badgeStyle="soft">NestJS</app-badge>
-            </div>
-          </app-card-body>
-        </app-card>
+        <!-- Backend -->
+        <div class="skill-card card-stone reveal-target reveal-delay-3" #revealTarget>
+          <div class="skill-icon-wrap">
+            <img src="assets/icons/database-rings.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+          </div>
+          <h3 class="skill-title">Backend</h3>
+          <div class="skill-badges">
+            <span class="badge-token">Node.js</span>
+            <span class="badge-token">NestJS</span>
+            <span class="badge-token">Express</span>
+            <span class="badge-token">Prisma</span>
+            <span class="badge-token">SQL</span>
+          </div>
+        </div>
 
-        <!-- DevOps & Cloud -->
-        <app-card variant="default" classOverride="group">
-          <app-card-body>
-            <div class="flex items-center mb-4">
-              <i class="fas fa-cloud text-3xl text-orange-400 mr-3"></i>
-              <h3 class="text-xl font-bold text-white">DevOps & Cloud</h3>
-            </div>
-            <div class="flex flex-wrap gap-2">
-              <app-badge variant="warning" badgeStyle="soft">AWS</app-badge>
-              <app-badge variant="warning" badgeStyle="soft">Digital Ocean</app-badge>
-              <app-badge variant="warning" badgeStyle="soft">Docker</app-badge>
-              <app-badge variant="warning" badgeStyle="soft">Kubernetes</app-badge>
-              <app-badge variant="warning" badgeStyle="soft">Jenkins</app-badge>
-              <app-badge variant="warning" badgeStyle="soft">Linux</app-badge>
-            </div>
-          </app-card-body>
-        </app-card>
+        <!-- Infrastructure -->
+        <div class="skill-card card-stone reveal-target reveal-delay-4" #revealTarget>
+          <div class="skill-icon-wrap">
+            <img src="assets/icons/cloud-nodes.svg" class="skill-svg-icon" width="72" height="72" aria-hidden="true" alt="">
+          </div>
+          <h3 class="skill-title">Infrastructure</h3>
+          <div class="skill-badges">
+            <span class="badge-token">AWS</span>
+            <span class="badge-token">Docker</span>
+            <span class="badge-token">Kubernetes</span>
+            <span class="badge-token">Jenkins</span>
+            <span class="badge-token">Linux</span>
+          </div>
+        </div>
+
       </div>
     </div>
   </section>
 
-  <!-- Certifications Section -->
-  <section class="py-20 bg-gray-900">
+  <!-- ── Commendations ─────────────────────────────────────────────────── -->
+  <section class="rpg-section alt">
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-4 text-white">
-        <span class="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-400"
-          >Certifications</span
-        >
-      </h2>
-      <p class="text-center text-gray-400 mb-12 max-w-2xl mx-auto">
-        Continuous learning and professional development in cutting-edge technologies
-      </p>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        <div
-          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
-        >
+      <div class="section-header" #revealTarget>
+        <div class="section-header-inner reveal-target">
+          <h2 class="section-title">Commendations</h2>
+          <p class="section-subtitle">Certifications earned through rigorous trials</p>
+        </div>
+        <div class="section-divider-rpg revealed"></div>
+      </div>
+
+      <div class="certifications-grid">
+        <div class="cert-card card-stone">
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -174,9 +197,7 @@
             data-share-badge-host="https://www.credly.com"
           ></div>
         </div>
-        <div
-          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
-        >
+        <div class="cert-card card-stone">
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -184,9 +205,7 @@
             data-share-badge-host="https://www.credly.com"
           ></div>
         </div>
-        <div
-          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
-        >
+        <div class="cert-card card-stone">
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -194,9 +213,7 @@
             data-share-badge-host="https://www.credly.com"
           ></div>
         </div>
-        <div
-          class="flex justify-center p-4 bg-gray-800/50 backdrop-blur-sm rounded-xl border border-gray-700 hover:border-purple-500 transition-all duration-300"
-        >
+        <div class="cert-card card-stone">
           <div
             data-iframe-width="150"
             data-iframe-height="270"
@@ -208,62 +225,62 @@
     </div>
   </section>
 
-  <!-- Footer -->
-  <section class="py-12 bg-gray-900/50 border-t border-gray-800">
+  <!-- ── Footer ────────────────────────────────────────────────────────── -->
+  <footer class="rpg-footer">
     <div class="container mx-auto px-4">
-      <div class="flex flex-col md:flex-row justify-between items-center gap-4">
-        <div class="flex flex-col items-center md:items-start gap-2">
-          <p class="text-gray-400 text-sm">
-            © 2025 Joseph R. Quinn, Esq. • Licensed under
+      <div class="footer-content">
+        <div class="footer-info">
+          <p class="footer-copyright">
+            © 2025 Joseph R. Quinn, Esq. ·
             <a
               href="https://github.com/quinnjr/quinnjr.dev/blob/main/LICENSE"
               target="_blank"
-              class="text-blue-400 hover:underline"
-              >MIT License</a
-            >
+              rel="noopener noreferrer"
+              class="link-tavern"
+            >MIT License</a>
           </p>
-          <p class="text-gray-500 text-sm">
-            Tech consulting by
+          <p class="footer-tagline">
+            Forged at
             <a
               href="https://pegausheavy.dev"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-purple-400 hover:text-purple-300 hover:underline transition-colors"
-            >
-              <i class="fas fa-building mr-1"></i>Pegaus Heavy Industries
-            </a>
+              class="link-tavern"
+            >Pegasus Heavy Industries</a>
           </p>
         </div>
-        <div class="flex gap-4">
+        <div class="footer-links">
           <a
             href="https://github.com/quinnjr"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-gray-400 hover:text-blue-400 transition-colors"
+            class="footer-icon"
             aria-label="GitHub Profile"
           >
-            <i class="fab fa-github text-2xl"></i>
+            <i class="fab fa-github"></i>
           </a>
           <a
             href="https://github.com/quinnjr/quinnjr.dev"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-gray-400 hover:text-purple-400 transition-colors"
+            class="footer-icon"
             aria-label="View Source Code"
           >
-            <i class="fas fa-code text-2xl"></i>
+            <i class="fas fa-code"></i>
           </a>
           <a
             href="https://pegausheavy.dev"
             target="_blank"
             rel="noopener noreferrer"
-            class="text-gray-400 hover:text-purple-400 transition-colors"
-            aria-label="Pegaus Heavy Industries"
+            class="footer-icon"
+            aria-label="Pegasus Heavy Industries"
           >
-            <i class="fas fa-building text-2xl"></i>
+            <i class="fas fa-shield-alt"></i>
           </a>
         </div>
       </div>
     </div>
-  </section>
+    <div class="footer-border"></div>
+  </footer>
+
 </div>

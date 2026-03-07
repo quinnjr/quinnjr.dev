@@ -1,12 +1,10 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { RouterLink } from '@angular/router';
-
-import { AuthButtonComponent } from '../auth-button/auth-button.component';
+import { RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
   selector: 'app-naviation',
   standalone: true,
-  imports: [RouterLink, AuthButtonComponent],
+  imports: [RouterLink, RouterLinkActive],
   templateUrl: './navigation.component.html',
   styleUrl: './navigation.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -14,41 +12,41 @@ import { AuthButtonComponent } from '../auth-button/auth-button.component';
 export class NavigationComponent {
   public navbarItems = signal([
     {
-      title: 'Home',
+      title: 'Tavern',
       link: '/',
-      icon: 'fas fa-home',
+      icon: 'fas fa-fire',
     },
     {
-      title: 'Resume',
+      title: 'Quest Log',
       link: '/resume',
-      icon: 'fas fa-user-graduate',
+      icon: 'fas fa-scroll',
     },
     {
-      title: 'Projects',
+      title: 'Crafted Works',
       link: '/projects',
-      icon: 'fas fa-project-diagram',
+      icon: 'fas fa-hammer',
     },
     {
-      title: 'Articles',
+      title: 'Chronicles',
       link: '/articles',
-      icon: 'fas fa-newspaper',
+      icon: 'fas fa-book-open',
     },
     {
-      title: 'LinkedIn',
+      title: 'Guild Hall',
       link: 'https://www.linkedin.com/in/quinnjosephr/',
-      icon: 'fab fa-linkedin',
+      icon: 'fas fa-users',
       external: true,
     },
     {
-      title: 'Github',
+      title: 'Arcane Repository',
       link: 'https://github.com/quinnjr',
-      icon: 'fab fa-github',
+      icon: 'fas fa-code-branch',
       external: true,
     },
     {
-      title: 'Pegasus Heavy',
+      title: 'Forge',
       link: 'https://pegausheavy.dev',
-      icon: 'fas fa-building',
+      icon: 'fas fa-shield-alt',
       external: true,
     },
   ]);
