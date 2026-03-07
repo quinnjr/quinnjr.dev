@@ -8,6 +8,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
+import { TavernSceneComponent } from '../../components/tavern-scene/tavern-scene.component';
 import {
   ButtonComponent,
   CardComponent,
@@ -25,7 +26,7 @@ interface WindowWithCredly extends Window {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, ButtonComponent, CardComponent, CardBodyComponent, BadgeComponent],
+  imports: [RouterLink, TavernSceneComponent, ButtonComponent, CardComponent, CardBodyComponent, BadgeComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

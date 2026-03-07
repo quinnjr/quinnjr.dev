@@ -1,19 +1,50 @@
-<nav class="bg-gray-900/95 backdrop-blur-md border-b border-gray-800 sticky top-0 z-50">
-  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+<nav class="tavern-nav sticky top-0 z-50">
+  <div class="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto px-6 py-3">
+    <!-- JRQ Shield Monogram Logo -->
     <a
       routerLink="/home"
       routerLinkActive="router-link-active"
-      class="flex items-center space-x-3 rtl:space-x-reverse group"
+      class="nav-logo-link group"
+      aria-label="quinnjr.tech — Home"
     >
-      <span
-        class="self-center text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400 group-hover:from-blue-300 group-hover:via-purple-300 group-hover:to-pink-300 transition-all duration-300"
-        >QuinnJR<span class="text-blue-400">.dev</span></span
-      >
+      <div class="nav-logo">
+        <svg
+          width="34"
+          height="38"
+          viewBox="0 0 36 42"
+          fill="none"
+          xmlns="http://www.w3.org/2000/svg"
+          class="nav-shield"
+          aria-hidden="true"
+        >
+          <path
+            d="M18 2L2 9V22C2 31.9 9.4 40.4 18 42C26.6 40.4 34 31.9 34 22V9L18 2Z"
+            stroke="#c9a84c"
+            stroke-width="1.5"
+            fill="rgba(10,10,20,0.85)"
+          />
+          <text
+            x="50%"
+            y="59%"
+            dominant-baseline="middle"
+            text-anchor="middle"
+            fill="#c9a84c"
+            font-family="Cinzel Decorative, serif"
+            font-size="9.5"
+            font-weight="700"
+          >
+            JRQ
+          </text>
+        </svg>
+        <span class="nav-site-name">quinnjr.tech</span>
+      </div>
     </a>
+
+    <!-- Mobile Menu Button -->
     <button
       (click)="toggleMenu()"
       type="button"
-      class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-400 rounded-lg md:hidden hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700"
+      class="nav-menu-btn md:hidden"
       aria-controls="navbar-default"
       [attr.aria-expanded]="isMenuOpen()"
     >
@@ -92,4 +123,7 @@
       </div>
     </div>
   </div>
+
+  <!-- Amber bottom edge line -->
+  <div class="nav-border"></div>
 </nav>

@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+  <style>
+    .beam { transform-origin: 40px 28px; animation: tip 4s ease-in-out infinite; }
+    .pan-l { transform-origin: 20px 44px; animation: pan-l 4s ease-in-out infinite; }
+    .pan-r { transform-origin: 60px 44px; animation: pan-r 4s ease-in-out infinite; }
+    @keyframes tip {
+      0%, 100% { transform: rotate(0deg); }
+      20%      { transform: rotate(-12deg); }
+      50%      { transform: rotate(0deg); }
+      70%      { transform: rotate(12deg); }
+    }
+    @keyframes pan-l {
+      0%, 100% { transform: translateY(0); }
+      20%      { transform: translateY(8px); }
+      50%      { transform: translateY(0); }
+      70%      { transform: translateY(-8px); }
+    }
+    @keyframes pan-r {
+      0%, 100% { transform: translateY(0); }
+      20%      { transform: translateY(-8px); }
+      50%      { transform: translateY(0); }
+      70%      { transform: translateY(8px); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .beam, .pan-l, .pan-r { animation: none; }
+    }
+  </style>
+  <!-- Pillar -->
+  <line x1="40" y1="28" x2="40" y2="72" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+  <!-- Base -->
+  <line x1="28" y1="72" x2="52" y2="72" stroke="#c9a84c" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Top ornament -->
+  <circle cx="40" cy="20" r="4" fill="none" stroke="#c9a84c" stroke-width="1.5"/>
+  <line x1="40" y1="20" x2="40" y2="28" stroke="#c9a84c" stroke-width="1.5"/>
+  <!-- Beam -->
+  <g class="beam">
+    <line x1="14" y1="28" x2="66" y2="28" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+    <!-- Left chain -->
+    <line x1="20" y1="28" x2="20" y2="42" stroke="#c9a84c" stroke-width="1" stroke-dasharray="2,2" opacity="0.7"/>
+    <!-- Right chain -->
+    <line x1="60" y1="28" x2="60" y2="42" stroke="#c9a84c" stroke-width="1" stroke-dasharray="2,2" opacity="0.7"/>
+  </g>
+  <!-- Left pan -->
+  <g class="pan-l">
+    <path d="M10,44 Q20,50 30,44" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="10" y1="44" x2="30" y2="44" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+  </g>
+  <!-- Right pan -->
+  <g class="pan-r">
+    <path d="M50,44 Q60,50 70,44" fill="none" stroke="#c9a84c" stroke-width="1.5" stroke-linecap="round"/>
+    <line x1="50" y1="44" x2="70" y2="44" stroke="#c9a84c" stroke-width="1" opacity="0.4"/>
+  </g>
+</svg>
