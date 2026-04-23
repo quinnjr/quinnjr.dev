@@ -1,36 +1,27 @@
 commit_msg=$(cat "$1")
 
-# Git-flow commit message format: type: description
-# Types: feature, bugfix, release, hotfix, chore, docs, style, refactor, test, perf
+# Conventional Commits format: type(scope)!: description
+# https://www.conventionalcommits.org/
 # Examples:
-#   feature: add user authentication
-#   bugfix: fix login redirect issue
-#   release: version 2.0.0
-#   hotfix: fix critical security vulnerability
+#   feat: add user authentication
+#   fix(auth): correct login redirect
+#   feat!: remove deprecated API
+#   chore: update dependencies
 
-if ! echo "$commit_msg" | grep -qE "^(feature|bugfix|release|hotfix|chore|docs|style|refactor|test|perf)(/.*)?: .+"; then
+if ! echo "$commit_msg" | grep -qE "^(feat|fix|feature|bugfix|release|hotfix|chore|docs|style|refactor|test|perf|build|ci|revert)(\([^)]+\))?!?: .+"; then
   echo "❌ Invalid commit message format!"
   echo ""
-  echo "Commit message must follow the format:"
-  echo "  <type>: <description>"
+  echo "Commit message must follow Conventional Commits format:"
+  echo "  <type>[(scope)][!]: <description>"
   echo ""
-  echo "Valid types:"
-  echo "  - feature: New feature"
-  echo "  - bugfix: Bug fix"
-  echo "  - release: Release commit"
-  echo "  - hotfix: Critical hotfix"
-  echo "  - chore: Maintenance tasks"
-  echo "  - docs: Documentation changes"
-  echo "  - style: Code style changes (formatting, etc.)"
-  echo "  - refactor: Code refactoring"
-  echo "  - test: Adding or updating tests"
-  echo "  - perf: Performance improvements"
+  echo "Valid types: feat, fix, chore, docs, style, refactor, test, perf,"
+  echo "             build, ci, revert, release, hotfix"
   echo ""
   echo "Examples:"
-  echo "  feature: add user authentication"
-  echo "  bugfix: fix login redirect issue"
-  echo "  release: version 2.0.0"
-  echo "  hotfix: fix critical security vulnerability"
+  echo "  feat: add user authentication"
+  echo "  fix(auth): correct login redirect"
+  echo "  feat!: remove deprecated v1 API"
+  echo "  chore: update dependencies"
   echo ""
   exit 1
 fi
