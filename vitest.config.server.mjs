@@ -50,6 +50,14 @@ export default defineConfig({
     typecheck: {
       tsconfig: './tsconfig.json',
     },
+
+    // Force graphql (and pothos) to share one module instance in the
+    // vitest worker so GraphQLSchema instanceof checks don't fail across realms.
+    server: {
+      deps: {
+        inline: ['graphql', '@pothos/core', '@pothos/plugin-prisma', '@pothos/plugin-scope-auth'],
+      },
+    },
   },
 });
 
