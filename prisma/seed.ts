@@ -21,6 +21,23 @@ async function main() {
 
   console.log('✓ Created SEO settings:', seoSettings.id);
 
+  // Provision the initial ADMIN user. Override the auth0Id/email via env to match
+  // the real Auth0 account; subsequent role changes can be made in Prisma Studio.
+  const adminAuth0Id = process.env['SEED_ADMIN_AUTH0_ID'] ?? 'auth0|REPLACE_ME';
+  const adminEmail = process.env['SEED_ADMIN_EMAIL'] ?? 'jquinn@lexmata.ai';
+  const admin = await prisma.user.upsert({
+    where: { auth0Id: adminAuth0Id },
+    update: { role: 'ADMIN' },
+    create: {
+      auth0Id: adminAuth0Id,
+      email: adminEmail,
+      name: 'Joseph R. Quinn',
+      role: 'ADMIN',
+    },
+  });
+
+  console.log('✓ Created/updated admin user:', admin.email);
+
   // Create static sitemap routes for Angular application
   const staticRoutes = [
     { url: '/', changefreq: 'daily', priority: 1.0 },
