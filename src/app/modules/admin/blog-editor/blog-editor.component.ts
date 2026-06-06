@@ -3,8 +3,21 @@ import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/cor
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { QuillModule } from 'ngx-quill';
+import { Apollo, gql } from 'apollo-angular';
 
 import { ButtonComponent } from '../../../shared/components/ui';
+
+const CREATE_POST = gql`
+  mutation CreatePost($input: CreateBlogPostInput!) {
+    createPost(input: $input) { id slug }
+  }
+`;
+
+const UPDATE_POST = gql`
+  mutation UpdatePost($id: String!, $input: UpdateBlogPostInput!) {
+    updatePost(id: $id, input: $input) { id slug }
+  }
+`;
 
 @Component({
   selector: 'app-blog-editor',
@@ -119,6 +132,7 @@ export class BlogEditorComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
+  private readonly apollo = inject(Apollo);
 
   postForm!: FormGroup;
   isEditMode = false;
@@ -165,17 +179,31 @@ export class BlogEditorComponent implements OnInit {
 
   onSubmit = (): void => {
     if (this.postForm.invalid || this.isSubmitting) {
+      this.postForm.markAllAsTouched();
       return;
     }
     this.isSubmitting = true;
-    // eslint-disable-next-line no-console
-    console.log('Submitting:', this.postForm.value);
-    setTimeout(() => {
-      this.isSubmitting = false;
-      this.router.navigate(['/admin/articles']).catch(() => {
-        // Navigation error handled
-      });
-    }, 1000);
+
+    const { title, content } = this.postForm.value as { title: string; content: string };
+    const input = { title, content, status: 'DRAFT' as const };
+
+    const op = this.isEditMode
+      ? this.apollo.mutate({ mutation: UPDATE_POST, variables: { id: this.postId, input } })
+      : this.apollo.mutate({ mutation: CREATE_POST, variables: { input } });
+
+    op.subscribe({
+      next: () => {
+        this.isSubmitting = false;
+        this.router.navigate(['/admin/articles']).catch(() => {
+          // Navigation error handled
+        });
+      },
+      error: (err: unknown) => {
+        this.isSubmitting = false;
+        // eslint-disable-next-line no-console
+        console.error('Failed to save post', err);
+      },
+    });
   };
 
   goBack = (): void => {
