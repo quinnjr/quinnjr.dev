@@ -3,10 +3,12 @@ import { type ApplicationConfig, provideZoneChangeDetection } from '@angular/cor
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideAuth0 } from '@auth0/auth0-angular';
+import { provideApollo } from 'apollo-angular';
 
 import { environment } from '../environments/environment';
 
 import { routes } from './app.routes';
+import { apolloOptionsFactory } from './graphql/apollo.config';
 import { FlowbiteService } from './services/flowbite.service';
 
 export const appConfig: ApplicationConfig = {
@@ -21,6 +23,7 @@ export const appConfig: ApplicationConfig = {
       authorizationParams: environment.auth0.authorizationParams,
       httpInterceptor: environment.auth0.httpInterceptor,
     }),
+    provideApollo(apolloOptionsFactory),
     FlowbiteService,
   ],
 };

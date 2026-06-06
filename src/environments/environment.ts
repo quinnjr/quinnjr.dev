@@ -8,7 +8,7 @@ export const environment = {
         typeof window !== 'undefined' ? window.location.origin : 'http://localhost:4200',
     },
     httpInterceptor: {
-      allowedList: ['/api/*'],
+      allowedList: ['/graphql'],
     },
   },
 };
