@@ -7,11 +7,11 @@ import { DatabaseService } from '../../../src/server/services/database.service';
 
 afterEach(() => container.reset());
 
-function ctx(role: string | null) {
+function ctx(role: string | null, { authorId = 'u1' }: { authorId?: string | null } = {}) {
   return {
     prisma: {
       blogPost: {
-        findUnique: vi.fn().mockResolvedValue({ authorId: 'u1' }),
+        findUnique: vi.fn().mockResolvedValue(authorId !== null ? { authorId } : null),
         updateMany: vi.fn().mockResolvedValue({ count: 1 }),
       },
     },
@@ -60,5 +60,98 @@ describe('blog mutations', () => {
     });
     expect(result.errors).toBeUndefined();
     expect(result.data?.recordPostView).toBe(true);
+    expect((c as any).prisma.blogPost.updateMany).toHaveBeenCalledOnce();
+    expect((c as any).prisma.blogPost.updateMany).toHaveBeenCalledWith(
+      expect.objectContaining({
+        where: expect.objectContaining({ slug: 'hello', status: 'PUBLISHED' }),
+        data: { viewCount: { increment: 1 } },
+      }),
+    );
+  });
+
+  it('updatePost: AUTHOR edits own post → succeeds and delegates', async () => {
+    const updatePost = vi.fn().mockResolvedValue({ id: 'p1', title: 'z' });
+    container.registerInstance(BlogService, { updatePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { updatePost(id:"p1", input:{title:"z"}) { id } }',
+      contextValue: ctx('AUTHOR', { authorId: 'u1' }),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(updatePost).toHaveBeenCalledOnce();
+  });
+
+  it('updatePost: AUTHOR edits someone else\'s post → denied and not delegated', async () => {
+    const updatePost = vi.fn();
+    container.registerInstance(BlogService, { updatePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { updatePost(id:"p1", input:{title:"z"}) { id } }',
+      contextValue: ctx('AUTHOR', { authorId: 'other' }),
+    });
+    expect(result.errors).toBeDefined();
+    expect(result.errors![0].message).toContain('your own posts');
+    expect(updatePost).not.toHaveBeenCalled();
+  });
+
+  it('updatePost: EDITOR edits someone else\'s post → succeeds (privileged bypass)', async () => {
+    const updatePost = vi.fn().mockResolvedValue({ id: 'p1', title: 'z' });
+    container.registerInstance(BlogService, { updatePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { updatePost(id:"p1", input:{title:"z"}) { id } }',
+      contextValue: ctx('EDITOR', { authorId: 'other' }),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(updatePost).toHaveBeenCalledOnce();
+  });
+
+  it('updatePost: missing post → error and not delegated', async () => {
+    const updatePost = vi.fn();
+    container.registerInstance(BlogService, { updatePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { updatePost(id:"p1", input:{title:"z"}) { id } }',
+      contextValue: ctx('AUTHOR', { authorId: null }),
+    });
+    expect(result.errors).toBeDefined();
+    expect(updatePost).not.toHaveBeenCalled();
+  });
+
+  it('deletePost: EDITOR is allowed → returns true and delegates', async () => {
+    const deletePost = vi.fn().mockResolvedValue(undefined);
+    container.registerInstance(BlogService, { deletePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { deletePost(id:"p1") }',
+      contextValue: ctx('EDITOR'),
+    });
+    expect(result.errors).toBeUndefined();
+    expect(result.data?.deletePost).toBe(true);
+    expect(deletePost).toHaveBeenCalledOnce();
+  });
+
+  it('deletePost: AUTHOR is denied → error and not delegated', async () => {
+    const deletePost = vi.fn();
+    container.registerInstance(BlogService, { deletePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { deletePost(id:"p1") }',
+      contextValue: ctx('AUTHOR'),
+    });
+    expect(result.errors).toBeDefined();
+    expect(deletePost).not.toHaveBeenCalled();
   });
 });
