@@ -1,7 +1,7 @@
 import slugify from 'slugify';
 import { inject, singleton } from 'tsyringe';
 
-import { PostStatus } from '../../generated/prisma/client';
+import { PostStatus, Prisma } from '../../generated/prisma/client';
 
 import { DatabaseService } from './database.service';
 
@@ -268,6 +268,39 @@ export class BlogService {
       orderBy: {
         name: 'asc',
       },
+    });
+  }
+
+  createCategory(data: { name: string; slug?: string; description?: string }) {
+    return this.prisma.category.create({
+      data: { name: data.name, slug: data.slug ?? this.generateSlug(data.name), description: data.description },
+    });
+  }
+
+  updateCategory(id: string, data: { name?: string; description?: string }) {
+    return this.prisma.category.update({
+      where: { id },
+      data: { ...data, ...(data.name ? { slug: this.generateSlug(data.name) } : {}) },
+    });
+  }
+
+  deleteCategory(id: string) {
+    return this.prisma.category.delete({ where: { id } });
+  }
+
+  createTag(name: string) {
+    return this.prisma.tag.create({ data: { name, slug: this.generateSlug(name) } });
+  }
+
+  deleteTag(id: string) {
+    return this.prisma.tag.delete({ where: { id } });
+  }
+
+  updateSeoSettings(data: Prisma.SeoSettingsUpdateInput) {
+    return this.prisma.seoSettings.upsert({
+      where: { id: 'default' },
+      update: data,
+      create: { id: 'default', siteName: 'quinnjr.dev', ...(data as Prisma.SeoSettingsCreateInput) },
     });
   }
 
