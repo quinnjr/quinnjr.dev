@@ -63,12 +63,12 @@ builder.mutationFields((t) => ({
       twitterHandle: t.arg.string(),
       defaultOgImage: t.arg.string(),
     },
-    resolve: (_query, _root, args) => {
+    resolve: async (_query, _root, args) => {
       const data = Object.fromEntries(
         Object.entries(args).filter(([, v]) => v != null),
       ) as Prisma.SeoSettingsUpdateInput;
       try {
-        return blog().updateSeoSettings(data);
+        return await blog().updateSeoSettings(data);
       } catch (e) {
         rethrowAsGraphQLError(e);
       }
