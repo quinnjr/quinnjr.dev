@@ -65,3 +65,7 @@ crash.*.log
 
 # Git worktrees
 .worktrees/
+
+# GraphQL codegen artifacts
+schema.graphql
+src/app/graphql/generated.ts

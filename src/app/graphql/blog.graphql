@@ -1,0 +1,27 @@
+query PublishedPosts {
+  publishedPosts {
+    id
+    title
+    slug
+    excerpt
+    publishedAt
+    author { id name picture }
+  }
+}
+
+query AdminPosts($status: PostStatus) {
+  posts(status: $status) {
+    id
+    title
+    status
+    updatedAt
+  }
+}
+
+mutation CreatePost($input: CreateBlogPostInput!) {
+  createPost(input: $input) { id slug }
+}
+
+mutation UpdatePost($id: String!, $input: UpdateBlogPostInput!) {
+  updatePost(id: $id, input: $input) { id slug }
+}
