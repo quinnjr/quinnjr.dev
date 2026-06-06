@@ -1,8 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { Apollo, gql } from 'apollo-angular';
 
 import { ButtonComponent } from '../../../shared/components/ui';
+
+const ADMIN_POSTS = gql`
+  query AdminPosts($status: PostStatus) {
+    posts(status: $status) {
+      id
+      title
+      status
+      updatedAt
+    }
+  }
+`;
+
+interface AdminPost {
+  id: string;
+  title: string;
+  status: string;
+  updatedAt: string;
+}
 
 @Component({
   selector: 'app-blog-list',
@@ -25,22 +44,44 @@ import { ButtonComponent } from '../../../shared/components/ui';
           </a>
         </div>
 
-        <!-- Empty State -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
-          <i class="fas fa-newspaper text-gray-400 text-6xl mb-4"></i>
-          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No articles yet</h2>
-          <p class="text-gray-600 dark:text-gray-400 mb-6">
-            Get started by creating your first blog post
-          </p>
-          <a routerLink="/admin/articles/new">
-            <app-button variant="primary" size="lg">
-              <i class="fas fa-plus mr-2"></i>Create Your First Article
-            </app-button>
-          </a>
-        </div>
+        @if (posts().length) {
+          <ul class="space-y-2">
+            @for (post of posts(); track post.id) {
+              <li class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-center justify-between">
+                <div>
+                  <a [routerLink]="['/admin/articles/edit', post.id]" class="font-semibold text-gray-900 dark:text-white">{{ post.title }}</a>
+                  <span class="ml-2 text-sm text-gray-500">{{ post.status }}</span>
+                </div>
+              </li>
+            }
+          </ul>
+        } @else {
+          <!-- Empty State -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
+            <i class="fas fa-newspaper text-gray-400 text-6xl mb-4"></i>
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No articles yet</h2>
+            <p class="text-gray-600 dark:text-gray-400 mb-6">
+              Get started by creating your first blog post
+            </p>
+            <a routerLink="/admin/articles/new">
+              <app-button variant="primary" size="lg">
+                <i class="fas fa-plus mr-2"></i>Create Your First Article
+              </app-button>
+            </a>
+          </div>
+        }
       </div>
     </div>
   `,
   styles: [],
 })
-export class BlogListComponent {}
+export class BlogListComponent implements OnInit {
+  private readonly apollo = inject(Apollo);
+  readonly posts = signal<AdminPost[]>([]);
+
+  ngOnInit(): void {
+    this.apollo
+      .watchQuery<{ posts: AdminPost[] }>({ query: ADMIN_POSTS })
+      .valueChanges.subscribe(({ data }) => this.posts.set((data?.posts as AdminPost[]) ?? []));
+  }
+}
