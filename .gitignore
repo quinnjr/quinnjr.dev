@@ -6,6 +6,7 @@
 /out-tsc
 /bazel-out
 /src/generated/prisma
+/src/generated/pothos-types.ts
 .angular
 
 # Node
