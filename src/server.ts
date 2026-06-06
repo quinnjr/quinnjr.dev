@@ -8,7 +8,6 @@ import express from 'express';
 
 import bootstrap from './main.server';
 import { initializeContainer } from './server/container';
-import blogRoutes from './server/routes/blog';
 import githubRoutes from './server/routes/github';
 import sitemapRoutes from './server/routes/sitemap';
 import { createYogaMiddleware } from './server/graphql/yoga';
@@ -33,7 +32,6 @@ export function app(): express.Express {
   server.use(express.urlencoded({ extended: true }));
 
   // API Routes
-  server.use('/api/blog', blogRoutes);
   server.use('/api/github', githubRoutes);
 
   // GraphQL API (Yoga). Mounted before the Angular catch-all.
