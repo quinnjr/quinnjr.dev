@@ -11,6 +11,7 @@ import { initializeContainer } from './server/container';
 import blogRoutes from './server/routes/blog';
 import githubRoutes from './server/routes/github';
 import sitemapRoutes from './server/routes/sitemap';
+import { createYogaMiddleware } from './server/graphql/yoga';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -34,6 +35,10 @@ export function app(): express.Express {
   // API Routes
   server.use('/api/blog', blogRoutes);
   server.use('/api/github', githubRoutes);
+
+  // GraphQL API (Yoga). Mounted before the Angular catch-all.
+  const yoga = createYogaMiddleware();
+  server.use(yoga.graphqlEndpoint, yoga as unknown as express.RequestHandler);
 
   // SEO Routes (sitemap, robots.txt)
   server.use('/', sitemapRoutes);
