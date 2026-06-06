@@ -9,6 +9,8 @@ export function createYogaMiddleware() {
     graphqlEndpoint: '/graphql',
     graphiql: process.env['NODE_ENV'] !== 'production',
     maskedErrors: process.env['NODE_ENV'] === 'production',
+    // Disable schema introspection in production.
+    ...(process.env['NODE_ENV'] === 'production' ? { introspection: false } : {}),
     context: ({ request }) => createContext(request.headers.get('authorization')),
   });
 }

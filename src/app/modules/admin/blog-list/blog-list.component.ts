@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 
@@ -77,11 +78,13 @@ interface AdminPost {
 })
 export class BlogListComponent implements OnInit {
   private readonly apollo = inject(Apollo);
+  private readonly destroyRef = inject(DestroyRef);
   readonly posts = signal<AdminPost[]>([]);
 
   ngOnInit(): void {
     this.apollo
       .watchQuery<{ posts: AdminPost[] }>({ query: ADMIN_POSTS })
-      .valueChanges.subscribe(({ data }) => this.posts.set((data?.posts as AdminPost[]) ?? []));
+      .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ data }) => this.posts.set((data?.posts as AdminPost[]) ?? []));
   }
 }
