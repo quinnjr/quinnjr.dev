@@ -1,9 +1,10 @@
 // src/server/graphql/context.ts
 import { container } from 'tsyringe';
-import { DatabaseService } from '../services/database.service';
-import type { PrismaClient } from '../../generated/prisma/client';
-import type { User } from '../../generated/prisma/client';
+
+import type { PrismaClient, User } from '../../generated/prisma/client';
 import { UserRole } from '../../generated/prisma/client';
+import { DatabaseService } from '../services/database.service';
+
 import { verifyAccessToken } from './auth';
 
 export interface GraphQLContext {
@@ -41,9 +42,7 @@ export async function createContext(authorization: string | null): Promise<Graph
 
   const email = (payload['email'] as string | undefined) ?? `${payload.sub}@placeholder.local`;
   const name =
-    (payload['name'] as string | undefined) ??
-    (payload['nickname'] as string | undefined) ??
-    email;
+    (payload['name'] as string | undefined) ?? (payload['nickname'] as string | undefined) ?? email;
   const picture = payload['picture'] as string | undefined;
 
   // Read first so pure reads don't pay a write; only write on first login or when

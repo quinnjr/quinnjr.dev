@@ -12,7 +12,11 @@ function register(blogMock: object) {
   container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
 }
 function ctx(role: string | null) {
-  return { prisma: {}, user: role ? { id: 'u1', role } : null, isAuthenticated: role != null } as never;
+  return {
+    prisma: {},
+    user: role ? { id: 'u1', role } : null,
+    isAuthenticated: role != null,
+  } as never;
 }
 
 describe('taxonomy mutations', () => {
@@ -48,12 +52,16 @@ describe('taxonomy mutations', () => {
     register({ createTag, deleteCategory });
     const { schema } = await import('../../../src/server/graphql/schema');
     const okTag = await graphql({
-      schema, source: 'mutation { createTag(name:"ng") { id } }', contextValue: ctx('AUTHOR'),
+      schema,
+      source: 'mutation { createTag(name:"ng") { id } }',
+      contextValue: ctx('AUTHOR'),
     });
     expect(okTag.errors).toBeUndefined();
     expect(createTag).toHaveBeenCalledOnce();
     const denied = await graphql({
-      schema, source: 'mutation { deleteCategory(id:"c1") }', contextValue: ctx('AUTHOR'),
+      schema,
+      source: 'mutation { deleteCategory(id:"c1") }',
+      contextValue: ctx('AUTHOR'),
     });
     expect(denied.errors).toBeDefined();
     expect(deleteCategory).not.toHaveBeenCalled();
@@ -64,7 +72,9 @@ describe('taxonomy mutations', () => {
     register({ updateSeoSettings });
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
-      schema, source: 'mutation { updateSeoSettings(siteName:"X") { id siteName } }', contextValue: ctx('ADMIN'),
+      schema,
+      source: 'mutation { updateSeoSettings(siteName:"X") { id siteName } }',
+      contextValue: ctx('ADMIN'),
     });
     expect(result.errors).toBeUndefined();
     expect(updateSeoSettings).toHaveBeenCalledOnce();

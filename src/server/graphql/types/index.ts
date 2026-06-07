@@ -10,7 +10,7 @@ export const PostStatus = builder.enumType('PostStatus', {
 });
 
 export const UserType = builder.prismaObject('User', {
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     name: t.exposeString('name'),
     picture: t.exposeString('picture', { nullable: true }),
@@ -30,7 +30,7 @@ export const UserType = builder.prismaObject('User', {
 });
 
 export const CategoryType = builder.prismaObject('Category', {
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     name: t.exposeString('name'),
     slug: t.exposeString('slug'),
@@ -40,7 +40,7 @@ export const CategoryType = builder.prismaObject('Category', {
 });
 
 export const TagType = builder.prismaObject('Tag', {
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     name: t.exposeString('name'),
     slug: t.exposeString('slug'),
@@ -49,14 +49,14 @@ export const TagType = builder.prismaObject('Tag', {
 });
 
 export const BlogPostTagType = builder.prismaObject('BlogPostTag', {
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     tag: t.relation('tag'),
   }),
 });
 
 export const BlogPostType = builder.prismaObject('BlogPost', {
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     title: t.exposeString('title'),
     slug: t.exposeString('slug'),
@@ -85,7 +85,7 @@ export const BlogPostType = builder.prismaObject('BlogPost', {
 });
 
 export const SeoSettingsType = builder.prismaObject('SeoSettings', {
-  fields: (t) => ({
+  fields: t => ({
     id: t.exposeID('id'),
     siteName: t.exposeString('siteName'),
     siteDescription: t.exposeString('siteDescription', { nullable: true }),

@@ -1,14 +1,14 @@
 // src/server/graphql/resolvers/blog.mutations.ts
-import { builder } from '../builder';
-import '../types';
 import { type CreateBlogPostDto, type UpdateBlogPostDto } from '../../services/blog.service';
+import { builder } from '../builder';
 import { meetsMinimumRole } from '../context';
 import { rethrowAsGraphQLError } from '../errors';
 import { PostStatus } from '../types';
+
 import { blog } from './services';
 
 const CreateBlogPostInput = builder.inputType('CreateBlogPostInput', {
-  fields: (t) => ({
+  fields: t => ({
     title: t.string({ required: true }),
     content: t.string({ required: true }),
     excerpt: t.string(),
@@ -31,7 +31,7 @@ const CreateBlogPostInput = builder.inputType('CreateBlogPostInput', {
 });
 
 const UpdateBlogPostInput = builder.inputType('UpdateBlogPostInput', {
-  fields: (t) => ({
+  fields: t => ({
     title: t.string(),
     content: t.string(),
     excerpt: t.string(),
@@ -54,7 +54,7 @@ const UpdateBlogPostInput = builder.inputType('UpdateBlogPostInput', {
 });
 
 builder.mutationType({
-  fields: (t) => ({
+  fields: t => ({
     createPost: t.prismaField({
       type: 'BlogPost',
       authScopes: { role: 'AUTHOR' },
@@ -85,9 +85,11 @@ builder.mutationType({
           where: { id: args.id },
           select: { authorId: true },
         });
-        if (!existing) rethrowAsGraphQLError(new Error('Post not found'));
+        if (!existing) {
+          rethrowAsGraphQLError(new Error('Post not found'));
+        }
         // Authors may only edit their own posts; editors and above may edit any.
-        if (!meetsMinimumRole(ctx.user, 'EDITOR') && existing!.authorId !== ctx.user!.id) {
+        if (!meetsMinimumRole(ctx.user, 'EDITOR') && existing.authorId !== ctx.user!.id) {
           rethrowAsGraphQLError(new Error('You can only edit your own posts'));
         }
         try {

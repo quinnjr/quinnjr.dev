@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
@@ -44,6 +51,6 @@ export class ArticlesComponent implements OnInit {
     this.apollo
       .watchQuery<{ publishedPosts: PublishedPost[] }>({ query: PUBLISHED_POSTS })
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ data }) => this.posts.set((data?.publishedPosts as PublishedPost[]) ?? []));
+      .subscribe(({ data }) => this.posts.set((data?.publishedPosts ?? []) as PublishedPost[]));
   }
 }

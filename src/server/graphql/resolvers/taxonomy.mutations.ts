@@ -1,11 +1,12 @@
 // src/server/graphql/resolvers/taxonomy.mutations.ts
+import { type Prisma } from '../../../generated/prisma/client';
 import { builder } from '../builder';
-import '../types';
-import { Prisma } from '../../../generated/prisma/client';
 import { rethrowAsGraphQLError } from '../errors';
+import '../types';
+
 import { blog } from './services';
 
-builder.mutationFields((t) => ({
+builder.mutationFields(t => ({
   createCategory: t.prismaField({
     type: 'Category',
     authScopes: { role: 'EDITOR' },

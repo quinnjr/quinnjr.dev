@@ -1,6 +1,6 @@
 import { InjectionToken, inject } from '@angular/core';
+import { type ApolloClient, InMemoryCache } from '@apollo/client/core';
 import { HttpLink } from 'apollo-angular/http';
-import { ApolloClient, InMemoryCache } from '@apollo/client/core';
 
 /** Absolute GraphQL endpoint for SSR; defaults to relative for the browser. */
 export const GRAPHQL_URI = new InjectionToken<string>('GRAPHQL_URI', {

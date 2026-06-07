@@ -10,9 +10,9 @@ describe('error mapping', () => {
   });
 
   it('rethrows known domain errors with BAD_USER_INPUT code', () => {
-    expect(() =>
-      rethrowAsGraphQLError(new Error('A post with this title already exists')),
-    ).toThrow(GraphQLError);
+    expect(() => rethrowAsGraphQLError(new Error('A post with this title already exists'))).toThrow(
+      GraphQLError
+    );
   });
 
   it('rethrows unknown errors as INTERNAL_SERVER_ERROR', () => {

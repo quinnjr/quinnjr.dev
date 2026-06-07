@@ -170,7 +170,11 @@ export class BlogService {
 
   createCategory(data: { name: string; slug?: string; description?: string }) {
     return this.prisma.category.create({
-      data: { name: data.name, slug: data.slug ?? this.generateSlug(data.name), description: data.description },
+      data: {
+        name: data.name,
+        slug: data.slug ?? this.generateSlug(data.name),
+        description: data.description,
+      },
     });
   }
 
@@ -197,7 +201,11 @@ export class BlogService {
     return this.prisma.seoSettings.upsert({
       where: { id: 'default' },
       update: data,
-      create: { id: 'default', siteName: 'quinnjr.dev', ...(data as Prisma.SeoSettingsCreateInput) },
+      create: {
+        id: 'default',
+        siteName: 'quinnjr.dev',
+        ...(data as Prisma.SeoSettingsCreateInput),
+      },
     });
   }
 

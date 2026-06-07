@@ -2,10 +2,12 @@
 import SchemaBuilder from '@pothos/core';
 import PrismaPlugin from '@pothos/plugin-prisma';
 import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
+
 import type PrismaTypes from '../../generated/pothos-types';
 import { getDatamodel } from '../../generated/pothos-types';
 import type { UserRole } from '../../generated/prisma/client';
-import { GraphQLContext, meetsMinimumRole } from './context';
+
+import { type GraphQLContext, meetsMinimumRole } from './context';
 import { DateTimeResolver, JSONResolver } from './scalars';
 
 export const builder = new SchemaBuilder<{
@@ -23,14 +25,14 @@ export const builder = new SchemaBuilder<{
 }>({
   plugins: [ScopeAuthPlugin, PrismaPlugin],
   scopeAuth: {
-    authScopes: (ctx) => ({
+    authScopes: ctx => ({
       public: true,
       authenticated: ctx.isAuthenticated,
       role: (minimum: UserRole) => meetsMinimumRole(ctx.user, minimum),
     }),
   },
   prisma: {
-    client: (ctx) => ctx.prisma,
+    client: ctx => ctx.prisma,
     dmmf: getDatamodel(),
   },
 });

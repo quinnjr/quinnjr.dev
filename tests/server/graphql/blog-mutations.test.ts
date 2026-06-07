@@ -65,7 +65,7 @@ describe('blog mutations', () => {
       expect.objectContaining({
         where: expect.objectContaining({ slug: 'hello', status: 'PUBLISHED' }),
         data: { viewCount: { increment: 1 } },
-      }),
+      })
     );
   });
 
@@ -83,7 +83,7 @@ describe('blog mutations', () => {
     expect(updatePost).toHaveBeenCalledOnce();
   });
 
-  it('updatePost: AUTHOR edits someone else\'s post → denied and not delegated', async () => {
+  it("updatePost: AUTHOR edits someone else's post → denied and not delegated", async () => {
     const updatePost = vi.fn();
     container.registerInstance(BlogService, { updatePost } as never);
     container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
@@ -98,7 +98,7 @@ describe('blog mutations', () => {
     expect(updatePost).not.toHaveBeenCalled();
   });
 
-  it('updatePost: EDITOR edits someone else\'s post → succeeds (privileged bypass)', async () => {
+  it("updatePost: EDITOR edits someone else's post → succeeds (privileged bypass)", async () => {
     const updatePost = vi.fn().mockResolvedValue({ id: 'p1', title: 'z' });
     container.registerInstance(BlogService, { updatePost } as never);
     container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
