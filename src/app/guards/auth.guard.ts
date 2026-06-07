@@ -1,19 +1,14 @@
 import { inject } from '@angular/core';
-import { AuthService } from '@auth0/auth0-angular';
-import { map } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
-export const authGuard = () => {
-  const authService = inject(AuthService);
+import { AuthService } from '../services/auth.service';
 
-  return authService.isAuthenticated$.pipe(
-    map(isAuthenticated => {
-      if (!isAuthenticated) {
-        authService.loginWithRedirect({
-          appState: { target: window.location.pathname },
-        });
-        return false;
-      }
-      return true;
-    })
-  );
+export const authGuard = (): boolean => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  if (auth.isAuthenticated()) {
+    return true;
+  }
+  router.navigate(['/login']).catch(() => undefined);
+  return false;
 };
