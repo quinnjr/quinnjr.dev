@@ -29,6 +29,7 @@
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
     "prisma:reset": "prisma migrate reset",
+    "user:create": "tsx scripts/create-user.ts",
     "prepare": "husky",
     "schema:print": "tsx scripts/print-schema.ts",
     "codegen": "pnpm schema:print && graphql-codegen --config codegen.ts"
