@@ -64,9 +64,12 @@ builder.mutationFields((t) => ({
       defaultOgImage: t.arg.string(),
     },
     resolve: async (_query, _root, args) => {
-      const data = Object.fromEntries(
-        Object.entries(args).filter(([, v]) => v != null),
-      ) as Prisma.SeoSettingsUpdateInput;
+      const data: Prisma.SeoSettingsUpdateInput = {
+        ...(args.siteName != null && { siteName: args.siteName }),
+        ...(args.siteDescription != null && { siteDescription: args.siteDescription }),
+        ...(args.twitterHandle != null && { twitterHandle: args.twitterHandle }),
+        ...(args.defaultOgImage != null && { defaultOgImage: args.defaultOgImage }),
+      };
       try {
         return await blog().updateSeoSettings(data);
       } catch (e) {

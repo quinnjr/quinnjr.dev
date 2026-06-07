@@ -20,10 +20,9 @@ export const ROLE_RANK: Record<UserRole, number> = {
   VIEWER: 0,
 };
 
-/** Anonymous context (token-aware factory added in a later task). */
-export function createAnonymousContext(): GraphQLContext {
-  const db = container.resolve(DatabaseService);
-  return { prisma: db.getClient(), user: null, isAuthenticated: false };
+/** True when `user` exists and its role meets the given minimum in the hierarchy. */
+export function meetsMinimumRole(user: User | null, minimum: UserRole): boolean {
+  return user != null && ROLE_RANK[user.role] >= ROLE_RANK[minimum];
 }
 
 /**

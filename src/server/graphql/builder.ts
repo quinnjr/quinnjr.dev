@@ -5,7 +5,7 @@ import ScopeAuthPlugin from '@pothos/plugin-scope-auth';
 import type PrismaTypes from '../../generated/pothos-types';
 import { getDatamodel } from '../../generated/pothos-types';
 import type { UserRole } from '../../generated/prisma/client';
-import { GraphQLContext, ROLE_RANK } from './context';
+import { GraphQLContext, meetsMinimumRole } from './context';
 import { DateTimeResolver, JSONResolver } from './scalars';
 
 export const builder = new SchemaBuilder<{
@@ -26,8 +26,7 @@ export const builder = new SchemaBuilder<{
     authScopes: (ctx) => ({
       public: true,
       authenticated: ctx.isAuthenticated,
-      role: (minimum: UserRole) =>
-        ctx.user != null && ROLE_RANK[ctx.user.role] >= ROLE_RANK[minimum],
+      role: (minimum: UserRole) => meetsMinimumRole(ctx.user, minimum),
     }),
   },
   prisma: {

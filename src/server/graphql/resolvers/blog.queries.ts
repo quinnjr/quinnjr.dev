@@ -1,5 +1,6 @@
 // src/server/graphql/resolvers/blog.queries.ts
 import { builder } from '../builder';
+import { meetsMinimumRole } from '../context';
 import { PostStatus } from '../types';
 
 builder.queryType({
@@ -35,9 +36,9 @@ builder.queryType({
           where: { slug: args.slug },
         });
         if (!post) return null;
-        if (post.status !== 'PUBLISHED') {
-          const rank = ctx.user?.role;
-          if (rank !== 'ADMIN' && rank !== 'EDITOR') return null;
+        // Non-published posts are visible only to editors and above.
+        if (post.status !== 'PUBLISHED' && !meetsMinimumRole(ctx.user, 'EDITOR')) {
+          return null;
         }
         return post;
       },

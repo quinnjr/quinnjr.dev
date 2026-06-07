@@ -3,6 +3,7 @@ import { container } from 'tsyringe';
 import { builder } from '../builder';
 import '../types';
 import { BlogService, type CreateBlogPostDto, type UpdateBlogPostDto } from '../../services/blog.service';
+import { meetsMinimumRole } from '../context';
 import { rethrowAsGraphQLError } from '../errors';
 import { PostStatus } from '../types';
 
@@ -87,9 +88,8 @@ builder.mutationType({
           select: { authorId: true },
         });
         if (!existing) rethrowAsGraphQLError(new Error('Post not found'));
-        const role = ctx.user!.role;
-        const isPrivileged = role === 'ADMIN' || role === 'EDITOR';
-        if (!isPrivileged && existing!.authorId !== ctx.user!.id) {
+        // Authors may only edit their own posts; editors and above may edit any.
+        if (!meetsMinimumRole(ctx.user, 'EDITOR') && existing!.authorId !== ctx.user!.id) {
           rethrowAsGraphQLError(new Error('You can only edit your own posts'));
         }
         try {
