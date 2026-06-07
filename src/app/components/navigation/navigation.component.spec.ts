@@ -12,11 +12,7 @@ describe('NavgiationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NavigationComponent],
-      providers: [
-        provideHttpClient(),
-        provideRouter([]),
-        provideLocationMocks(),
-      ],
+      providers: [provideHttpClient(), provideRouter([]), provideLocationMocks()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavigationComponent);
