@@ -47,7 +47,14 @@ describe('createContext', () => {
       email: 'a@b.com',
       name: 'A',
     } as never);
-    const existing = { id: 'u1', auth0Id: 'auth0|abc', email: 'a@b.com', name: 'A', picture: null, role: 'EDITOR' };
+    const existing = {
+      id: 'u1',
+      auth0Id: 'auth0|abc',
+      email: 'a@b.com',
+      name: 'A',
+      picture: null,
+      role: 'EDITOR',
+    };
     const findUnique = vi.fn().mockResolvedValue(existing);
     const create = vi.fn();
     const update = vi.fn();
@@ -68,7 +75,14 @@ describe('createContext', () => {
       email: 'new@b.com',
       name: 'A',
     } as never);
-    const existing = { id: 'u1', auth0Id: 'auth0|abc', email: 'old@b.com', name: 'A', picture: null, role: 'EDITOR' };
+    const existing = {
+      id: 'u1',
+      auth0Id: 'auth0|abc',
+      email: 'old@b.com',
+      name: 'A',
+      picture: null,
+      role: 'EDITOR',
+    };
     const updated = { ...existing, email: 'new@b.com' };
     const findUnique = vi.fn().mockResolvedValue(existing);
     const create = vi.fn();

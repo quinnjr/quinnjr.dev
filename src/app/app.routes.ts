@@ -24,9 +24,7 @@ export const routes: Routes = [
   {
     path: 'articles/:slug',
     loadComponent: () =>
-      import('./pages/article-detail/article-detail.component').then(
-        m => m.ArticleDetailComponent
-      ),
+      import('./pages/article-detail/article-detail.component').then(m => m.ArticleDetailComponent),
   },
   {
     path: 'login',

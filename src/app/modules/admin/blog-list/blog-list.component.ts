@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
@@ -48,9 +55,15 @@ interface AdminPost {
         @if (posts().length) {
           <ul class="space-y-2">
             @for (post of posts(); track post.id) {
-              <li class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-center justify-between">
+              <li
+                class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-center justify-between"
+              >
                 <div>
-                  <a [routerLink]="['/admin/articles/edit', post.id]" class="font-semibold text-gray-900 dark:text-white">{{ post.title }}</a>
+                  <a
+                    [routerLink]="['/admin/articles/edit', post.id]"
+                    class="font-semibold text-gray-900 dark:text-white"
+                    >{{ post.title }}</a
+                  >
                   <span class="ml-2 text-sm text-gray-500">{{ post.status }}</span>
                 </div>
               </li>
@@ -60,7 +73,9 @@ interface AdminPost {
           <!-- Empty State -->
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
             <i class="fas fa-newspaper text-gray-400 text-6xl mb-4"></i>
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">No articles yet</h2>
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+              No articles yet
+            </h2>
             <p class="text-gray-600 dark:text-gray-400 mb-6">
               Get started by creating your first blog post
             </p>
@@ -85,6 +100,6 @@ export class BlogListComponent implements OnInit {
     this.apollo
       .watchQuery<{ posts: AdminPost[] }>({ query: ADMIN_POSTS })
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ data }) => this.posts.set((data?.posts as AdminPost[]) ?? []));
+      .subscribe(({ data }) => this.posts.set((data?.posts ?? []) as AdminPost[]));
   }
 }

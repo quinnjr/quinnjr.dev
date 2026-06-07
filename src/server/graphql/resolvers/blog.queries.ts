@@ -4,7 +4,7 @@ import { meetsMinimumRole } from '../context';
 import { PostStatus } from '../types';
 
 builder.queryType({
-  fields: (t) => ({
+  fields: t => ({
     publishedPosts: t.prismaField({
       type: ['BlogPost'],
       authScopes: { public: true },
@@ -35,7 +35,9 @@ builder.queryType({
           ...query,
           where: { slug: args.slug },
         });
-        if (!post) return null;
+        if (!post) {
+          return null;
+        }
         // Non-published posts are visible only to editors and above.
         if (post.status !== 'PUBLISHED' && !meetsMinimumRole(ctx.user, 'EDITOR')) {
           return null;
@@ -78,8 +80,7 @@ builder.queryType({
       type: 'SeoSettings',
       nullable: true,
       authScopes: { public: true },
-      resolve: (query, _root, _args, ctx) =>
-        ctx.prisma.seoSettings.findFirst({ ...query }),
+      resolve: (query, _root, _args, ctx) => ctx.prisma.seoSettings.findFirst({ ...query }),
     }),
   }),
 });

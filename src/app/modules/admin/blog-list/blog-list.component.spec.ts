@@ -19,7 +19,9 @@ describe('BlogListComponent', () => {
     fixture.detectChanges(); // triggers ngOnInit
     const op = controller.expectOne('AdminPosts');
     op.flush({
-      data: { posts: [{ id: 'p1', title: 'Hello', status: 'DRAFT', updatedAt: '2024-01-01T00:00:00Z' }] },
+      data: {
+        posts: [{ id: 'p1', title: 'Hello', status: 'DRAFT', updatedAt: '2024-01-01T00:00:00Z' }],
+      },
     });
     expect(op.operation.operationName).toBe('AdminPosts');
     fixture.detectChanges();

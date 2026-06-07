@@ -1,7 +1,8 @@
-import { createYoga } from 'graphql-yoga';
 import type { Request, Response } from 'express';
-import { schema } from './schema';
+import { createYoga } from 'graphql-yoga';
+
 import { createContext } from './context';
+import { schema } from './schema';
 
 export function createYogaMiddleware() {
   return createYoga<{ req: Request; res: Response }>({

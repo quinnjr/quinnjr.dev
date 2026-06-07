@@ -8,9 +8,9 @@ import express from 'express';
 
 import bootstrap from './main.server';
 import { initializeContainer } from './server/container';
+import { createYogaMiddleware } from './server/graphql/yoga';
 import githubRoutes from './server/routes/github';
 import sitemapRoutes from './server/routes/sitemap';
-import { createYogaMiddleware } from './server/graphql/yoga';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {

@@ -2,20 +2,26 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
-import { QuillModule } from 'ngx-quill';
 import { Apollo, gql } from 'apollo-angular';
+import { QuillModule } from 'ngx-quill';
 
 import { ButtonComponent } from '../../../shared/components/ui';
 
 const CREATE_POST = gql`
   mutation CreatePost($input: CreateBlogPostInput!) {
-    createPost(input: $input) { id slug }
+    createPost(input: $input) {
+      id
+      slug
+    }
   }
 `;
 
 const UPDATE_POST = gql`
   mutation UpdatePost($id: String!, $input: UpdateBlogPostInput!) {
-    updatePost(id: $id, input: $input) { id slug }
+    updatePost(id: $id, input: $input) {
+      id
+      slug
+    }
   }
 `;
 
@@ -210,7 +216,7 @@ export class BlogEditorComponent implements OnInit {
       },
       error: (err: unknown) => {
         this.isSubmitting = false;
-        // eslint-disable-next-line no-console
+
         console.error('Failed to save post', err);
       },
     });

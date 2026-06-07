@@ -8,7 +8,6 @@ const issuer = domain ? `https://${domain}/` : '';
 // require BOTH domain and audience before enabling verification. Misconfiguration
 // fails secure: every token is rejected (anonymous context) rather than trusted.
 if (domain && !audience) {
-  // eslint-disable-next-line no-console
   console.warn('AUTH0_AUDIENCE is not set — JWT verification is disabled (all tokens rejected).');
 }
 
@@ -22,12 +21,14 @@ const jwks =
  * Verify an Auth0 access token from an Authorization header value.
  * Returns the verified payload, or null if absent/invalid.
  */
-export async function verifyAccessToken(
-  authorization: string | null,
-): Promise<JWTPayload | null> {
-  if (!authorization || !jwks) return null;
+export async function verifyAccessToken(authorization: string | null): Promise<JWTPayload | null> {
+  if (!authorization || !jwks) {
+    return null;
+  }
   const token = authorization.replace(/^Bearer\s+/i, '').trim();
-  if (!token || token.split('.').length !== 3) return null;
+  if (token.split('.').length !== 3) {
+    return null;
+  }
   try {
     const { payload } = await jwtVerify(token, jwks, {
       issuer,

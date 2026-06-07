@@ -6,7 +6,7 @@ describe('object types', () => {
   it('builds a schema exposing the CMS types and gated fields', () => {
     // Minimal query referencing the types so they are retained in the SDL.
     builder.queryType({
-      fields: (t) => ({
+      fields: t => ({
         _post: t.prismaField({ type: 'BlogPost', nullable: true, resolve: () => null }),
         _seo: t.prismaField({ type: 'SeoSettings', nullable: true, resolve: () => null }),
       }),
