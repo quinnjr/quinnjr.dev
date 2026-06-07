@@ -70,8 +70,8 @@ enum PostStatus {
 // User/Author Model
 model User {
   id              String          @id @default(uuid())
-  auth0Id         String          @unique // Auth0 user ID
   email           String          @unique
+  passwordHash    String          // Argon2id encoded hash (embeds salt + params)
   name            String
   picture         String?
   bio             String?
@@ -85,7 +85,6 @@ model User {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  @@index([auth0Id])
   @@index([email])
   @@map("users")
 }
