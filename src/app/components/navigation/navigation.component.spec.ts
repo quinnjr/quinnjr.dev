@@ -1,7 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
-import { provideAuth0 } from '@auth0/auth0-angular';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { NavigationComponent } from './navigation.component';
@@ -17,13 +16,6 @@ describe('NavgiationComponent', () => {
         provideHttpClient(),
         provideRouter([]),
         provideLocationMocks(),
-        provideAuth0({
-          domain: 'test.auth0.com',
-          clientId: 'test-client-id',
-          authorizationParams: {
-            redirect_uri: 'http://localhost:4200',
-          },
-        }),
       ],
     }).compileComponents();
 

@@ -1,24 +1,22 @@
 import { provideHttpClient } from '@angular/common/http';
-import { PLATFORM_ID } from '@angular/core';
+import { signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
-import { of } from 'rxjs';
 
+import { AuthService } from '../../services/auth.service';
 import { AuthButtonComponent } from './auth-button.component';
 
 describe('AuthButtonComponent', () => {
   let component: AuthButtonComponent;
   let fixture: ComponentFixture<AuthButtonComponent>;
 
-  describe('Browser Environment', () => {
+  describe('Unauthenticated state', () => {
     let mockAuthService: Partial<AuthService>;
     let mockRouter: Partial<Router>;
 
     beforeEach(async () => {
       mockAuthService = {
-        isAuthenticated$: of(false),
-        user$: of(null),
+        isAuthenticated: signal(false),
         logout: vi.fn(),
       };
 
@@ -33,7 +31,6 @@ describe('AuthButtonComponent', () => {
           provideRouter([]),
           { provide: AuthService, useValue: mockAuthService },
           { provide: Router, useValue: mockRouter },
-          { provide: PLATFORM_ID, useValue: 'browser' },
         ],
       }).compileComponents();
 
@@ -46,74 +43,36 @@ describe('AuthButtonComponent', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should detect browser platform', () => {
-      expect(component.isBrowser).toBe(true);
-    });
-
-    it('should inject AuthService in browser', () => {
+    it('should inject AuthService', () => {
       expect(component.auth).not.toBeNull();
     });
 
-    it('should navigate to admin on login', () => {
-      component.login();
-      expect(mockRouter.navigate).toHaveBeenCalledWith(['/admin']);
+    it('should navigate to /login on goToLogin()', () => {
+      component.goToLogin();
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/login']);
     });
 
-    it('should handle navigation errors', async () => {
-      const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-      mockRouter.navigate = vi.fn().mockRejectedValue(new Error('Navigation failed'));
-
-      component.login();
-
-      // Wait for promise to reject
-      await new Promise(resolve => setTimeout(resolve, 10));
-
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Navigation failed:', expect.any(Error));
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('should call AuthService logout with correct params', () => {
-      // Mock window.location.origin
-      Object.defineProperty(window, 'location', {
-        value: { origin: 'http://localhost:4200' },
-        writable: true,
-      });
-
+    it('should call AuthService.logout and navigate to / on logout()', () => {
       component.logout();
-
-      expect(mockAuthService.logout).toHaveBeenCalledWith({
-        logoutParams: {
-          returnTo: 'http://localhost:4200',
-        },
-      });
-    });
-
-    it('should not logout if not browser', () => {
-      component.isBrowser = false;
-      component.logout();
-      expect(mockAuthService.logout).not.toHaveBeenCalled();
-    });
-
-    it('should not logout if auth service is null', () => {
-      component.auth = null;
-      component.logout();
-      expect(mockAuthService.logout).not.toHaveBeenCalled();
+      expect(mockAuthService.logout).toHaveBeenCalled();
+      expect(mockRouter.navigate).toHaveBeenCalledWith(['/']);
     });
 
     it('should render login button when not authenticated', () => {
-      const compiled = fixture.nativeElement;
+      const compiled = fixture.nativeElement as HTMLElement;
       const loginButton = compiled.querySelector('button');
       expect(loginButton).toBeTruthy();
-      expect(loginButton.textContent).toContain('Login');
+      expect(loginButton?.textContent).toContain('Login');
     });
   });
 
-  describe('Server Environment (SSR)', () => {
-    let mockRouter: Partial<Router>;
+  describe('Authenticated state', () => {
+    let mockAuthService: Partial<AuthService>;
 
     beforeEach(async () => {
-      mockRouter = {
-        navigate: vi.fn().mockResolvedValue(true),
+      mockAuthService = {
+        isAuthenticated: signal(true),
+        logout: vi.fn(),
       };
 
       await TestBed.configureTestingModule({
@@ -121,8 +80,7 @@ describe('AuthButtonComponent', () => {
         providers: [
           provideHttpClient(),
           provideRouter([]),
-          { provide: Router, useValue: mockRouter },
-          { provide: PLATFORM_ID, useValue: 'server' },
+          { provide: AuthService, useValue: mockAuthService },
         ],
       }).compileComponents();
 
@@ -131,28 +89,15 @@ describe('AuthButtonComponent', () => {
       fixture.detectChanges();
     });
 
-    it('should create in SSR', () => {
+    it('should create', () => {
       expect(component).toBeTruthy();
     });
 
-    it('should detect server platform', () => {
-      expect(component.isBrowser).toBe(false);
-    });
-
-    it('should not inject AuthService in SSR', () => {
-      expect(component.auth).toBeNull();
-    });
-
-    it('should not navigate on login in SSR', () => {
-      component.login();
-      expect(mockRouter.navigate).not.toHaveBeenCalled();
-    });
-
-    it('should render disabled login button in SSR', () => {
-      const compiled = fixture.nativeElement;
-      const loginButton = compiled.querySelector('button');
-      expect(loginButton).toBeTruthy();
-      expect(loginButton.disabled).toBe(true);
+    it('should render logout button when authenticated', () => {
+      const compiled = fixture.nativeElement as HTMLElement;
+      const logoutButton = compiled.querySelector('button');
+      expect(logoutButton).toBeTruthy();
+      expect(logoutButton?.textContent).toContain('Logout');
     });
   });
 });

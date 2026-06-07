@@ -9,7 +9,7 @@ import { routes } from './app.routes';
 import { apolloOptionsFactory, GRAPHQL_URI } from './graphql/apollo.config';
 import { FlowbiteService } from './services/flowbite.service';
 
-// Server config WITHOUT Auth0 to avoid SSR issues with location/window access
+// Server-side application config (SSR).
 export const config: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
@@ -23,6 +23,6 @@ export const config: ApplicationConfig = {
       useValue: `http://localhost:${process.env['PORT'] ?? '4000'}/graphql`,
     },
     FlowbiteService,
-    // Auth0 is intentionally excluded from SSR - it will be provided only in browser
+    // Auth is token-based; SSR runs anonymous (no token available server-side).
   ],
 };
