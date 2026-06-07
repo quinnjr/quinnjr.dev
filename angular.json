@@ -39,7 +39,8 @@
             "prerender": false,
             "ssr": {
               "entry": "src/server.ts"
-            }
+            },
+            "externalDependencies": ["@node-rs/argon2"]
           },
           "configurations": {
             "production": {
