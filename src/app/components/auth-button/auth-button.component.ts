@@ -1,8 +1,8 @@
-import { CommonModule, isPlatformBrowser } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, Injector, PLATFORM_ID } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
 
+import { AuthService } from '../../services/auth.service';
 import { ButtonComponent } from '../../shared/components/ui';
 
 @Component({
@@ -12,31 +12,13 @@ import { ButtonComponent } from '../../shared/components/ui';
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="flex items-center gap-2">
-      @if (isBrowser && auth && (auth.isAuthenticated$ | async)) {
-        <!-- User is logged in -->
-        <div class="flex items-center gap-3">
-          @if (auth.user$ | async; as user) {
-            <div class="flex items-center gap-2">
-              @if (user.picture) {
-                <img
-                  [src]="user.picture"
-                  [alt]="user.name"
-                  class="w-8 h-8 rounded-full border-2 border-gray-300 dark:border-gray-600"
-                />
-              }
-              <span class="text-sm font-medium text-gray-700 dark:text-gray-200 hidden md:inline">
-                {{ user.name || user.email }}
-              </span>
-            </div>
-          }
-          <app-button (click)="logout()" variant="danger" size="sm">
-            <i class="fas fa-sign-out-alt"></i>
-            <span class="ml-2 hidden md:inline">Logout</span>
-          </app-button>
-        </div>
+      @if (auth.isAuthenticated()) {
+        <app-button (click)="logout()" variant="danger" size="sm">
+          <i class="fas fa-sign-out-alt"></i>
+          <span class="ml-2 hidden md:inline">Logout</span>
+        </app-button>
       } @else {
-        <!-- User is not logged in or SSR -->
-        <app-button (click)="login()" variant="primary" size="sm" [disabled]="!isBrowser">
+        <app-button (click)="goToLogin()" variant="primary" size="sm">
           <i class="fas fa-sign-in-alt"></i>
           <span class="ml-2 hidden md:inline">Login</span>
         </app-button>
@@ -46,41 +28,15 @@ import { ButtonComponent } from '../../shared/components/ui';
   styles: [],
 })
 export class AuthButtonComponent {
-  private platformId = inject(PLATFORM_ID);
-  private injector = inject(Injector);
-  private router = inject(Router);
-  public isBrowser = isPlatformBrowser(this.platformId);
-  // Inject AuthService optionally - it won't be available during SSR
-  public auth: AuthService | null = null;
+  readonly auth = inject(AuthService);
+  private readonly router = inject(Router);
 
-  constructor() {
-    if (this.isBrowser) {
-      // Only inject Auth0 in browser context using Injector
-      try {
-        this.auth = this.injector.get(AuthService, null);
-      } catch {
-        // Auth0 not available (SSR context)
-        this.auth = null;
-      }
-    }
-  }
-
-  login(): void {
-    // Navigate to admin page, which will trigger auth if needed
-    if (this.isBrowser) {
-      this.router.navigate(['/admin']).catch((err: unknown) => {
-        console.error('Navigation failed:', err);
-      });
-    }
+  goToLogin(): void {
+    this.router.navigate(['/login']).catch(() => undefined);
   }
 
   logout(): void {
-    if (this.auth && this.isBrowser) {
-      this.auth.logout({
-        logoutParams: {
-          returnTo: window.location.origin,
-        },
-      });
-    }
+    this.auth.logout();
+    this.router.navigate(['/']).catch(() => undefined);
   }
 }
