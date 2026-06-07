@@ -4,6 +4,7 @@ import { container } from 'tsyringe';
 import { BlogService } from './services/blog.service';
 import { DatabaseService } from './services/database.service';
 import { GitHubService } from './services/github.service';
+import { PasswordService } from './services/password.service';
 import { SitemapService } from './services/sitemap.service';
 
 /**
@@ -14,6 +15,7 @@ export function initializeContainer(): void {
   container.registerSingleton(DatabaseService);
   container.registerSingleton(BlogService);
   container.registerSingleton(GitHubService);
+  container.registerSingleton(PasswordService);
   container.registerSingleton(SitemapService);
 
   // eslint-disable-next-line no-console
