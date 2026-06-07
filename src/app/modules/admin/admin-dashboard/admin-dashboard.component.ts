@@ -1,8 +1,8 @@
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '@auth0/auth0-angular';
 
+import { AuthService } from '../../../services/auth.service';
 import {
   ButtonComponent,
   CardComponent,
@@ -34,29 +34,19 @@ import {
         </div>
 
         <!-- User Info Card -->
-        @if (auth.user$ | async; as user) {
+        @if (auth.currentUser(); as user) {
           <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
             <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
               <i class="fas fa-user-circle mr-2"></i>User Information
             </h2>
             <div class="flex items-center gap-4">
-              @if (user.picture) {
-                <img
-                  [src]="user.picture"
-                  [alt]="user.name"
-                  class="w-20 h-20 rounded-full border-4 border-blue-500"
-                />
-              }
               <div>
                 <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.name }}</h3>
-                <p class="text-gray-600 dark:text-gray-400">{{ user.email }}</p>
-                @if (user.email_verified) {
-                  <div class="mt-2">
-                    <app-badge variant="success" badgeStyle="soft">
-                      <i class="fas fa-check-circle mr-1"></i>Verified
-                    </app-badge>
-                  </div>
-                }
+                <div class="mt-2">
+                  <app-badge variant="success" badgeStyle="soft">
+                    <i class="fas fa-check-circle mr-1"></i>{{ user.role }}
+                  </app-badge>
+                </div>
               </div>
             </div>
 
@@ -64,13 +54,7 @@ import {
               <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
                 <p class="text-sm text-gray-600 dark:text-gray-400">User ID</p>
                 <p class="text-sm font-mono text-gray-900 dark:text-white break-all">
-                  {{ user.sub }}
-                </p>
-              </div>
-              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <p class="text-sm text-gray-600 dark:text-gray-400">Last Updated</p>
-                <p class="text-sm font-mono text-gray-900 dark:text-white">
-                  {{ user.updated_at | date: 'medium' }}
+                  {{ user.id }}
                 </p>
               </div>
             </div>
