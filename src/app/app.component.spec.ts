@@ -1,7 +1,6 @@
 import { provideHttpClient } from '@angular/common/http';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
-import { provideAuth0 } from '@auth0/auth0-angular';
 import { TestBed } from '@angular/core/testing';
 import { AppComponent } from './app.component';
 
@@ -13,13 +12,6 @@ describe('AppComponent', () => {
         provideHttpClient(),
         provideRouter([]),
         provideLocationMocks(),
-        provideAuth0({
-          domain: 'test.auth0.com',
-          clientId: 'test-client-id',
-          authorizationParams: {
-            redirect_uri: 'http://localhost:4200',
-          },
-        }),
       ],
     }).compileComponents();
   });
