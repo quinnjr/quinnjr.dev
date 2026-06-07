@@ -46,11 +46,24 @@ export async function createContext(authorization: string | null): Promise<Graph
     email;
   const picture = payload['picture'] as string | undefined;
 
-  const user = await prisma.user.upsert({
-    where: { auth0Id: payload.sub },
-    update: { email, name, ...(picture ? { picture } : {}) },
-    create: { auth0Id: payload.sub, email, name, picture, role: UserRole.VIEWER },
-  });
+  // Read first so pure reads don't pay a write; only write on first login or when
+  // the cached profile fields have actually changed.
+  const existing = await prisma.user.findUnique({ where: { auth0Id: payload.sub } });
+  let user = existing;
+  if (!existing) {
+    user = await prisma.user.create({
+      data: { auth0Id: payload.sub, email, name, picture, role: UserRole.VIEWER },
+    });
+  } else if (
+    existing.email !== email ||
+    existing.name !== name ||
+    (picture !== undefined && existing.picture !== picture)
+  ) {
+    user = await prisma.user.update({
+      where: { auth0Id: payload.sub },
+      data: { email, name, ...(picture ? { picture } : {}) },
+    });
+  }
 
   return { prisma, user, isAuthenticated: true };
 }

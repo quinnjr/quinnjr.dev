@@ -43,77 +43,6 @@ export class BlogService {
   }
 
   /**
-   * Get all published blog posts
-   */
-  getPublishedPosts(): Promise<unknown[]> {
-    return this.prisma.blogPost.findMany({
-      where: {
-        status: 'PUBLISHED',
-        publishedAt: {
-          lte: new Date(),
-        },
-      },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            picture: true,
-          },
-        },
-        category: true,
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-      orderBy: {
-        publishedAt: 'desc',
-      },
-    });
-  }
-
-  /**
-   * Get a single blog post by slug
-   */
-  async getPostBySlug(slug: string) {
-    const post = await this.prisma.blogPost.findUnique({
-      where: { slug },
-      include: {
-        author: {
-          select: {
-            id: true,
-            name: true,
-            picture: true,
-            bio: true,
-          },
-        },
-        category: true,
-        tags: {
-          include: {
-            tag: true,
-          },
-        },
-      },
-    });
-
-    if (post) {
-      // Increment view count
-      await this.prisma.blogPost.update({
-        where: { id: post.id },
-        data: {
-          viewCount: {
-            increment: 1,
-          },
-        },
-      });
-    }
-
-    return post;
-  }
-
-  /**
    * Create a new blog post
    */
   async createPost(data: CreateBlogPostDto) {
@@ -236,38 +165,6 @@ export class BlogService {
   deletePost(id: string): Promise<unknown> {
     return this.prisma.blogPost.delete({
       where: { id },
-    });
-  }
-
-  /**
-   * Get all categories
-   */
-  getCategories(): Promise<unknown[]> {
-    return this.prisma.category.findMany({
-      include: {
-        _count: {
-          select: { blogPosts: true },
-        },
-      },
-      orderBy: {
-        name: 'asc',
-      },
-    });
-  }
-
-  /**
-   * Get all tags
-   */
-  getTags(): Promise<unknown[]> {
-    return this.prisma.tag.findMany({
-      include: {
-        _count: {
-          select: { blogPosts: true },
-        },
-      },
-      orderBy: {
-        name: 'asc',
-      },
     });
   }
 

@@ -46,12 +46,16 @@ builder.queryType({
 
     posts: t.prismaField({
       type: ['BlogPost'],
-      authScopes: { role: 'EDITOR' },
+      // Authors may list their own posts; editors and above see every post.
+      authScopes: { role: 'AUTHOR' },
       args: { status: t.arg({ type: PostStatus, required: false }) },
       resolve: (query, _root, args, ctx) =>
         ctx.prisma.blogPost.findMany({
           ...query,
-          where: args.status ? { status: args.status } : {},
+          where: {
+            ...(args.status ? { status: args.status } : {}),
+            ...(meetsMinimumRole(ctx.user, 'EDITOR') ? {} : { authorId: ctx.user!.id }),
+          },
           orderBy: { updatedAt: 'desc' },
         }),
     }),

@@ -4,10 +4,19 @@ const domain = process.env['AUTH0_DOMAIN'] ?? '';
 const audience = process.env['AUTH0_AUDIENCE'] ?? '';
 const issuer = domain ? `https://${domain}/` : '';
 
+// An empty `audience` would cause jose to skip `aud` validation entirely, so we
+// require BOTH domain and audience before enabling verification. Misconfiguration
+// fails secure: every token is rejected (anonymous context) rather than trusted.
+if (domain && !audience) {
+  // eslint-disable-next-line no-console
+  console.warn('AUTH0_AUDIENCE is not set — JWT verification is disabled (all tokens rejected).');
+}
+
 // Cache the JWKS across requests.
-const jwks = domain
-  ? createRemoteJWKSet(new URL(`https://${domain}/.well-known/jwks.json`))
-  : null;
+const jwks =
+  domain && audience
+    ? createRemoteJWKSet(new URL(`https://${domain}/.well-known/jwks.json`))
+    : null;
 
 /**
  * Verify an Auth0 access token from an Authorization header value.
