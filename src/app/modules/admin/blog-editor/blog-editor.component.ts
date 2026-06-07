@@ -178,18 +178,28 @@ export class BlogEditorComponent implements OnInit {
   }
 
   onSubmit = (): void => {
-    if (this.postForm.invalid || this.isSubmitting) {
+    if (this.postForm.invalid) {
       this.postForm.markAllAsTouched();
+      return;
+    }
+    if (this.isSubmitting) {
       return;
     }
     this.isSubmitting = true;
 
     const { title, content } = this.postForm.value as { title: string; content: string };
-    const input = { title, content, status: 'DRAFT' as const };
 
+    // On update, omit `status` so an existing post's published state is preserved
+    // (the editor has no status control yet). New posts start as DRAFT.
     const op = this.isEditMode
-      ? this.apollo.mutate({ mutation: UPDATE_POST, variables: { id: this.postId, input } })
-      : this.apollo.mutate({ mutation: CREATE_POST, variables: { input } });
+      ? this.apollo.mutate({
+          mutation: UPDATE_POST,
+          variables: { id: this.postId, input: { title, content } },
+        })
+      : this.apollo.mutate({
+          mutation: CREATE_POST,
+          variables: { input: { title, content, status: 'DRAFT' as const } },
+        });
 
     op.subscribe({
       next: () => {

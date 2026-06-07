@@ -3,10 +3,17 @@ import { graphql } from 'graphql';
 import { schema } from '../../../src/server/graphql/schema';
 
 // Minimal stub prisma so resolvers don't need a real database.
-function stubContext(user: { id: string; role: string } | null) {
+// `findManyCalls` captures the args each `blogPost.findMany` was invoked with.
+function stubContext(user: { id: string; role: string } | null, findManyCalls: unknown[] = []) {
   return {
     prisma: {
-      blogPost: { findMany: async () => [], findUnique: async () => null },
+      blogPost: {
+        findMany: async (args: unknown) => {
+          findManyCalls.push(args);
+          return [];
+        },
+        findUnique: async () => null,
+      },
       category: { findMany: async () => [] },
       tag: { findMany: async () => [] },
       seoSettings: { findFirst: async () => null },
@@ -37,13 +44,27 @@ describe('read queries', () => {
     expect(result.errors?.[0]?.extensions?.['code'] ?? 'FORBIDDEN').toBeTruthy();
   });
 
-  it('admin posts query is allowed for EDITOR', async () => {
+  it('posts query: EDITOR sees all posts (no author filter)', async () => {
+    const calls: unknown[] = [];
     const result = await graphql({
       schema,
       source: '{ posts { id } }',
-      contextValue: stubContext({ id: 'u1', role: 'EDITOR' }),
+      contextValue: stubContext({ id: 'u1', role: 'EDITOR' }, calls),
     });
     expect(result.errors).toBeUndefined();
-    expect(result.data).toHaveProperty('posts');
+    const where = (calls[0] as { where: Record<string, unknown> }).where;
+    expect(where).not.toHaveProperty('authorId');
+  });
+
+  it('posts query: AUTHOR is allowed but scoped to their own posts', async () => {
+    const calls: unknown[] = [];
+    const result = await graphql({
+      schema,
+      source: '{ posts { id } }',
+      contextValue: stubContext({ id: 'author-1', role: 'AUTHOR' }, calls),
+    });
+    expect(result.errors).toBeUndefined();
+    const where = (calls[0] as { where: Record<string, unknown> }).where;
+    expect(where.authorId).toBe('author-1');
   });
 });

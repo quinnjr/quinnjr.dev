@@ -22,6 +22,13 @@ export const routes: Routes = [
       import('./pages/articles/articles.component').then(m => m.ArticlesComponent),
   },
   {
+    path: 'articles/:slug',
+    loadComponent: () =>
+      import('./pages/article-detail/article-detail.component').then(
+        m => m.ArticleDetailComponent
+      ),
+  },
+  {
     path: 'login',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent),
   },

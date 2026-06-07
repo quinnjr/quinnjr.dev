@@ -16,7 +16,9 @@ export const DateTimeResolver = new GraphQLScalarType({
   },
   parseLiteral(ast) {
     if (ast.kind !== Kind.STRING) throw new TypeError('DateTime must be a string');
-    return new Date(ast.value);
+    const d = new Date(ast.value);
+    if (Number.isNaN(d.getTime())) throw new TypeError('Invalid DateTime');
+    return d;
   },
 });
 

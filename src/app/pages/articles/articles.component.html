@@ -13,6 +13,22 @@
       </p>
     </div>
 
+    @if (posts().length) {
+      <!-- Published Articles -->
+      <div class="max-w-3xl mx-auto mb-16 space-y-4">
+        @for (post of posts(); track post.id) {
+          <a
+            [routerLink]="['/articles', post.slug]"
+            class="block p-6 bg-gray-800/50 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors"
+          >
+            <h2 class="text-2xl font-bold text-white mb-2">{{ post.title }}</h2>
+            @if (post.excerpt) {
+              <p class="text-gray-400">{{ post.excerpt }}</p>
+            }
+          </a>
+        }
+      </div>
+    } @else {
     <!-- Coming Soon Card -->
     <div class="max-w-3xl mx-auto">
       <div
@@ -60,5 +76,6 @@
         </p>
       </div>
     </div>
+    }
   </div>
 </div>

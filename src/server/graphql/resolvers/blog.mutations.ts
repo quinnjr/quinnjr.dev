@@ -1,11 +1,11 @@
 // src/server/graphql/resolvers/blog.mutations.ts
-import { container } from 'tsyringe';
 import { builder } from '../builder';
 import '../types';
-import { BlogService, type CreateBlogPostDto, type UpdateBlogPostDto } from '../../services/blog.service';
+import { type CreateBlogPostDto, type UpdateBlogPostDto } from '../../services/blog.service';
 import { meetsMinimumRole } from '../context';
 import { rethrowAsGraphQLError } from '../errors';
 import { PostStatus } from '../types';
+import { blog } from './services';
 
 const CreateBlogPostInput = builder.inputType('CreateBlogPostInput', {
   fields: (t) => ({
@@ -52,8 +52,6 @@ const UpdateBlogPostInput = builder.inputType('UpdateBlogPostInput', {
     tagIds: t.stringList(),
   }),
 });
-
-const blog = () => container.resolve(BlogService);
 
 builder.mutationType({
   fields: (t) => ({

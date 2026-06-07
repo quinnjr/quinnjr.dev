@@ -1,12 +1,9 @@
 // src/server/graphql/resolvers/taxonomy.mutations.ts
-import { container } from 'tsyringe';
 import { builder } from '../builder';
 import '../types';
-import { BlogService } from '../../services/blog.service';
 import { Prisma } from '../../../generated/prisma/client';
 import { rethrowAsGraphQLError } from '../errors';
-
-const blog = () => container.resolve(BlogService);
+import { blog } from './services';
 
 builder.mutationFields((t) => ({
   createCategory: t.prismaField({
