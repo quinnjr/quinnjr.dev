@@ -1,4 +1,5 @@
 import { PrismaClient } from '../src/generated/prisma/client';
+import { PasswordService } from '../src/server/services/password.service';
 
 const prisma = new PrismaClient();
 
@@ -21,18 +22,19 @@ async function main() {
 
   console.log('✓ Created SEO settings:', seoSettings.id);
 
-  // Provision the initial ADMIN user. Override the auth0Id/email via env to match
-  // the real Auth0 account; subsequent role changes can be made in Prisma Studio.
-  const adminAuth0Id = process.env['SEED_ADMIN_AUTH0_ID'] ?? 'auth0|REPLACE_ME';
+  // Provision the initial ADMIN user from env. Set SEED_ADMIN_EMAIL/SEED_ADMIN_PASSWORD;
+  // subsequent role changes can be made in Prisma Studio.
   const adminEmail = process.env['SEED_ADMIN_EMAIL'] ?? 'jquinn@lexmata.ai';
+  const adminPassword = process.env['SEED_ADMIN_PASSWORD'] ?? 'change-me-locally';
+  const passwordHash = await new PasswordService().hash(adminPassword);
   const admin = await prisma.user.upsert({
-    where: { auth0Id: adminAuth0Id },
+    where: { email: adminEmail },
     update: { role: 'ADMIN' },
     create: {
-      auth0Id: adminAuth0Id,
       email: adminEmail,
       name: 'Joseph R. Quinn',
       role: 'ADMIN',
+      passwordHash,
     },
   });
 

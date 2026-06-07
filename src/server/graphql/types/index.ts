@@ -21,10 +21,6 @@ export const UserType = builder.prismaObject('User', {
       nullable: true,
       authScopes: (user, _args, ctx) => ctx.user?.id === user.id || { role: 'ADMIN' },
     }),
-    auth0Id: t.exposeString('auth0Id', {
-      nullable: true,
-      authScopes: (user, _args, ctx) => ctx.user?.id === user.id || { role: 'ADMIN' },
-    }),
     createdAt: t.expose('createdAt', { type: 'DateTime' }),
   }),
 });
