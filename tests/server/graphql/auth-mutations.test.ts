@@ -26,7 +26,9 @@ function ctx(userRow: { id: string; role: string } | null) {
 
 describe('login mutation', () => {
   it('returns a token + user for correct credentials', async () => {
-    container.registerInstance(PasswordService, { verify: vi.fn().mockResolvedValue(true) } as never);
+    container.registerInstance(PasswordService, {
+      verify: vi.fn().mockResolvedValue(true),
+    } as never);
     container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
@@ -41,7 +43,9 @@ describe('login mutation', () => {
   });
 
   it('rejects wrong credentials with a generic UNAUTHENTICATED error', async () => {
-    container.registerInstance(PasswordService, { verify: vi.fn().mockResolvedValue(false) } as never);
+    container.registerInstance(PasswordService, {
+      verify: vi.fn().mockResolvedValue(false),
+    } as never);
     container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
