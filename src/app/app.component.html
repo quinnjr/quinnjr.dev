@@ -15,9 +15,4 @@
   <div class="hud-scanlines"></div>
 </div>
 
-<div [@routeAnimations]="getRouteAnimationData() | async">
-  <app-naviation />
-  <main id="main-content" tabindex="-1">
-    <router-outlet />
-  </main>
-</div>
+<router-outlet />

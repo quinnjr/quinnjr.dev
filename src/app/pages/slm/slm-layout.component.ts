@@ -3,12 +3,14 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
+import { NavigationComponent } from '../../components/navigation/navigation.component';
+
 import { CHAPTERS } from './chapters';
 
 @Component({
   selector: 'app-slm-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, NavigationComponent],
   templateUrl: './slm-layout.component.html',
   styleUrl: './slm-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
