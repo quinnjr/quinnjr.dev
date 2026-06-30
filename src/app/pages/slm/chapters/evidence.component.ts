@@ -151,43 +151,37 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <h2>What the trillion-parameter frontier actually spent</h2>
 
       <p>
-        The other half of this comparison deserves the same rigor applied to it. No frontier lab has
-        published the architecture or parameter count of its current models. OpenAI's own GPT-4
-        Technical Report says outright that it withholds "further details about the architecture
-        (including model size)... due to the competitive landscape and the safety implications," and
-        the GPT-4o System Card that followed it a year later is a safety document, not an
-        engineering one. Everything below this point is leak and informed estimate, not OpenAI
-        disclosure, and it is presented that way.
+        The other half of this comparison deserves the same rigor applied to it. OpenAI has never
+        published the architecture or parameter count of GPT-4. Its own GPT-4 Technical Report says
+        outright that it withholds "further details about the architecture (including model size)...
+        due to the competitive landscape and the safety implications." What follows is leak and
+        informed estimate, not OpenAI disclosure, and it is presented that way.
       </p>
 
       <p>
-        The trillion-parameter figure belongs to the original GPT-4, not GPT-4o. A widely cited
-        SemiAnalysis report from July 2023 described GPT-4 as a mixture-of-experts model exceeding
-        one trillion parameters in total, commonly cited at 1.8 trillion across 16 experts of
-        roughly 111 billion each, with around 220 billion of those parameters active on any single
-        forward pass, trained on roughly 13 trillion tokens. GPT-4o, released the following year, is
-        widely believed to be far smaller. Independent estimates converge on something closer to 200
-        billion total parameters, judged mostly by its sharply lower price per token and faster
-        response time relative to the original model, with GPT-4o mini separately estimated around 8
-        billion. OpenAI has confirmed none of these figures.
+        A widely cited SemiAnalysis report from July 2023 described GPT-4 as a mixture-of-experts
+        model exceeding one trillion parameters in total, commonly cited at 1.8 trillion across 16
+        experts of roughly 111 billion each, with around 220 billion of those parameters active on
+        any single forward pass, trained on roughly 13 trillion tokens. OpenAI has confirmed none of
+        this, but the figures are detailed enough, and corroborated widely enough since, that this
+        manifesto treats them as the working estimate.
       </p>
 
       <p>
-        The training run behind the larger, trillion-parameter GPT-4 is the one with public numbers
-        attached to it, and a rough check holds up against them. Counting only the 220 billion
-        active parameters as the ones doing work on each token, the standard compute estimate of six
-        times parameters times training tokens puts that run at roughly 1.7 times ten to the
-        twenty-fifth floating point operations. Spread across an A100 cluster running at a realistic
-        35 percent of peak throughput, that works out to roughly 44 million GPU-hours, close enough
-        to the figure reported elsewhere, 25,000 GPUs run for 90 to 100 days, around 55 to 57
-        million GPU-hours, to treat both as the same neighborhood. At a cluster power draw near 25
-        megawatts sustained for that stretch, the run consumed somewhere around 50 to 60
-        gigawatt-hours of electricity, enough to power several thousand homes for a year, for one
-        training run of one model. At roughly one to two dollars an hour for that much A100 time,
-        the run cost on the order of 60 to 110 million dollars. Sam Altman has himself acknowledged,
-        in public remarks the same month reporters first floated the 100 million dollar figure, that
-        the true number was higher, not lower, and that he already considered the era of simply
-        building bigger models to be ending.
+        That training run is the one with public numbers attached to it, and a rough check holds up
+        against them. Counting only the 220 billion active parameters as the ones doing work on each
+        token, the standard compute estimate of six times parameters times training tokens puts that
+        run at roughly 1.7 times ten to the twenty-fifth floating point operations. Spread across an
+        A100 cluster running at a realistic 35 percent of peak throughput, that works out to roughly
+        44 million GPU-hours, close enough to the figure reported elsewhere, 25,000 GPUs run for 90
+        to 100 days, around 55 to 57 million GPU-hours, to treat both as the same neighborhood. At a
+        cluster power draw near 25 megawatts sustained for that stretch, the run consumed somewhere
+        around 50 to 60 gigawatt-hours of electricity, enough to power several thousand homes for a
+        year, for one training run of one model. At roughly one to two dollars an hour for that much
+        A100 time, the run cost on the order of 60 to 110 million dollars. Sam Altman has himself
+        acknowledged, in public remarks the same month reporters first floated the 100 million
+        dollar figure, that the true number was higher, not lower, and that he already considered
+        the era of simply building bigger models to be ending.
       </p>
 
       <p>
@@ -260,12 +254,6 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >arXiv:2303.08774</a
           >. States directly that architecture, model size, hardware, and training compute are
           withheld from the report.
-        </li>
-        <li>
-          <cite>OpenAI.</cite> "GPT-4o System Card." 2024.
-          <a href="https://arxiv.org/abs/2410.21276" target="_blank" rel="noopener noreferrer"
-            >arXiv:2410.21276</a
-          >. A safety and evaluation document. Contains no architecture or parameter disclosure.
         </li>
         <li>
           <cite>Patel, D. and Wong, G.</cite> "GPT-4 Architecture, Infrastructure, Training Dataset,
