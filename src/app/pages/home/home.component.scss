@@ -1,6 +1,7 @@
 .tavern-page {
   min-height: 100vh;
-  background: var(--bg-void, #0a0a0f);
+  // Transparent — the fixed site backdrop shows through.
+  background: transparent;
 }
 
 // ── Hero Section ──────────────────────────────────────────────────────────
@@ -179,7 +180,10 @@
 
 .skills-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  // auto-fit (not auto-fill) collapses empty trailing tracks, so the four
+  // cards always fill the row and stay centered instead of left-aligning
+  // against an empty column on wide (≥1536px) viewports.
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   gap: 1.5rem;
 }
 
@@ -263,71 +267,4 @@
     border-top: 12px solid var(--color-amber);
     border-right: 12px solid transparent;
   }
-}
-
-// ── Footer ────────────────────────────────────────────────────────────────
-
-.rpg-footer {
-  background: rgba(5, 5, 12, 0.9);
-  border-top: 1px solid rgba(201, 168, 76, 0.15);
-  padding: 2rem 0;
-}
-
-.footer-content {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  align-items: center;
-  text-align: center;
-
-  @media (min-width: 768px) {
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: left;
-  }
-}
-
-.footer-copyright {
-  font-family: 'Crimson Text', serif;
-  color: var(--color-muted);
-  font-size: 0.9rem;
-}
-
-.footer-tagline {
-  font-family: 'Crimson Text', serif;
-  color: var(--color-muted);
-  font-size: 0.85rem;
-  margin-top: 0.25rem;
-}
-
-.footer-links {
-  display: flex;
-  gap: 1rem;
-  align-items: center;
-}
-
-.footer-icon {
-  color: var(--color-muted);
-  font-size: 1.25rem;
-  transition:
-    color 0.2s ease,
-    text-shadow 0.2s ease;
-  text-decoration: none;
-
-  &:hover {
-    color: var(--color-amber);
-    text-shadow: 0 0 10px rgba(201, 168, 76, 0.5);
-  }
-}
-
-.footer-border {
-  height: 1px;
-  margin-top: 2rem;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(201, 168, 76, 0.3) 40%,
-    rgba(201, 168, 76, 0.3) 60%,
-    transparent
-  );
 }

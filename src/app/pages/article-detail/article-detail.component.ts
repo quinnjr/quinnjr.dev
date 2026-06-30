@@ -46,19 +46,30 @@ interface ArticlePost {
   imports: [CommonModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-gray-900">
-      <div class="container mx-auto max-w-3xl px-4 py-12">
-        <a routerLink="/articles" class="text-blue-400 hover:underline">&larr; All articles</a>
+    <div class="tavern-shell">
+      <div class="container mx-auto max-w-3xl px-4 py-16">
+        <a routerLink="/articles" class="link-tavern font-mono text-sm">
+          <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>All chronicles
+        </a>
         @if (post(); as p) {
-          <article class="mt-6">
-            <h1 class="text-4xl font-bold text-white mb-2">{{ p.title }}</h1>
+          <article class="mt-8">
+            <p class="tavern-eyebrow">Chronicle</p>
+            <h1 class="mt-3 mb-3 font-medieval text-4xl leading-tight text-parchment">
+              {{ p.title }}
+            </h1>
             @if (p.author) {
-              <p class="text-gray-400 mb-8">By {{ p.author.name }}</p>
+              <p class="mb-2 font-mono text-xs uppercase tracking-widest text-muted">
+                Inked by {{ p.author.name }}
+              </p>
             }
-            <div class="prose prose-invert max-w-none" [innerHTML]="p.content"></div>
+            <div class="section-divider-rpg revealed"></div>
+            <div class="scroll-prose mt-6" [innerHTML]="p.content"></div>
           </article>
         } @else if (loaded()) {
-          <p class="mt-6 text-gray-400">Article not found.</p>
+          <div class="card-stone mt-10 p-8 text-center">
+            <i class="fas fa-feather mb-3 text-3xl text-amber" aria-hidden="true"></i>
+            <p class="font-body text-muted">This entry could not be found in the archive.</p>
+          </div>
         }
       </div>
     </div>

@@ -216,6 +216,33 @@
   }
 }
 
+// Tiny "opens externally" mark trailing external links.
+.nav-external-mark {
+  font-size: 0.55rem;
+  opacity: 0.45;
+  margin-left: 0.1rem;
+  transition: opacity 0.2s ease;
+
+  .nav-link:hover & {
+    opacity: 0.8;
+  }
+}
+
+// ── Auth button slot ──────────────────────────────────────────────────────
+
+.nav-auth {
+  display: flex;
+  align-items: center;
+  margin-top: 0.75rem;
+
+  @media (min-width: 768px) {
+    margin-top: 0;
+    margin-left: 1.25rem;
+    padding-left: 1.25rem;
+    border-left: 1px solid rgba(201, 168, 76, 0.15);
+  }
+}
+
 // ── Amber bottom edge ─────────────────────────────────────────────────────
 
 .nav-border {

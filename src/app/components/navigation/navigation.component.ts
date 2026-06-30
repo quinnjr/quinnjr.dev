@@ -15,7 +15,7 @@ export class NavigationComponent {
   public navbarItems = signal([
     {
       title: 'Tavern',
-      link: '/',
+      link: '/home',
       icon: 'fas fa-fire',
     },
     {
@@ -48,18 +48,6 @@ export class NavigationComponent {
       title: 'Arcane Repository',
       link: 'https://github.com/quinnjr',
       icon: 'fas fa-code-branch',
-      external: true,
-    },
-    {
-      title: 'Forge',
-      link: 'https://pegausheavy.dev',
-      icon: 'fas fa-shield-alt',
-      external: true,
-    },
-    {
-      title: 'Pegasus Heavy',
-      link: 'https://pegausheavy.dev',
-      icon: 'fas fa-building',
       external: true,
     },
   ]);

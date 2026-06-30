@@ -2,17 +2,11 @@ import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 
 import { GitHubRepository, GitHubService } from '../../services/github.service';
-import {
-  ButtonComponent,
-  CardComponent,
-  CardBodyComponent,
-  BadgeComponent,
-} from '../../shared/components/ui';
 
 @Component({
   selector: 'app-projects',
   standalone: true,
-  imports: [CommonModule, ButtonComponent, CardComponent, CardBodyComponent, BadgeComponent],
+  imports: [CommonModule],
   templateUrl: './projects.component.html',
   styleUrl: './projects.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -143,69 +137,6 @@ export class ProjectsComponent implements OnInit {
     }
 
     return 'fa-code';
-  }
-
-  // eslint-disable-next-line sonarjs/cognitive-complexity
-  getColorForRepo(repo: GitHubRepository): string {
-    const name = repo.name.toLowerCase();
-    const lang = repo.primaryLanguage?.name ?? '';
-
-    // Specific project colors
-    if (name.includes('fruity') || name.includes('mcp')) {
-      return 'purple';
-    }
-    if (name.includes('indexeddb')) {
-      return 'pink';
-    }
-    if (name.includes('guitar')) {
-      return 'green';
-    }
-    if (name.includes('itunes') || name.includes('mtp')) {
-      return 'orange';
-    }
-    if (name.includes('game')) {
-      return 'cyan';
-    }
-    if (name.includes('pluma')) {
-      return 'yellow';
-    }
-    if (name.includes('bulma')) {
-      return 'teal';
-    }
-    if (name.includes('apollo')) {
-      return 'violet';
-    }
-    if (name.includes('dotfiles')) {
-      return 'lime';
-    }
-    if (name.includes('cuda')) {
-      return 'red';
-    }
-
-    // Language-based colors
-    if (lang === 'TypeScript' || lang === 'JavaScript') {
-      return 'blue';
-    }
-    if (lang === 'Rust') {
-      return 'orange';
-    }
-    if (lang === 'Python') {
-      return 'yellow';
-    }
-    if (lang === 'Go') {
-      return 'cyan';
-    }
-    if (lang === 'PHP') {
-      return 'violet';
-    }
-    if (lang === 'Shell') {
-      return 'green';
-    }
-    if (lang === 'Dart') {
-      return 'sky';
-    }
-
-    return 'gray';
   }
 
   getDisplayName(name: string): string {
