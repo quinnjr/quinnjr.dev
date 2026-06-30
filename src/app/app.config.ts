@@ -1,7 +1,7 @@
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { type ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimations } from '@angular/platform-browser/animations';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideApollo } from 'apollo-angular';
 
 import { routes } from './app.routes';
@@ -12,7 +12,10 @@ import { FlowbiteService } from './services/flowbite.service';
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes),
+    provideRouter(
+      routes,
+      withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
+    ),
     provideAnimations(),
     provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     provideApollo(apolloOptionsFactory),
