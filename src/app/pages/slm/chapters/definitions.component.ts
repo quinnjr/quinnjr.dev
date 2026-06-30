@@ -20,12 +20,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <p>
         A large language model, or LLM, is a neural network trained to predict the next token in a
         sequence of text, given everything that came before it. That single task, repeated, is the
-        whole mechanism. Ask it a question and it is not looking up an answer. It is generating one
-        token at a time, each one chosen by running the same prediction again with the growing
-        response appended to the input. The model is a fixed function learned once during training
-        and then run, unchanged, every time it is used. GPT, Claude, and Gemini are all LLMs. The
-        differences between them, and the differences this manifesto cares about, come down to how
-        big that function is and how it is asked to use itself.
+        whole mechanism. Ask it a question and it is not looking up an answer. It is playing a
+        highly accurate, mathematical guessing game, generating one token at a time, each one chosen
+        by running the same prediction again with the growing response appended to the input. The
+        model is a fixed function learned once during training and then run, unchanged, every time
+        it is used. GPT, Claude, and Gemini are all LLMs. The differences between them, and the
+        differences this manifesto cares about, come down to how big that function is and how it is
+        asked to use itself.
       </p>
 
       <h2>Tokens</h2>
