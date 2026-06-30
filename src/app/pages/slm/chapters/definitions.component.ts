@@ -75,6 +75,20 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         parameter and dollar for dollar, than training the larger model in the first place.
       </p>
 
+      <h2>Frontier model</h2>
+
+      <p>
+        A frontier model is whatever sits at the current edge of scale, the largest, most expensive
+        model a given lab has trained, intended to push the field's ceiling rather than to serve any
+        one product cheaply. Anthropic's Claude, OpenAI's GPT, and Google's Gemini, at their largest
+        and newest, are frontier models. The defining trait is not capability alone. It is the bet
+        behind it, that another jump in scale, another few hundred billion parameters and another
+        round of capital, is the path to a categorically smarter model. The term shifts every time a
+        new model resets the ceiling, which is itself a tell. Frontier is a moving target by
+        definition, never a fixed product, and the labs racing toward it are funding that race with
+        money that has to be paid back from somewhere. So far, for any of them, it has not been.
+      </p>
+
       <h2>Small language model</h2>
 
       <p>
