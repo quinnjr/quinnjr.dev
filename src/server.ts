@@ -22,7 +22,19 @@ export function app(): express.Express {
   const browserDistFolder = resolve(serverDistFolder, '../browser');
   const indexHtml = join(serverDistFolder, 'index.server.html');
 
-  const commonEngine = new CommonEngine();
+  // Hostnames permitted in the request Host header. Without this, @angular/ssr
+  // rejects every host (including localhost) as a host-poisoning guard and
+  // silently falls back to client-side rendering. Override via SSR_ALLOWED_HOSTS
+  // (comma-separated) for other deploy targets. Matching is on hostname only
+  // (port stripped); "*.quinnjr.dev" covers www and any subdomain.
+  const allowedHosts = (
+    process.env['SSR_ALLOWED_HOSTS'] ?? 'quinnjr.dev,*.quinnjr.dev,localhost,127.0.0.1'
+  )
+    .split(',')
+    .map(host => host.trim())
+    .filter(Boolean);
+
+  const commonEngine = new CommonEngine({ allowedHosts });
 
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);

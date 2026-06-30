@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:coverage": "ng test --code-coverage --watch=false",
+    "test:coverage": "ng test --coverage --watch=false",
     "test:server": "vitest run --config vitest.config.server.mjs",
     "test:server:watch": "vitest --config vitest.config.server.mjs",
     "test:server:coverage": "vitest run --config vitest.config.server.mjs --coverage",
@@ -71,8 +71,6 @@
     "zone.js": "~0.15.0"
   },
   "devDependencies": {
-    "@angular-builders/custom-esbuild": "^20.0.0",
-    "@angular-builders/jest": "^20.0.0",
     "@angular-devkit/build-angular": "^21.2.8",
     "@angular/cli": "^21.2.8",
     "@angular/compiler-cli": "^21.2.10",

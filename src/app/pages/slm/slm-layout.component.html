@@ -1,0 +1,56 @@
+<div class="grimoire">
+  <!-- ── Title plate ───────────────────────────────────────────────────── -->
+  <header class="grimoire-header">
+    <p class="grimoire-eyebrow">Codex of the Lesser Machine-Spirits</p>
+    <h1 class="grimoire-title">The SLM Manifesto</h1>
+    <div class="grimoire-rule"><i class="fas fa-gem"></i></div>
+  </header>
+
+  <div class="container mx-auto px-4 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+      <!-- ── Table of contents ───────────────────────────────────────────── -->
+      <aside class="lg:col-span-1">
+        <nav class="grimoire-index card-stone" aria-label="Chapters">
+          <p class="grimoire-index-title">Contents</p>
+          <ol class="grimoire-toc">
+            @for (chapter of chapters; track chapter.slug) {
+              <li>
+                <a [routerLink]="['/slm', chapter.slug]" routerLinkActive="is-active">{{
+                  chapter.title
+                }}</a>
+              </li>
+            }
+          </ol>
+        </nav>
+      </aside>
+
+      <!-- ── The open leaf ─────────────────────────────────────────────────── -->
+      <main class="lg:col-span-3">
+        <article class="grimoire-leaf card-stone">
+          <router-outlet />
+        </article>
+
+        <nav class="grimoire-pagination" aria-label="Chapter navigation">
+          @if (prev(); as p) {
+            <a [routerLink]="['/slm', p.slug]" class="grimoire-turn is-prev">
+              <i class="fas fa-chevron-left"></i>
+              <span
+                ><span class="turn-label">Preceding</span
+                ><span class="turn-title">{{ p.title }}</span></span
+              >
+            </a>
+          }
+          @if (next(); as n) {
+            <a [routerLink]="['/slm', n.slug]" class="grimoire-turn is-next">
+              <i class="fas fa-chevron-right"></i>
+              <span
+                ><span class="turn-label">Following</span
+                ><span class="turn-title">{{ n.title }}</span></span
+              >
+            </a>
+          }
+        </nav>
+      </main>
+    </div>
+  </div>
+</div>
