@@ -8,7 +8,7 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:coverage": "ng test --code-coverage --watch=false",
+    "test:coverage": "ng test --coverage --watch=false",
     "test:server": "vitest run --config vitest.config.server.mjs",
     "test:server:watch": "vitest --config vitest.config.server.mjs",
     "test:server:coverage": "vitest run --config vitest.config.server.mjs --coverage",
