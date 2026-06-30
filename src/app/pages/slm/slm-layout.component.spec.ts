@@ -35,11 +35,11 @@ describe('SlmLayoutComponent', () => {
   it('third chapter links to both neighbours', async () => {
     const c = await layoutAt('/slm/evidence');
     expect(c.prev()?.title).toBe('Definitions');
-    expect(c.next()?.title).toBe('Practice');
+    expect(c.next()?.title).toBe('Costs');
   });
 
   it('last chapter has no next', async () => {
-    const c = await layoutAt('/slm/practice');
+    const c = await layoutAt('/slm/costs');
     expect(c.prev()?.title).toBe('Evidence');
     expect(c.next()).toBeNull();
   });

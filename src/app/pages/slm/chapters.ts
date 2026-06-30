@@ -28,8 +28,8 @@ export const CHAPTERS: readonly Chapter[] = [
     load: () => import('./chapters/evidence.component').then(m => m.EvidenceComponent),
   },
   {
-    slug: 'practice',
-    title: 'Practice',
-    load: () => import('./chapters/practice.component').then(m => m.PracticeComponent),
+    slug: 'costs',
+    title: 'Costs',
+    load: () => import('./chapters/costs.component').then(m => m.CostsComponent),
   },
 ];
