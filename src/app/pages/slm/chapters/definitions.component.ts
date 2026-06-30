@@ -107,6 +107,61 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         With these terms fixed, the case against the trillion-parameter frontier and for the small
         model, reasoning hard, can be made without further translation.
       </p>
+
+      <h2 class="bibliography-title">Sources</h2>
+      <ol class="bibliography">
+        <li>
+          <cite>Vaswani, A. et al.</cite> "Attention Is All You Need." NeurIPS, 2017.
+          <a href="https://arxiv.org/abs/1706.03762" target="_blank" rel="noopener noreferrer"
+            >arXiv:1706.03762</a
+          >. The transformer architecture underlying nearly every modern LLM.
+        </li>
+        <li>
+          <cite>Sennrich, R., Haddow, B., and Birch, A.</cite> "Neural Machine Translation of Rare
+          Words with Subword Units." ACL, 2016.
+          <a href="https://arxiv.org/abs/1508.07909" target="_blank" rel="noopener noreferrer"
+            >arXiv:1508.07909</a
+          >. The byte-pair encoding scheme behind most modern tokenizers.
+        </li>
+        <li>
+          <cite>Kaplan, J. et al.</cite> "Scaling Laws for Neural Language Models." 2020.
+          <a href="https://arxiv.org/abs/2001.08361" target="_blank" rel="noopener noreferrer"
+            >arXiv:2001.08361</a
+          >. The original case for predicting model performance from parameter count, data, and
+          compute.
+        </li>
+        <li>
+          <cite>Hoffmann, J. et al.</cite> "Training Compute-Optimal Large Language Models."
+          DeepMind, 2022.
+          <a href="https://arxiv.org/abs/2203.15556" target="_blank" rel="noopener noreferrer"
+            >arXiv:2203.15556</a
+          >. The Chinchilla paper, showing most large models of its era were undertrained relative
+          to their parameter count.
+        </li>
+        <li>
+          <cite>Wei, J. et al.</cite> "Chain-of-Thought Prompting Elicits Reasoning in Large
+          Language Models." 2022.
+          <a href="https://arxiv.org/abs/2201.11903" target="_blank" rel="noopener noreferrer"
+            >arXiv:2201.11903</a
+          >. The paper that established step-by-step inference-time reasoning as a lever distinct
+          from model scale.
+        </li>
+        <li>
+          <cite>Gunasekar, S. et al.</cite> "Textbooks Are All You Need." Microsoft Research, 2023.
+          <a href="https://arxiv.org/abs/2306.11644" target="_blank" rel="noopener noreferrer"
+            >arXiv:2306.11644</a
+          >. The Phi-1 paper, an early case for small models trained on curated data outperforming
+          much larger ones on narrower tasks.
+        </li>
+        <li>
+          <cite>Gemma Team, Google DeepMind.</cite> "Gemma: Open Models Based on Gemini Research and
+          Technology." 2024.
+          <a href="https://arxiv.org/abs/2403.08295" target="_blank" rel="noopener noreferrer"
+            >arXiv:2403.08295</a
+          >. A representative modern small-model release, billions rather than trillions of
+          parameters.
+        </li>
+      </ol>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

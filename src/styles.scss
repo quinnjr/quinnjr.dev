@@ -1177,6 +1177,53 @@
     background: linear-gradient(90deg, transparent, var(--color-edge-strong), transparent);
   }
 
+  /* Bibliography / source notes */
+  .manifesto-prose .bibliography-title {
+    font-family: var(--font-heading);
+    font-size: 1.05rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-amber);
+    margin: 0 0 1rem;
+  }
+  .manifesto-prose ol.bibliography {
+    list-style: none;
+    counter-reset: source;
+    margin: 0 0 1.75rem;
+    padding: 0;
+    font-size: 0.95rem;
+    color: var(--color-parchment);
+    opacity: 0.85;
+  }
+  .manifesto-prose ol.bibliography > li {
+    counter-increment: source;
+    position: relative;
+    padding: 0.5rem 0 0.5rem 3rem;
+    border-top: 1px solid var(--color-edge);
+    line-height: 1.55;
+  }
+  .manifesto-prose ol.bibliography > li::before {
+    content: '[' counter(source) ']';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-ice);
+  }
+  .manifesto-prose ol.bibliography cite {
+    font-style: italic;
+    color: var(--color-amber-bright);
+  }
+  .manifesto-prose ol.bibliography a {
+    color: var(--color-ice);
+    text-decoration: underline;
+    text-underline-offset: 0.15em;
+  }
+  .manifesto-prose ol.bibliography a:hover {
+    color: var(--color-amber-bright);
+  }
+
   /* ── Page-turn navigation ────────────────────────────────────────────── */
   .grimoire-pagination {
     display: flex;
