@@ -4,8 +4,18 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   selector: 'app-slm-practice',
   standalone: true,
   template: `
-    <h1 class="text-2xl font-bold mb-4">Practice</h1>
-    <p class="text-gray-300">Placeholder content. Draft this chapter later.</p>
+    <div class="manifesto-prose">
+      <p class="manifesto-sigil">Verse III &middot; Practice</p>
+      <h1>Practice</h1>
+      <p class="lede">
+        Where the creed meets the keyboard. Placeholder text — this chapter turns the principles
+        into things you actually do.
+      </p>
+      <h2>In the small</h2>
+      <p>Replace with concrete practice: how to pick, run, and trust a small model day to day.</p>
+      <hr />
+      <p>End of the seeded manuscript. Three verses, awaiting their real ink.</p>
+    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

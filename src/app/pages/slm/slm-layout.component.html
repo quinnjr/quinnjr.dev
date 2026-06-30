@@ -1,46 +1,53 @@
 <div class="grimoire">
-  <div class="container mx-auto px-4 py-8">
-    <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+  <!-- ── Title plate ───────────────────────────────────────────────────── -->
+  <header class="grimoire-header">
+    <p class="grimoire-eyebrow">Codex of the Lesser Machine-Spirits</p>
+    <h1 class="grimoire-title">The SLM Manifesto</h1>
+    <div class="grimoire-rule"><i class="fas fa-gem"></i></div>
+  </header>
+
+  <div class="container mx-auto px-4 pb-16">
+    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
       <!-- ── Table of contents ───────────────────────────────────────────── -->
       <aside class="lg:col-span-1">
-        <nav class="sidebar card-stone p-4">
-          <div class="sidebar-brand">
-            <span class="sidebar-brand-text">SLM MANIFESTO</span>
-          </div>
-          <ol class="sidebar-links">
+        <nav class="grimoire-index card-stone" aria-label="Chapters">
+          <p class="grimoire-index-title">Contents</p>
+          <ol class="grimoire-toc">
             @for (chapter of chapters; track chapter.slug) {
               <li>
-                <a
-                  [routerLink]="['/slm', chapter.slug]"
-                  routerLinkActive="text-blue-400"
-                  class="sidebar-link"
-                  ><i class="fas fa-bookmark sidebar-icon"></i><span>{{ chapter.title }}</span></a
-                >
+                <a [routerLink]="['/slm', chapter.slug]" routerLinkActive="is-active">{{
+                  chapter.title
+                }}</a>
               </li>
             }
           </ol>
         </nav>
       </aside>
 
-      <!-- ── Chapter content ─────────────────────────────────────────────── -->
-      <main class="lg:col-span-4">
-        <article class="card-stone p-6">
+      <!-- ── The open leaf ─────────────────────────────────────────────────── -->
+      <main class="lg:col-span-3">
+        <article class="grimoire-leaf card-stone">
           <router-outlet />
         </article>
 
-        <nav class="chapter-nav" aria-label="Chapter navigation">
+        <nav class="grimoire-pagination" aria-label="Chapter navigation">
           @if (prev(); as p) {
-            <a [routerLink]="['/slm', p.slug]" class="chapter-nav-link"
-              ><i class="fas fa-chevron-left"></i><span>{{ p.title }}</span></a
-            >
-          } @else {
-            <span></span>
+            <a [routerLink]="['/slm', p.slug]" class="grimoire-turn is-prev">
+              <i class="fas fa-chevron-left"></i>
+              <span
+                ><span class="turn-label">Preceding</span
+                ><span class="turn-title">{{ p.title }}</span></span
+              >
+            </a>
           }
           @if (next(); as n) {
-            <a [routerLink]="['/slm', n.slug]" class="chapter-nav-link chapter-nav-next"
-              ><span>{{ n.title }}</span
-              ><i class="fas fa-chevron-right"></i
-            ></a>
+            <a [routerLink]="['/slm', n.slug]" class="grimoire-turn is-next">
+              <i class="fas fa-chevron-right"></i>
+              <span
+                ><span class="turn-label">Following</span
+                ><span class="turn-title">{{ n.title }}</span></span
+              >
+            </a>
           }
         </nav>
       </main>
