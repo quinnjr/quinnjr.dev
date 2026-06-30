@@ -116,6 +116,22 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         the genuinely efficient silicon locked behind someone else's login.
       </p>
 
+      <p>
+        This is the part of the lament that actually costs money. An IDC survey cited in late 2025
+        found 86 percent of CIOs planning to repatriate at least some workload from the public cloud
+        back to infrastructure they own, AI spending named as a leading driver, enterprises looking
+        at their own GPU and inference bills and asking whether owning the iron would cost less than
+        renting someone else's. ARM64's well-documented energy advantage, up to 60 percent less
+        power for comparable work, is exactly the kind of saving a repatriation decision should be
+        able to capture. It mostly cannot. An enterprise repatriating onto x86 buys into a real,
+        competitive retail market. An enterprise that wants to repatriate onto ARM64 instead finds
+        one CPU vendor, a handful of OEMs, and a missing chassis from most of the names that would
+        normally sell it to them, while the ARM silicon actually proven to save the most energy sits
+        inside the very clouds that enterprise is trying to leave. The hardware gap this chapter
+        laments is not an abstraction. It is enterprises paying x86's power bill, on their own
+        premises, for want of a market that would sell them the cheaper alternative.
+      </p>
+
       <h2>What it costs to build the room</h2>
 
       <p>
@@ -285,6 +301,17 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >servethehome.com</a
           >. The current OEM list for general-purpose ARM64 servers, and Dell, HPE, and Wiwynn's
           absence from it.
+        </li>
+        <li>
+          <cite>HBS.</cite> "Cloud Repatriation Trends: Cost, AI and the Push Towards Hybrid."
+          November 2025.
+          <a
+            href="https://www.hbs.net/blog/cloud-repatriation-trends-cost-ai-and-the-push-towards-hybrid"
+            target="_blank"
+            rel="noopener noreferrer"
+            >hbs.net</a
+          >. The IDC-sourced figure that 86 percent of CIOs planned to repatriate some workload from
+          the public cloud in 2025, AI spending cited as a leading driver.
         </li>
         <li>
           <cite>SemiAnalysis.</cite> "Are AI Datacenters Increasing Electric Bills for American
