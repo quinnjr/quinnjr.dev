@@ -1,0 +1,28 @@
+// Crafted Works — the "GitHub forge" loading ember and card icon lift.
+
+.forge-spinner {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 2px solid rgba(201, 168, 76, 0.18);
+  border-top-color: var(--color-amber);
+  box-shadow: 0 0 24px rgba(255, 107, 53, 0.25);
+  animation: forge-spin 1s linear infinite;
+}
+
+@keyframes forge-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// The project icon gets a warm glow as the stone tile lifts on hover.
+.card-stone:hover .fas {
+  filter: drop-shadow(0 0 10px rgba(201, 168, 76, 0.45));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .forge-spinner {
+    animation: none;
+  }
+}

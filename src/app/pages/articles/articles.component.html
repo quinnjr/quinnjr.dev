@@ -1,78 +1,66 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-  <div class="container mx-auto px-4 py-12">
+<div class="tavern-shell">
+  <div class="container mx-auto px-4 py-16">
     <!-- Header -->
-    <div class="text-center mb-16">
-      <h1
-        class="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
-      >
-        Articles & Insights
-      </h1>
-      <p class="text-xl text-gray-400 max-w-2xl mx-auto">
-        Technical tutorials, programming insights, and thoughts on the intersection of law and
-        technology
+    <header class="tavern-head">
+      <p class="tavern-eyebrow">The Archive</p>
+      <h1 class="tavern-title">Chronicles</h1>
+      <p class="tavern-subtitle">
+        Tutorials, field notes, and observations from where law and technology meet.
       </p>
-    </div>
+    </header>
 
     @if (posts().length) {
-      <!-- Published Articles -->
-      <div class="max-w-3xl mx-auto mb-16 space-y-4">
+      <!-- Published chronicles -->
+      <div class="mx-auto max-w-3xl space-y-4">
         @for (post of posts(); track post.id) {
-          <a
-            [routerLink]="['/articles', post.slug]"
-            class="block p-6 bg-gray-800/50 rounded-xl border border-gray-700 hover:border-purple-500 transition-colors"
-          >
-            <h2 class="text-2xl font-bold text-white mb-2">{{ post.title }}</h2>
+          <a [routerLink]="['/articles', post.slug]" class="quest-row clip-rpg group">
+            <h2
+              class="font-heading text-2xl text-parchment transition-colors group-hover:text-amber-bright"
+            >
+              {{ post.title }}
+            </h2>
             @if (post.excerpt) {
-              <p class="text-gray-400">{{ post.excerpt }}</p>
+              <p class="mt-2 font-body text-muted">{{ post.excerpt }}</p>
             }
+            <span class="mt-3 inline-flex items-center gap-2 font-mono text-xs text-amber">
+              Read the entry <i class="fas fa-arrow-right" aria-hidden="true"></i>
+            </span>
           </a>
         }
       </div>
     } @else {
-      <!-- Coming Soon Card -->
-      <div class="max-w-3xl mx-auto">
-        <div
-          class="p-12 text-center bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl border border-gray-700"
-        >
-          <div class="mb-6">
-            <i class="fas fa-pen-nib text-6xl text-purple-400 mb-4"></i>
-          </div>
-          <h2 class="text-3xl font-bold text-white mb-4">Content Coming Soon</h2>
-          <p class="text-gray-400 mb-8 text-lg">
-            I'm currently working on creating high-quality technical content covering topics like:
+      <!-- The chronicle is being written -->
+      <div class="mx-auto max-w-3xl">
+        <div class="card-stone clip-rpg p-10 text-center md:p-12">
+          <i class="fas fa-feather-pointed mb-4 text-5xl text-amber" aria-hidden="true"></i>
+          <h2 class="font-medieval text-3xl text-parchment">The chronicle is being written</h2>
+          <p class="mx-auto mt-3 mb-8 max-w-xl font-body text-muted">
+            New entries are in the works. Tales currently being inked cover:
           </p>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-            <app-card variant="default">
-              <app-card-body>
-                <i class="fas fa-code text-blue-400 text-2xl mb-2"></i>
-                <h3 class="text-white font-semibold">Systems Programming</h3>
-                <p class="text-gray-400 text-sm">Rust, Go, and low-level development</p>
-              </app-card-body>
-            </app-card>
-            <app-card variant="default">
-              <app-card-body>
-                <i class="fas fa-balance-scale text-purple-400 text-2xl mb-2"></i>
-                <h3 class="text-white font-semibold">Cyber Law</h3>
-                <p class="text-gray-400 text-sm">Legal aspects of technology</p>
-              </app-card-body>
-            </app-card>
-            <app-card variant="default">
-              <app-card-body>
-                <i class="fas fa-network-wired text-green-400 text-2xl mb-2"></i>
-                <h3 class="text-white font-semibold">DevOps & Cloud</h3>
-                <p class="text-gray-400 text-sm">Kubernetes, Docker, and infrastructure</p>
-              </app-card-body>
-            </app-card>
-            <app-card variant="default">
-              <app-card-body>
-                <i class="fas fa-graduation-cap text-pink-400 text-2xl mb-2"></i>
-                <h3 class="text-white font-semibold">Best Practices</h3>
-                <p class="text-gray-400 text-sm">Software engineering principles</p>
-              </app-card-body>
-            </app-card>
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div class="card-stone p-5 text-left">
+              <i class="fas fa-microchip mb-2 text-2xl text-amber" aria-hidden="true"></i>
+              <h3 class="font-heading text-parchment">Systems Programming</h3>
+              <p class="font-body text-sm text-muted">Rust, Go, and low-level craft</p>
+            </div>
+            <div class="card-stone p-5 text-left">
+              <i class="fas fa-scale-balanced mb-2 text-2xl text-amber" aria-hidden="true"></i>
+              <h3 class="font-heading text-parchment">Cyber Law</h3>
+              <p class="font-body text-sm text-muted">The legal edge of technology</p>
+            </div>
+            <div class="card-stone p-5 text-left">
+              <i class="fas fa-network-wired mb-2 text-2xl text-amber" aria-hidden="true"></i>
+              <h3 class="font-heading text-parchment">DevOps &amp; Cloud</h3>
+              <p class="font-body text-sm text-muted">Kubernetes, Docker, infrastructure</p>
+            </div>
+            <div class="card-stone p-5 text-left">
+              <i class="fas fa-graduation-cap mb-2 text-2xl text-amber" aria-hidden="true"></i>
+              <h3 class="font-heading text-parchment">Best Practices</h3>
+              <p class="font-body text-sm text-muted">Software engineering principles</p>
+            </div>
           </div>
-          <p class="text-gray-500 text-sm">
-            <i class="fas fa-clock mr-2"></i>Check back soon for new content!
+          <p class="mt-8 font-mono text-xs uppercase tracking-widest text-muted">
+            <i class="fas fa-hourglass-half mr-2" aria-hidden="true"></i>Return soon for new entries
           </p>
         </div>
       </div>

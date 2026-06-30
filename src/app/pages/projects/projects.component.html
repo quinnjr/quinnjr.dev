@@ -1,126 +1,87 @@
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900">
-  <div class="container mx-auto px-4 py-12">
+<div class="tavern-shell">
+  <div class="container mx-auto px-4 py-16">
     <!-- Header -->
-    <div class="text-center mb-16">
-      <h1
-        class="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-purple-400 to-pink-400"
-      >
-        Projects & Work
-      </h1>
-      <p class="text-xl text-gray-400 max-w-2xl mx-auto">
-        {{ repositories().length }} open-source projects spanning web development, systems
-        programming, bioinformatics, and more
+    <header class="tavern-head">
+      <p class="tavern-eyebrow">The Workshop</p>
+      <h1 class="tavern-title">Crafted Works</h1>
+      <p class="tavern-subtitle">
+        {{ repositories().length }} open-source creations — forged across web, systems programming,
+        bioinformatics, and the deeper arcana of code.
       </p>
-    </div>
+    </header>
 
-    <!-- Loading State -->
+    <!-- Loading -->
     @if (loading()) {
-      <div class="flex justify-center items-center py-20">
-        <div class="text-center">
-          <div
-            class="w-16 h-16 border-4 border-gray-700 border-t-blue-500 rounded-full animate-spin mx-auto mb-4"
-          ></div>
-          <p class="text-gray-400">Loading projects from GitHub...</p>
-        </div>
+      <div class="flex flex-col items-center justify-center py-24 text-center">
+        <div class="forge-spinner" aria-hidden="true"></div>
+        <p class="mt-4 font-mono text-sm text-muted">Summoning works from the GitHub forge…</p>
       </div>
     }
 
-    <!-- Error State -->
+    <!-- Error -->
     @if (error()) {
-      <div class="max-w-2xl mx-auto p-6 bg-red-900/20 border border-red-500 rounded-xl text-center">
-        <i class="fas fa-exclamation-triangle text-red-400 text-3xl mb-4"></i>
-        <h3 class="text-xl font-bold text-white mb-2">Failed to Load Projects</h3>
-        <p class="text-gray-400">{{ error() }}</p>
+      <div class="card-stone mx-auto max-w-xl p-8 text-center">
+        <i class="fas fa-triangle-exclamation mb-3 text-3xl text-amber" aria-hidden="true"></i>
+        <h3 class="font-heading text-xl text-parchment">The forge is cold</h3>
+        <p class="mt-2 font-body text-muted">{{ error() }}</p>
       </div>
     }
 
-    <!-- Projects Grid -->
+    <!-- Grid -->
     @if (!loading() && !error()) {
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         @for (repo of repositories(); track repo.name) {
-          <app-card variant="default" classOverride="group">
-            <app-card-body>
-              <div class="flex items-start justify-between mb-4">
-                @if (repo.stargazerCount > 0) {
-                  <div class="flex items-center gap-2">
-                    <i
-                      class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
-                        getColorForRepo(repo)
-                      }}-400"
-                    ></i>
-                    <i class="fas fa-star text-yellow-400 text-sm"></i>
-                  </div>
-                } @else {
-                  <i
-                    class="fas {{ getIconForRepo(repo) }} text-3xl text-{{
-                      getColorForRepo(repo)
-                    }}-400"
-                  ></i>
-                }
-                <a
-                  [href]="repo.url"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="text-gray-500 text-xl hover:text-{{
-                    getColorForRepo(repo)
-                  }}-400 transition-colors"
-                >
-                  <i class="fab fa-github"></i>
-                </a>
-              </div>
-              <h3 class="text-xl font-bold text-white mb-2">{{ getDisplayName(repo.name) }}</h3>
-              <p class="text-gray-400 mb-4">
-                {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
-                @if (repo.stargazerCount > 0) {
-                  <span
-                    >({{ repo.stargazerCount }}
-                    {{ repo.stargazerCount === 1 ? 'star' : 'stars' }})</span
-                  >
-                }
-              </p>
+          <a
+            [href]="repo.url"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="card-stone group flex flex-col p-6"
+          >
+            <div class="mb-4 flex items-start justify-between">
+              <i
+                class="fas {{
+                  getIconForRepo(repo)
+                }} text-3xl text-amber group-hover:text-amber-bright"
+                aria-hidden="true"
+              ></i>
+              <span class="text-muted transition-colors group-hover:text-amber">
+                <i class="fab fa-github text-lg" aria-hidden="true"></i>
+              </span>
+            </div>
+            <h3 class="font-heading text-lg text-parchment">{{ getDisplayName(repo.name) }}</h3>
+            <p class="mt-2 flex-1 font-body text-sm text-muted">
+              {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
+            </p>
+            <div class="mt-4 flex flex-wrap items-center gap-2">
               @if (repo.primaryLanguage) {
-                <div class="flex flex-wrap gap-2">
-                  <app-badge
-                    [variant]="
-                      getColorForRepo(repo) === 'blue'
-                        ? 'primary'
-                        : getColorForRepo(repo) === 'purple'
-                          ? 'secondary'
-                          : getColorForRepo(repo) === 'green'
-                            ? 'success'
-                            : getColorForRepo(repo) === 'yellow' ||
-                                getColorForRepo(repo) === 'orange'
-                              ? 'warning'
-                              : getColorForRepo(repo) === 'red'
-                                ? 'danger'
-                                : 'info'
-                    "
-                    badgeStyle="soft"
-                  >
-                    {{ repo.primaryLanguage.name }}
-                  </app-badge>
-                </div>
+                <span class="badge-token">{{ repo.primaryLanguage.name }}</span>
               }
-            </app-card-body>
-          </app-card>
+              @if (repo.stargazerCount > 0) {
+                <span class="hud-stat">
+                  <i class="fas fa-star text-amber" aria-hidden="true"></i>
+                  <span>{{ repo.stargazerCount }}</span>
+                </span>
+              }
+            </div>
+          </a>
         }
       </div>
     }
 
-    <!-- Call to Action -->
-    <div
-      class="text-center p-12 bg-gradient-to-br from-blue-900/20 to-purple-900/20 rounded-2xl border border-gray-700"
-    >
-      <i class="fab fa-github text-6xl text-gray-400 mb-6"></i>
-      <h2 class="text-3xl font-bold text-white mb-4">Explore More on GitHub</h2>
-      <p class="text-gray-400 mb-8 max-w-2xl mx-auto">
-        Visit my GitHub profile to see all my public repositories, contributions, and collaborative
-        work
+    <!-- Call to action -->
+    <div class="card-stone mt-14 p-10 text-center">
+      <i class="fab fa-github mb-4 text-5xl text-amber/70" aria-hidden="true"></i>
+      <h2 class="font-medieval text-2xl text-parchment">More in the Arcane Repository</h2>
+      <p class="mx-auto mt-3 mb-7 max-w-xl font-body text-muted">
+        Every public repository, contribution, and collaboration is kept in the open on GitHub.
       </p>
-      <a href="https://github.com/quinnjr" target="_blank" rel="noopener noreferrer">
-        <app-button variant="primary" size="lg">
-          <i class="fab fa-github mr-2"></i>View GitHub Profile
-        </app-button>
+      <a
+        href="https://github.com/quinnjr"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-rpg btn-rpg-primary"
+      >
+        <i class="fab fa-github" aria-hidden="true"></i> Visit GitHub
       </a>
     </div>
   </div>

@@ -1,26 +1,12 @@
-import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { ActivatedRoute, RouterOutlet } from '@angular/router';
-import { map, Observable } from 'rxjs';
-
-import { slideInAnimation } from './animations';
-import { NavigationComponent } from './components/navigation/navigation.component';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, NavigationComponent],
+  imports: [RouterOutlet],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
-  animations: [slideInAnimation],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AppComponent {
-  private activatedRoute = inject(ActivatedRoute);
-
-  public getRouteAnimationData(): Observable<string | undefined> {
-    return this.activatedRoute.data.pipe(
-      map((data: Record<string, unknown>) => data['animation'] as string | undefined)
-    );
-  }
-}
+export class AppComponent {}

@@ -11,8 +11,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 
-import { CardComponent, CardBodyComponent } from '../../shared/components/ui';
-
 const PUBLISHED_POSTS = gql`
   query PublishedPosts {
     publishedPosts {
@@ -36,7 +34,7 @@ interface PublishedPost {
 @Component({
   selector: 'app-articles',
   standalone: true,
-  imports: [CommonModule, RouterLink, CardComponent, CardBodyComponent],
+  imports: [CommonModule, RouterLink],
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

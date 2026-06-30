@@ -1,6 +1,7 @@
 .character-sheet {
   min-height: 100vh;
-  background: var(--bg-void, #0a0a0f);
+  // Transparent — the fixed site backdrop shows through.
+  background: transparent;
   padding-top: 1rem;
 }
 
