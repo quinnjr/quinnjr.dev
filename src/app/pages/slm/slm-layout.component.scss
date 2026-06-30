@@ -1,0 +1,3 @@
+/* Grimoire styling lives in global styles.scss (.grimoire / .manifesto-prose)
+   so it can reach the chapter prose projected through <router-outlet>, which
+   Angular's emulated view encapsulation would otherwise wall off. */

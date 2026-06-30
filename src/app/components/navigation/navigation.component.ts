@@ -34,6 +34,11 @@ export class NavigationComponent {
       icon: 'fas fa-book-open',
     },
     {
+      title: 'SLM Manifesto',
+      link: '/slm',
+      icon: 'fas fa-book-skull',
+    },
+    {
       title: 'Guild Hall',
       link: 'https://www.linkedin.com/in/quinnjosephr/',
       icon: 'fas fa-users',

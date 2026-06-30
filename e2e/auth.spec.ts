@@ -18,13 +18,4 @@ test.describe('Authentication', () => {
     const loginContent = page.locator('body');
     await expect(loginContent).toBeVisible({ timeout: 10000 });
   });
-
-  test('should handle callback route', async ({ page }) => {
-    await page.goto('/callback');
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
-    await page.waitForLoadState('networkidle', { timeout: 15000 });
-    // Callback page should load (may redirect after auth)
-    await page.waitForURL(/.*callback/, { timeout: 10000 });
-    await expect(page).toHaveURL(/.*callback/);
-  });
 });

@@ -28,9 +28,11 @@ describe('BlogEditorComponent', () => {
   it('sends UpdatePost mutation in edit mode', () => {
     const fixture = TestBed.createComponent(BlogEditorComponent);
     const cmp = fixture.componentInstance;
+    // Set edit state AFTER detectChanges: ngOnInit derives postId from the route
+    // param (absent here) and would otherwise clobber a value set beforehand.
+    fixture.detectChanges();
     cmp.isEditMode = true;
     cmp.postId = 'existing-id';
-    fixture.detectChanges();
     cmp.postForm.patchValue({ title: 'Updated', content: '<p>New content</p>' });
     cmp.onSubmit();
     const op = controller.expectOne('UpdatePost');
@@ -46,7 +48,7 @@ describe('BlogEditorComponent', () => {
     // Leave form empty (invalid)
     cmp.onSubmit();
     controller.expectNone('CreatePost');
-    expect(cmp.postForm.get('title')?.touched).toBeTrue();
+    expect(cmp.postForm.get('title')?.touched).toBe(true);
   });
 
   afterEach(() => controller.verify());
