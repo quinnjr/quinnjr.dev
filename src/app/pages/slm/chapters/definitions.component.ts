@@ -11,10 +11,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <h1>Definitions</h1>
 
       <p class="lede">
-        Before the argument continues, the terms in it need fixing in place. Anyone can read what
-        follows, but it is written with two readers in mind: the engineer who already has a working
-        sense of these words and wants the precise version I am using, and the investor sizing up
-        whether the thesis, and the person making it, are worth backing. Short, plain, and exact
+        Before the argument continues, the terms in it need fixing in place. Short, plain, and exact
         beats clever every time here.
       </p>
 
