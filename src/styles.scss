@@ -56,6 +56,30 @@
   --color-edge: rgba(201, 168, 76, 0.3);
   --color-edge-strong: rgba(201, 168, 76, 0.55);
 
+  /* ── Tailwind v4 utility tokens (enable @apply bg-void / text-hearth / etc.) ──
+     Only `--color-*` names generate bg-/text-/border-/from- utilities in v4, so the
+     background tones live here as solid colors meant to be used with opacity modifiers
+     (e.g. `bg-panel/85`, `border-amber/30`). The legacy --bg-* / --text-* vars above
+     stay as aliases so existing themed pages keep working unchanged. */
+  --color-void: #0a0a0f;
+  --color-deep: #050508;
+  --color-panel: #0a0a14;
+  --color-panel-hi: #0f0f1e;
+  --color-parchment-dim: #c4b8a0;
+  --color-hearth: #ff6b35;
+  --color-ember: #e25822;
+  --color-gold: #ffd700;
+  --color-brass: #b5a642;
+  --color-wood: #5c3317;
+  --color-wood-dark: #2d1810;
+  --color-wood-light: #8b4513;
+
+  /* Reusable shadow utilities (→ shadow-glow / shadow-elevation / shadow-fire) */
+  --shadow-glow: 0 0 20px rgba(201, 168, 76, 0.3);
+  --shadow-glow-strong: 0 0 30px rgba(201, 168, 76, 0.45);
+  --shadow-elevation: 0 10px 40px rgba(0, 0, 0, 0.7);
+  --shadow-fire: 0 0 40px rgba(226, 88, 34, 0.4), 0 0 80px rgba(226, 88, 34, 0.18);
+
   /* RPG backgrounds */
   --bg-primary: #0a0a0f;
   --bg-secondary: #0d0d18;
@@ -806,6 +830,93 @@
 
   .focus-within-highlight:focus-within {
     box-shadow: 0 0 0 3px var(--color-amber);
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Redesign primitives — @apply-driven theme classes (Tailwind v4)
+   Built entirely from theme tokens so the rebuilt pages (Crafted Works,
+   Chronicles, the Gatehouse / login, article reading view) stay on-theme with
+   almost no bespoke CSS. Consumed directly in component templates.
+   ══════════════════════════════════════════════════════════════════════════ */
+@layer components {
+  /* ── Page scaffolding ─────────────────────────────────────────────────── */
+  .tavern-shell {
+    @apply min-h-screen w-full bg-void;
+  }
+  .tavern-head {
+    @apply mx-auto mb-14 max-w-3xl text-center;
+  }
+  .tavern-eyebrow {
+    @apply font-mono text-xs uppercase text-ice;
+    letter-spacing: 0.35em;
+  }
+  .tavern-title {
+    @apply mt-3 mb-4 font-medieval text-parchment;
+    font-size: clamp(2.2rem, 5vw, 3.4rem);
+    line-height: 1.06;
+    text-shadow: 0 0 36px rgba(201, 168, 76, 0.18);
+  }
+  .tavern-subtitle {
+    @apply mx-auto font-body text-muted;
+    font-size: 1.12rem;
+    max-width: 40rem;
+  }
+
+  /* ── Beveled corner helper (RPG plate edge) ───────────────────────────── */
+  .clip-rpg {
+    clip-path: polygon(
+      10px 0,
+      100% 0,
+      100% calc(100% - 10px),
+      calc(100% - 10px) 100%,
+      0 100%,
+      0 10px
+    );
+  }
+
+  /* ── Rune-etched form field (Gatehouse / login) ───────────────────────── */
+  .field-label {
+    @apply mb-2 block font-mono text-xs uppercase text-muted;
+    letter-spacing: 0.18em;
+  }
+  .field-rune {
+    @apply w-full border border-amber/25 bg-void/70 px-4 py-3 font-body text-parchment transition-colors;
+  }
+  .field-rune::placeholder {
+    @apply text-muted/70;
+  }
+  .field-rune:focus {
+    @apply border-amber outline-none;
+    box-shadow: var(--shadow-glow);
+  }
+
+  /* ── Quest / work entry row (Chronicles list, project links) ──────────── */
+  .quest-row {
+    @apply relative block border border-amber/20 bg-panel/80 p-6 transition-all;
+  }
+  .quest-row:hover {
+    @apply -translate-y-1 border-amber/55;
+    box-shadow: var(--shadow-elevation);
+  }
+
+  /* ── Themed long-form prose (article reading view) ────────────────────── */
+  .scroll-prose {
+    @apply font-body text-parchment/90;
+    font-size: 1.15rem;
+    line-height: 1.8;
+  }
+  .scroll-prose :is(h1, h2, h3) {
+    @apply font-heading text-amber;
+  }
+  .scroll-prose a {
+    @apply text-ice underline decoration-ice/40 underline-offset-4;
+  }
+  .scroll-prose :is(pre, code) {
+    @apply font-mono;
+  }
+  .scroll-prose pre {
+    @apply border border-amber/15 bg-deep/70 p-4;
   }
 }
 

@@ -4,72 +4,113 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
-import { ButtonComponent } from '../../shared/components/ui';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink, ButtonComponent],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div
-      class="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 py-12 px-4"
-    >
-      <div class="max-w-md w-full space-y-8">
-        <h2 class="text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-          Sign in to your account
-        </h2>
-        <form
-          [formGroup]="form"
-          (ngSubmit)="onSubmit()"
-          class="mt-8 space-y-6 bg-white dark:bg-gray-800 p-6 rounded-lg shadow-lg"
-        >
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >Email</label
-            >
-            <input
-              id="email"
-              type="email"
-              formControlName="email"
-              autocomplete="username"
-              class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
+    <div class="tavern-shell flex items-center justify-center px-4 py-16">
+      <div class="w-full max-w-md">
+        <div class="card-stone clip-rpg p-8">
+          <div class="flex flex-col items-center text-center">
+            <div class="login-sigil" aria-hidden="true"><i class="fas fa-lock"></i></div>
+            <p class="tavern-eyebrow mt-5">Restricted Passage</p>
+            <h1 class="login-title">The Gatehouse</h1>
+            <p class="mt-2 font-body text-muted">Speak the words to pass.</p>
           </div>
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 dark:text-gray-300"
-              >Password</label
+
+          <form [formGroup]="form" (ngSubmit)="onSubmit()" class="mt-8 space-y-5">
+            <div>
+              <label for="email" class="field-label">Email</label>
+              <input
+                id="email"
+                type="email"
+                formControlName="email"
+                autocomplete="username"
+                class="field-rune"
+                placeholder="you@realm.dev"
+              />
+            </div>
+            <div>
+              <label for="password" class="field-label">Password</label>
+              <input
+                id="password"
+                type="password"
+                formControlName="password"
+                autocomplete="current-password"
+                class="field-rune"
+                placeholder="••••••••"
+              />
+            </div>
+            @if (error()) {
+              <p class="login-error" role="alert">
+                <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>{{ error() }}
+              </p>
+            }
+            <button
+              type="submit"
+              class="btn-rpg btn-rpg-primary w-full justify-center"
+              [disabled]="submitting()"
             >
-            <input
-              id="password"
-              type="password"
-              formControlName="password"
-              autocomplete="current-password"
-              class="mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
-            />
-          </div>
-          @if (error()) {
-            <p class="text-sm text-red-600">{{ error() }}</p>
-          }
-          <app-button
-            type="submit"
-            variant="primary"
-            size="lg"
-            [fullWidth]="true"
-            [disabled]="submitting()"
-          >
-            <i class="fas fa-lock mr-2"></i>{{ submitting() ? 'Signing in…' : 'Sign in' }}
-          </app-button>
-          <div class="text-center">
-            <a routerLink="/" class="text-sm font-medium text-blue-600 hover:text-blue-500">
-              <i class="fas fa-arrow-left mr-2"></i>Back to home
+              <i class="fas fa-key" aria-hidden="true"></i>
+              {{ submitting() ? 'Unbarring the door…' : 'Enter' }}
+            </button>
+          </form>
+
+          <div class="mt-7 text-center">
+            <a routerLink="/home" class="link-tavern">
+              <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>Back to the tavern
             </a>
           </div>
-        </form>
+        </div>
       </div>
     </div>
   `,
-  styles: [],
+  styles: [
+    `
+      .login-sigil {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 66px;
+        height: 66px;
+        color: var(--color-amber);
+        font-size: 1.5rem;
+        background: radial-gradient(circle, rgba(201, 168, 76, 0.16), transparent 70%);
+        border: 1px solid var(--color-edge-strong);
+        box-shadow: var(--shadow-glow);
+        clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
+      }
+
+      .login-title {
+        font-family: var(--font-medieval), serif;
+        font-weight: 700;
+        font-size: 2rem;
+        color: var(--color-parchment);
+        text-shadow: 0 0 30px rgba(201, 168, 76, 0.25);
+        margin-top: 0.4rem;
+      }
+
+      .login-error {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.6rem 0.85rem;
+        font-family: var(--font-mono), monospace;
+        font-size: 0.8rem;
+        color: #ff8a7a;
+        background: rgba(255, 80, 60, 0.07);
+        border: 1px solid rgba(255, 120, 100, 0.35);
+      }
+
+      button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+    `,
+  ],
 })
 export class LoginComponent {
   private readonly fb = inject(FormBuilder);

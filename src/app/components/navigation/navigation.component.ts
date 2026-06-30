@@ -15,7 +15,7 @@ export class NavigationComponent {
   public navbarItems = signal([
     {
       title: 'Tavern',
-      link: '/',
+      link: '/home',
       icon: 'fas fa-fire',
     },
     {

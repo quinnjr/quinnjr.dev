@@ -85,14 +85,8 @@
         </svg>
       }
     </button>
-    <div
-      [class.hidden]="!isMenuOpen()"
-      class="w-full md:flex md:w-auto md:items-center md:gap-6"
-      id="navbar-default"
-    >
-      <ul
-        class="font-medium flex flex-col p-4 md:p-0 mt-4 border border-gray-800 rounded-lg bg-gray-800 md:flex-row md:gap-6 rtl:space-x-reverse md:mt-0 md:border-0 md:bg-transparent"
-      >
+    <div class="nav-menu-wrapper" [class.nav-menu-open]="isMenuOpen()" id="navbar-default">
+      <ul class="nav-menu">
         @for (item of navbarItems(); track $index) {
           <li>
             @if (item.external) {
@@ -101,24 +95,29 @@
                 target="_blank"
                 rel="noopener noreferrer"
                 (click)="closeMenu()"
-                class="block py-2 px-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-blue-400 transition-all duration-200 md:hover:bg-transparent md:p-0 whitespace-nowrap"
+                class="nav-link"
               >
-                <i [class]="item.icon" class="mr-2"></i>{{ item.title }}
+                <i [class]="item.icon" aria-hidden="true"></i><span>{{ item.title }}</span>
+                <i
+                  class="fas fa-arrow-up-right-from-square nav-external-mark"
+                  aria-hidden="true"
+                ></i>
               </a>
             } @else {
               <a
                 [routerLink]="item.link"
-                routerLinkActive="text-blue-400 bg-gray-800/50 md:bg-transparent"
+                routerLinkActive="nav-link-active"
                 (click)="closeMenu()"
-                class="block py-2 px-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-blue-400 transition-all duration-200 md:hover:bg-transparent md:p-0 whitespace-nowrap"
+                class="nav-link"
               >
-                <i [class]="item.icon" class="mr-2"></i>{{ item.title }}
+                <span class="nav-active-dot" aria-hidden="true"></span>
+                <i [class]="item.icon" aria-hidden="true"></i><span>{{ item.title }}</span>
               </a>
             }
           </li>
         }
       </ul>
-      <div class="md:flex md:ml-6">
+      <div class="nav-auth">
         <app-auth-button></app-auth-button>
       </div>
     </div>
