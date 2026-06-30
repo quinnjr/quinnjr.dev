@@ -21,14 +21,14 @@ describe('SlmLayoutComponent', () => {
   }
 
   it('first chapter has no prev and Principles as next', async () => {
-    const c = await layoutAt('/slm/preamble');
+    const c = await layoutAt('/slm/introduction');
     expect(c.prev()).toBeNull();
     expect(c.next()?.title).toBe('Principles');
   });
 
   it('middle chapter links to both neighbours', async () => {
     const c = await layoutAt('/slm/principles');
-    expect(c.prev()?.title).toBe('Preamble');
+    expect(c.prev()?.title).toBe('Introduction');
     expect(c.next()?.title).toBe('Practice');
   });
 

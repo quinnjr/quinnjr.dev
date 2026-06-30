@@ -13,9 +13,9 @@ export interface Chapter {
 
 export const CHAPTERS: readonly Chapter[] = [
   {
-    slug: 'preamble',
-    title: 'Preamble',
-    load: () => import('./chapters/preamble.component').then(m => m.PreambleComponent),
+    slug: 'introduction',
+    title: 'Introduction',
+    load: () => import('./chapters/introduction.component').then(m => m.IntroductionComponent),
   },
   {
     slug: 'principles',
