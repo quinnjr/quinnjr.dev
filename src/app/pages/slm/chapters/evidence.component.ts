@@ -193,6 +193,40 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         as. It is the more disciplined one.
       </p>
 
+      <h2>GPT-4 against DeepSeek V3, run cost to run cost</h2>
+
+      <p>
+        Set the two training runs already detailed in this chapter side by side, on the same
+        accounting basis, and the point lands harder than either figure does alone. DeepSeek's own
+        technical report puts V3 at 671 billion total parameters, 37 billion of them active per
+        token, trained on 14.8 trillion tokens using 2.788 million GPU-hours on the export-compliant
+        H800 chips described above. The R1 reinforcement learning pass added 294,000 dollars on top
+        of V3's 5.576 million dollar pretraining run, putting the full disclosed cost at roughly
+        5.87 million dollars. GPT-4's leaked figures describe a model with more than twice the total
+        parameters, roughly six times the active parameters, trained on a comparable volume of
+        tokens, using around twenty times the GPU-hours, at an estimated cost on the order of 100
+        million dollars.
+      </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="costComparisonData"
+        [options]="barOptions"
+        caption="Disclosed training-run cost, GPT-4 (estimated) vs DeepSeek V3 + R1 (officially disclosed)."
+      />
+
+      <p>
+        Both numbers describe the same thing: dollars of GPU time spent to produce one finished,
+        trained model. Neither side here is a marketing estimate dressed up as fact. DeepSeek's
+        figure comes from its own published technical report. GPT-4's comes from a leaked
+        architecture analysis, checked earlier in this chapter against the number OpenAI's own chief
+        executive declined to dispute. On that basis, training a model that would go on to tie a
+        current Google frontier release on SWE-bench Verified cost roughly seventeen times less than
+        training the model OpenAI has never confirmed the size of. That is not a rounding
+        difference. It is this manifesto's whole argument, expressed as one number divided by
+        another.
+      </p>
+
       <hr />
 
       <p>
@@ -276,6 +310,13 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >fortune.com</a
           >. Reports Altman's remarks on GPT-4's training cost and the end of scale-first model
           design, from an MIT event the same month.
+        </li>
+        <li>
+          <cite>DeepSeek-AI.</cite> "DeepSeek-V3 Technical Report." December 2024.
+          <a href="https://arxiv.org/abs/2412.19437" target="_blank" rel="noopener noreferrer"
+            >arXiv:2412.19437</a
+          >. The company's own disclosure of V3's 671 billion total and 37 billion active
+          parameters, its 14.8 trillion training tokens, and its 2.788 million H800 GPU-hours.
         </li>
       </ol>
     </div>
@@ -364,5 +405,18 @@ export class EvidenceComponent {
         grid: { color: GRID_COLOR },
       },
     },
+  };
+
+  protected readonly costComparisonData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['GPT-4 (OpenAI, estimated)', 'DeepSeek V3 + R1 (disclosed)'],
+    datasets: [
+      {
+        label: 'Training run cost ($M)',
+        data: [100, 5.87],
+        backgroundColor: [ICE_FILL, AMBER_FILL],
+        borderColor: [ICE_LINE, AMBER_LINE],
+        borderWidth: 1,
+      },
+    ],
   };
 }
