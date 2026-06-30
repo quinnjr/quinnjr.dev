@@ -2,6 +2,7 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ApolloTestingModule } from 'apollo-angular/testing';
 
 import { NavigationComponent } from './navigation.component';
 
@@ -11,7 +12,7 @@ describe('NavgiationComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [NavigationComponent],
+      imports: [NavigationComponent, ApolloTestingModule],
       providers: [provideHttpClient(), provideRouter([]), provideLocationMocks()],
     }).compileComponents();
 
