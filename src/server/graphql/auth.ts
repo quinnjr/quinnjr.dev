@@ -5,7 +5,6 @@ const key = secret ? new TextEncoder().encode(secret) : null;
 const EXPIRY = '7d';
 
 if (!key) {
-  // eslint-disable-next-line no-console
   console.warn('JWT_SECRET is not set — authentication is disabled (all tokens rejected).');
 }
 
