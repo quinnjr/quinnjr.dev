@@ -18,7 +18,7 @@ import { ButtonComponent } from '../../shared/components/ui';
           <span class="ml-2 hidden md:inline">Logout</span>
         </app-button>
       } @else {
-        <app-button (click)="goToLogin()" variant="primary" size="sm">
+        <app-button (click)="goToLogin()" variant="amber" size="sm">
           <i class="fas fa-sign-in-alt"></i>
           <span class="ml-2 hidden md:inline">Login</span>
         </app-button>

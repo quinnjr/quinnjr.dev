@@ -10,7 +10,8 @@ export type ButtonVariant =
   | 'info'
   | 'ghost'
   | 'outline'
-  | 'link';
+  | 'link'
+  | 'amber';
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -63,6 +64,8 @@ export class ButtonComponent {
       outline:
         'bg-transparent border-2 border-gray-700 text-gray-300 hover:border-blue-500 hover:text-blue-400 hover:shadow-lg hover:shadow-blue-500/30 focus:ring-blue-500',
       link: 'bg-transparent text-blue-400 hover:text-blue-300 hover:underline focus:ring-blue-500 px-0',
+      amber:
+        'bg-gradient-to-r from-amber-bright to-amber text-void border border-edge-strong hover:shadow-lg hover:shadow-amber/40 hover:-translate-y-0.5 focus:ring-amber',
     };
 
     const sizeClasses: Record<ButtonSize, string> = {
