@@ -228,6 +228,7 @@ export default tseslint.config(
       '**/coverage/**',
       '**/*.spec.ts',
       '**/generated/**',
+      '**/generated.ts',
       '**/.angular/**',
     ],
   }
