@@ -24,8 +24,13 @@ describe('NavgiationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 8 navigation items', () => {
-    expect(component.navbarItems().length).toBe(8);
+  it('should have 9 navigation items', () => {
+    expect(component.navbarItems().length).toBe(9);
+  });
+
+  it('should have SLM Manifesto link', () => {
+    const slmItem = component.navbarItems().find(item => item.title === 'SLM Manifesto');
+    expect(slmItem?.link).toBe('/slm');
   });
 
   it('should have Guild Hall (LinkedIn) link', () => {

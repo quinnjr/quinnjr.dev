@@ -1,0 +1,23 @@
+.chapter-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 1.5rem;
+}
+
+.chapter-nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  color: #93c5fd; // matches the blue-300 accent used elsewhere
+  transition: color 0.15s ease;
+
+  &:hover {
+    color: #bfdbfe;
+  }
+}
+
+.chapter-nav-next {
+  margin-left: auto;
+}
