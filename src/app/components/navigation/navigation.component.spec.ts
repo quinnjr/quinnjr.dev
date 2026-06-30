@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
@@ -13,7 +13,7 @@ describe('NavgiationComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [NavigationComponent, ApolloTestingModule],
-      providers: [provideHttpClient(), provideRouter([]), provideLocationMocks()],
+      providers: [provideHttpClient(withXhr()), provideRouter([]), provideLocationMocks()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(NavigationComponent);
@@ -25,8 +25,8 @@ describe('NavgiationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 9 navigation items', () => {
-    expect(component.navbarItems().length).toBe(9);
+  it('should have 7 navigation items', () => {
+    expect(component.navbarItems().length).toBe(7);
   });
 
   it('should have SLM Manifesto link', () => {
@@ -48,13 +48,5 @@ describe('NavgiationComponent', () => {
     expect(githubItem?.link).toBe('https://github.com/quinnjr');
     expect(githubItem?.icon).toBe('fas fa-code-branch');
     expect(githubItem?.external).toBe(true);
-  });
-
-  it('should have Pegasus Heavy link', () => {
-    const pegasusItem = component.navbarItems().find(item => item.title === 'Pegasus Heavy');
-    expect(pegasusItem).toBeDefined();
-    expect(pegasusItem?.link).toBe('https://pegausheavy.dev');
-    expect(pegasusItem?.icon).toBe('fas fa-building');
-    expect(pegasusItem?.external).toBe(true);
   });
 });

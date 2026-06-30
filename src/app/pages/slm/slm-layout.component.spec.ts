@@ -1,12 +1,18 @@
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
+import { ApolloTestingModule } from 'apollo-angular/testing';
 
 import { SlmLayoutComponent } from './slm-layout.component';
 
 describe('SlmLayoutComponent', () => {
   async function layoutAt(url: string): Promise<SlmLayoutComponent> {
     TestBed.configureTestingModule({
-      providers: [provideRouter([{ path: '**', component: SlmLayoutComponent }])],
+      imports: [ApolloTestingModule],
+      providers: [
+        provideRouter([{ path: '**', component: SlmLayoutComponent }]),
+        provideHttpClient(withXhr()),
+      ],
     });
     await TestBed.inject(Router).navigateByUrl(url);
     const fixture = TestBed.createComponent(SlmLayoutComponent);

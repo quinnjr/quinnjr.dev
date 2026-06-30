@@ -1,4 +1,4 @@
-import { provideHttpClient } from '@angular/common/http';
+import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideLocationMocks } from '@angular/common/testing';
 import { provideRouter } from '@angular/router';
 import { TestBed } from '@angular/core/testing';
@@ -9,7 +9,7 @@ describe('AppComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [AppComponent, ApolloTestingModule],
-      providers: [provideHttpClient(), provideRouter([]), provideLocationMocks()],
+      providers: [provideHttpClient(withXhr()), provideRouter([]), provideLocationMocks()],
     }).compileComponents();
   });
 
