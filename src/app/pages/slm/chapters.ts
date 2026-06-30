@@ -23,9 +23,9 @@ export const CHAPTERS: readonly Chapter[] = [
     load: () => import('./chapters/definitions.component').then(m => m.DefinitionsComponent),
   },
   {
-    slug: 'principles',
-    title: 'Principles',
-    load: () => import('./chapters/principles.component').then(m => m.PrinciplesComponent),
+    slug: 'evidence',
+    title: 'Evidence',
+    load: () => import('./chapters/evidence.component').then(m => m.EvidenceComponent),
   },
   {
     slug: 'practice',

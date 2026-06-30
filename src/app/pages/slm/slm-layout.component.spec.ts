@@ -29,18 +29,18 @@ describe('SlmLayoutComponent', () => {
   it('second chapter links to both neighbours', async () => {
     const c = await layoutAt('/slm/definitions');
     expect(c.prev()?.title).toBe('Introduction');
-    expect(c.next()?.title).toBe('Principles');
+    expect(c.next()?.title).toBe('Evidence');
   });
 
   it('third chapter links to both neighbours', async () => {
-    const c = await layoutAt('/slm/principles');
+    const c = await layoutAt('/slm/evidence');
     expect(c.prev()?.title).toBe('Definitions');
     expect(c.next()?.title).toBe('Practice');
   });
 
   it('last chapter has no next', async () => {
     const c = await layoutAt('/slm/practice');
-    expect(c.prev()?.title).toBe('Principles');
+    expect(c.prev()?.title).toBe('Evidence');
     expect(c.next()).toBeNull();
   });
 });
