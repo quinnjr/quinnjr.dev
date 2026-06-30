@@ -103,12 +103,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         fail," and within days said he would use Grok to "rewrite the entire corpus of human
         knowledge," asking the public to submit "divisive facts" for the model to be trained on.
         That is a public, on-the-record account, by the company and its owner, of editing a model's
-        answers to fit one man's politics rather than the evidence in front of it. Capability has
-        followed the same line. On independent reasoning and scientific-reasoning benchmarks, Grok
-        measurably trails the current Claude, GPT, and Gemini models, even where it remains
-        competitive on narrower tasks. A model edited toward one person's worldview and behind on
-        the benchmarks that matter most is not pushing any frontier. This manifesto declines to call
-        it one.
+        answers to fit one man's politics rather than the evidence in front of it. The same pattern
+        shows up in Grokipedia, the encyclopedia Grok itself was used to write. A November 2025
+        review by the fact-checking organization PolitiFact found pages crediting sources that did
+        not say what Grokipedia claimed they said, including an entry for the singer Feist that
+        invented a fact about her father's death and cited an unrelated 2017 article as the source,
+        a fabrication a basic citation check would have caught. Capability has followed the same
+        line. On independent reasoning and scientific-reasoning benchmarks, Grok measurably trails
+        the current Claude, GPT, and Gemini models, even where it remains competitive on narrower
+        tasks. A model that invents its own sources, edited toward one person's worldview, and
+        behind on the benchmarks that matter most is not pushing any frontier. This manifesto
+        declines to call it one.
       </p>
 
       <h2>Small language model</h2>
@@ -224,6 +229,17 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
             >lmcouncil.ai/benchmarks</a
           >. Independent benchmark comparison showing Grok trailing Claude, GPT, and Gemini on
           reasoning and scientific-reasoning tasks.
+        </li>
+        <li>
+          <cite>PolitiFact.</cite> "Musk's AI-powered Grokipedia: A Wikipedia spin-off with less
+          care to sourcing, accuracy." November 2025.
+          <a
+            href="https://www.politifact.com/article/2025/nov/12/Grokipedia-Wikipedia-AI-citations/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >politifact.com</a
+          >. The fact-check finding Grokipedia pages citing sources that did not support, or
+          contradicted, the claims attributed to them.
         </li>
       </ol>
     </div>
