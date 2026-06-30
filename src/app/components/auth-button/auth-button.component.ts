@@ -13,7 +13,7 @@ import { ButtonComponent } from '../../shared/components/ui';
   template: `
     <div class="flex items-center gap-2">
       @if (auth.isAuthenticated()) {
-        <app-button (click)="logout()" variant="danger" size="sm">
+        <app-button (click)="logout()" variant="ember" size="sm">
           <i class="fas fa-sign-out-alt"></i>
           <span class="ml-2 hidden md:inline">Logout</span>
         </app-button>

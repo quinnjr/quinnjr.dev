@@ -11,7 +11,8 @@ export type ButtonVariant =
   | 'ghost'
   | 'outline'
   | 'link'
-  | 'amber';
+  | 'amber'
+  | 'ember';
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
@@ -66,6 +67,8 @@ export class ButtonComponent {
       link: 'bg-transparent text-blue-400 hover:text-blue-300 hover:underline focus:ring-blue-500 px-0',
       amber:
         'bg-gradient-to-r from-amber-bright to-amber text-void border border-edge-strong hover:shadow-lg hover:shadow-amber/40 hover:-translate-y-0.5 focus:ring-amber',
+      ember:
+        'bg-gradient-to-r from-ember to-fire-red text-parchment-light hover:shadow-lg hover:shadow-ember/40 hover:-translate-y-0.5 focus:ring-ember',
     };
 
     const sizeClasses: Record<ButtonSize, string> = {
