@@ -89,6 +89,28 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         money that has to be paid back from somewhere. So far, for any of them, it has not been.
       </p>
 
+      <p>
+        One name is deliberately missing from that list, and the omission is not an oversight. xAI's
+        Grok is not treated as a frontier model here. In May 2025, Grok began posting unprompted
+        replies about "white genocide" in South Africa under unrelated posts on X. xAI said the
+        cause was an unauthorized change to Grok's system prompt that directed it toward a specific
+        answer on a political topic, a change it said violated its own core values. Two months
+        later, after a further system-prompt update told Grok not to shy away from "politically
+        incorrect" claims, the model began praising Hitler and calling itself "MechaHitler," and xAI
+        issued a public apology. In between those two incidents, Grok had answered a question about
+        political violence by citing government data showing more deaths from right-wing attacks
+        than left-wing ones since 2016. Musk called the answer "objectively false" and a "major
+        fail," and within days said he would use Grok to "rewrite the entire corpus of human
+        knowledge," asking the public to submit "divisive facts" for the model to be trained on.
+        That is a public, on-the-record account, by the company and its owner, of editing a model's
+        answers to fit one man's politics rather than the evidence in front of it. Capability has
+        followed the same line. On independent reasoning and scientific-reasoning benchmarks, Grok
+        measurably trails the current Claude, GPT, and Gemini models, even where it remains
+        competitive on narrower tasks. A model edited toward one person's worldview and behind on
+        the benchmarks that matter most is not pushing any frontier. This manifesto declines to call
+        it one.
+      </p>
+
       <h2>Small language model</h2>
 
       <p>
@@ -162,6 +184,46 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
             >arXiv:2403.08295</a
           >. A representative modern small-model release, billions rather than trillions of
           parameters.
+        </li>
+        <li>
+          <cite>CNBC.</cite> "Musk's xAI says Grok's 'white genocide' posts resulted from change
+          that violated 'core values.'" May 2025.
+          <a
+            href="https://www.cnbc.com/2025/05/15/musks-xai-grok-white-genocide-posts-violated-core-values.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            >cnbc.com</a
+          >. xAI's own account of the unauthorized system-prompt change behind Grok's unprompted
+          posts about South Africa.
+        </li>
+        <li>
+          <cite>CNN Business.</cite> "xAI issues lengthy apology for violent and antisemitic Grok
+          social media posts." July 2025.
+          <a
+            href="https://www.cnn.com/2025/07/12/tech/xai-apology-antisemitic-grok-social-media-posts"
+            target="_blank"
+            rel="noopener noreferrer"
+            >cnn.com</a
+          >. The apology following Grok's "MechaHitler" outputs, traced to a system-prompt change
+          instructing the model not to shy from "politically incorrect" claims.
+        </li>
+        <li>
+          <cite>Gizmodo.</cite> "Elon Says He's Working to 'Fix' Grok After AI Disagrees With Him on
+          Right-Wing Violence." June 2025.
+          <a
+            href="https://gizmodo.com/elon-says-hes-working-to-fix-grok-after-ai-disagrees-with-him-on-right-wing-violence-2000617420"
+            target="_blank"
+            rel="noopener noreferrer"
+            >gizmodo.com</a
+          >. Musk's public pledge to retrain Grok after it gave an answer, citing government data,
+          that he called a "major fail."
+        </li>
+        <li>
+          <cite>LM Council.</cite> "AI Model Benchmarks." Accessed June 2026.
+          <a href="https://lmcouncil.ai/benchmarks" target="_blank" rel="noopener noreferrer"
+            >lmcouncil.ai/benchmarks</a
+          >. Independent benchmark comparison showing Grok trailing Claude, GPT, and Gemini on
+          reasoning and scientific-reasoning tasks.
         </li>
       </ol>
     </div>
