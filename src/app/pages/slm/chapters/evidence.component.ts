@@ -1,10 +1,48 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { type ChartConfiguration } from 'chart.js';
+
+import { ManifestoChartComponent } from '../../../components/manifesto-chart/manifesto-chart.component';
+
+// Grimoire chart palette: amber for the Chinese open-weight labs this
+// chapter is arguing for, ice for the Western frontier labs it is arguing
+// against. Canvas fillStyle can't resolve CSS custom properties, so the
+// hex/rgba values are duplicated from src/styles.scss by hand.
+const AMBER_FILL = 'rgba(232, 196, 106, 0.85)';
+const AMBER_LINE = '#e8c46a';
+const ICE_FILL = 'rgba(74, 158, 255, 0.85)';
+const ICE_LINE = '#4a9eff';
+const MONO_FONT = "'Share Tech Mono', 'Courier New', monospace";
+const TICK_COLOR = '#c4b8a0';
+const LABEL_GEMINI = 'Gemini 3.1 Pro';
+const GRID_COLOR = 'rgba(201, 168, 76, 0.15)';
+
+const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: {
+      labels: { color: TICK_COLOR, font: { family: MONO_FONT, size: 11 } },
+    },
+  },
+  scales: {
+    x: {
+      ticks: { color: TICK_COLOR, font: { family: MONO_FONT, size: 10 } },
+      grid: { color: GRID_COLOR },
+    },
+    y: {
+      ticks: { color: TICK_COLOR, font: { family: MONO_FONT, size: 10 } },
+      grid: { color: GRID_COLOR },
+    },
+  },
+};
 
 @Component({
   selector: 'app-slm-evidence',
   standalone: true,
+  imports: [ManifestoChartComponent],
   // Evidence chapter. Mostly straight HTML projected into .manifesto-prose
   // (styled globally): .lede gets the illuminated initial, h2 marks sections.
+  // Chart data lives as class fields below, bound into <app-manifesto-chart>.
   template: `
     <div class="manifesto-prose">
       <p class="manifesto-sigil">Verse III &middot; Evidence</p>
@@ -26,17 +64,35 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         against Gemini 3.1 Pro at 93, GPT-5.4 Pro at 92, and Claude Opus 4.6 at 88. A six-point gap
         to the best closed model and a one-point gap to the third-best is not parity, but it is a
         long way from the gap a model trained on restricted hardware for a fraction of the budget
-        was supposed to leave. On SWE-bench Verified, the benchmark the field treats as the closest
-        thing to a real coding exam, DeepSeek V4 Pro Max scored 80.6 percent in June 2026, tied
-        exactly with Gemini 3.1 Pro's 80.6 percent, with Kimi K2.6 close behind at 80.2 percent and
-        Qwen3.7 Max at 80.4 percent. Claude Opus 4.8 and GPT-5.5 still lead that benchmark outright,
-        at 88.6 and 88.7 percent. But a Chinese open-weight model tying one of the three labs this
-        manifesto names as the frontier, on the benchmark that matters most for the work this
-        manifesto cares about, is not a footnote. On vendor and third-party tracked SWE-bench Pro
-        numbers, GLM-5.2 has been reported at 62.1 percent, ahead of GPT-5.5's own reported 58.6
-        percent. Code Arena's agentic web-development leaderboard, tracking 67 models as of April
-        2026, places GLM-5.1 third in the world and Kimi K2.6 sixth.
+        was supposed to leave.
       </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="compositeScoreData"
+        [options]="barOptions"
+        caption="BenchLM composite benchmark score, June 2026. Amber: Chinese open-weight models. Ice: Western frontier models."
+      />
+
+      <p>
+        On SWE-bench Verified, the benchmark the field treats as the closest thing to a real coding
+        exam, DeepSeek V4 Pro Max scored 80.6 percent in June 2026, tied exactly with Gemini 3.1
+        Pro's 80.6 percent, with Kimi K2.6 close behind at 80.2 percent and Qwen3.7 Max at 80.4
+        percent. Claude Opus 4.8 and GPT-5.5 still lead that benchmark outright, at 88.6 and 88.7
+        percent. But a Chinese open-weight model tying one of the three labs this manifesto names as
+        the frontier, on the benchmark that matters most for the work this manifesto cares about, is
+        not a footnote. On vendor and third-party tracked SWE-bench Pro numbers, GLM-5.2 has been
+        reported at 62.1 percent, ahead of GPT-5.5's own reported 58.6 percent. Code Arena's agentic
+        web-development leaderboard, tracking 67 models as of April 2026, places GLM-5.1 third in
+        the world and Kimi K2.6 sixth.
+      </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="sweBenchData"
+        [options]="barOptions"
+        caption="SWE-bench Verified score, June 2026. Amber: Chinese open-weight models. Ice: Western frontier models."
+      />
 
       <h2>The price</h2>
 
@@ -50,6 +106,13 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         manifesto's case for small and efficient models rests on, demonstrated at a scale no single
         engineer's benchmark could prove on its own.
       </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="pricingData"
+        [options]="pricingOptions"
+        caption="Price per million tokens, June 2026, logarithmic scale. Amber: Chinese open-weight model. Ice: Western frontier models."
+      />
 
       <h2>The capital, and the hardware it had to work with</h2>
 
@@ -145,4 +208,87 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class EvidenceComponent {}
+export class EvidenceComponent {
+  protected readonly barOptions = BASE_BAR_OPTIONS;
+
+  protected readonly compositeScoreData: ChartConfiguration<'bar'>['data'] = {
+    labels: [
+      'DeepSeek V4 Pro',
+      'GLM-5.1',
+      'Kimi K2.6',
+      'Qwen3.5',
+      'Claude Opus 4.6',
+      'GPT-5.4 Pro',
+      LABEL_GEMINI,
+    ],
+    datasets: [
+      {
+        label: 'BenchLM composite score',
+        data: [87, 83, 81, 79, 88, 92, 93],
+        backgroundColor: [
+          AMBER_FILL,
+          AMBER_FILL,
+          AMBER_FILL,
+          AMBER_FILL,
+          ICE_FILL,
+          ICE_FILL,
+          ICE_FILL,
+        ],
+        borderColor: [AMBER_LINE, AMBER_LINE, AMBER_LINE, AMBER_LINE, ICE_LINE, ICE_LINE, ICE_LINE],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  protected readonly sweBenchData: ChartConfiguration<'bar'>['data'] = {
+    labels: [
+      'DeepSeek V4 Pro Max',
+      LABEL_GEMINI,
+      'Qwen3.7 Max',
+      'Kimi K2.6',
+      'Claude Opus 4.8',
+      'GPT-5.5',
+    ],
+    datasets: [
+      {
+        label: 'SWE-bench Verified (%)',
+        data: [80.6, 80.6, 80.4, 80.2, 88.6, 88.7],
+        backgroundColor: [AMBER_FILL, ICE_FILL, AMBER_FILL, AMBER_FILL, ICE_FILL, ICE_FILL],
+        borderColor: [AMBER_LINE, ICE_LINE, AMBER_LINE, AMBER_LINE, ICE_LINE, ICE_LINE],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  protected readonly pricingData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['DeepSeek V4 Flash', LABEL_GEMINI, 'Claude Opus 4.8', 'GPT-5.5'],
+    datasets: [
+      {
+        label: 'Input $/M tokens',
+        data: [0.14, 2, 5, 5],
+        backgroundColor: AMBER_FILL,
+        borderColor: AMBER_LINE,
+        borderWidth: 1,
+      },
+      {
+        label: 'Output $/M tokens',
+        data: [0.28, 12, 25, 30],
+        backgroundColor: ICE_FILL,
+        borderColor: ICE_LINE,
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  protected readonly pricingOptions: ChartConfiguration<'bar'>['options'] = {
+    ...BASE_BAR_OPTIONS,
+    scales: {
+      x: BASE_BAR_OPTIONS?.scales?.['x'],
+      y: {
+        type: 'logarithmic',
+        ticks: { color: TICK_COLOR, font: { family: MONO_FONT, size: 10 } },
+        grid: { color: GRID_COLOR },
+      },
+    },
+  };
+}

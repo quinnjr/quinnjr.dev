@@ -1224,6 +1224,32 @@
     color: var(--color-amber-bright);
   }
 
+  /* Embedded data charts */
+  .manifesto-prose .manifesto-chart {
+    margin: 2rem 0;
+    padding: 1.5rem;
+  }
+  .manifesto-chart-canvas {
+    position: relative;
+    height: 320px;
+  }
+  .manifesto-chart-fallback {
+    margin: 0;
+    padding: 2rem 0;
+    text-align: center;
+    font-family: var(--font-mono);
+    font-size: 0.85rem;
+    color: var(--color-muted);
+  }
+  .manifesto-prose .manifesto-chart figcaption {
+    margin: 0.85rem 0 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    letter-spacing: 0.02em;
+    color: var(--color-muted);
+    text-align: center;
+  }
+
   /* ── Page-turn navigation ────────────────────────────────────────────── */
   .grimoire-pagination {
     display: flex;
