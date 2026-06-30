@@ -1,6 +1,6 @@
 // src/server/graphql/resolvers/blog.queries.ts
 import { builder } from '../builder';
-import { meetsMinimumRole } from '../context';
+import { meetsMinimumRole, requireUser } from '../context';
 import { PostStatus } from '../types';
 
 builder.queryType({
@@ -56,7 +56,7 @@ builder.queryType({
           ...query,
           where: {
             ...(args.status ? { status: args.status } : {}),
-            ...(meetsMinimumRole(ctx.user, 'EDITOR') ? {} : { authorId: ctx.user!.id }),
+            ...(meetsMinimumRole(ctx.user, 'EDITOR') ? {} : { authorId: requireUser(ctx).id }),
           },
           orderBy: { updatedAt: 'desc' },
         }),

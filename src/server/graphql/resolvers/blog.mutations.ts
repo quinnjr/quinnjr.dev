@@ -1,7 +1,7 @@
 // src/server/graphql/resolvers/blog.mutations.ts
 import { type CreateBlogPostDto, type UpdateBlogPostDto } from '../../services/blog.service';
 import { builder } from '../builder';
-import { meetsMinimumRole } from '../context';
+import { meetsMinimumRole, requireUser } from '../context';
 import { rethrowAsGraphQLError } from '../errors';
 import { PostStatus } from '../types';
 
@@ -65,7 +65,7 @@ builder.mutationType({
             ...args.input,
             seoKeywords: args.input.seoKeywords ?? undefined,
             tagIds: args.input.tagIds ?? undefined,
-            authorId: ctx.user!.id,
+            authorId: requireUser(ctx).id,
           } as CreateBlogPostDto);
         } catch (e) {
           rethrowAsGraphQLError(e);
@@ -89,7 +89,7 @@ builder.mutationType({
           rethrowAsGraphQLError(new Error('Post not found'));
         }
         // Authors may only edit their own posts; editors and above may edit any.
-        if (!meetsMinimumRole(ctx.user, 'EDITOR') && existing.authorId !== ctx.user!.id) {
+        if (!meetsMinimumRole(ctx.user, 'EDITOR') && existing.authorId !== requireUser(ctx).id) {
           rethrowAsGraphQLError(new Error('You can only edit your own posts'));
         }
         try {
