@@ -259,6 +259,41 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         petabyte.
       </p>
 
+      <h2>What I pay instead</h2>
+
+      <p>
+        Every figure above describes someone else's bill. Mine is easy to put a number on by
+        comparison. The DGX Spark in my closet, the same one running the Qwen coding model mentioned
+        in Evidence, draws a peak of 240 watts and, measured under real inference load on an
+        identical unit, an average closer to 50. Left running for a year at the 2026 national
+        average US residential rate, 18.7 cents a kilowatt-hour, that is somewhere between 82
+        dollars a year at realistic load and 393 dollars a year if it ran flat out, continuously,
+        all year, which it does not. Add the 3,999 dollar purchase price as a one-time cost and the
+        first year runs a little over 4,000 dollars. Every year after that runs under 400.
+      </p>
+
+      <app-manifesto-math
+        [displayMode]="true"
+        tex="50\\text{ W} \\times 8760\\text{ h} \\times \\$0.187/\\text{kWh} \\approx \\$82/\\text{yr}"
+      />
+
+      <p>
+        Epoch AI's gigawatt campus, the same model cited earlier in this chapter, prices the energy
+        alone, not the building, not the servers, just the electricity, at 0.6 billion dollars a
+        year. That is roughly 1.5 million times what my closet costs to run at the worst-case,
+        continuous-peak estimate, and more than 7 million times what it costs running the way it
+        actually runs. The frontier and the small machine in my closet are not on the same cost
+        curve, not by a factor that rounds to anything. They are not the same kind of expense at
+        all.
+      </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="closetVsCampusData"
+        [options]="logScaleBarOptions"
+        caption="Annual energy cost, logarithmic scale. A personal DGX Spark, realistic load, against Epoch AI's one-gigawatt AI campus model."
+      />
+
       <hr />
 
       <p>
@@ -333,6 +368,24 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >jll.com</a
           >. Standard and AI-optimized datacenter construction cost per megawatt.
         </li>
+        <li>
+          <cite>NVIDIA.</cite> "Personal AI Supercomputer Powered by Blackwell: DGX Spark." 2026.
+          <a
+            href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >nvidia.com</a
+          >. DGX Spark's price and 240-watt peak system power rating.
+        </li>
+        <li>
+          <cite>U.S. Energy Information Administration.</cite> "Electric Power Monthly." 2026.
+          <a
+            href="https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_a"
+            target="_blank"
+            rel="noopener noreferrer"
+            >eia.gov</a
+          >. The 18.7 cents per kilowatt-hour average US residential electricity rate used above.
+        </li>
       </ol>
     </div>
   `,
@@ -378,5 +431,30 @@ export class CostsComponent {
         borderWidth: 1,
       },
     ],
+  };
+
+  protected readonly closetVsCampusData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['DGX Spark (closet, realistic load)', 'Gigawatt AI campus (energy only)'],
+    datasets: [
+      {
+        label: 'Annual energy cost ($)',
+        data: [82, 600_000_000],
+        backgroundColor: [AMBER_FILL, ICE_FILL],
+        borderColor: [AMBER_LINE, ICE_LINE],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  protected readonly logScaleBarOptions: ChartConfiguration<'bar'>['options'] = {
+    ...BASE_BAR_OPTIONS,
+    scales: {
+      x: BASE_BAR_OPTIONS?.scales?.['x'],
+      y: {
+        type: 'logarithmic',
+        ticks: { color: TICK_COLOR, font: { family: MONO_FONT, size: 10 } },
+        grid: { color: GRID_COLOR },
+      },
+    },
   };
 }
