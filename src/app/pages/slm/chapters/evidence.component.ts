@@ -148,6 +148,48 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         benchmark.
       </p>
 
+      <h2>The objective with no terminal point</h2>
+
+      <p>
+        Every number in this chapter so far explains a price difference. This section explains why
+        one side of that comparison keeps paying it. A small model trained for a defined task has an
+        external target: clear a benchmark score, hit a latency budget, handle a domain at an
+        acceptable error rate. Once that target is cleared, more training is measurable waste, and a
+        lab can point at the number and say spending further here no longer pays. Artificial general
+        intelligence has no equivalent target, because general intelligence has never been given an
+        operational definition. There is no benchmark a frontier lab clears that ends the project,
+        because the field invents a harder benchmark the moment the old one stops discriminating
+        between models. Humanity's Last Exam exists for exactly this reason. It was built in 2025
+        because models had pushed past ninety percent on the benchmarks that came before it, MMLU
+        among them, and a saturated benchmark stops being able to tell anyone anything. The new exam
+        will saturate too. Another one will follow it. That is not a flaw in the benchmarking
+        process. It is what an open-ended objective looks like from the outside.
+      </p>
+
+      <p>
+        This manifesto has already made the economic version of this argument twice, without naming
+        the mechanism behind it. The introduction calls scale-chasing a bill that arrives every
+        quarter and never comes due. The definition of a frontier model earlier in this manifesto
+        calls it a moving target by definition, never a fixed product. Both observations describe
+        the same fact from different angles. An objective with no stopping rule produces a capital
+        commitment with no stopping rule. A lab chasing a fixed target can be defunded the moment
+        the target is reached, or the moment it becomes clear the target will not be reached on the
+        money already spent. A lab chasing general intelligence has no such moment available to it,
+        because there is no fixed target whose achievement, or failure, a board or an investor could
+        point to and call it settled.
+      </p>
+
+      <p>
+        The honest counter to this argument is that a hundred small models with a hundred bounded
+        objectives are not obviously different from one large model with none, since in aggregate
+        the spending might look similar from a distance. It is different, and the difference is the
+        whole point. Each of those hundred bounded efforts can be judged, funded, and killed on its
+        own terms, the moment it proves out or fails. None of that capital is hostage to a
+        definition that does not exist. The trillion-parameter program has no equivalent off-ramp.
+        It can only ever be funded again, on the promise that the next run is the one that finally
+        arrives.
+      </p>
+
       <h2>What the trillion-parameter frontier actually spent</h2>
 
       <p>
@@ -325,6 +367,14 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >arXiv:2412.19437</a
           >. The company's own disclosure of V3's 671 billion total and 37 billion active
           parameters, its 14.8 trillion training tokens, and its 2.788 million H800 GPU-hours.
+        </li>
+        <li>
+          <cite>Phan, L. et al.</cite> "Humanity's Last Exam." Center for AI Safety and Scale AI,
+          January 2025.
+          <a href="https://arxiv.org/abs/2501.14249" target="_blank" rel="noopener noreferrer"
+            >arXiv:2501.14249</a
+          >. Built after MMLU and similar benchmarks saturated above ninety percent accuracy, the
+          example this chapter uses for benchmark goalposts that move as soon as they are cleared.
         </li>
       </ol>
     </div>
