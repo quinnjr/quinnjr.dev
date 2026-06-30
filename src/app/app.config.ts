@@ -3,6 +3,7 @@ import { type ApplicationConfig, provideZoneChangeDetection } from '@angular/cor
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter } from '@angular/router';
 import { provideApollo } from 'apollo-angular';
+import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
 
 import { routes } from './app.routes';
 import { apolloOptionsFactory } from './graphql/apollo.config';
@@ -16,6 +17,7 @@ export const appConfig: ApplicationConfig = {
     provideAnimations(),
     provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     provideApollo(apolloOptionsFactory),
+    provideCharts(withDefaultRegisterables()),
     FlowbiteService,
   ],
 };
