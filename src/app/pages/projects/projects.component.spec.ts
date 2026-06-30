@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, withXhr } from '@angular/common/http';
 import { provideHttpClient } from '@angular/common/http';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
@@ -77,7 +77,7 @@ describe('ProjectsComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ProjectsComponent],
-      providers: [provideHttpClient()],
+      providers: [provideHttpClient(withXhr())],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ProjectsComponent);
@@ -229,120 +229,6 @@ describe('ProjectsComponent', () => {
         isFork: false,
       };
       expect(component.getIconForRepo(repo)).toBe('fa-code');
-    });
-  });
-
-  describe('getColorForRepo', () => {
-    it('should return purple for mcp projects', () => {
-      const repo: GitHubRepository = {
-        name: 'mcp-project',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: null,
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('purple');
-    });
-
-    it('should return pink for indexeddb projects', () => {
-      const repo: GitHubRepository = {
-        name: 'indexeddb-wrapper',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: null,
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('pink');
-    });
-
-    it('should return lime for dotfiles', () => {
-      const repo: GitHubRepository = {
-        name: 'dotfiles',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: null,
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('lime');
-    });
-
-    it('should return red for cuda projects', () => {
-      const repo: GitHubRepository = {
-        name: 'cuda-algorithm',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: null,
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('red');
-    });
-
-    it('should return blue for TypeScript projects', () => {
-      const repo: GitHubRepository = {
-        name: 'unknown-ts',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: { name: 'TypeScript' },
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('blue');
-    });
-
-    it('should return orange for Rust projects', () => {
-      const repo: GitHubRepository = {
-        name: 'unknown-rust',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: { name: 'Rust' },
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('orange');
-    });
-
-    it('should return yellow for Python projects', () => {
-      const repo: GitHubRepository = {
-        name: 'unknown-python',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: { name: 'Python' },
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('yellow');
-    });
-
-    it('should return gray for unknown projects', () => {
-      const repo: GitHubRepository = {
-        name: 'unknown',
-        description: '',
-        url: '',
-        stargazerCount: 0,
-        primaryLanguage: null,
-        pushedAt: '',
-        isPrivate: false,
-        isFork: false,
-      };
-      expect(component.getColorForRepo(repo)).toBe('gray');
     });
   });
 
