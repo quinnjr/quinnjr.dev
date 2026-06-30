@@ -82,7 +82,7 @@ const UPDATE_POST = gql`
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   URL:
                   <span class="font-mono text-blue-600 dark:text-blue-400">
-                    /blog/{{ generateSlug(postForm.get('title')?.value) }}
+                    /blog/{{ generateSlug($safeNavigationMigration(postForm.get('title')?.value)) }}
                   </span>
                 </p>
               </div>

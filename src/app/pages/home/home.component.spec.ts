@@ -8,6 +8,22 @@ describe('HomeComponent', () => {
   let component: HomeComponent;
   let fixture: ComponentFixture<HomeComponent>;
 
+  // jsdom does not implement IntersectionObserver, which ScrollRevealService
+  // instantiates on the browser platform.
+  beforeAll(() => {
+    globalThis.IntersectionObserver ??= class {
+      readonly root = null;
+      readonly rootMargin = '';
+      readonly thresholds: ReadonlyArray<number> = [];
+      observe(): void {}
+      unobserve(): void {}
+      disconnect(): void {}
+      takeRecords(): IntersectionObserverEntry[] {
+        return [];
+      }
+    } as unknown as typeof IntersectionObserver;
+  });
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [HomeComponent],

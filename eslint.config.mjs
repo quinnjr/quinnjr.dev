@@ -59,7 +59,6 @@ export default tseslint.config(
       ],
       '@angular-eslint/no-empty-lifecycle-method': 'error',
       '@angular-eslint/use-lifecycle-interface': 'error',
-      '@angular-eslint/no-conflicting-lifecycle': 'error',
       '@angular-eslint/use-component-view-encapsulation': 'warn',
       '@angular-eslint/prefer-on-push-component-change-detection': 'warn',
       '@angular-eslint/no-output-on-prefix': 'error',
