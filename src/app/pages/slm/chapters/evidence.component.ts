@@ -227,6 +227,14 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         another.
       </p>
 
+      <p>
+        None of this is abstract to me. I write code on Claude Code most days, and I also keep a
+        Qwen coding model running locally on an Nvidia Spark on my desk. The local model takes the
+        routine work, scaffolding, mechanical refactors, the parts of the job that do not need a
+        frontier model's judgment, and every task it handles is a task Claude Code never bills me
+        for. The savings are not a thought experiment. They show up on my own invoice.
+      </p>
+
       <hr />
 
       <p>
