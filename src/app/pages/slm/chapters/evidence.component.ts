@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { type ChartConfiguration } from 'chart.js';
 
 import { ManifestoChartComponent } from '../../../components/manifesto-chart/manifesto-chart.component';
+import { ManifestoMathComponent } from '../../../components/manifesto-math/manifesto-math.component';
 
 // Grimoire chart palette: amber for the Chinese open-weight labs this
 // chapter is arguing for, ice for the Western frontier labs it is arguing
@@ -39,7 +40,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 @Component({
   selector: 'app-slm-evidence',
   standalone: true,
-  imports: [ManifestoChartComponent],
+  imports: [ManifestoChartComponent, ManifestoMathComponent],
   // Evidence chapter. Mostly straight HTML projected into .manifesto-prose
   // (styled globally): .lede gets the illuminated initial, h2 marks sections.
   // Chart data lives as class fields below, bound into <app-manifesto-chart>.
@@ -212,18 +213,30 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <p>
         That training run is the one with public numbers attached to it, and a rough check holds up
         against them. Counting only the 220 billion active parameters as the ones doing work on each
-        token, the standard compute estimate of six times parameters times training tokens puts that
-        run at roughly 1.7 times ten to the twenty-fifth floating point operations. Spread across an
-        A100 cluster running at a realistic 35 percent of peak throughput, that works out to roughly
-        44 million GPU-hours, close enough to the figure reported elsewhere, 25,000 GPUs run for 90
-        to 100 days, around 55 to 57 million GPU-hours, to treat both as the same neighborhood. At a
-        cluster power draw near 25 megawatts sustained for that stretch, the run consumed somewhere
-        around 50 to 60 gigawatt-hours of electricity, enough to power several thousand homes for a
-        year, for one training run of one model. At roughly one to two dollars an hour for that much
-        A100 time, the run cost on the order of 60 to 110 million dollars. Sam Altman has himself
-        acknowledged, in public remarks the same month reporters first floated the 100 million
-        dollar figure, that the true number was higher, not lower, and that he already considered
-        the era of simply building bigger models to be ending.
+        token, the standard compute estimate is six times parameters times training tokens.
+      </p>
+
+      <app-manifesto-math
+        [displayMode]="true"
+        tex="\\text{FLOPs} \\approx 6 \\times N_{\\text{active}} \\times D"
+      />
+      <app-manifesto-math
+        [displayMode]="true"
+        tex="\\approx 6 \\times (2.2 \\times 10^{11}) \\times (1.3 \\times 10^{13}) \\approx 1.7 \\times 10^{25}"
+      />
+
+      <p>
+        That puts the run at roughly 1.7 times ten to the twenty-fifth floating point operations.
+        Spread across an A100 cluster running at a realistic 35 percent of peak throughput, that
+        works out to roughly 44 million GPU-hours, close enough to the figure reported elsewhere,
+        25,000 GPUs run for 90 to 100 days, around 55 to 57 million GPU-hours, to treat both as the
+        same neighborhood. At a cluster power draw near 25 megawatts sustained for that stretch, the
+        run consumed somewhere around 50 to 60 gigawatt-hours of electricity, enough to power
+        several thousand homes for a year, for one training run of one model. At roughly one to two
+        dollars an hour for that much A100 time, the run cost on the order of 60 to 110 million
+        dollars. Sam Altman has himself acknowledged, in public remarks the same month reporters
+        first floated the 100 million dollar figure, that the true number was higher, not lower, and
+        that he already considered the era of simply building bigger models to be ending.
       </p>
 
       <p>

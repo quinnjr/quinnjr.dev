@@ -3,6 +3,7 @@
    requires @import to properly process the directive. The @use statement doesn't work
    with PostCSS-based transformations. */
 @import 'tailwindcss';
+@import 'katex/dist/katex.min.css';
 
 /* Tailwind v4 CSS-based theme configuration */
 @theme {
@@ -1248,6 +1249,25 @@
     letter-spacing: 0.02em;
     color: var(--color-muted);
     text-align: center;
+  }
+
+  /* Inline and block math, rendered by KaTeX */
+  .manifesto-math {
+    color: inherit;
+  }
+  .manifesto-math.is-display {
+    display: block;
+    margin: 1.75rem auto;
+    padding: 1.1rem 1.5rem;
+    width: fit-content;
+    max-width: 100%;
+    color: var(--color-amber-bright);
+    background: var(--color-panel-hi);
+    border: 1px solid var(--color-edge);
+    border-radius: 2px;
+  }
+  .manifesto-math.is-display .katex-display {
+    margin: 0;
   }
 
   /* ── Page-turn navigation ────────────────────────────────────────────── */
