@@ -50,18 +50,6 @@ export class NavigationComponent {
       icon: 'fas fa-code-branch',
       external: true,
     },
-    {
-      title: 'Forge',
-      link: 'https://pegausheavy.dev',
-      icon: 'fas fa-shield-alt',
-      external: true,
-    },
-    {
-      title: 'Pegasus Heavy',
-      link: 'https://pegausheavy.dev',
-      icon: 'fas fa-building',
-      external: true,
-    },
   ]);
 
   public isMenuOpen = signal(false);

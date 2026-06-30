@@ -842,7 +842,9 @@
 @layer components {
   /* ── Page scaffolding ─────────────────────────────────────────────────── */
   .tavern-shell {
-    @apply min-h-screen w-full bg-void;
+    /* Transparent so the fixed site backdrop shows through; content panels
+       (card-stone, quest-row) carry their own dark fills for legibility. */
+    @apply min-h-screen w-full;
   }
   .tavern-head {
     @apply mx-auto mb-14 max-w-3xl text-center;
