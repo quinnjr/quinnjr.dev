@@ -15,7 +15,7 @@ import { NavigationComponent } from '../navigation/navigation.component';
   imports: [RouterOutlet, NavigationComponent, FooterComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <app-naviation />
+    <app-navigation />
     <main id="main-content" tabindex="-1">
       <router-outlet />
     </main>

@@ -4,7 +4,7 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthButtonComponent } from '../auth-button/auth-button.component';
 
 @Component({
-  selector: 'app-naviation',
+  selector: 'app-navigation',
   standalone: true,
   imports: [RouterLink, RouterLinkActive, AuthButtonComponent],
   templateUrl: './navigation.component.html',
