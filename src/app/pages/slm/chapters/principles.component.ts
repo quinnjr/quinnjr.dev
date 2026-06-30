@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   standalone: true,
   template: `
     <div class="manifesto-prose">
-      <p class="manifesto-sigil">Verse II &middot; Principles</p>
+      <p class="manifesto-sigil">Verse III &middot; Principles</p>
       <h1>Principles</h1>
       <p class="lede">
         The tenets. Placeholder wording for now, structured as numbered verses so the manifesto

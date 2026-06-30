@@ -20,15 +20,21 @@ describe('SlmLayoutComponent', () => {
     return fixture.componentInstance;
   }
 
-  it('first chapter has no prev and Principles as next', async () => {
+  it('first chapter has no prev and Definitions as next', async () => {
     const c = await layoutAt('/slm/introduction');
     expect(c.prev()).toBeNull();
+    expect(c.next()?.title).toBe('Definitions');
+  });
+
+  it('second chapter links to both neighbours', async () => {
+    const c = await layoutAt('/slm/definitions');
+    expect(c.prev()?.title).toBe('Introduction');
     expect(c.next()?.title).toBe('Principles');
   });
 
-  it('middle chapter links to both neighbours', async () => {
+  it('third chapter links to both neighbours', async () => {
     const c = await layoutAt('/slm/principles');
-    expect(c.prev()?.title).toBe('Introduction');
+    expect(c.prev()?.title).toBe('Definitions');
     expect(c.next()?.title).toBe('Practice');
   });
 

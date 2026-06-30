@@ -5,7 +5,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   standalone: true,
   template: `
     <div class="manifesto-prose">
-      <p class="manifesto-sigil">Verse III &middot; Practice</p>
+      <p class="manifesto-sigil">Verse IV &middot; Practice</p>
       <h1>Practice</h1>
       <p class="lede">
         Where the creed meets the keyboard. Placeholder text — this chapter turns the principles
