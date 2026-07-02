@@ -221,13 +221,22 @@ export default tseslint.config(
     },
   },
   {
+    // CLI tooling and DB seeds: console output is the intended interface.
+    files: ['scripts/**/*.ts', 'prisma/**/*.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
     // Ignore patterns
     ignores: [
       '**/dist/**',
       '**/node_modules/**',
       '**/coverage/**',
       '**/*.spec.ts',
+      '**/*.test.ts',
       '**/generated/**',
+      '**/generated.ts',
       '**/.angular/**',
     ],
   }
