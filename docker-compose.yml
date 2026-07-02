@@ -1,6 +1,20 @@
-version: '3.8'
-
 services:
+  db:
+    image: postgres:16-alpine
+    container_name: quinnjr-dev-db
+    restart: always
+    environment:
+      - POSTGRES_DB=quinnjr
+      - POSTGRES_USER=quinnjr
+      - POSTGRES_PASSWORD=quinnjr
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U quinnjr']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
   app:
     build:
       context: .
@@ -8,15 +22,18 @@ services:
     image: quinnjr.dev:latest
     container_name: quinnjr-dev
     restart: always
+    depends_on:
+      db:
+        condition: service_healthy
     ports:
-      - "4000:4000"
+      - '4000:4000'
     environment:
       - NODE_ENV=production
       - PORT=4000
-      - DATABASE_URL=file:/data/quinnjr.db
-    volumes:
-      - sqlite_data:/data
+      - DATABASE_URL=postgresql://quinnjr:quinnjr@db:5432/quinnjr?schema=public
+    # Apply migrations before starting the server (the image ships the Prisma
+    # CLI and prisma/migrations as runtime dependencies).
+    command: sh -c "pnpm exec prisma migrate deploy && node dist/quinnjr.dev/server/server.mjs"
 
 volumes:
-  sqlite_data:
-
+  postgres_data:
