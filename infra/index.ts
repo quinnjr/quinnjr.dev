@@ -18,7 +18,9 @@ const dbNodeCount = config.getNumber('dbNodeCount') ?? 1;
 const domainName = config.get('domainName') ?? 'quinnjr.dev';
 const githubOwner = config.get('githubOwner') ?? 'quinnjr';
 const imageRepository = config.get('imageRepository') ?? 'quinnjr.dev';
-const imageTag = config.get('imageTag') ?? 'latest';
+// Required, not defaulted to 'latest': every deploy must pin an immutable tag
+// (CI passes the built image's tag; local runs set it via `pulumi config set`).
+const imageTag = config.require('imageTag');
 // Create the DNS zone here, or assume it already exists in the DO account.
 const manageDnsZone = config.getBoolean('manageDnsZone') ?? false;
 
@@ -46,15 +48,14 @@ const database = new digitalocean.DatabaseDb(`${appName}-db`, {
   name: 'quinnjr',
 });
 
-const dbUser = new digitalocean.DatabaseUser(`${appName}-user`, {
-  clusterId: dbCluster.id,
-  name: 'quinnjr',
-});
-
-// Prisma connection string for the dedicated database + user. Managed PG
+// Connect as the cluster's admin role. On DO managed Postgres (PG15+) the
+// created database is owned by the admin (doadmin) and a separately-created
+// user has no CREATE on its public schema, which breaks both `prisma migrate
+// deploy` and runtime writes. Using the admin credentials avoids a GRANT dance
+// (Pulumi's digitalocean provider can't set schema privileges). Managed PG
 // requires TLS, hence sslmode=require.
 const databaseUrl = pulumi
-  .all([dbUser.name, dbUser.password, dbCluster.host, dbCluster.port, database.name])
+  .all([dbCluster.user, dbCluster.password, dbCluster.host, dbCluster.port, database.name])
   .apply(
     ([user, password, host, port, name]) =>
       `postgresql://${user}:${password}@${host}:${port}/${name}?sslmode=require`
@@ -95,6 +96,13 @@ const app = new digitalocean.App(appName, {
         envs: [
           { key: 'NODE_ENV', value: 'production', scope: 'RUN_TIME' },
           { key: 'PORT', value: '4000', scope: 'RUN_TIME' },
+          // App Platform's health probe hits the container on an internal IP,
+          // which the SSR CommonEngine allowedHosts check would reject (500).
+          // App Platform's edge already restricts inbound hosts to the app's
+          // domains, so accept any host at the container. ponytail: '*' works
+          // without an image rebuild; tighten with a dedicated /healthz route
+          // that bypasses SSR if stricter host validation is ever wanted.
+          { key: 'SSR_ALLOWED_HOSTS', value: '*', scope: 'RUN_TIME' },
           { key: 'DATABASE_URL', value: databaseUrl, type: 'SECRET', scope: 'RUN_TIME' },
           { key: 'JWT_SECRET', value: jwtSecret, type: 'SECRET', scope: 'RUN_TIME' },
           {
