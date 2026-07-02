@@ -1,5 +1,7 @@
 # Build stage
-FROM node:22-alpine AS builder
+FROM node:24-alpine AS builder
+# Angular 22 CLI requires Node >= 24.15 (or 22.22.3, which Docker Hub's
+# 22-alpine does not yet ship); 24-alpine satisfies it.
 
 # Set working directory
 WORKDIR /app
@@ -25,7 +27,7 @@ RUN pnpm prisma:generate
 RUN pnpm build
 
 # Production stage
-FROM node:22-alpine AS production
+FROM node:24-alpine AS production
 
 # Set working directory
 WORKDIR /app
