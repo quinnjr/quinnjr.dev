@@ -1,0 +1,6 @@
+name: quinnjr-dev
+runtime:
+  name: nodejs
+  options:
+    packagemanager: pnpm
+description: DigitalOcean App Platform infrastructure for quinnjr.dev

@@ -1,0 +1,4 @@
+# Roots infra/ as its own pnpm workspace so `pnpm install` here (and Pulumi's
+# auto-install during `pulumi up`) resolves against infra/package.json rather
+# than being captured by the Angular app's workspace one directory up.
+packages: []

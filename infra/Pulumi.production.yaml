@@ -1,0 +1,16 @@
+config:
+  quinnjr-dev:region: nyc3
+  quinnjr-dev:appRegion: nyc
+  quinnjr-dev:appInstanceSize: basic-xxs
+  quinnjr-dev:dbSize: db-s-1vcpu-1gb
+  quinnjr-dev:dbNodeCount: '1'
+  quinnjr-dev:domainName: quinnjr.dev
+  quinnjr-dev:githubOwner: quinnjr
+  quinnjr-dev:imageRepository: quinnjr.dev
+  quinnjr-dev:imageTag: latest
+  quinnjr-dev:manageDnsZone: 'false'
+  # Secrets (encrypted into this file by the passphrase provider — set with:
+  #   pulumi config set --secret quinnjr-dev:jwtSecret <value>
+  #   pulumi config set --secret quinnjr-dev:githubApiToken <value>
+  #   pulumi config set --secret quinnjr-dev:ghcrCredentials "<gh-user>:<gh-pat>"
+  # DIGITALOCEAN_TOKEN is provided via environment, not config.

@@ -22,7 +22,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -126,86 +126,60 @@ jobs:
 
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
-        continue-on-error: true  # Don't block deployment if attestation fails
+        continue-on-error: true # Don't block deployment if attestation fails
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.meta.outputs.digest }}
           push-to-registry: true
 
-  terraform:
-    name: Terraform Deploy
+  deploy:
+    name: Pulumi Deploy (DigitalOcean)
     needs: build-and-push
     runs-on: ubuntu-latest
-    env:
-      TF_VAR_docker_image_tag: ${{ needs.build-and-push.outputs.image-tag }}
 
     permissions:
       contents: read
 
     defaults:
       run:
-        working-directory: ./tf
+        working-directory: ./infra
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          terraform_version: 1.7.0
+          node-version: '22'
 
-      - name: Configure Terraform variables
-        run: |
-          cat > terraform.tfvars <<EOF
-          do_token        = "${{ secrets.DIGITALOCEAN_TOKEN }}"
-          github_token    = "${{ secrets.GH_PAT }}"
-          github_username = "${{ github.repository_owner }}"
-          project_name    = "quinnjr-dev"
-          region          = "nyc3"
-          docker_image    = "ghcr.io/${{ github.repository }}:${{ github.ref == 'refs/heads/main' && 'latest' || github.ref_name }}"
-          domain_name     = "${{ secrets.DOMAIN_NAME }}"
-          enable_dns      = ${{ secrets.ENABLE_DNS || 'false' }}
-          EOF
-      - name: Terraform Init
-        run: terraform init
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install infra dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Pulumi up
+        uses: pulumi/actions@v6
+        with:
+          command: up
+          stack-name: production
+          work-dir: ./infra
+          # Self-managed state in a DigitalOcean Spaces (S3-compatible) bucket.
+          cloud-url: s3://quinnjr-pulumi?endpoint=nyc3.digitaloceanspaces.com&region=us-east-1&s3ForcePathStyle=true
+          # Deploy the image built by the build-and-push job.
+          config-map: |
+            { "quinnjr-dev:imageTag": { "value": "${{ needs.build-and-push.outputs.image-tag }}" } }
         env:
+          # Passphrase secrets provider — decrypts the stack's encrypted config.
+          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
+          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
+          # Spaces credentials for the S3 state backend.
           AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-
-      - name: Terraform Format Check
-        run: terraform fmt -check
-        continue-on-error: true
-
-      - name: Terraform Validate
-        run: terraform validate
-
-      - name: Terraform Plan
-        id: plan
-        run: terraform plan -no-color -out=tfplan -var="github_api_token=${{ secrets.GH_API_TOKEN }}"
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-
-      - name: Terraform Apply
-        run: terraform apply -auto-approve tfplan
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-
-      - name: Output Application URL
-        continue-on-error: true
-        run: |
-          if APP_URL=$(terraform output -raw app_url 2>&1); then
-            echo "::notice::Application deployed at: $APP_URL"
-            echo "APP_URL=${APP_URL}" >> $GITHUB_OUTPUT
-          else
-            echo "::warning::Unable to retrieve application URL from Terraform outputs"
-            echo "APP_URL=pending" >> $GITHUB_OUTPUT
-          fi
+          AWS_REGION: us-east-1
 
   tag-release:
     name: Tag Release Version
@@ -225,7 +199,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
 
       - name: Configure Git
         run: |
