@@ -14,3 +14,11 @@ config:
   #   pulumi config set --secret quinnjr-dev:githubApiToken <value>
   #   pulumi config set --secret quinnjr-dev:ghcrCredentials "<gh-user>:<gh-pat>"
   # DIGITALOCEAN_TOKEN is provided via environment, not config.
+
+  quinnjr-dev:jwtSecret:
+    secure: v1:mHVnhnLPApkMqnxG:5srQoo/EP/mCxsIAo+4w8ALnnMuMvlIyijSSVeELYzSvi4nSnFqZ+zbbN3q03/b8zeFsZU772fpuQWtRHkoHsY2FNRCioFDefMEHkN4hiXY=
+  quinnjr-dev:githubApiToken:
+    secure: v1:rDX4mv6twVxGtfxn:tXFV24IIpZzMzooBkshQKj9ck2rNlJLjxvBxy6PVP709tQxWYu3CADlLshm/Ad9Wm1F7ZX4RIbo=
+  quinnjr-dev:ghcrCredentials:
+    secure: v1:AzzDE4cLbRVj7B+N:bY4j3UQMxkTsC4uar0sn49ED5nRYfY5AyAB7mj2S7I6DC8Xuc9pmHGjLzN6P+sL62PNu/Qgqeg612Lq9KfVflw==
+encryptionsalt: v1:TGrvRiOhDGQ=:v1:XOz1b/Ap0VGhrZDb:D7KtbBVm0C9X08as5kY/Z02W11ySug==
