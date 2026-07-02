@@ -48,18 +48,41 @@ const database = new digitalocean.DatabaseDb(`${appName}-db`, {
   name: 'quinnjr',
 });
 
-// Connect as the cluster's admin role. On DO managed Postgres (PG15+) the
-// created database is owned by the admin (doadmin) and a separately-created
-// user has no CREATE on its public schema, which breaks both `prisma migrate
-// deploy` and runtime writes. Using the admin credentials avoids a GRANT dance
-// (Pulumi's digitalocean provider can't set schema privileges). Managed PG
-// requires TLS, hence sslmode=require.
-const databaseUrl = pulumi
-  .all([dbCluster.user, dbCluster.password, dbCluster.host, dbCluster.port, database.name])
-  .apply(
-    ([user, password, host, port, name]) =>
-      `postgresql://${user}:${password}@${host}:${port}/${name}?sslmode=require`
-  );
+// Scoped runtime user. On DO managed Postgres the database is owned by the
+// admin (doadmin); this user owns nothing and is granted DML only (see the
+// migrate job below), so the long-lived web service can't run DDL, reach other
+// databases, or otherwise act as admin.
+const dbUser = new digitalocean.DatabaseUser(`${appName}-user`, {
+  clusterId: dbCluster.id,
+  name: 'quinnjr',
+});
+
+const pgUrl = (
+  user: pulumi.Input<string>,
+  password: pulumi.Input<string>
+): pulumi.Output<string> =>
+  pulumi
+    .all([user, password, dbCluster.host, dbCluster.port, database.name])
+    .apply(([u, p, host, port, name]) =>
+      // Managed PG requires TLS, hence sslmode=require.
+      `postgresql://${u}:${p}@${host}:${port}/${name}?sslmode=require`
+    );
+
+// Admin connection — used only by the ephemeral migration job (DDL + grants).
+const adminDatabaseUrl = pgUrl(dbCluster.user, dbCluster.password);
+// App connection — the scoped user the web service runs as.
+const appDatabaseUrl = pgUrl(dbUser.name, dbUser.password);
+
+// Grants applied by the migration job (as admin) so the scoped user can read
+// and write every table/sequence, including those future migrations create.
+// Idempotent, so it re-runs safely on each deploy.
+const grantSql = [
+  'GRANT USAGE ON SCHEMA public TO "quinnjr";',
+  'GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO "quinnjr";',
+  'GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO "quinnjr";',
+  'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO "quinnjr";',
+  'ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT USAGE, SELECT ON SEQUENCES TO "quinnjr";',
+].join(' ');
 
 // Shared image spec for both the service and the migration job.
 const image: digitalocean.types.input.AppSpecServiceImage = {
@@ -103,7 +126,7 @@ const app = new digitalocean.App(appName, {
           // without an image rebuild; tighten with a dedicated /healthz route
           // that bypasses SSR if stricter host validation is ever wanted.
           { key: 'SSR_ALLOWED_HOSTS', value: '*', scope: 'RUN_TIME' },
-          { key: 'DATABASE_URL', value: databaseUrl, type: 'SECRET', scope: 'RUN_TIME' },
+          { key: 'DATABASE_URL', value: appDatabaseUrl, type: 'SECRET', scope: 'RUN_TIME' },
           { key: 'JWT_SECRET', value: jwtSecret, type: 'SECRET', scope: 'RUN_TIME' },
           {
             key: 'GITHUB_API_TOKEN',
@@ -115,17 +138,28 @@ const app = new digitalocean.App(appName, {
       },
     ],
 
-    // Apply Prisma migrations before every rollout. The runtime image ships the
-    // prisma CLI (a runtime dependency) and prisma/migrations, so this succeeds
-    // against the managed database before the new service instances start.
+    // Before every rollout: apply migrations as admin (DDL), then grant the
+    // scoped runtime user access to the resulting objects. Runs as the app, so
+    // it reaches the DB through the firewall's trusted source. The image ships
+    // the prisma CLI and prisma/migrations as runtime dependencies.
     jobs: [
       {
         name: 'migrate',
         kind: 'PRE_DEPLOY',
         instanceSizeSlug: appInstanceSize,
         image,
-        runCommand: 'pnpm exec prisma migrate deploy',
-        envs: [{ key: 'DATABASE_URL', value: databaseUrl, type: 'SECRET', scope: 'RUN_TIME' }],
+        // App Platform tokenizes run_command (it does NOT interpret && or |),
+        // so wrap the pipeline in an explicit `sh -c`. The SQL is passed via the
+        // GRANT_SQL env var rather than inline to avoid nested-quote breakage
+        // (the SQL contains double-quoted identifiers).
+        runCommand:
+          `sh -c 'pnpm exec prisma migrate deploy && ` +
+          `printf %s "$GRANT_SQL" | pnpm exec prisma db execute --stdin --schema prisma/schema.prisma'`,
+        // Admin URL: migrations need DDL and the grants need admin rights.
+        envs: [
+          { key: 'DATABASE_URL', value: adminDatabaseUrl, type: 'SECRET', scope: 'RUN_TIME' },
+          { key: 'GRANT_SQL', value: grantSql, scope: 'RUN_TIME' },
+        ],
       },
     ],
   },
