@@ -20,21 +20,27 @@ describe('SlmLayoutComponent', () => {
     return fixture.componentInstance;
   }
 
-  it('first chapter has no prev and Principles as next', async () => {
-    const c = await layoutAt('/slm/preamble');
+  it('first chapter has no prev and Definitions as next', async () => {
+    const c = await layoutAt('/slm/introduction');
     expect(c.prev()).toBeNull();
-    expect(c.next()?.title).toBe('Principles');
+    expect(c.next()?.title).toBe('Definitions');
   });
 
-  it('middle chapter links to both neighbours', async () => {
-    const c = await layoutAt('/slm/principles');
-    expect(c.prev()?.title).toBe('Preamble');
-    expect(c.next()?.title).toBe('Practice');
+  it('second chapter links to both neighbours', async () => {
+    const c = await layoutAt('/slm/definitions');
+    expect(c.prev()?.title).toBe('Introduction');
+    expect(c.next()?.title).toBe('Evidence');
+  });
+
+  it('third chapter links to both neighbours', async () => {
+    const c = await layoutAt('/slm/evidence');
+    expect(c.prev()?.title).toBe('Definitions');
+    expect(c.next()?.title).toBe('Costs');
   });
 
   it('last chapter has no next', async () => {
-    const c = await layoutAt('/slm/practice');
-    expect(c.prev()?.title).toBe('Principles');
+    const c = await layoutAt('/slm/costs');
+    expect(c.prev()?.title).toBe('Evidence');
     expect(c.next()).toBeNull();
   });
 });

@@ -93,6 +93,13 @@
     outline: 2px solid #c9a84c;
     outline-offset: 2px;
   }
+
+  // Angular's emulated view encapsulation gives this selector higher
+  // specificity than Tailwind's .md\:hidden utility class, so that class
+  // never actually wins the cascade. The breakpoint has to live here.
+  @media (min-width: 768px) {
+    display: none;
+  }
 }
 
 // ── Mobile menu wrapper ───────────────────────────────────────────────────

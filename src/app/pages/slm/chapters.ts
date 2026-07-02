@@ -13,18 +13,23 @@ export interface Chapter {
 
 export const CHAPTERS: readonly Chapter[] = [
   {
-    slug: 'preamble',
-    title: 'Preamble',
-    load: () => import('./chapters/preamble.component').then(m => m.PreambleComponent),
+    slug: 'introduction',
+    title: 'Introduction',
+    load: () => import('./chapters/introduction.component').then(m => m.IntroductionComponent),
   },
   {
-    slug: 'principles',
-    title: 'Principles',
-    load: () => import('./chapters/principles.component').then(m => m.PrinciplesComponent),
+    slug: 'definitions',
+    title: 'Definitions',
+    load: () => import('./chapters/definitions.component').then(m => m.DefinitionsComponent),
   },
   {
-    slug: 'practice',
-    title: 'Practice',
-    load: () => import('./chapters/practice.component').then(m => m.PracticeComponent),
+    slug: 'evidence',
+    title: 'Evidence',
+    load: () => import('./chapters/evidence.component').then(m => m.EvidenceComponent),
+  },
+  {
+    slug: 'costs',
+    title: 'Costs',
+    load: () => import('./chapters/costs.component').then(m => m.CostsComponent),
   },
 ];
