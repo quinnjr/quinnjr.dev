@@ -115,17 +115,20 @@ const app = new digitalocean.App(appName, {
         instanceCount: 1,
         httpPort: 4000, // matches Dockerfile EXPOSE/PORT
         image,
-        healthCheck: { httpPath: '/', initialDelaySeconds: 20 },
+        // Probe the dedicated /healthz endpoint, which is answered by Express
+        // before SSR and so isn't subject to host validation.
+        healthCheck: { httpPath: '/healthz', initialDelaySeconds: 20 },
         envs: [
           { key: 'NODE_ENV', value: 'production', scope: 'RUN_TIME' },
           { key: 'PORT', value: '4000', scope: 'RUN_TIME' },
-          // App Platform's health probe hits the container on an internal IP,
-          // which the SSR CommonEngine allowedHosts check would reject (500).
-          // App Platform's edge already restricts inbound hosts to the app's
-          // domains, so accept any host at the container. ponytail: '*' works
-          // without an image rebuild; tighten with a dedicated /healthz route
-          // that bypasses SSR if stricter host validation is ever wanted.
-          { key: 'SSR_ALLOWED_HOSTS', value: '*', scope: 'RUN_TIME' },
+          // Restrict SSR host validation to the app's real domains (custom
+          // domain + App Platform's default ingress). The internal health
+          // probe no longer needs a wildcard here — it uses /healthz.
+          {
+            key: 'SSR_ALLOWED_HOSTS',
+            value: `${domainName},*.${domainName},*.ondigitalocean.app`,
+            scope: 'RUN_TIME',
+          },
           { key: 'DATABASE_URL', value: appDatabaseUrl, type: 'SECRET', scope: 'RUN_TIME' },
           { key: 'JWT_SECRET', value: jwtSecret, type: 'SECRET', scope: 'RUN_TIME' },
           {
