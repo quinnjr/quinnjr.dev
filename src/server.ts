@@ -39,6 +39,14 @@ export function app(): express.Express {
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
+  // Liveness/readiness probe. Answered directly by Express before the Angular
+  // SSR handler, so it bypasses CommonEngine's host validation — App Platform
+  // probes the container on an internal IP that the SSR allowedHosts check
+  // would otherwise reject. Keeps allowedHosts restrictive for real requests.
+  server.get('/healthz', (_req, res) => {
+    res.status(200).send('ok');
+  });
+
   // Parse JSON bodies
   server.use(express.json());
   server.use(express.urlencoded({ extended: true }));

@@ -7,7 +7,7 @@ config:
   quinnjr-dev:domainName: quinnjr.dev
   quinnjr-dev:githubOwner: quinnjr
   quinnjr-dev:imageRepository: quinnjr.dev
-  quinnjr-dev:imageTag: 2.4.0
+  quinnjr-dev:imageTag: 2.4.1
   quinnjr-dev:manageDnsZone: 'false'
   # Secrets (encrypted into this file by the passphrase provider — set with:
   #   pulumi config set --secret quinnjr-dev:jwtSecret <value>
