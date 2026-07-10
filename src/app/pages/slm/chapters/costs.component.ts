@@ -132,6 +132,42 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         premises, for want of a market that would sell them the cheaper alternative.
       </p>
 
+      <h2>What each architecture actually burns</h2>
+
+      <p>
+        The lament above is about who sells the hardware. This is about what running it costs in
+        electricity once bought, and the three architectures do not sort into a close race.
+        Cloudflare's own edge fleet gives a clean, apples-to-apples comparison, since the company
+        has published production numbers for both its x86 and ARM generations against the same older
+        baseline. AMD's Milan generation of EPYC chips, the newer x86 fleet, delivers 39 percent
+        more internet requests per watt than the prior Rome generation. Cloudflare's Ampere-designed
+        ARM fleet, built in the same window, delivers 57 percent more requests per watt over that
+        same Rome baseline, ahead of x86's own next generation rather than behind it. AWS makes the
+        identical claim at cloud scale directly: Graviton instances use up to 60 percent less energy
+        than a comparable x86 EC2 instance for the same performance. Two independent companies, at
+        two different layers of the internet, measured the same result.
+      </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="architectureEfficiencyData"
+        [options]="barOptions"
+        caption="Requests per watt, Cloudflare's edge fleet, gain over the same 2019-era x86 baseline. RISC-V omitted: no independently verified figure exists yet."
+      />
+
+      <p>
+        RISC-V is, on paper, the most efficient architecture of the three, since an open instruction
+        set lets a designer strip out every piece of silicon a given workload does not need rather
+        than carry decades of x86 or ARM legacy along for compatibility. SiFive's P870-D core scales
+        to 256 coherent cores on exactly that promise, and the company markets it directly at
+        datacenter power budgets. But it is still a promise rather than a measured result. No
+        independently benchmarked performance-per-watt figure for a shipping, general-purpose RISC-V
+        server chip exists in the way Cloudflare's and AWS's numbers exist for ARM, and Ventana, the
+        vendor furthest along on a general-purpose RISC-V server core, has already slipped its first
+        Veyron chip past its original ship date once. RISC-V may well win this comparison
+        eventually. It has not yet had the chance to prove it in production the way ARM already has.
+      </p>
+
       <h2>What it costs to build the room</h2>
 
       <p>
@@ -337,6 +373,34 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           absence from it.
         </li>
         <li>
+          <cite>Cloudflare.</cite> "Designing Edge Servers with Arm CPUs to Deliver 57% More
+          Performance Per Watt." 2026.
+          <a
+            href="https://blog.cloudflare.com/designing-edge-servers-with-arm-cpus/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >blog.cloudflare.com</a
+          >. The production requests-per-watt figures for Cloudflare's x86 (Milan) and ARM (Ampere)
+          edge fleets, both measured against the same Rome-era baseline.
+        </li>
+        <li>
+          <cite>Amazon Web Services.</cite> "AWS Graviton Processor." 2026.
+          <a href="https://aws.amazon.com/ec2/graviton/" target="_blank" rel="noopener noreferrer"
+            >aws.amazon.com</a
+          >. AWS's own claim that Graviton instances use up to 60 percent less energy than
+          comparable x86 instances for the same performance.
+        </li>
+        <li>
+          <cite>SiFive.</cite> "RISC-V for the Datacenter: Introducing the P870-D." 2024.
+          <a
+            href="https://www.sifive.com/blog/risc-v-for-the-datacenter-introducing-the-p870-d"
+            target="_blank"
+            rel="noopener noreferrer"
+            >sifive.com</a
+          >. SiFive's own performance-per-watt claims for its 256-core datacenter core, presented
+          without independent benchmarks as of this writing.
+        </li>
+        <li>
           <cite>HBS.</cite> "Cloud Repatriation Trends: Cost, AI and the Push Towards Hybrid."
           November 2025.
           <a
@@ -399,6 +463,19 @@ export class CostsComponent {
       {
         label: 'Fully integrated $/GPU (thousands)',
         data: [46, 54],
+        backgroundColor: [ICE_FILL, AMBER_FILL],
+        borderColor: [ICE_LINE, AMBER_LINE],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  protected readonly architectureEfficiencyData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['x86 (AMD Milan vs Rome)', 'ARM (Ampere vs Rome)'],
+    datasets: [
+      {
+        label: 'Requests per watt, gain over 2019-era x86 baseline (%)',
+        data: [39, 57],
         backgroundColor: [ICE_FILL, AMBER_FILL],
         borderColor: [ICE_LINE, AMBER_LINE],
         borderWidth: 1,
