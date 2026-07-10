@@ -68,9 +68,9 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         system, the GB200 NVL72, prices at 2.8 to 3.4 million dollars for the hardware alone, near
         3.9 million dollars all in with networking and storage, for 72 GPUs in one rack. Divide that
         out and the fully integrated cost lands near 54,000 dollars per GPU, higher than the
-        eight-GPU box, not lower. Scaling up bought more compute. It did not buy a cheaper GPU. The
-        cost of tying that many chips together at that density is itself a line item, and it grows
-        with the rack.
+        eight-GPU box rather than lower. Scaling up bought more compute, not a cheaper GPU. The cost
+        of tying that many chips together at that density is itself a line item, and it grows with
+        the rack.
       </p>
 
       <app-manifesto-chart
@@ -113,7 +113,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         that designed it for themselves. An industry that wants efficient, small-model-friendly
         hardware to actually proliferate is choosing between a competitive x86 market and an ARM64
         market that is, in practice, one chip vendor, a handful of OEMs reselling that one chip, and
-        the genuinely efficient silicon locked behind someone else's login.
+        the most efficient silicon of all locked behind someone else's login.
       </p>
 
       <p>
@@ -128,7 +128,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         one CPU vendor, a handful of OEMs, and a missing chassis from most of the names that would
         normally sell it to them, while the ARM silicon actually proven to save the most energy sits
         inside the very clouds that enterprise is trying to leave. The hardware gap this chapter
-        laments is not an abstraction. It is enterprises paying x86's power bill, on their own
+        laments shows up as a real line item: enterprises paying x86's power bill, on their own
         premises, for want of a market that would sell them the cheaper alternative.
       </p>
 
@@ -143,12 +143,12 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         a full one-gigawatt AI campus, sized around a fleet of GB200 NVL72 racks, puts the fully
         loaded figure, building, power, cooling, networking, and the servers themselves together, at
         38 billion dollars up front, 38 million dollars per megawatt. The gap between that number
-        and the construction-only figures above is the compute. A gigawatt-scale AI campus is not a
-        building with computers in it afterward. The computers are most of the bill. Amortized over
-        a five-year hardware lifespan and a fourteen-year facility lifespan, the same model puts the
-        campus's annual cost of ownership, capital and operating combined, near 8.5 billion dollars
-        a year, 8.5 million dollars per megawatt per year, of which servers and network
-        infrastructure alone account for roughly 5 billion of that annual figure.
+        and the construction-only figures above is the compute. The computers, not the building,
+        make up most of the bill on a gigawatt-scale AI campus. Amortized over a five-year hardware
+        lifespan and a fourteen-year facility lifespan, the same model puts the campus's annual cost
+        of ownership, capital and operating combined, near 8.5 billion dollars a year, 8.5 million
+        dollars per megawatt per year, of which servers and network infrastructure alone account for
+        roughly 5 billion of that annual figure.
       </p>
 
       <app-manifesto-chart
@@ -191,14 +191,14 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       />
 
       <p>
-        That price is not fixed. It is already moving. PJM, the grid operator covering much of the
-        mid-Atlantic and Midwest, saw its capacity price for the 2025-26 service period jump 9.3
-        times over, from 29 dollars per megawatt-day to 270 dollars per megawatt-day, with some
-        locations closer to 450. PJM and the utilities involved point to forecasted datacenter load
-        as the driver. Residents in PJM's territory are projected to see their electricity bills
-        rise roughly 15 percent in 2026 against the pre-datacenter-boom baseline. The price per
-        kilowatt-hour a frontier lab pays today is not the price it will pay once the grid it is
-        straining finishes passing that strain through to everyone connected to it.
+        That price is already moving. PJM, the grid operator covering much of the mid-Atlantic and
+        Midwest, saw its capacity price for the 2025-26 service period jump 9.3 times over, from 29
+        dollars per megawatt-day to 270 dollars per megawatt-day, with some locations closer to 450.
+        PJM and the utilities involved point to forecasted datacenter load as the driver. Residents
+        in PJM's territory are projected to see their electricity bills rise roughly 15 percent in
+        2026 against the pre-datacenter-boom baseline. The price per kilowatt-hour a frontier lab
+        pays today is not the price it will pay once the grid it is straining finishes passing that
+        strain through to everyone connected to it.
       </p>
 
       <h2>Storing the petabytes</h2>
@@ -219,10 +219,10 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         checkpoints saved at intervals across a months-long run, each one a multi-terabyte snapshot
         of every parameter at trillion-parameter scale, and the optimizer state sitting alongside
         each checkpoint, often two to four times the size of the model itself for the optimizers
-        this kind of training actually uses. A frontier run's storage bill is not the size of its
-        finished dataset. It is that, plus the discarded majority of what was scraped to build it,
-        plus a running history of the model's own intermediate states, and petabytes, plural, is the
-        realistic unit for the whole pile.
+        this kind of training actually uses. A frontier run's storage bill runs well past the size
+        of its finished dataset: add the discarded majority of what was scraped to build that
+        dataset, add a running history of the model's own intermediate states, and petabytes,
+        plural, becomes the realistic unit for the whole pile.
       </p>
 
       <h2>What it costs to train one, bottom-up</h2>
@@ -282,9 +282,8 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         alone, not the building, not the servers, just the electricity, at 0.6 billion dollars a
         year. That is roughly 1.5 million times what my closet costs to run at the worst-case,
         continuous-peak estimate, and more than 7 million times what it costs running the way it
-        actually runs. The frontier and the small machine in my closet are not on the same cost
-        curve, not by a factor that rounds to anything. They are not the same kind of expense at
-        all.
+        actually runs. Put the frontier and the small machine in my closet on the same chart and the
+        scale itself stops meaning anything useful. They are different kinds of expense entirely.
       </p>
 
       <app-manifesto-chart
