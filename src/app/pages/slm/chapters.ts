@@ -37,4 +37,9 @@ export const CHAPTERS: readonly Chapter[] = [
     title: 'Backlash',
     load: () => import('./chapters/backlash.component').then(m => m.BacklashComponent),
   },
+  {
+    slug: 'overkill',
+    title: 'Overkill',
+    load: () => import('./chapters/overkill.component').then(m => m.OverkillComponent),
+  },
 ];
