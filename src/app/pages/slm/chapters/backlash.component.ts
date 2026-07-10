@@ -52,9 +52,9 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         Evidence made the technical case and Costs made the economic one. This chapter makes the
         human case, and it does not require a single argument of my own, because the public has
         already made it, in polling, in layoff data, and in courtrooms. The frontier promised a
-        substitute for skilled judgment. The record so far, checked against real coverage rather
-        than press releases, shows the substitute failing in public, being walked back in public,
-        and, in at least one field I know from the inside, actively sanctioned by judges in public.
+        substitute for skilled judgment. Checked against real coverage rather than press releases,
+        the substitute has been failing publicly, getting walked back quietly, and, in at least one
+        field I know from the inside, drawing sanctions from judges who caught the difference.
       </p>
 
       <h2>What the public actually thinks</h2>
@@ -68,8 +68,8 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         found 76 percent of Americans trust AI-generated information hardly ever or only some of the
         time, and an Economist and YouGov poll found more than 70 percent of Americans, across party
         lines, think AI is advancing too quickly. People are using this technology more and
-        believing it less, at the same time, which is not the trajectory a genuinely trusted
-        replacement for human judgment would show.
+        believing it less, at the same time. A trusted replacement for human judgment does not
+        usually look like that.
       </p>
 
       <app-manifesto-chart
@@ -96,9 +96,9 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         executives report AI has had zero employment impact at their own firm, even as their own
         companies announce AI-attributed cuts. Cognizant's own chief AI officer put it plainly:
         sometimes AI becomes the scapegoat from a financial perspective. Sam Altman used a blunter
-        term for the same pattern: AI washing. What changed in 2026 was not that AI started
-        replacing workers. What changed is that executives stopped hiding ordinary cost-cutting
-        behind the word restructuring and started hiding it behind the word AI instead.
+        term for the same pattern: AI washing. AI did not start replacing workers in 2026.
+        Executives just traded one cover story for another, swapping the old word, restructuring,
+        for a newer one that plays better on an earnings call.
       </p>
 
       <app-manifesto-chart
@@ -128,9 +128,9 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         directly: they hunt for failure points before a part ever reaches the plant floor. The
         result was not a wash. Ford topped JD Power's initial quality study for the first time in
         sixteen years, and CEO Jim Farley credited the rehiring effort with hundreds of millions of
-        dollars in savings on warranty and recall costs alone. Ford did not fail because it tried
-        AI. It failed because it tried to remove the judgment AI still cannot supply, found out the
-        hard way, and had to pay experienced humans to come back and supply it.
+        dollars in savings on warranty and recall costs alone. Trying AI was not Ford's mistake.
+        Trying to remove the judgment AI still cannot supply was, and fixing it meant paying
+        experienced humans to come back and supply that judgment themselves.
       </p>
 
       <h2>Where the substitution gets tested hardest: law</h2>
@@ -154,9 +154,9 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         that a defendant who used a general-purpose chatbot to help build his own defense had waived
         attorney-client privilege over that strategy entirely. Every one of these is a licensed
         attorney, trained for years, using a tool marketed as ready for professional legal work, and
-        getting personally sanctioned by a judge for trusting it. That is not a technology on the
-        verge of replacing a lawyer. That is a technology a lawyer cannot yet safely delegate to
-        without checking every citation by hand.
+        getting personally sanctioned by a judge for trusting it. A lawyer who hands off a citation
+        without checking it by hand is not looking at a technology on the verge of replacing them.
+        The sanctions orders keep saying otherwise.
       </p>
 
       <p>
@@ -166,14 +166,13 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         Officer at Lexmata, building the legal-technology platform attorneys and their clients
         actually use. I have sat on both sides of this problem at once, as counsel and as the
         engineer responsible for the AI tooling itself, and both roles teach the same lesson.
-        Current models are genuinely useful for a first draft, a structured summary, a starting
-        point for research a competent attorney still has to verify line by line. They are not yet
-        trustworthy enough to skip that verification, and every sanctioned filing above is what
-        happens when someone skips it anyway. A field with this much formal, adversarial,
-        judge-supervised checking is the clearest place to see that current AI is not at the stage
-        of replacing anyone genuinely competent in their own field. It augments competence. It does
-        not yet substitute for it, and the courts keep proving that on the record, one sanctions
-        order at a time.
+        Current models earn their keep on a first draft, a structured summary, a starting point for
+        research a competent attorney still has to verify line by line. Skip that verification and
+        every sanctioned filing above is what waits on the other side. A field with this much
+        formal, adversarial, judge-supervised checking is the clearest place to watch current AI's
+        actual stage of development: useful help for someone already competent, no substitute for
+        the competence itself, and the courts keep proving the difference one sanctions order at a
+        time.
       </p>
 
       <hr />
