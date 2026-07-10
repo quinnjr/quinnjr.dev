@@ -38,9 +38,15 @@ describe('SlmLayoutComponent', () => {
     expect(c.next()?.title).toBe('Costs');
   });
 
-  it('last chapter has no next', async () => {
+  it('fourth chapter links to both neighbours', async () => {
     const c = await layoutAt('/slm/costs');
     expect(c.prev()?.title).toBe('Evidence');
+    expect(c.next()?.title).toBe('Backlash');
+  });
+
+  it('last chapter has no next', async () => {
+    const c = await layoutAt('/slm/backlash');
+    expect(c.prev()?.title).toBe('Costs');
     expect(c.next()).toBeNull();
   });
 });
