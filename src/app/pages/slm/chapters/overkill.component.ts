@@ -66,8 +66,8 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         neither one runs on a coding model. Both hook into the same trillion-parameter-class,
         AGI-chasing systems this manifesto has argued against since its first page, sold to a
         developer typing shell commands the same way they are sold to someone asking for a poem.
-        That is not a coding tool with a general model bolted on for convenience. It is a general
-        model wearing a coding tool as a costume, and the costume is expensive.
+        Call it what it actually is: a general model wearing a coding tool as a costume, and the
+        costume is expensive.
       </p>
 
       <h2>The tools are not what they are sold as</h2>
@@ -82,10 +82,10 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         direction of travel explicit. Earlier Codex releases carried version numbers tying them to a
         specific GPT generation. The newest ones dropped that numbering, because the frontier
         general-purpose model had absorbed enough coding capability that a separate specialist tier
-        stopped making sense to maintain as its own product. The industry is not moving toward
-        smaller, coding-focused models. It is moving the other way, consolidating code into the same
-        giant model that also writes marketing copy and argues philosophy, and billing every one of
-        those uses at the same trillion-parameter rate.
+        stopped making sense to maintain as its own product. The industry is moving away from
+        smaller, coding-focused models, not toward them, consolidating code into the same giant
+        model that also writes marketing copy and argues philosophy, and billing every one of those
+        uses at the same trillion-parameter rate.
       </p>
 
       <h2>What a coding-only model would actually buy</h2>
@@ -127,13 +127,12 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       />
 
       <p>
-        None of this is speculative about whether small models can actually do coding work. Chinese
+        Whether small models can actually do coding work is not the open question here. Chinese
         open-weight coding models already price the difference into the market today. DeepSeek V4
         Flash runs fourteen cents per million input tokens. Claude Opus 4.8, the model underneath
         Claude Code, runs five dollars, and GPT-5.5, the model family underneath Codex, runs the
-        same five dollars. The assumption in this chapter is not a guess about some future
-        architecture. It is a description of pricing that already exists, for models already doing
-        real coding work, that neither Claude Code nor Codex has adopted.
+        same five dollars. This chapter's assumption describes pricing that already exists, for
+        models already doing real coding work, that neither Claude Code nor Codex has adopted.
       </p>
 
       <app-manifesto-chart
@@ -177,39 +176,39 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         Anthropic's numbers tell the same story from a stronger starting position. Annualized
         revenue reached roughly 30 billion dollars by April 2026, and the company still spent 2
         dollars and 16 cents for every dollar that revenue brought in. A subsidy this size, run by
-        two of the best-funded companies in the world, is not a permanent feature of the market. It
-        is a bet that usage will lock in before the bill comes due. When investors eventually demand
-        the unit economics close, on Claude Code and Codex specifically as much as on chatbots, the
-        honest way to close them is to stop running every coding query through a trillion-parameter
-        model billed as if it might also write the next great novel. The dishonest way is to just
-        raise the price and hope developers do not notice they are paying frontier rates for
-        autocomplete. Chinese open-weight coding models, already priced at a fraction of Claude and
-        GPT rates and already competitive on the benchmarks Evidence cited, are sitting there as the
-        alternative the moment that price rises. A tool that gets more expensive while a cheaper one
-        gets no worse is not a tool that keeps its market by default.
+        two of the best-funded companies in the world, reads less like a permanent feature of the
+        market and more like a bet that usage locks in before the bill comes due. When investors
+        eventually demand the unit economics close, on Claude Code and Codex specifically as much as
+        on chatbots, the honest way to close them is to stop running every coding query through a
+        trillion-parameter model billed as if it might also write the next great novel. The
+        dishonest way is to just raise the price and hope developers do not notice they are paying
+        frontier rates for autocomplete. Chinese open-weight coding models, already priced at a
+        fraction of Claude and GPT rates and already competitive on the benchmarks Evidence cited,
+        are sitting there as the alternative the moment that price rises. A tool that gets more
+        expensive while a cheaper one gets no worse is not a tool that keeps its market by default.
       </p>
 
       <p>
         I wrote a meaningful share of this manifesto's prose using Claude Code, running Claude
         Sonnet 5, and I find that more amusing than reassuring. A tool built and marketed for
         writing and running code spent real compute drafting paragraphs of political argument about
-        server costs and Ford's rehiring numbers, work with nothing to do with a compiler. That is
-        not a complaint about the writing help, which was genuinely useful. It is the clearest
-        personal proof of this chapter's whole point. A model that drafts prose as comfortably as it
-        drafts code was never specialized for either one. It is a generalist doing both jobs at a
-        generalist's price, and I paid that price to write a manifesto arguing against paying it.
+        server costs and Ford's rehiring numbers, work with nothing to do with a compiler. The
+        writing help itself was useful, no complaint there. What it proves is this chapter's whole
+        point, in miniature. A model that drafts prose as comfortably as it drafts code was never
+        specialized for either one. It is a generalist doing both jobs at a generalist's price, and
+        I paid that price to write a manifesto arguing against paying it.
       </p>
 
       <hr />
 
       <p>
-        None of this argues that Claude Code or Codex are bad tools. Both are genuinely capable, and
-        this manifesto has used one of them to help write itself. It argues that neither tool is
-        built the way its own economics call for. A coding assistant priced and sized for coding
-        would cost its maker less to run, fail less often, and charge its users less than either
-        product does today. The frontier labs are not building that tool because the trillion-
-        parameter model already exists and selling access to it is easier than building something
-        smaller on purpose. That choice is a subsidy, not a strategy, and subsidies end.
+        None of this argues that Claude Code or Codex are bad tools. Both are capable, and this
+        manifesto has used one of them to help write itself. It argues that neither tool is built
+        the way its own economics call for. A coding assistant priced and sized for coding would
+        cost its maker less to run, fail less often, and charge its users less than either product
+        does today. The frontier labs are not building that tool because the trillion- parameter
+        model already exists and selling access to it is easier than building something smaller on
+        purpose. That choice is a subsidy, not a strategy, and subsidies end.
       </p>
 
       <h2 class="bibliography-title">Sources</h2>
