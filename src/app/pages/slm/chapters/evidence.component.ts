@@ -51,8 +51,8 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 
       <p class="lede">
         A thesis this blunt deserves a test, not just an argument. The cleanest one running right
-        now is not a small model against a large one. It is the open-weight Chinese labs against the
-        Western frontier: less capital, chips a generation behind and deliberately throttled by
+        now pits the open-weight Chinese labs against the Western frontier, not a small model
+        against a large one: less capital, chips a generation behind and deliberately throttled by
         export controls, and architectures built for efficiency rather than scale for its own sake,
         measured against Anthropic, OpenAI, and Google on the same public benchmarks. As of June
         2026, that test is not going the way the trillion-parameter story predicts it should.
@@ -125,12 +125,12 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         near 1.6 billion dollars and its operating costs near 944 million dollars, with hardware
         spending alone exceeding 500 million dollars over the company's history once research,
         failed runs, and infrastructure are counted rather than just the final successful training
-        run. That correction matters, and it cuts both ways. It is intellectually dishonest to wave
-        away DeepSeek's cost advantage as a marketing number. It is just as dishonest to repeat the
-        marketing number as the whole truth. The honest comparison is harder and more favorable to
-        this manifesto's case than either: a company that has spent on the order of a few billion
-        dollars in total, competing against labs that have raised, between them, tens of billions of
-        dollars in venture capital to reach a similar place on the scoreboard.
+        run. That correction matters, and it cuts both ways. Waving away DeepSeek's cost advantage
+        as a marketing number is intellectually dishonest, and repeating the marketing number as the
+        whole truth is no better. The honest comparison is harder and more favorable to this
+        manifesto's case than either: a company that has spent on the order of a few billion dollars
+        in total, competing against labs that have raised, between them, tens of billions of dollars
+        in venture capital to reach a similar place on the scoreboard.
       </p>
 
       <p>
@@ -163,8 +163,8 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         between models. Humanity's Last Exam exists for exactly this reason. It was built in 2025
         because models had pushed past ninety percent on the benchmarks that came before it, MMLU
         among them, and a saturated benchmark stops being able to tell anyone anything. The new exam
-        will saturate too. Another one will follow it. That is not a flaw in the benchmarking
-        process. It is what an open-ended objective looks like from the outside.
+        will saturate too. Another one will follow it. That is what an open-ended objective looks
+        like from the outside, not a flaw in the benchmarking process.
       </p>
 
       <p>
@@ -182,13 +182,12 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 
       <p>
         The honest counter to this argument is that a hundred small models with a hundred bounded
-        objectives are not obviously different from one large model with none, since in aggregate
-        the spending might look similar from a distance. It is different, and the difference is the
-        whole point. Each of those hundred bounded efforts can be judged, funded, and killed on its
-        own terms, the moment it proves out or fails. None of that capital is hostage to a
-        definition that does not exist. The trillion-parameter program has no equivalent off-ramp.
-        It can only ever be funded again, on the promise that the next run is the one that finally
-        arrives.
+        objectives, in aggregate, might spend about what one large model with none does, so where is
+        the real distinction. Here: each of those hundred bounded efforts can be judged, funded, and
+        killed on its own terms, the moment it proves out or fails. None of that capital is hostage
+        to a definition that does not exist. The trillion-parameter program has no equivalent
+        off-ramp. It can only ever be funded again, on the promise that the next run is the one that
+        finally arrives.
       </p>
 
       <h2>What the trillion-parameter frontier actually spent</h2>
@@ -244,8 +243,8 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         founder's own account, for one model, one training run, before a single dollar of inference,
         staffing, or the failed runs that never made it into a press release. Measured against that,
         a team spending a few billion dollars in total, training on chips a generation behind, and
-        tying the result on a real public benchmark, is not the underdog story it is usually told
-        as. It is the more disciplined one.
+        tying the result on a real public benchmark, deserves a better story than underdog. Call it
+        the more disciplined one instead.
       </p>
 
       <h2>GPT-4 against DeepSeek V3, run cost to run cost</h2>
@@ -278,8 +277,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         executive declined to dispute. On that basis, training a model that would go on to tie a
         current Google frontier release on SWE-bench Verified cost roughly seventeen times less than
         training the model OpenAI has never confirmed the size of. That is not a rounding
-        difference. It is this manifesto's whole argument, expressed as one number divided by
-        another.
+        difference. It is this manifesto's whole argument, reduced to one number divided by another.
       </p>
 
       <p>
