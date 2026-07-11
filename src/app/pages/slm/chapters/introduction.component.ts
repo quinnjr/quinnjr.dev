@@ -33,10 +33,10 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         single wager. They believe intelligence is a function of scale, and that a model large
         enough, trained on enough of the world, will cross some threshold into general competence.
         Each generation costs an order of magnitude more than the last. Each is sold as the
-        penultimate step. None has produced a business that earns more than it burns. None has
-        produced the general mind it was meant to. The losses are not a phase to be grown out of.
-        They are the shape of the thing. A system built to be all things to all users is, by
-        construction, the most expensive possible way to do any single one of them.
+        penultimate step. None has produced a business that earns more than it burns, and none has
+        come any closer to the general mind it was built to reach. The losses are not a phase to be
+        grown out of. They are the shape of the thing. A system built to be all things to all users
+        is, by construction, the most expensive possible way to do any single one of them.
       </p>
 
       <blockquote>
@@ -58,8 +58,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
 
       <p>
         The frontier sells generality that almost no one needs at a price almost no one can sustain.
-        The small model sells competence at a price that turns a profit. That is not a smaller
-        ambition. It is a serious one.
+        The small model sells competence at a price that turns a profit, and there is nothing modest
+        about an ambition that actually pays for itself.
       </p>
 
       <h2>Where the coin should flow</h2>

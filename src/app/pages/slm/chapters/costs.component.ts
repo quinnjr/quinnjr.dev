@@ -68,9 +68,9 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         system, the GB200 NVL72, prices at 2.8 to 3.4 million dollars for the hardware alone, near
         3.9 million dollars all in with networking and storage, for 72 GPUs in one rack. Divide that
         out and the fully integrated cost lands near 54,000 dollars per GPU, higher than the
-        eight-GPU box, not lower. Scaling up bought more compute. It did not buy a cheaper GPU. The
-        cost of tying that many chips together at that density is itself a line item, and it grows
-        with the rack.
+        eight-GPU box rather than lower. Scaling up bought more compute, not a cheaper GPU. The cost
+        of tying that many chips together at that density is itself a line item, and it grows with
+        the rack.
       </p>
 
       <app-manifesto-chart
@@ -113,7 +113,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         that designed it for themselves. An industry that wants efficient, small-model-friendly
         hardware to actually proliferate is choosing between a competitive x86 market and an ARM64
         market that is, in practice, one chip vendor, a handful of OEMs reselling that one chip, and
-        the genuinely efficient silicon locked behind someone else's login.
+        the most efficient silicon of all locked behind someone else's login.
       </p>
 
       <p>
@@ -128,8 +128,44 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         one CPU vendor, a handful of OEMs, and a missing chassis from most of the names that would
         normally sell it to them, while the ARM silicon actually proven to save the most energy sits
         inside the very clouds that enterprise is trying to leave. The hardware gap this chapter
-        laments is not an abstraction. It is enterprises paying x86's power bill, on their own
+        laments shows up as a real line item: enterprises paying x86's power bill, on their own
         premises, for want of a market that would sell them the cheaper alternative.
+      </p>
+
+      <h2>What each architecture actually burns</h2>
+
+      <p>
+        The lament above is about who sells the hardware. This is about what running it costs in
+        electricity once bought, and the three architectures do not sort into a close race.
+        Cloudflare's own edge fleet gives a clean, apples-to-apples comparison, since the company
+        has published production numbers for both its x86 and ARM generations against the same older
+        baseline. AMD's Milan generation of EPYC chips, the newer x86 fleet, delivers 39 percent
+        more internet requests per watt than the prior Rome generation. Cloudflare's Ampere-designed
+        ARM fleet, built in the same window, delivers 57 percent more requests per watt over that
+        same Rome baseline, ahead of x86's own next generation rather than behind it. AWS makes the
+        identical claim at cloud scale directly: Graviton instances use up to 60 percent less energy
+        than a comparable x86 EC2 instance for the same performance. Two independent companies, at
+        two different layers of the internet, measured the same result.
+      </p>
+
+      <app-manifesto-chart
+        [type]="'bar'"
+        [data]="architectureEfficiencyData"
+        [options]="barOptions"
+        caption="Requests per watt, Cloudflare's edge fleet, gain over the same 2019-era x86 baseline. RISC-V omitted: no independently verified figure exists yet."
+      />
+
+      <p>
+        RISC-V is, on paper, the most efficient architecture of the three, since an open instruction
+        set lets a designer strip out every piece of silicon a given workload does not need rather
+        than carry decades of x86 or ARM legacy along for compatibility. SiFive's P870-D core scales
+        to 256 coherent cores on exactly that promise, and the company markets it directly at
+        datacenter power budgets. But it is still a promise rather than a measured result. No
+        independently benchmarked performance-per-watt figure for a shipping, general-purpose RISC-V
+        server chip exists in the way Cloudflare's and AWS's numbers exist for ARM, and Ventana, the
+        vendor furthest along on a general-purpose RISC-V server core, has already slipped its first
+        Veyron chip past its original ship date once. RISC-V may well win this comparison
+        eventually. It has not yet had the chance to prove it in production the way ARM already has.
       </p>
 
       <h2>What it costs to build the room</h2>
@@ -143,12 +179,12 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         a full one-gigawatt AI campus, sized around a fleet of GB200 NVL72 racks, puts the fully
         loaded figure, building, power, cooling, networking, and the servers themselves together, at
         38 billion dollars up front, 38 million dollars per megawatt. The gap between that number
-        and the construction-only figures above is the compute. A gigawatt-scale AI campus is not a
-        building with computers in it afterward. The computers are most of the bill. Amortized over
-        a five-year hardware lifespan and a fourteen-year facility lifespan, the same model puts the
-        campus's annual cost of ownership, capital and operating combined, near 8.5 billion dollars
-        a year, 8.5 million dollars per megawatt per year, of which servers and network
-        infrastructure alone account for roughly 5 billion of that annual figure.
+        and the construction-only figures above is the compute. The computers, not the building,
+        make up most of the bill on a gigawatt-scale AI campus. Amortized over a five-year hardware
+        lifespan and a fourteen-year facility lifespan, the same model puts the campus's annual cost
+        of ownership, capital and operating combined, near 8.5 billion dollars a year, 8.5 million
+        dollars per megawatt per year, of which servers and network infrastructure alone account for
+        roughly 5 billion of that annual figure.
       </p>
 
       <app-manifesto-chart
@@ -191,14 +227,14 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       />
 
       <p>
-        That price is not fixed. It is already moving. PJM, the grid operator covering much of the
-        mid-Atlantic and Midwest, saw its capacity price for the 2025-26 service period jump 9.3
-        times over, from 29 dollars per megawatt-day to 270 dollars per megawatt-day, with some
-        locations closer to 450. PJM and the utilities involved point to forecasted datacenter load
-        as the driver. Residents in PJM's territory are projected to see their electricity bills
-        rise roughly 15 percent in 2026 against the pre-datacenter-boom baseline. The price per
-        kilowatt-hour a frontier lab pays today is not the price it will pay once the grid it is
-        straining finishes passing that strain through to everyone connected to it.
+        That price is already moving. PJM, the grid operator covering much of the mid-Atlantic and
+        Midwest, saw its capacity price for the 2025-26 service period jump 9.3 times over, from 29
+        dollars per megawatt-day to 270 dollars per megawatt-day, with some locations closer to 450.
+        PJM and the utilities involved point to forecasted datacenter load as the driver. Residents
+        in PJM's territory are projected to see their electricity bills rise roughly 15 percent in
+        2026 against the pre-datacenter-boom baseline. The price per kilowatt-hour a frontier lab
+        pays today is not the price it will pay once the grid it is straining finishes passing that
+        strain through to everyone connected to it.
       </p>
 
       <h2>Storing the petabytes</h2>
@@ -219,10 +255,10 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         checkpoints saved at intervals across a months-long run, each one a multi-terabyte snapshot
         of every parameter at trillion-parameter scale, and the optimizer state sitting alongside
         each checkpoint, often two to four times the size of the model itself for the optimizers
-        this kind of training actually uses. A frontier run's storage bill is not the size of its
-        finished dataset. It is that, plus the discarded majority of what was scraped to build it,
-        plus a running history of the model's own intermediate states, and petabytes, plural, is the
-        realistic unit for the whole pile.
+        this kind of training actually uses. A frontier run's storage bill runs well past the size
+        of its finished dataset: add the discarded majority of what was scraped to build that
+        dataset, add a running history of the model's own intermediate states, and petabytes,
+        plural, becomes the realistic unit for the whole pile.
       </p>
 
       <h2>What it costs to train one, bottom-up</h2>
@@ -282,9 +318,8 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         alone, not the building, not the servers, just the electricity, at 0.6 billion dollars a
         year. That is roughly 1.5 million times what my closet costs to run at the worst-case,
         continuous-peak estimate, and more than 7 million times what it costs running the way it
-        actually runs. The frontier and the small machine in my closet are not on the same cost
-        curve, not by a factor that rounds to anything. They are not the same kind of expense at
-        all.
+        actually runs. Put the frontier and the small machine in my closet on the same chart and the
+        scale itself stops meaning anything useful. They are different kinds of expense entirely.
       </p>
 
       <app-manifesto-chart
@@ -336,6 +371,34 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >servethehome.com</a
           >. The current OEM list for general-purpose ARM64 servers, and Dell, HPE, and Wiwynn's
           absence from it.
+        </li>
+        <li>
+          <cite>Cloudflare.</cite> "Designing Edge Servers with Arm CPUs to Deliver 57% More
+          Performance Per Watt." 2026.
+          <a
+            href="https://blog.cloudflare.com/designing-edge-servers-with-arm-cpus/"
+            target="_blank"
+            rel="noopener noreferrer"
+            >blog.cloudflare.com</a
+          >. The production requests-per-watt figures for Cloudflare's x86 (Milan) and ARM (Ampere)
+          edge fleets, both measured against the same Rome-era baseline.
+        </li>
+        <li>
+          <cite>Amazon Web Services.</cite> "AWS Graviton Processor." 2026.
+          <a href="https://aws.amazon.com/ec2/graviton/" target="_blank" rel="noopener noreferrer"
+            >aws.amazon.com</a
+          >. AWS's own claim that Graviton instances use up to 60 percent less energy than
+          comparable x86 instances for the same performance.
+        </li>
+        <li>
+          <cite>SiFive.</cite> "RISC-V for the Datacenter: Introducing the P870-D." 2024.
+          <a
+            href="https://www.sifive.com/blog/risc-v-for-the-datacenter-introducing-the-p870-d"
+            target="_blank"
+            rel="noopener noreferrer"
+            >sifive.com</a
+          >. SiFive's own performance-per-watt claims for its 256-core datacenter core, presented
+          without independent benchmarks as of this writing.
         </li>
         <li>
           <cite>HBS.</cite> "Cloud Repatriation Trends: Cost, AI and the Push Towards Hybrid."
@@ -400,6 +463,19 @@ export class CostsComponent {
       {
         label: 'Fully integrated $/GPU (thousands)',
         data: [46, 54],
+        backgroundColor: [ICE_FILL, AMBER_FILL],
+        borderColor: [ICE_LINE, AMBER_LINE],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  protected readonly architectureEfficiencyData: ChartConfiguration<'bar'>['data'] = {
+    labels: ['x86 (AMD Milan vs Rome)', 'ARM (Ampere vs Rome)'],
+    datasets: [
+      {
+        label: 'Requests per watt, gain over 2019-era x86 baseline (%)',
+        data: [39, 57],
         backgroundColor: [ICE_FILL, AMBER_FILL],
         borderColor: [ICE_LINE, AMBER_LINE],
         borderWidth: 1,
