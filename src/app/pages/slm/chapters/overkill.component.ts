@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { type ChartConfiguration } from 'chart.js';
 
 import { ManifestoChartComponent } from '../../../components/manifesto-chart/manifesto-chart.component';
@@ -52,7 +53,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 @Component({
   selector: 'app-slm-overkill',
   standalone: true,
-  imports: [ManifestoChartComponent, ManifestoMathComponent],
+  imports: [ManifestoChartComponent, ManifestoMathComponent, RouterLink],
   // Overkill chapter. Mostly straight HTML projected into .manifesto-prose
   // (styled globally): .lede gets the illuminated initial, h2 marks sections.
   // Chart data lives as class fields below, bound into <app-manifesto-chart>.
@@ -78,14 +79,16 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         Code is a harness around that model, not a different model underneath it. OpenAI's Codex CLI
         runs on GPT-5-Codex, and GPT-5-Codex is, by OpenAI's own description, a version of GPT-5
         optimized for agentic coding, a fine-tuned checkpoint of the frontier model rather than a
-        distinct smaller architecture trained for code alone. OpenAI's own naming history makes the
-        direction of travel explicit. Earlier Codex releases carried version numbers tying them to a
-        specific GPT generation. The newest ones dropped that numbering, because the frontier
-        general-purpose model had absorbed enough coding capability that a separate specialist tier
-        stopped making sense to maintain as its own product. The industry is moving away from
-        smaller, coding-focused models, not toward them, consolidating code into the same giant
-        model that also writes marketing copy and argues philosophy, and billing every one of those
-        uses at the same trillion-parameter rate.
+        distinct smaller architecture trained for code alone.<sup class="citation"
+          ><a [routerLink]="[]" fragment="overkill-src-1">[1]</a></sup
+        >
+        OpenAI's own naming history makes the direction of travel explicit. Earlier Codex releases
+        carried version numbers tying them to a specific GPT generation. The newest ones dropped
+        that numbering, because the frontier general-purpose model had absorbed enough coding
+        capability that a separate specialist tier stopped making sense to maintain as its own
+        product. The industry is moving away from smaller, coding-focused models, not toward them,
+        consolidating code into the same giant model that also writes marketing copy and argues
+        philosophy, and billing every one of those uses at the same trillion-parameter rate.
       </p>
 
       <h2>What a coding-only model would actually buy</h2>
@@ -108,14 +111,19 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         for the same request volume, using this manifesto's own GB200 NVL72 figures from Costs. That
         is the hardware side of the assumption. The reliability side follows from it. Claude's own
         status history in 2026 counts 118 reported outages since January, and a cluster of ten
-        separate disruptions inside a single twelve-day span in June alone. The worst of that run,
-        on June 2, traced back to Claude Code's own sub-agent system: a bug let sub-agents spawn
-        child sub-agents in a loop that never terminated, draining token quotas in minutes and
-        taking claude.ai, the API, the developer console, and Claude Code down together for close to
-        six hours. Anthropic has not published a post-incident engineering report for that outage or
-        the ones that followed it in the same month. A smaller, purpose-built coding model, serving
-        one workload instead of sharing capacity with every other use of the same giant model fleet,
-        is a simpler system with fewer places for that kind of failure to start, and simpler systems
+        separate disruptions inside a single twelve-day span in June alone.<sup class="citation"
+          ><a [routerLink]="[]" fragment="overkill-src-2">[2]</a></sup
+        >
+        The worst of that run, on June 2, traced back to Claude Code's own sub-agent system: a bug
+        let sub-agents spawn child sub-agents in a loop that never terminated, draining token quotas
+        in minutes and taking claude.ai, the API, the developer console, and Claude Code down
+        together for close to six hours.<sup class="citation"
+          ><a [routerLink]="[]" fragment="overkill-src-3">[3]</a></sup
+        >
+        Anthropic has not published a post-incident engineering report for that outage or the ones
+        that followed it in the same month. A smaller, purpose-built coding model, serving one
+        workload instead of sharing capacity with every other use of the same giant model fleet, is
+        a simpler system with fewer places for that kind of failure to start, and simpler systems
         are usually the ones that stay up.
       </p>
 
@@ -129,10 +137,15 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <p>
         Whether small models can actually do coding work is not the open question here. Chinese
         open-weight coding models already price the difference into the market today. DeepSeek V4
-        Flash runs fourteen cents per million input tokens. Claude Opus 4.8, the model underneath
-        Claude Code, runs five dollars, and GPT-5.5, the model family underneath Codex, runs the
-        same five dollars. This chapter's assumption describes pricing that already exists, for
-        models already doing real coding work, that neither Claude Code nor Codex has adopted.
+        Flash runs fourteen cents per million input tokens.<sup class="citation"
+          ><a [routerLink]="[]" fragment="overkill-src-5">[5]</a></sup
+        >
+        Claude Opus 4.8, the model underneath Claude Code, runs five dollars, and GPT-5.5, the model
+        family underneath Codex, runs the same five dollars.<sup class="citation"
+          ><a [routerLink]="[]" fragment="overkill-src-5">[5]</a></sup
+        >
+        This chapter's assumption describes pricing that already exists, for models already doing
+        real coding work, that neither Claude Code nor Codex has adopted.
       </p>
 
       <app-manifesto-chart
@@ -162,7 +175,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <p>
         OpenAI burned roughly 9 billion dollars in 2025, is projected to burn 17 billion in 2026,
         and is projected to burn 57 billion in 2027, a trajectory climbing faster than its own
-        revenue.
+        revenue.<sup class="citation"><a [routerLink]="[]" fragment="overkill-src-4">[4]</a></sup>
       </p>
 
       <app-manifesto-chart
@@ -175,17 +188,20 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <p>
         Anthropic's numbers tell the same story from a stronger starting position. Annualized
         revenue reached roughly 30 billion dollars by April 2026, and the company still spent 2
-        dollars and 16 cents for every dollar that revenue brought in. A subsidy this size, run by
-        two of the best-funded companies in the world, reads less like a permanent feature of the
-        market and more like a bet that usage locks in before the bill comes due. When investors
-        eventually demand the unit economics close, on Claude Code and Codex specifically as much as
-        on chatbots, the honest way to close them is to stop running every coding query through a
-        trillion-parameter model billed as if it might also write the next great novel. The
-        dishonest way is to just raise the price and hope developers do not notice they are paying
-        frontier rates for autocomplete. Chinese open-weight coding models, already priced at a
-        fraction of Claude and GPT rates and already competitive on the benchmarks Evidence cited,
-        are sitting there as the alternative the moment that price rises. A tool that gets more
-        expensive while a cheaper one gets no worse is not a tool that keeps its market by default.
+        dollars and 16 cents for every dollar that revenue brought in.<sup class="citation"
+          ><a [routerLink]="[]" fragment="overkill-src-4">[4]</a></sup
+        >
+        A subsidy this size, run by two of the best-funded companies in the world, reads less like a
+        permanent feature of the market and more like a bet that usage locks in before the bill
+        comes due. When investors eventually demand the unit economics close, on Claude Code and
+        Codex specifically as much as on chatbots, the honest way to close them is to stop running
+        every coding query through a trillion-parameter model billed as if it might also write the
+        next great novel. The dishonest way is to just raise the price and hope developers do not
+        notice they are paying frontier rates for autocomplete. Chinese open-weight coding models,
+        already priced at a fraction of Claude and GPT rates and already competitive on the
+        benchmarks Evidence cited, are sitting there as the alternative the moment that price rises.
+        A tool that gets more expensive while a cheaper one gets no worse is not a tool that keeps
+        its market by default.
       </p>
 
       <p>
@@ -213,7 +229,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 
       <h2 class="bibliography-title">Sources</h2>
       <ol class="bibliography">
-        <li>
+        <li id="overkill-src-1">
           <cite>OpenAI.</cite> "Building more with GPT-5.1-Codex-Max." 2026.
           <a
             href="https://openai.com/index/gpt-5-1-codex-max/"
@@ -223,7 +239,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. OpenAI's own description of Codex models as optimized variants of the GPT-5 frontier
           model, not a separate architecture.
         </li>
-        <li>
+        <li id="overkill-src-2">
           <cite>TechTimes.</cite> "Claude Outage: Tenth Disruption in 12 Days Exposes Anthropic
           Infrastructure Strain." June 2026.
           <a
@@ -233,7 +249,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >techtimes.com</a
           >. The June 2026 outage cluster and the 118-incidents-since-January figure.
         </li>
-        <li>
+        <li id="overkill-src-3">
           <cite>ninetwothree.</cite> "The Slot Machine That Codes." June 2026.
           <a
             href="https://www.ninetwothree.co/blog/claude-code-loop-economics"
@@ -242,7 +258,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >ninetwothree.co</a
           >. The Claude Code sub-agent infinite-loop bug behind the June 2 outage.
         </li>
-        <li>
+        <li id="overkill-src-4">
           <cite>AI After Hours.</cite> "OpenAI vs Anthropic: The $121 Billion Question." 2026.
           <a
             href="https://aiafterhours.substack.com/p/openai-vs-anthropic-the-121-billion"
@@ -252,7 +268,7 @@ const LOG_SCALE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. OpenAI and Anthropic's 2026 revenue, burn, and cost-per-revenue-dollar figures cited
           above.
         </li>
-        <li>
+        <li id="overkill-src-5">
           <cite>Morph.</cite> "Best AI Model for Coding (June 2026): 12 Models Ranked by SWE-bench
           Pro Score and Cost per Task." June 2026.
           <a
