@@ -438,6 +438,76 @@
   gap: 0.35rem;
 }
 
+// ── Grouped positions (LinkedIn-style: multiple roles at one company) ─────
+
+.quest-company {
+  font-family: 'Cinzel', serif;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+  margin-bottom: 0.2rem;
+}
+
+.quest-roles {
+  margin-top: 0.9rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.quest-role {
+  position: relative;
+  padding-left: 1.5rem;
+  padding-bottom: 1rem;
+
+  &:last-child {
+    padding-bottom: 0;
+  }
+
+  // Timeline dot
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.3rem;
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(181, 166, 66, 0.35);
+  }
+
+  &.current::before {
+    background: var(--color-amber);
+    box-shadow: 0 0 6px rgba(201, 168, 76, 0.6);
+  }
+
+  // Connector line between roles
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: calc(0.3rem + 13px);
+    bottom: 2px;
+    width: 1px;
+    background: rgba(201, 168, 76, 0.25);
+  }
+}
+
+.role-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.role-title {
+  font-family: 'Cinzel', serif;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--color-parchment);
+}
+
 // ── Education entries ─────────────────────────────────────────────────────
 
 .education-entry {
