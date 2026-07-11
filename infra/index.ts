@@ -57,16 +57,12 @@ const dbUser = new digitalocean.DatabaseUser(`${appName}-user`, {
   name: 'quinnjr',
 });
 
-const pgUrl = (
-  user: pulumi.Input<string>,
-  password: pulumi.Input<string>
-): pulumi.Output<string> =>
-  pulumi
-    .all([user, password, dbCluster.host, dbCluster.port, database.name])
-    .apply(([u, p, host, port, name]) =>
+const pgUrl = (user: pulumi.Input<string>, password: pulumi.Input<string>): pulumi.Output<string> =>
+  pulumi.all([user, password, dbCluster.host, dbCluster.port, database.name]).apply(
+    ([u, p, host, port, name]) =>
       // Managed PG requires TLS, hence sslmode=require.
       `postgresql://${u}:${p}@${host}:${port}/${name}?sslmode=require`
-    );
+  );
 
 // Admin connection — used only by the ephemeral migration job (DDL + grants).
 const adminDatabaseUrl = pgUrl(dbCluster.user, dbCluster.password);
