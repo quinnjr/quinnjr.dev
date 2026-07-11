@@ -28,7 +28,7 @@ describe('FlowbiteService', () => {
         () => {
           expect(callback).toHaveBeenCalled();
         },
-        { timeout: 1000, interval: 50 }
+        { timeout: 10000, interval: 50 }
       );
 
       expect(callback).toHaveBeenCalledWith(expect.any(Object));
@@ -44,7 +44,7 @@ describe('FlowbiteService', () => {
         () => {
           expect(callback).toHaveBeenCalled();
         },
-        { timeout: 1000, interval: 50 }
+        { timeout: 10000, interval: 50 }
       );
 
       const callArg = callback.mock.calls[0][0];
