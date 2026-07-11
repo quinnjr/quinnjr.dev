@@ -70,3 +70,6 @@ crash.*.log
 # GraphQL codegen artifacts
 schema.graphql
 src/app/graphql/generated.ts
+
+# Claude Code local state
+.claude/local/
