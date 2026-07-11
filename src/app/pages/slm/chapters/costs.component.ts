@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { type ChartConfiguration } from 'chart.js';
 
 import { ManifestoChartComponent } from '../../../components/manifesto-chart/manifesto-chart.component';
@@ -40,7 +41,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 @Component({
   selector: 'app-slm-costs',
   standalone: true,
-  imports: [ManifestoChartComponent, ManifestoMathComponent],
+  imports: [ManifestoChartComponent, ManifestoMathComponent, RouterLink],
   // Costs chapter. Mostly straight HTML projected into .manifesto-prose
   // (styled globally): .lede gets the illuminated initial, h2 marks sections.
   // Chart data lives as class fields below, bound into <app-manifesto-chart>.
@@ -103,17 +104,22 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         vendor, Ampere, whose AmpereOne and Altra lines are the only general-purpose ARM silicon
         most buyers can actually purchase. The OEMs building chassis around that one chip are
         Supermicro, Gigabyte, ASRock Rack, IEIT, and BYD. HPE, Wiwynn, and Dell, despite earlier
-        involvement with Ampere's parts, are not currently on that list at all. Nvidia sells its own
-        ARM64 Grace CPU, but only bundled into Grace-Hopper and Grace-Blackwell GPU systems, never
-        as a standalone chassis choice the way an EPYC or a Xeon is. And the ARM silicon doing the
-        most for efficiency right now, AWS's Graviton, Google's Axion, and Microsoft's Cobalt,
-        reportedly up to 20 percent cheaper and 60 percent more energy-efficient than comparable x86
-        instances, is not for sale under any terms. It is proprietary to the cloud that built it,
-        unavailable to anyone trying to run their own infrastructure outside the three hyperscalers
-        that designed it for themselves. An industry that wants efficient, small-model-friendly
-        hardware to actually proliferate is choosing between a competitive x86 market and an ARM64
-        market that is, in practice, one chip vendor, a handful of OEMs reselling that one chip, and
-        the most efficient silicon of all locked behind someone else's login.
+        involvement with Ampere's parts, are not currently on that list at all.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-3">[3]</a></sup
+        >
+        Nvidia sells its own ARM64 Grace CPU, but only bundled into Grace-Hopper and Grace-Blackwell
+        GPU systems, never as a standalone chassis choice the way an EPYC or a Xeon is. And the ARM
+        silicon doing the most for efficiency right now, AWS's Graviton, Google's Axion, and
+        Microsoft's Cobalt, reportedly up to 20 percent cheaper and 60 percent more energy-efficient
+        than comparable x86 instances, is not for sale under any terms.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-5">[5]</a></sup
+        >
+        It is proprietary to the cloud that built it, unavailable to anyone trying to run their own
+        infrastructure outside the three hyperscalers that designed it for themselves. An industry
+        that wants efficient, small-model-friendly hardware to actually proliferate is choosing
+        between a competitive x86 market and an ARM64 market that is, in practice, one chip vendor,
+        a handful of OEMs reselling that one chip, and the most efficient silicon of all locked
+        behind someone else's login.
       </p>
 
       <p>
@@ -121,15 +127,18 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         found 86 percent of CIOs planning to repatriate at least some workload from the public cloud
         back to infrastructure they own, AI spending named as a leading driver, enterprises looking
         at their own GPU and inference bills and asking whether owning the iron would cost less than
-        renting someone else's. ARM64's well-documented energy advantage, up to 60 percent less
-        power for comparable work, is exactly the kind of saving a repatriation decision should be
-        able to capture. It mostly cannot. An enterprise repatriating onto x86 buys into a real,
-        competitive retail market. An enterprise that wants to repatriate onto ARM64 instead finds
-        one CPU vendor, a handful of OEMs, and a missing chassis from most of the names that would
-        normally sell it to them, while the ARM silicon actually proven to save the most energy sits
-        inside the very clouds that enterprise is trying to leave. The hardware gap this chapter
-        laments shows up as a real line item: enterprises paying x86's power bill, on their own
-        premises, for want of a market that would sell them the cheaper alternative.
+        renting someone else's.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-7">[7]</a></sup
+        >
+        ARM64's well-documented energy advantage, up to 60 percent less power for comparable work,
+        is exactly the kind of saving a repatriation decision should be able to capture. It mostly
+        cannot. An enterprise repatriating onto x86 buys into a real, competitive retail market. An
+        enterprise that wants to repatriate onto ARM64 instead finds one CPU vendor, a handful of
+        OEMs, and a missing chassis from most of the names that would normally sell it to them,
+        while the ARM silicon actually proven to save the most energy sits inside the very clouds
+        that enterprise is trying to leave. The hardware gap this chapter laments shows up as a real
+        line item: enterprises paying x86's power bill, on their own premises, for want of a market
+        that would sell them the cheaper alternative.
       </p>
 
       <h2>What each architecture actually burns</h2>
@@ -140,12 +149,21 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         Cloudflare's own edge fleet gives a clean, apples-to-apples comparison, since the company
         has published production numbers for both its x86 and ARM generations against the same older
         baseline. AMD's Milan generation of EPYC chips, the newer x86 fleet, delivers 39 percent
-        more internet requests per watt than the prior Rome generation. Cloudflare's Ampere-designed
-        ARM fleet, built in the same window, delivers 57 percent more requests per watt over that
-        same Rome baseline, ahead of x86's own next generation rather than behind it. AWS makes the
-        identical claim at cloud scale directly: Graviton instances use up to 60 percent less energy
-        than a comparable x86 EC2 instance for the same performance. Two independent companies, at
-        two different layers of the internet, measured the same result.
+        more internet requests per watt than the prior Rome generation.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-4">[4]</a></sup
+        >
+        Cloudflare's Ampere-designed ARM fleet, built in the same window, delivers 57 percent more
+        requests per watt over that same Rome baseline, ahead of x86's own next generation rather
+        than behind it.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-4">[4]</a></sup
+        >
+        AWS makes the identical claim at cloud scale directly: Graviton instances use up to 60
+        percent less energy than a comparable x86 EC2 instance for the same performance.<sup
+          class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-5">[5]</a></sup
+        >
+        Two independent companies, at two different layers of the internet, measured the same
+        result.
       </p>
 
       <app-manifesto-chart
@@ -160,12 +178,15 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         set lets a designer strip out every piece of silicon a given workload does not need rather
         than carry decades of x86 or ARM legacy along for compatibility. SiFive's P870-D core scales
         to 256 coherent cores on exactly that promise, and the company markets it directly at
-        datacenter power budgets. But it is still a promise rather than a measured result. No
-        independently benchmarked performance-per-watt figure for a shipping, general-purpose RISC-V
-        server chip exists in the way Cloudflare's and AWS's numbers exist for ARM, and Ventana, the
-        vendor furthest along on a general-purpose RISC-V server core, has already slipped its first
-        Veyron chip past its original ship date once. RISC-V may well win this comparison
-        eventually. It has not yet had the chance to prove it in production the way ARM already has.
+        datacenter power budgets.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-6">[6]</a></sup
+        >
+        But it is still a promise rather than a measured result. No independently benchmarked
+        performance-per-watt figure for a shipping, general-purpose RISC-V server chip exists in the
+        way Cloudflare's and AWS's numbers exist for ARM, and Ventana, the vendor furthest along on
+        a general-purpose RISC-V server core, has already slipped its first Veyron chip past its
+        original ship date once. RISC-V may well win this comparison eventually. It has not yet had
+        the chance to prove it in production the way ARM already has.
       </p>
 
       <h2>What it costs to build the room</h2>
@@ -175,16 +196,22 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         industry survey puts an ordinary datacenter build at 8 to 12 million dollars per megawatt,
         and an AI-optimized facility, built for the power density and cooling a GPU cluster needs,
         at 15 to 20 million dollars per megawatt or more, for the building, power infrastructure,
-        and cooling alone, before a single server goes in a rack. Epoch AI's 2026 research model for
-        a full one-gigawatt AI campus, sized around a fleet of GB200 NVL72 racks, puts the fully
-        loaded figure, building, power, cooling, networking, and the servers themselves together, at
-        38 billion dollars up front, 38 million dollars per megawatt. The gap between that number
-        and the construction-only figures above is the compute. The computers, not the building,
-        make up most of the bill on a gigawatt-scale AI campus. Amortized over a five-year hardware
-        lifespan and a fourteen-year facility lifespan, the same model puts the campus's annual cost
-        of ownership, capital and operating combined, near 8.5 billion dollars a year, 8.5 million
-        dollars per megawatt per year, of which servers and network infrastructure alone account for
-        roughly 5 billion of that annual figure.
+        and cooling alone, before a single server goes in a rack.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-9">[9]</a></sup
+        >
+        Epoch AI's 2026 research model for a full one-gigawatt AI campus, sized around a fleet of
+        GB200 NVL72 racks, puts the fully loaded figure, building, power, cooling, networking, and
+        the servers themselves together, at 38 billion dollars up front, 38 million dollars per
+        megawatt.<sup class="citation"><a [routerLink]="[]" fragment="costs-src-1">[1]</a></sup> The
+        gap between that number and the construction-only figures above is the compute. The
+        computers, not the building, make up most of the bill on a gigawatt-scale AI campus.
+        Amortized over a five-year hardware lifespan and a fourteen-year facility lifespan, the same
+        model puts the campus's annual cost of ownership, capital and operating combined, near 8.5
+        billion dollars a year, 8.5 million dollars per megawatt per year, of which servers and
+        network infrastructure alone account for roughly 5 billion of that annual figure.<sup
+          class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-1">[1]</a></sup
+        >
       </p>
 
       <app-manifesto-chart
@@ -217,8 +244,11 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 
       <p>
         Epoch AI's gigawatt model prices the energy itself, separate from the cooling that moves it,
-        at 0.6 billion dollars a year. Treated as a full gigawatt running close to continuously
-        across a year, that implies a price near seven cents per kilowatt-hour.
+        at 0.6 billion dollars a year.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-1">[1]</a></sup
+        >
+        Treated as a full gigawatt running close to continuously across a year, that implies a price
+        near seven cents per kilowatt-hour.
       </p>
 
       <app-manifesto-math
@@ -229,12 +259,15 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <p>
         That price is already moving. PJM, the grid operator covering much of the mid-Atlantic and
         Midwest, saw its capacity price for the 2025-26 service period jump 9.3 times over, from 29
-        dollars per megawatt-day to 270 dollars per megawatt-day, with some locations closer to 450.
-        PJM and the utilities involved point to forecasted datacenter load as the driver. Residents
-        in PJM's territory are projected to see their electricity bills rise roughly 15 percent in
-        2026 against the pre-datacenter-boom baseline. The price per kilowatt-hour a frontier lab
-        pays today is not the price it will pay once the grid it is straining finishes passing that
-        strain through to everyone connected to it.
+        dollars per megawatt-day to 270 dollars per megawatt-day, with some locations closer to
+        450.<sup class="citation"><a [routerLink]="[]" fragment="costs-src-8">[8]</a></sup> PJM and
+        the utilities involved point to forecasted datacenter load as the driver. Residents in PJM's
+        territory are projected to see their electricity bills rise roughly 15 percent in 2026
+        against the pre-datacenter-boom baseline.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-8">[8]</a></sup
+        >
+        The price per kilowatt-hour a frontier lab pays today is not the price it will pay once the
+        grid it is straining finishes passing that strain through to everyone connected to it.
       </p>
 
       <h2>Storing the petabytes</h2>
@@ -287,12 +320,14 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         frontier models puts hardware at 47 to 67 percent of a training run's total cost, with staff
         and energy making up the rest, and finds frontier training budgets growing 2.4 times a year
         since 2016, crossing half a billion dollars in 2025 and heading toward one to three billion
-        dollars by 2027. That trajectory, built independently of anything in this manifesto, lands
-        in the same place this chapter's own numbers point to from underneath: somewhere in the high
-        hundreds of millions to low billions of dollars for a single 2026 frontier run, and rising.
-        Introduction called this a bill that arrives every quarter and never comes due. This chapter
-        is what that bill is actually made of, megawatt by megawatt, rack by rack, petabyte by
-        petabyte.
+        dollars by 2027.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-2">[2]</a></sup
+        >
+        That trajectory, built independently of anything in this manifesto, lands in the same place
+        this chapter's own numbers point to from underneath: somewhere in the high hundreds of
+        millions to low billions of dollars for a single 2026 frontier run, and rising. Introduction
+        called this a bill that arrives every quarter and never comes due. This chapter is what that
+        bill is actually made of, megawatt by megawatt, rack by rack, petabyte by petabyte.
       </p>
 
       <h2>What I pay instead</h2>
@@ -301,11 +336,19 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
         Every figure above describes someone else's bill. Mine is easy to put a number on by
         comparison. The DGX Spark in my closet, the same one running the Qwen coding model mentioned
         in Evidence, draws a peak of 240 watts and, measured under real inference load on an
-        identical unit, an average closer to 50. Left running for a year at the 2026 national
-        average US residential rate, 18.7 cents a kilowatt-hour, that is somewhere between 82
-        dollars a year at realistic load and 393 dollars a year if it ran flat out, continuously,
-        all year, which it does not. Add the 3,999 dollar purchase price as a one-time cost and the
-        first year runs a little over 4,000 dollars. Every year after that runs under 400.
+        identical unit, an average closer to 50.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-10">[10]</a></sup
+        >
+        Left running for a year at the 2026 national average US residential rate, 18.7 cents a
+        kilowatt-hour, that is somewhere between 82 dollars a year at realistic load and 393 dollars
+        a year if it ran flat out, continuously, all year, which it does not.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-11">[11]</a></sup
+        >
+        Add the 3,999 dollar purchase price as a one-time cost and the first year runs a little over
+        4,000 dollars.<sup class="citation"
+          ><a [routerLink]="[]" fragment="costs-src-10">[10]</a></sup
+        >
+        Every year after that runs under 400.
       </p>
 
       <app-manifesto-math
@@ -316,10 +359,11 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
       <p>
         Epoch AI's gigawatt campus, the same model cited earlier in this chapter, prices the energy
         alone, not the building, not the servers, just the electricity, at 0.6 billion dollars a
-        year. That is roughly 1.5 million times what my closet costs to run at the worst-case,
-        continuous-peak estimate, and more than 7 million times what it costs running the way it
-        actually runs. Put the frontier and the small machine in my closet on the same chart and the
-        scale itself stops meaning anything useful. They are different kinds of expense entirely.
+        year.<sup class="citation"><a [routerLink]="[]" fragment="costs-src-1">[1]</a></sup> That is
+        roughly 1.5 million times what my closet costs to run at the worst-case, continuous-peak
+        estimate, and more than 7 million times what it costs running the way it actually runs. Put
+        the frontier and the small machine in my closet on the same chart and the scale itself stops
+        meaning anything useful. They are different kinds of expense entirely.
       </p>
 
       <app-manifesto-chart
@@ -340,7 +384,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
 
       <h2 class="bibliography-title">Sources</h2>
       <ol class="bibliography">
-        <li>
+        <li id="costs-src-1">
           <cite>Epoch AI.</cite> "Total cost of ownership of a one-gigawatt AI data center." May
           2026.
           <a
@@ -351,7 +395,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. The gigawatt-campus cost model: 38 billion dollars up front, 8.5 billion dollars a year
           amortized, assuming a GB200 NVL72 fleet.
         </li>
-        <li>
+        <li id="costs-src-2">
           <cite
             >Cottier, B., Rahman, R., Fattorini, L., Maslej, N., Besiroglu, T., and Owen, D.</cite
           >
@@ -361,7 +405,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. The cost-composition model (hardware, staff, energy) and the 2.4x-per-year training
           cost growth trend cited above.
         </li>
-        <li>
+        <li id="costs-src-3">
           <cite>ServeTheHome.</cite> "Ampere AmpereOne Pricing and SKU List with Current OEM
           Partners." 2026.
           <a
@@ -372,7 +416,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. The current OEM list for general-purpose ARM64 servers, and Dell, HPE, and Wiwynn's
           absence from it.
         </li>
-        <li>
+        <li id="costs-src-4">
           <cite>Cloudflare.</cite> "Designing Edge Servers with Arm CPUs to Deliver 57% More
           Performance Per Watt." 2026.
           <a
@@ -383,14 +427,14 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. The production requests-per-watt figures for Cloudflare's x86 (Milan) and ARM (Ampere)
           edge fleets, both measured against the same Rome-era baseline.
         </li>
-        <li>
+        <li id="costs-src-5">
           <cite>Amazon Web Services.</cite> "AWS Graviton Processor." 2026.
           <a href="https://aws.amazon.com/ec2/graviton/" target="_blank" rel="noopener noreferrer"
             >aws.amazon.com</a
           >. AWS's own claim that Graviton instances use up to 60 percent less energy than
           comparable x86 instances for the same performance.
         </li>
-        <li>
+        <li id="costs-src-6">
           <cite>SiFive.</cite> "RISC-V for the Datacenter: Introducing the P870-D." 2024.
           <a
             href="https://www.sifive.com/blog/risc-v-for-the-datacenter-introducing-the-p870-d"
@@ -400,7 +444,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. SiFive's own performance-per-watt claims for its 256-core datacenter core, presented
           without independent benchmarks as of this writing.
         </li>
-        <li>
+        <li id="costs-src-7">
           <cite>HBS.</cite> "Cloud Repatriation Trends: Cost, AI and the Push Towards Hybrid."
           November 2025.
           <a
@@ -411,7 +455,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. The IDC-sourced figure that 86 percent of CIOs planned to repatriate some workload from
           the public cloud in 2025, AI spending cited as a leading driver.
         </li>
-        <li>
+        <li id="costs-src-8">
           <cite>SemiAnalysis.</cite> "Are AI Datacenters Increasing Electric Bills for American
           Households?" 2026.
           <a
@@ -422,7 +466,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
           >. The PJM capacity price spike, 29 to 270 dollars per megawatt-day, and the projected
           household bill impact.
         </li>
-        <li>
+        <li id="costs-src-9">
           <cite>JLL Research.</cite> "2026 Market Outlook for Global Data Centers." 2026.
           <a
             href="https://www.jll.com/en-us/insights/market-outlook/data-center-outlook"
@@ -431,7 +475,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >jll.com</a
           >. Standard and AI-optimized datacenter construction cost per megawatt.
         </li>
-        <li>
+        <li id="costs-src-10">
           <cite>NVIDIA.</cite> "Personal AI Supercomputer Powered by Blackwell: DGX Spark." 2026.
           <a
             href="https://www.nvidia.com/en-us/products/workstations/dgx-spark/"
@@ -440,7 +484,7 @@ const BASE_BAR_OPTIONS: ChartConfiguration<'bar'>['options'] = {
             >nvidia.com</a
           >. DGX Spark's price and 240-watt peak system power rating.
         </li>
-        <li>
+        <li id="costs-src-11">
           <cite>U.S. Energy Information Administration.</cite> "Electric Power Monthly." 2026.
           <a
             href="https://www.eia.gov/electricity/monthly/epm_table_grapher.php?t=epmt_5_6_a"

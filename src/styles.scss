@@ -1224,6 +1224,30 @@
   .manifesto-prose ol.bibliography a:hover {
     color: var(--color-amber-bright);
   }
+  /* Clearance for the fixed nav when a citation jumps to a source */
+  .manifesto-prose ol.bibliography > li {
+    scroll-margin-top: 6rem;
+  }
+  .manifesto-prose ol.bibliography > li:target {
+    background: rgba(74, 158, 255, 0.07);
+  }
+  .manifesto-prose ol.bibliography > li:target::before {
+    color: var(--color-amber-bright);
+  }
+
+  /* In-text citation markers — [n] superscripts anchored to the bibliography */
+  .manifesto-prose sup.citation {
+    font-family: var(--font-mono);
+    font-size: 0.62em;
+    line-height: 0;
+  }
+  .manifesto-prose sup.citation a {
+    color: var(--color-ice);
+    text-decoration: none;
+  }
+  .manifesto-prose sup.citation a:hover {
+    color: var(--color-amber-bright);
+  }
 
   /* Embedded data charts */
   .manifesto-prose .manifesto-chart {
