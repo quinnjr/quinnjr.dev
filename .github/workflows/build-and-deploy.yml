@@ -140,6 +140,27 @@ jobs:
     permissions:
       contents: read
 
+    # BROKEN BY DESIGN, as of the infra consolidation.
+    #
+    # ./infra moved to github.com/quinnjr/quinnjr.dev-infra (private) under
+    # quinnjr.dev/. This job therefore fails at checkout — the directory it
+    # expects is not in this repository any more. That was an accepted trade
+    # when the infra was consolidated, and the failure is left loud rather than
+    # commented out so it is never mistaken for a passing deploy.
+    #
+    # To restore, add a second checkout of the infra repo and repoint this job:
+    #
+    #   - uses: actions/checkout@v4
+    #     with:
+    #       repository: quinnjr/quinnjr.dev-infra
+    #       path: infra
+    #       token: ${{ secrets.INFRA_REPO_TOKEN }}   # PAT; the repo is private
+    #
+    # then set working-directory / work-dir to ./infra/quinnjr.dev.
+    # The default GITHUB_TOKEN cannot read another repository.
+    #
+    # Until then, deploy by hand from a clone of quinnjr.dev-infra:
+    #   cd quinnjr.dev && pulumi config set quinnjr-dev:imageTag <tag> && pulumi up
     defaults:
       run:
         working-directory: ./infra
