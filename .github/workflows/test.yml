@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -69,7 +69,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -99,7 +99,10 @@ jobs:
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v4
         with:
-          directory: ./coverage/client
+          # `ng test --coverage` (the @angular/build:unit-test vitest runner)
+          # has no reports-directory option and writes to ./coverage. There is
+          # no ./coverage/client; pointing at it silently uploaded nothing.
+          directory: ./coverage
           flags: client
           name: client-coverage
 
@@ -114,7 +117,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

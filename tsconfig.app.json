@@ -12,7 +12,6 @@
     "src/main.server.ts",
     "src/server.ts",
     "src/app/**/*.ts",
-    "src/environments/**/*.ts",
     "src/server/**/*.ts",
     "src/generated/**/*.ts"
   ],

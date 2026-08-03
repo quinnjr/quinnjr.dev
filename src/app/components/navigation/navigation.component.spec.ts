@@ -1,7 +1,7 @@
 import { provideHttpClient, withXhr } from '@angular/common/http';
 import { provideLocationMocks } from '@angular/common/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ApolloTestingModule } from 'apollo-angular/testing';
 
 import { NavigationComponent } from './navigation.component';
@@ -25,13 +25,21 @@ describe('NavgiationComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should have 7 navigation items', () => {
-    expect(component.navbarItems().length).toBe(7);
+  it('should have 8 navigation items', () => {
+    expect(component.navbarItems().length).toBe(8);
   });
 
   it('should have SLM Manifesto link', () => {
     const slmItem = component.navbarItems().find(item => item.title === 'SLM Manifesto');
     expect(slmItem?.link).toBe('/slm');
+  });
+
+  it("should have Parkinson's Map link", () => {
+    const mapItem = component.navbarItems().find(item => item.title === "Parkinson's Map");
+    expect(mapItem).toBeDefined();
+    expect(mapItem?.link).toBe('https://parkinsons.quinnjr.dev/');
+    expect(mapItem?.icon).toBe('fas fa-diagram-project');
+    expect(mapItem?.external).toBe(true);
   });
 
   it('should have Guild Hall (LinkedIn) link', () => {

@@ -6,7 +6,7 @@ import { provideRouter } from '@angular/router';
 import { provideApollo } from 'apollo-angular';
 
 import { routes } from './app.routes';
-import { apolloOptionsFactory, GRAPHQL_URI } from './graphql/apollo.config';
+import { GRAPHQL_URI, serverApolloOptionsFactory } from './graphql/apollo.config';
 import { FlowbiteService } from './services/flowbite.service';
 
 // Server-side application config (SSR).
@@ -17,7 +17,7 @@ export const config: ApplicationConfig = {
     provideNoopAnimations(), // Use noop animations for SSR
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideServerRendering(),
-    provideApollo(apolloOptionsFactory),
+    provideApollo(serverApolloOptionsFactory),
     {
       provide: GRAPHQL_URI,
       useValue: `http://localhost:${process.env['PORT'] ?? '4000'}/graphql`,

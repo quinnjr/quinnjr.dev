@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import { builder } from '../../../src/server/graphql/builder';
 import '../../../src/server/graphql/types';
 
@@ -22,10 +23,10 @@ describe('object types', () => {
     expect(typeMap['PostStatus']).toBeDefined();
     // Check BlogPost fields include author, tags, postCount-bearing types
     const blogPostFields = (typeMap['BlogPost'] as any).getFields();
-    expect(blogPostFields['author']).toBeDefined();
-    expect(blogPostFields['tags']).toBeDefined();
+    expect(blogPostFields.author).toBeDefined();
+    expect(blogPostFields.tags).toBeDefined();
     // Category and Tag expose postCount
     const categoryFields = (typeMap['Category'] as any).getFields();
-    expect(categoryFields['postCount']).toBeDefined();
+    expect(categoryFields.postCount).toBeDefined();
   });
 });

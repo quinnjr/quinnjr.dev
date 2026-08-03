@@ -41,14 +41,14 @@ async function main() {
   console.log('✓ Created/updated admin user:', admin.email);
 
   // Create static sitemap routes for Angular application
+  // Mirrors STATIC_ROUTES in sitemap.service.ts, which is the authoritative
+  // list. `/blog` (no such route) and `/login` (noindex) are deliberately gone.
   const staticRoutes = [
-    { url: '/', changefreq: 'daily', priority: 1.0 },
-    { url: '/home', changefreq: 'daily', priority: 1.0 },
+    { url: '/', changefreq: 'weekly', priority: 1.0 },
+    { url: '/home', changefreq: 'weekly', priority: 1.0 },
     { url: '/articles', changefreq: 'daily', priority: 0.9 },
     { url: '/resume', changefreq: 'monthly', priority: 0.8 },
     { url: '/projects', changefreq: 'weekly', priority: 0.8 },
-    { url: '/blog', changefreq: 'daily', priority: 0.9 },
-    { url: '/login', changefreq: 'yearly', priority: 0.3 },
   ];
 
   for (const route of staticRoutes) {

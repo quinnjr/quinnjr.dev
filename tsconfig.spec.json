@@ -4,7 +4,7 @@
     "outDir": "./out-tsc/spec",
     "types": ["vitest/globals", "@angular/platform-browser-dynamic/testing"]
   },
-  "include": ["src/app/**/*.spec.ts", "src/**/*.d.ts"],
+  "include": ["src/app/**/*.spec.ts", "src/test-setup.ts", "src/**/*.d.ts"],
   "exclude": [
     "src/server/**/*",
     "src/server/**/*.spec.ts",

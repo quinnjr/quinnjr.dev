@@ -1,9 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+/**
+ * Every case asserts rendered content on the destination page as well as the
+ * URL: a URL-only assertion merely restates the click/goto that produced it and
+ * would still pass against a component that rendered nothing.
+ */
 test.describe('Navigation', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/home');
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForSelector('nav', { timeout: 10000 });
   });
@@ -11,39 +16,51 @@ test.describe('Navigation', () => {
   test('should navigate to home page', async ({ page }) => {
     const homeLink = page.getByRole('link', { name: /home/i });
     await homeLink.click({ timeout: 10000 });
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*home/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*home/);
+    await expect(page.locator('h1.hero-name')).toContainText('Joseph R. Quinn', {
+      timeout: 10000,
+    });
   });
 
   test('should navigate to resume page', async ({ page }) => {
     // Use first() to handle multiple resume links (nav + CTA button on homepage)
     const resumeLink = page.getByRole('link', { name: /resume/i }).first();
     await resumeLink.click({ timeout: 10000 });
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*resume/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*resume/);
+    await expect(page.locator('h1.char-name')).toContainText('Joseph R. Quinn', {
+      timeout: 10000,
+    });
   });
 
   test('should navigate to projects page', async ({ page }) => {
     // Use first() to handle multiple projects links (nav + CTA button on homepage)
     const projectsLink = page.getByRole('link', { name: /projects/i }).first();
     await projectsLink.click({ timeout: 10000 });
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*projects/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*projects/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Crafted Works' })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('should navigate to articles page', async ({ page }) => {
     const articlesLink = page.getByRole('link', { name: /chronicles/i });
     await articlesLink.click({ timeout: 10000 });
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*articles/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*articles/);
+    await expect(page.getByRole('heading', { level: 1, name: 'Chronicles' })).toBeVisible({
+      timeout: 10000,
+    });
   });
 
   test('should have auth button component', async ({ page }) => {

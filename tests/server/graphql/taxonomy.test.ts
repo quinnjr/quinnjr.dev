@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
 import { graphql } from 'graphql';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+
 import { BlogService } from '../../../src/server/services/blog.service';
 import { DatabaseService } from '../../../src/server/services/database.service';
 

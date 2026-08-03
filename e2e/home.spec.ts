@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test.describe('Home Page', () => {
   test('should load the home page', async ({ page }) => {
     await page.goto('/home');
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*home/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*home/);
@@ -11,16 +11,27 @@ test.describe('Home Page', () => {
 
   test('should display page title', async ({ page }) => {
     await page.goto('/home');
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
-    await expect(page).toHaveTitle(/Joseph R\. Quinn.*Full-Stack Software Engineer/i, {
+    // Set per-route by SeoService, not by index.html — see seo.service.ts.
+    await expect(page).toHaveTitle(/Joseph R\. Quinn.*Software Engineer/i, {
       timeout: 10000,
     });
   });
 
+  test('should carry a page-specific canonical URL', async ({ page }) => {
+    await page.goto('/resume');
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
+    await page.waitForLoadState('networkidle', { timeout: 15000 });
+
+    const canonical = page.locator('link[rel="canonical"]');
+    await expect(canonical).toHaveCount(1);
+    await expect(canonical).toHaveAttribute('href', 'https://quinnjr.dev/resume');
+  });
+
   test('should have navigation visible', async ({ page }) => {
     await page.goto('/home');
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForSelector('nav', { timeout: 10000 });
     // Note: component selector is app-naviation (typo in component)
@@ -30,7 +41,7 @@ test.describe('Home Page', () => {
 
   test('should redirect root path to home', async ({ page }) => {
     await page.goto('/');
-    await page.waitForSelector('router-outlet, app-root', { timeout: 15000 });
+    await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*home/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*home/);

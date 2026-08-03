@@ -8,18 +8,44 @@ import { PrismaClient } from '../../generated/prisma/client';
 @singleton()
 export class DatabaseService {
   private client: PrismaClient;
+  private shuttingDown = false;
 
   constructor() {
     this.client = new PrismaClient({
       log: process.env['NODE_ENV'] === 'development' ? ['query', 'error', 'warn'] : ['error'],
     });
 
-    // Graceful shutdown
-    process.on('beforeExit', () => {
-      this.disconnect().catch(() => {
-        // Disconnect error handled
+    this.registerShutdownHooks();
+  }
+
+  /**
+   * Close the pool on the signals a container actually receives.
+   *
+   * `beforeExit` was the wrong hook twice over: it never fires for SIGTERM (how
+   * an orchestrator stops us), and its listener ran synchronously so the process
+   * could exit before `$disconnect()` settled.
+   */
+  private registerShutdownHooks(): void {
+    for (const signal of ['SIGTERM', 'SIGINT'] as const) {
+      process.once(signal, () => {
+        this.shutdown(signal).catch((error: unknown) => {
+          console.error(`Error during ${signal} shutdown:`, error);
+        });
       });
-    });
+    }
+  }
+
+  private async shutdown(signal: string): Promise<void> {
+    if (this.shuttingDown) {
+      return;
+    }
+    this.shuttingDown = true;
+    try {
+      await this.disconnect();
+    } catch (error) {
+      console.error(`Failed to disconnect from the database on ${signal}:`, error);
+    }
+    process.exit(0);
   }
 
   /**

@@ -1,12 +1,17 @@
 {
   "name": "quinnjr.dev",
   "version": "2.5.2",
+  "engines": {
+    "node": "^22.22.3 || >=24.15.0",
+    "pnpm": ">=10.13.1"
+  },
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "prebuild": "prisma generate",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
+    "og:image": "rsvg-convert -w 1200 -h 630 scripts/og-image.svg -o public/assets/og-image.png",
     "test": "ng test",
     "test:coverage": "ng test --coverage --watch=false",
     "test:server": "vitest run --config vitest.config.server.mjs",
@@ -26,16 +31,21 @@
     "postinstall": "prisma generate",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
+    "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
     "prisma:reset": "prisma migrate reset",
     "user:create": "tsx scripts/create-user.ts",
     "prepare": "husky",
+    "release:tag": "node scripts/create-version-tag.mjs",
     "schema:print": "tsx scripts/print-schema.ts",
     "codegen": "pnpm schema:print && graphql-codegen --config codegen.ts"
   },
   "private": true,
   "license": "MIT",
+  "lint-staged": {
+    "*.{ts,html,css,scss,json,md}": "prettier --write"
+  },
   "dependencies": {
     "@angular/animations": "^22.0.4",
     "@angular/cdk": "^22.0.2",
@@ -106,6 +116,7 @@
     "flowbite": "^2.5.2",
     "husky": "^9.1.7",
     "jsdom": "^27.1.0",
+    "lint-staged": "^17.3.0",
     "playwright": "^1.56.1",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",

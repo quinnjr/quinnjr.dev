@@ -3,10 +3,12 @@ import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { ApolloTestingModule } from 'apollo-angular/testing';
 
+import { SeoService } from '../../services/seo.service';
+
 import { SlmLayoutComponent } from './slm-layout.component';
 
 describe('SlmLayoutComponent', () => {
-  async function layoutAt(url: string): Promise<SlmLayoutComponent> {
+  function configure(): void {
     TestBed.configureTestingModule({
       imports: [ApolloTestingModule],
       providers: [
@@ -14,6 +16,10 @@ describe('SlmLayoutComponent', () => {
         provideHttpClient(withXhr()),
       ],
     });
+  }
+
+  async function layoutAt(url: string): Promise<SlmLayoutComponent> {
+    configure();
     await TestBed.inject(Router).navigateByUrl(url);
     const fixture = TestBed.createComponent(SlmLayoutComponent);
     fixture.detectChanges();
@@ -54,5 +60,18 @@ describe('SlmLayoutComponent', () => {
     const c = await layoutAt('/slm/overkill');
     expect(c.prev()?.title).toBe('Backlash');
     expect(c.next()).toBeNull();
+  });
+
+  // Regression: bare /slm used to fall back to CHAPTERS[0], labelling the page
+  // "Introduction" with canonical /slm/introduction before the redirect ran.
+  it('applies no chapter SEO at bare /slm', async () => {
+    configure();
+    const apply = vi.spyOn(TestBed.inject(SeoService), 'apply');
+    await TestBed.inject(Router).navigateByUrl('/slm');
+    const fixture = TestBed.createComponent(SlmLayoutComponent);
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.currentChapter()).toBeNull();
+    expect(apply).not.toHaveBeenCalled();
   });
 });

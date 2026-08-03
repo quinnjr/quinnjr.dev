@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+
 import 'reflect-metadata';
 import { PasswordService } from '../../../src/server/services/password.service';
 

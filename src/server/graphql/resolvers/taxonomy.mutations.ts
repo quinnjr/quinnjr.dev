@@ -33,7 +33,13 @@ builder.mutationFields(t => ({
     authScopes: { role: 'ADMIN' },
     args: { id: t.arg.string({ required: true }) },
     resolve: async (_root, args) => {
-      await blog().deleteCategory(args.id);
+      try {
+        await blog().deleteCategory(args.id);
+      } catch (e) {
+        // Maps Prisma's P2025 for a missing id, which would otherwise escape
+        // unmapped and be masked as "Unexpected error" in production.
+        rethrowAsGraphQLError(e, 'Category not found');
+      }
       return true;
     },
   }),
@@ -48,7 +54,11 @@ builder.mutationFields(t => ({
     authScopes: { role: 'EDITOR' },
     args: { id: t.arg.string({ required: true }) },
     resolve: async (_root, args) => {
-      await blog().deleteTag(args.id);
+      try {
+        await blog().deleteTag(args.id);
+      } catch (e) {
+        rethrowAsGraphQLError(e, 'Tag not found');
+      }
       return true;
     },
   }),

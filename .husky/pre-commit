@@ -1,8 +1,16 @@
 echo "🔧 Generating Prisma client..."
 pnpm prisma:generate || exit 1
 
-echo "💅 Formatting code..."
-pnpm format || exit 1
+# Format ONLY the staged files and re-stage the result. `pnpm format` rewrote
+# the whole working tree AFTER git had snapshotted the index, so the commit
+# could still contain unformatted code while this hook reported success — and
+# the developer got surprise unstaged diffs across the repo.
+echo "💅 Formatting staged files..."
+pnpm exec lint-staged || {
+  echo ""
+  echo "❌ Formatting failed!"
+  exit 1
+}
 
 echo "🔍 Running linter..."
 pnpm lint || {
@@ -16,9 +24,11 @@ pnpm lint || {
 echo "🧪 Running server tests..."
 pnpm test:server || {
   echo ""
-  echo "❌ Tests failed!"
+  echo "❌ Server tests failed!"
   echo "Please fix test failures before committing."
   exit 1
 }
 
-echo "✅ Pre-commit checks passed!"
+# Deliberately fast: only the server suite runs here. The Angular unit suite
+# runs on pre-push; e2e runs in CI.
+echo "✅ Pre-commit checks passed (staged-file format, lint, server tests)."

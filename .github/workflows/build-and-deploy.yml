@@ -1,8 +1,14 @@
 name: Build and Deploy
 
-# Release-driven: pushing a version tag (e.g. v2.4.0) builds the semver-tagged
-# image and deploys that exact version to production. Bump the version, tag,
-# and push the tag to cut a release.
+# Release-driven: pushing a version tag (e.g. v2.4.0) runs the test suite and
+# builds/pushes the semver-tagged image to GHCR. Cut a release with
+# `pnpm release:tag` (creates and pushes the tag from package.json's version).
+#
+# NOTE: this workflow does NOT currently deploy. The `deploy` job below is
+# BROKEN BY DESIGN since ./infra moved to the quinnjr.dev-infra repository —
+# see the comment on that job. Until the infra checkout is restored, production
+# deploys are MANUAL, run by hand from a clone of quinnjr.dev-infra against the
+# image tag this workflow published.
 on:
   push:
     tags:
@@ -24,7 +30,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -172,7 +178,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: '24'
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4

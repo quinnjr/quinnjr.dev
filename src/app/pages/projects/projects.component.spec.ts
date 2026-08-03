@@ -1,9 +1,9 @@
-import { HttpClient, withXhr } from '@angular/common/http';
-import { provideHttpClient } from '@angular/common/http';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { HttpClient, withXhr, provideHttpClient } from '@angular/common/http';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
-import { GitHubRepository } from '../../services/github.service';
+import { type GitHubRepository } from '../../services/github.service';
+
 import { ProjectsComponent } from './projects.component';
 
 describe('ProjectsComponent', () => {
@@ -115,6 +115,42 @@ describe('ProjectsComponent', () => {
       expect(spy).toHaveBeenCalledWith('/api/github/repositories');
       expect(component.loading()).toBe(false);
       expect(component.error()).toBe('Failed to load projects from GitHub');
+    });
+  });
+
+  describe('JSON-LD', () => {
+    function pageGraph(): Record<string, unknown> | null {
+      const script = document.head.querySelector('script[data-seo-jsonld="page"]');
+      return script?.textContent ? JSON.parse(script.textContent) : null;
+    }
+
+    afterEach(() => {
+      document.head.querySelector('script[data-seo-jsonld="page"]')?.remove();
+    });
+
+    it('describes the page as a CollectionPage once loaded', async () => {
+      vi.spyOn(httpClient, 'get').mockReturnValue(of({ data: mockRepositories }));
+
+      fixture.detectChanges();
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const graph = pageGraph();
+      expect(graph?.['@type']).toBe('CollectionPage');
+      expect((graph?.['mainEntity'] as { numberOfItems: number }).numberOfItems).toBe(6);
+    });
+
+    // Regression: on the error path the CollectionPage was never published, so
+    // a client-side nav from Home left that route's ProfilePage graph, under
+    // the same `page` key, describing /projects.
+    it('still describes the page as a CollectionPage when the fetch fails', async () => {
+      vi.spyOn(httpClient, 'get').mockReturnValue(throwError(() => new Error('Network error')));
+
+      fixture.detectChanges();
+      await new Promise(resolve => setTimeout(resolve, 100));
+
+      const graph = pageGraph();
+      expect(graph?.['@type']).toBe('CollectionPage');
+      expect((graph?.['mainEntity'] as { numberOfItems: number }).numberOfItems).toBe(0);
     });
   });
 

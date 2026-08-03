@@ -1,8 +1,9 @@
 import { vi } from 'vitest';
-import { PrismaClient } from '../../../../src/generated/prisma/client';
+
+import { type PostStatus } from '../../../../src/generated/prisma/client';
 import { BlogService } from '../../../../src/server/services/blog.service';
-import { DatabaseService } from '../../../../src/server/services/database.service';
-import { PostStatus } from '../../../../src/generated/prisma/client';
+import { type DatabaseService } from '../../../../src/server/services/database.service';
+
 import { createMockPrismaClient } from './helpers';
 
 // Mock PrismaClient before importing services
@@ -21,7 +22,7 @@ describe('BlogService', () => {
 
     // Create mock DatabaseService
     mockDatabaseService = {
-      getClient: vi.fn().mockReturnValue(mockPrismaClient as unknown as PrismaClient),
+      getClient: vi.fn().mockReturnValue(mockPrismaClient),
     };
 
     service = new BlogService(mockDatabaseService as unknown as DatabaseService);
@@ -32,30 +33,87 @@ describe('BlogService', () => {
   });
 
   describe('createPost', () => {
-    it('should create a new blog post', async () => {
+    // A bare `toHaveBeenCalled()` would still pass if createPost were reduced
+    // to `this.prisma.blogPost.create({})`, leaving slug generation, the
+    // publishedAt hand-off and tag connection entirely unverified. Assert the
+    // arguments.
+    it('derives the slug from the title and passes the post fields through', async () => {
+      const publishedAt = new Date('2024-05-04T00:00:00.000Z');
       const createDto = {
-        title: 'New Post',
+        title: 'Hello, World! (Part 2)',
         content: 'Content here',
-        status: 'DRAFT' as PostStatus,
+        status: 'PUBLISHED' as PostStatus,
         authorId: 'author-1',
+        categoryId: 'cat-1',
+        publishedAt,
       };
 
-      const mockCreatedPost = {
-        id: '1',
-        ...createDto,
-        slug: 'new-post',
-      };
+      const mockCreatedPost = { id: '1', ...createDto, slug: 'hello-world-part-2' };
 
-      mockPrismaClient.blogPost.findUnique.mockResolvedValue(null);
       mockPrismaClient.blogPost.create.mockResolvedValue(mockCreatedPost);
 
       const result = await service.createPost(createDto);
 
       expect(result).toEqual(mockCreatedPost);
-      expect(mockPrismaClient.blogPost.create).toHaveBeenCalled();
+      expect(mockPrismaClient.blogPost.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          data: expect.objectContaining({
+            title: 'Hello, World! (Part 2)',
+            slug: 'hello-world-part-2',
+            content: 'Content here',
+            status: 'PUBLISHED',
+            authorId: 'author-1',
+            categoryId: 'cat-1',
+            publishedAt,
+            // Non-nullable columns the DTO omits must get defaults, not undefined.
+            seoKeywords: [],
+            noIndex: false,
+            noFollow: false,
+          }),
+        })
+      );
+      // The unique index is the arbiter now — no pre-flight lookup round trip.
+      expect(mockPrismaClient.blogPost.findUnique).not.toHaveBeenCalled();
     });
 
-    it('should throw error if post with same slug exists', async () => {
+    it('leaves publishedAt unset for a draft', async () => {
+      mockPrismaClient.blogPost.create.mockResolvedValue({ id: '1' });
+
+      await service.createPost({
+        title: 'A Draft',
+        content: 'x',
+        status: 'DRAFT',
+        authorId: 'author-1',
+      });
+
+      const { data } = mockPrismaClient.blogPost.create.mock.calls[0][0] as {
+        data: Record<string, unknown>;
+      };
+      expect(data['status']).toBe('DRAFT');
+      expect(data['publishedAt']).toBeUndefined();
+    });
+
+    it('connects the requested tags to the new post', async () => {
+      mockPrismaClient.blogPost.create.mockResolvedValue({ id: '1' });
+
+      await service.createPost({
+        title: 'Tagged Post',
+        content: 'x',
+        status: 'DRAFT',
+        authorId: 'author-1',
+        tagIds: ['tag-1', 'tag-2'],
+      });
+
+      const { data } = mockPrismaClient.blogPost.create.mock.calls[0][0] as {
+        data: { tags: { create: unknown[] } };
+      };
+      expect(data.tags.create).toEqual([
+        { tag: { connect: { id: 'tag-1' } } },
+        { tag: { connect: { id: 'tag-2' } } },
+      ]);
+    });
+
+    it('should translate the unique-constraint violation into a domain error', async () => {
       const createDto = {
         title: 'Existing Post',
         content: 'Content',
@@ -63,10 +121,9 @@ describe('BlogService', () => {
         authorId: 'author-1',
       };
 
-      mockPrismaClient.blogPost.findUnique.mockResolvedValue({
-        id: '1',
-        slug: 'existing-post',
-      });
+      mockPrismaClient.blogPost.create.mockRejectedValue(
+        Object.assign(new Error('Unique constraint failed'), { code: 'P2002' })
+      );
 
       await expect(service.createPost(createDto)).rejects.toThrow(
         'A post with this title already exists'
@@ -75,7 +132,7 @@ describe('BlogService', () => {
   });
 
   describe('updatePost', () => {
-    it('should update a blog post', async () => {
+    it('targets the post by id and regenerates the slug from the new title', async () => {
       const updateDto = {
         id: '1',
         title: 'Updated Title',
@@ -95,7 +152,51 @@ describe('BlogService', () => {
       const result = await service.updatePost(updateDto);
 
       expect(result).toEqual(mockUpdatedPost);
-      expect(mockPrismaClient.blogPost.update).toHaveBeenCalled();
+      expect(mockPrismaClient.blogPost.update).toHaveBeenCalledWith(
+        expect.objectContaining({
+          where: { id: '1' },
+          data: expect.objectContaining({
+            title: 'Updated Title',
+            content: 'Updated content',
+            slug: 'updated-title',
+          }),
+        })
+      );
+      // The `id` is the where-clause, never part of the update payload.
+      const { data } = mockPrismaClient.blogPost.update.mock.calls[0][0] as {
+        data: Record<string, unknown>;
+      };
+      expect(data).not.toHaveProperty('id');
+    });
+
+    it('does not touch the slug when the title is unchanged', async () => {
+      mockPrismaClient.blogPost.update.mockResolvedValue({ id: '1' });
+
+      await service.updatePost({ id: '1', content: 'Only the body changed' });
+
+      // No title → no slug regeneration, and no conflict lookup round trip.
+      expect(mockPrismaClient.blogPost.findFirst).not.toHaveBeenCalled();
+      const { data } = mockPrismaClient.blogPost.update.mock.calls[0][0] as {
+        data: Record<string, unknown>;
+      };
+      expect(data).not.toHaveProperty('slug');
+      expect(data['content']).toBe('Only the body changed');
+    });
+
+    it('should replace tags inside the single update, never deleting them first', async () => {
+      mockPrismaClient.blogPost.findFirst.mockResolvedValue(null);
+      mockPrismaClient.blogPost.update.mockResolvedValue({ id: '1' });
+
+      await service.updatePost({ id: '1', tagIds: ['t1', 't2'] });
+
+      // A separate blogPostTag.deleteMany could strand the post with zero tags
+      // if the update then failed; the nested deleteMany is part of the same
+      // statement.
+      const updateArg = mockPrismaClient.blogPost.update.mock.calls[0][0] as {
+        data: { tags: { deleteMany: unknown; create: unknown[] } };
+      };
+      expect(updateArg.data.tags.deleteMany).toEqual({});
+      expect(updateArg.data.tags.create).toHaveLength(2);
     });
 
     it('should throw error if new slug conflicts with another post', async () => {

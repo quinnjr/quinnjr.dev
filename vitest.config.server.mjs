@@ -29,10 +29,13 @@ export default defineConfig({
       reporter: ['text', 'lcov', 'html'],
       reportsDirectory: './coverage/server',
       include: ['src/server/**/*.ts'],
+      // src/server/routes/** is deliberately NOT excluded: the HTTP surface
+      // (/sitemap.xml, /robots.txt, /llms.txt, /api/github/repositories) has no
+      // suite yet, and the coverage number should show that gap rather than
+      // hide it behind an exclusion.
       exclude: [
         'src/server/**/*.d.ts',
         'src/server/**/*.interface.ts',
-        'src/server/routes/*.ts', // Integration tests handled separately
         'src/server/**/__tests__/**',
       ],
     },
@@ -51,11 +54,19 @@ export default defineConfig({
       tsconfig: './tsconfig.json',
     },
 
-    // Force graphql (and pothos) to share one module instance in the
-    // vitest worker so GraphQLSchema instanceof checks don't fail across realms.
+    // Force graphql (and everything that type-checks GraphQLSchema instances:
+    // pothos, yoga, graphql-tools) to share one module instance in the vitest
+    // worker so instanceof checks don't fail across realms.
     server: {
       deps: {
-        inline: ['graphql', '@pothos/core', '@pothos/plugin-prisma', '@pothos/plugin-scope-auth'],
+        inline: [
+          'graphql',
+          '@pothos/core',
+          '@pothos/plugin-prisma',
+          '@pothos/plugin-scope-auth',
+          'graphql-yoga',
+          /@graphql-tools\//,
+        ],
       },
     },
   },

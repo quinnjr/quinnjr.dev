@@ -118,8 +118,12 @@ function isReleaseMerge() {
     return false;
   } catch (error) {
     console.warn(`Warning: Could not determine if this is a release merge: ${error.message}`);
-    // If we can't determine, assume it might be (safer to tag than not)
-    return true;
+    // Fail closed. The caller's success path tags AND pushes, and pushing a
+    // `v*.*.*` tag is what triggers the release workflow — so guessing "yes"
+    // on an unrelated git failure publishes a release from an arbitrary
+    // commit. Not tagging is recoverable by re-running; an erroneous pushed
+    // tag is not.
+    return false;
   }
 }
 

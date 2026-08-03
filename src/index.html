@@ -38,6 +38,13 @@
       content="Full-stack software engineer and legal technologist specializing in Angular, TypeScript, Node.js, and cloud infrastructure. Founder of Pegaus Heavy Industries."
     />
     <meta property="og:image" content="https://quinnjr.dev/assets/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:type" content="image/png" />
+    <meta
+      property="og:image:alt"
+      content="Joseph R. Quinn — software engineer, attorney, technologist"
+    />
     <meta property="og:site_name" content="quinnjr.dev" />
     <meta property="og:locale" content="en_US" />
 
@@ -52,14 +59,18 @@
       name="twitter:description"
       content="Full-stack software engineer and legal technologist specializing in Angular, TypeScript, Node.js, and cloud infrastructure."
     />
-    <meta name="twitter:image" content="https://quinnjr.dev/assets/twitter-card.png" />
-    <meta name="twitter:creator" content="@quinnjr" />
-
-    <!-- AI Crawlers & ChatGPT -->
+    <meta name="twitter:image" content="https://quinnjr.dev/assets/og-image.png" />
     <meta
-      name="chatgpt-plugin"
-      content="Joseph Quinn's professional portfolio and technical blog"
+      name="twitter:image:alt"
+      content="Joseph R. Quinn — software engineer, attorney, technologist"
     />
+    <meta name="twitter:creator" content="@quinnjr" />
+    <meta name="twitter:site" content="@quinnjr" />
+
+    <!-- Answer engines. `ai-summary` is not a standard, but costs nothing and
+         some retrieval pipelines read it; the authoritative machine-readable
+         summary for LLMs is served at /llms.txt (see sitemap.service.ts). -->
+    <link rel="alternate" type="text/plain" href="https://quinnjr.dev/llms.txt" title="llms.txt" />
     <meta
       name="ai-summary"
       content="Joseph R. Quinn is a full-stack software engineer, attorney, and founder of Pegaus Heavy Industries. Expertise includes Angular, TypeScript, Node.js, Kubernetes, Docker, AWS, and cloud-native development. Former practicing attorney with specialization in technology law, intellectual property, and regulatory compliance. Available for technical consulting and full-stack development projects."
@@ -76,12 +87,13 @@
         "jobTitle": "Full-Stack Software Engineer & Tech Consultant",
         "description": "Full-stack software engineer, attorney, and founder of Pegaus Heavy Industries specializing in Angular, TypeScript, Node.js, and cloud infrastructure",
         "url": "https://quinnjr.dev",
-        "image": "https://quinnjr.dev/assets/profile.jpg",
+        "image": "https://quinnjr.dev/profile_picture.jpg",
         "email": "joseph@quinnjr.tech",
         "sameAs": [
           "https://github.com/quinnjr",
           "https://www.linkedin.com/in/quinnjosephr/",
-          "https://pegausheavy.dev"
+          "https://pegausheavy.dev",
+          "https://parkinsons.quinnjr.dev"
         ],
         "address": {
           "@type": "PostalAddress",
@@ -137,14 +149,14 @@
         "alternateName": "Joseph R. Quinn Portfolio",
         "url": "https://quinnjr.dev",
         "description": "Professional portfolio and technical blog of Joseph R. Quinn, full-stack software engineer and tech consultant",
+        "inLanguage": "en-US",
         "author": {
           "@type": "Person",
           "name": "Joseph R. Quinn"
         },
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://quinnjr.dev/search?q={search_term_string}",
-          "query-input": "required name=search_term_string"
+        "publisher": {
+          "@type": "Person",
+          "name": "Joseph R. Quinn"
         }
       }
     </script>
@@ -206,6 +218,7 @@
     <!-- Themed fonts: declared in styles.scss CSS vars but otherwise unloaded -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=Share+Tech+Mono&display=swap"

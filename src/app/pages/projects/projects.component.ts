@@ -1,7 +1,16 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 
 import { GitHubRepository, GitHubService } from '../../services/github.service';
+import { absoluteUrl } from '../../services/seo.config';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-projects',
@@ -13,13 +22,53 @@ import { GitHubRepository, GitHubService } from '../../services/github.service';
 })
 export class ProjectsComponent implements OnInit {
   private githubService = inject(GitHubService);
+  private seo = inject(SeoService);
 
   repositories = signal<GitHubRepository[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
 
+  /**
+   * Card view-model. `getIconForRepo` walks a long string-matching chain and
+   * `getDisplayName` allocates per call; binding them directly in the `@for`
+   * re-ran both for every card on every change-detection pass.
+   */
+  readonly cards = computed(() =>
+    this.repositories().map(repo => ({
+      ...repo,
+      icon: this.getIconForRepo(repo),
+      displayName: this.getDisplayName(repo.name),
+    }))
+  );
+
   ngOnInit(): void {
+    this.applySeo();
     this.loadRepositories();
+  }
+
+  private applySeo(): void {
+    this.seo.apply({
+      title: 'Projects — Open-Source Work by Joseph R. Quinn',
+      description:
+        'Open-source projects by Joseph R. Quinn, spanning Rust and Go systems tools, MCP servers, Angular libraries, bioinformatics utilities, and developer tooling.',
+      path: '/projects',
+      keywords: [
+        'Joseph R. Quinn projects',
+        'open source Rust projects',
+        'MCP servers',
+        'Angular open source',
+      ],
+    });
+
+    this.seo.setBreadcrumbs([
+      { name: 'Home', path: '/home' },
+      { name: 'Projects', path: '/projects' },
+    ]);
+
+    // Claim the `page` key immediately. `setJsonLd` replaces by key, so until
+    // this runs the previous route's graph (e.g. Home's ProfilePage) still
+    // describes this URL — permanently so if the GitHub fetch then fails.
+    this.publishItemList([]);
   }
 
   private loadRepositories(): void {
@@ -27,11 +76,44 @@ export class ProjectsComponent implements OnInit {
       next: repos => {
         this.repositories.set(repos);
         this.loading.set(false);
+        this.publishItemList(repos);
       },
       error: err => {
         console.error('Failed to load repositories:', err);
         this.error.set('Failed to load projects from GitHub');
         this.loading.set(false);
+      },
+    });
+  }
+
+  /**
+   * Publishes the repository grid as an ItemList so the page is legible as a
+   * list of named works rather than an opaque card layout. Emitted after the
+   * GitHub fetch resolves, which under SSR is before the HTML is serialised.
+   */
+  private publishItemList(repos: GitHubRepository[]): void {
+    this.seo.setJsonLd('page', {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': absoluteUrl('/projects'),
+      url: absoluteUrl('/projects'),
+      name: 'Projects — Open-Source Work by Joseph R. Quinn',
+      inLanguage: 'en-US',
+      mainEntity: {
+        '@type': 'ItemList',
+        numberOfItems: repos.length,
+        itemListElement: repos.map((repo, index) => ({
+          '@type': 'ListItem',
+          position: index + 1,
+          item: {
+            '@type': 'SoftwareSourceCode',
+            name: this.getDisplayName(repo.name),
+            description: repo.description ?? undefined,
+            codeRepository: repo.url,
+            programmingLanguage: repo.primaryLanguage?.name ?? undefined,
+            author: { '@type': 'Person', name: 'Joseph R. Quinn' },
+          },
+        })),
       },
     });
   }

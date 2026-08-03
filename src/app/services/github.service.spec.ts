@@ -1,9 +1,8 @@
-import { HttpClient, HttpErrorResponse, withXhr } from '@angular/common/http';
-import { provideHttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, withXhr, provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
-import { GitHubRepository, GitHubService } from './github.service';
+import { type GitHubRepository, GitHubService } from './github.service';
 
 describe('GitHubService', () => {
   let service: GitHubService;
@@ -51,7 +50,7 @@ describe('GitHubService', () => {
       const repos = await new Promise<GitHubRepository[]>((resolve, reject) => {
         service.getRepositories().subscribe({
           next: repos => resolve(repos),
-          error: err => reject(err),
+          error: (err: unknown) => reject(err instanceof Error ? err : new Error(String(err))),
         });
       });
 
@@ -73,7 +72,7 @@ describe('GitHubService', () => {
         new Promise((resolve, reject) => {
           service.getRepositories().subscribe({
             next: repos => resolve(repos),
-            error: err => reject(err),
+            error: (err: unknown) => reject(err instanceof Error ? err : new Error(String(err))),
           });
         })
       ).rejects.toThrow();
@@ -87,7 +86,7 @@ describe('GitHubService', () => {
       const repos = await new Promise<GitHubRepository[]>((resolve, reject) => {
         service.getRepositories().subscribe({
           next: repos => resolve(repos),
-          error: err => reject(err),
+          error: (err: unknown) => reject(err instanceof Error ? err : new Error(String(err))),
         });
       });
 
@@ -101,7 +100,7 @@ describe('GitHubService', () => {
       const repos = await new Promise<GitHubRepository[]>((resolve, reject) => {
         service.getRepositories().subscribe({
           next: repos => resolve(repos),
-          error: err => reject(err),
+          error: (err: unknown) => reject(err instanceof Error ? err : new Error(String(err))),
         });
       });
 
