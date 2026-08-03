@@ -1,4 +1,7 @@
 import 'reflect-metadata'; // Must be first import for tsyringe
+// Must precede any import that pulls in graphql-yoga: whatwg-node captures the
+// `Event` constructor at module scope, and zone.js has replaced it by now.
+import './restore-native-event';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -68,6 +71,27 @@ export function app(): express.Express {
       maxAge: '1y',
     })
   );
+
+  // Authenticated and interactive routes are client-rendered.
+  //
+  // `authGuard` decides from a token in `localStorage`, which does not exist on
+  // the server, so SSR always takes the unauthenticated branch and emits an
+  // empty shell. Client hydration then keeps that empty DOM instead of
+  // re-rendering over it, leaving the admin area blank. Serving the CSR shell
+  // removes the divergence at its source, and stops the server issuing GraphQL
+  // requests it holds no credentials for.
+  //
+  // This mirrors `src/app/app.routes.server.ts`, which expresses the same
+  // policy for the modern `AngularNodeAppEngine`; `CommonEngine` (used below)
+  // does not consult that config, so the split is enforced here as well.
+  const csrShell = join(browserDistFolder, 'index.csr.html');
+  server.get(/^\/(admin|login)(\/|$)/, (_req, res, next) => {
+    res.sendFile(csrShell, (err: unknown) => {
+      if (err) {
+        next(err);
+      }
+    });
+  });
 
   // All regular routes use the Angular engine
   server.get('**', (req, res, next) => {

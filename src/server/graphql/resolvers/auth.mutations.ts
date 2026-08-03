@@ -1,12 +1,11 @@
 // src/server/graphql/resolvers/auth.mutations.ts
 import { GraphQLError } from 'graphql';
 
-import type { User } from '../../../generated/prisma/client';
-import { signSession } from '../auth';
+import { signMfaToken, signSession } from '../auth';
 import { builder } from '../builder';
-import { UserType } from '../types';
+import { AuthPayload } from '../types';
 
-import { passwordService } from './services';
+import { passwordService, webauthnService } from './services';
 
 /**
  * Argon2id hash of a throwaway string, verified when no user matches the email.
@@ -19,18 +18,6 @@ import { passwordService } from './services';
  */
 const DUMMY_PASSWORD_HASH =
   '$argon2id$v=19$m=19456,t=2,p=1$+NCddCvybUdNuALabIoN6Q$oYuf/HXq9Bv2von05B8xe+lGKzmvDKxxtrdrNp0rQ4c';
-
-interface AuthPayloadShape {
-  token: string;
-  user: User;
-}
-
-const AuthPayload = builder.objectRef<AuthPayloadShape>('AuthPayload').implement({
-  fields: t => ({
-    token: t.exposeString('token'),
-    user: t.field({ type: UserType, resolve: p => p.user }),
-  }),
-});
 
 builder.mutationFields(t => ({
   login: t.field({
@@ -51,7 +38,19 @@ builder.mutationFields(t => ({
           extensions: { code: 'UNAUTHENTICATED' },
         });
       }
-      return { token: await signSession(user), user };
+      // Passkeys are a second factor, not an alternative: once one is
+      // enrolled, the password alone stops being sufficient. No session token
+      // is issued here — only proof that the first factor passed.
+      if (await webauthnService().hasPasskeys(user.id)) {
+        return {
+          token: null,
+          user: null,
+          mfaRequired: true,
+          mfaToken: await signMfaToken(user),
+        };
+      }
+
+      return { token: await signSession(user), user, mfaRequired: false, mfaToken: null };
     },
   }),
 }));

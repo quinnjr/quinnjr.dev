@@ -6,6 +6,7 @@ import { DatabaseService } from './services/database.service';
 import { GitHubService } from './services/github.service';
 import { PasswordService } from './services/password.service';
 import { SitemapService } from './services/sitemap.service';
+import { WebauthnService } from './services/webauthn.service';
 
 /**
  * Initialize the dependency injection container
@@ -17,6 +18,7 @@ export function initializeContainer(): void {
   container.registerSingleton(GitHubService);
   container.registerSingleton(PasswordService);
   container.registerSingleton(SitemapService);
+  container.registerSingleton(WebauthnService);
 
   // eslint-disable-next-line no-console
   console.log('✓ Dependency injection container initialized');

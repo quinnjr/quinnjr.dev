@@ -1,4 +1,5 @@
 // src/server/graphql/types/index.ts
+import type { User } from '../../../generated/prisma/client';
 import { builder } from '../builder';
 
 export const UserRole = builder.enumType('UserRole', {
@@ -89,5 +90,44 @@ export const SeoSettingsType = builder.prismaObject('SeoSettings', {
     defaultOgImage: t.exposeString('defaultOgImage', { nullable: true }),
     twitterHandle: t.exposeString('twitterHandle', { nullable: true }),
     organizationName: t.exposeString('organizationName', { nullable: true }),
+  }),
+});
+
+/**
+ * A registered authenticator. Deliberately exposes no key material — the
+ * public key and signature counter are server-side concerns and nothing in the
+ * UI needs them.
+ */
+export const PasskeyType = builder.prismaObject('Passkey', {
+  fields: t => ({
+    id: t.exposeID('id'),
+    name: t.exposeString('name'),
+    deviceType: t.exposeString('deviceType'),
+    backedUp: t.exposeBoolean('backedUp'),
+    createdAt: t.expose('createdAt', { type: 'DateTime' }),
+    lastUsedAt: t.expose('lastUsedAt', { type: 'DateTime', nullable: true }),
+  }),
+});
+
+/**
+ * Result of a sign-in attempt.
+ *
+ * `token`/`user` are null when `mfaRequired` is true: the password was correct
+ * but the account has a passkey enrolled, so no session exists yet. The caller
+ * completes the ceremony with `verifyPasskey(mfaToken:)`.
+ */
+export interface AuthPayloadShape {
+  token: string | null;
+  user: User | null;
+  mfaRequired: boolean;
+  mfaToken: string | null;
+}
+
+export const AuthPayload = builder.objectRef<AuthPayloadShape>('AuthPayload').implement({
+  fields: t => ({
+    token: t.exposeString('token', { nullable: true }),
+    user: t.field({ type: UserType, nullable: true, resolve: p => p.user }),
+    mfaRequired: t.exposeBoolean('mfaRequired'),
+    mfaToken: t.exposeString('mfaToken', { nullable: true }),
   }),
 });

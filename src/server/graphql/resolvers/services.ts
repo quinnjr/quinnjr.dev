@@ -2,6 +2,7 @@ import { container } from 'tsyringe';
 
 import { BlogService } from '../../services/blog.service';
 import { PasswordService } from '../../services/password.service';
+import { WebauthnService } from '../../services/webauthn.service';
 
 /**
  * Lazily resolve the BlogService singleton. Kept lazy (resolved per call) so
@@ -15,3 +16,9 @@ export const blog = () => container.resolve(BlogService);
  * re-register a mock instance in the tsyringe container before each invocation.
  */
 export const passwordService = () => container.resolve(PasswordService);
+
+/**
+ * Lazily resolve the WebauthnService singleton. Kept lazy so tests can
+ * re-register a mock instance in the tsyringe container before each invocation.
+ */
+export const webauthnService = () => container.resolve(WebauthnService);

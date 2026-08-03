@@ -1,11 +1,12 @@
 import { provideHttpClient, withInterceptorsFromDi, withXhr } from '@angular/common/http';
 import { type ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
-import { provideServerRendering } from '@angular/platform-server';
 import { provideRouter } from '@angular/router';
+import { provideServerRendering, withRoutes } from '@angular/ssr';
 import { provideApollo } from 'apollo-angular';
 
 import { routes } from './app.routes';
+import { serverRoutes } from './app.routes.server';
 import { GRAPHQL_URI, serverApolloOptionsFactory } from './graphql/apollo.config';
 import { FlowbiteService } from './services/flowbite.service';
 
@@ -16,7 +17,7 @@ export const config: ApplicationConfig = {
     provideRouter(routes),
     provideNoopAnimations(), // Use noop animations for SSR
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
-    provideServerRendering(),
+    provideServerRendering(withRoutes(serverRoutes)),
     provideApollo(serverApolloOptionsFactory),
     {
       provide: GRAPHQL_URI,

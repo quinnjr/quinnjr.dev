@@ -44,6 +44,13 @@ export const routes: Routes = [
             m => m.BlogEditorComponent
           ),
       },
+      {
+        path: 'security',
+        loadComponent: () =>
+          import('./modules/admin/passkeys/passkey-manager.component').then(
+            m => m.PasskeyManagerComponent
+          ),
+      },
     ],
   },
 
