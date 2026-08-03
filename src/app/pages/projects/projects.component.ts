@@ -2,11 +2,13 @@ import { CommonModule } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   computed,
   inject,
   OnInit,
   signal,
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { GitHubRepository, GitHubService } from '../../services/github.service';
 import { absoluteUrl } from '../../services/seo.config';
@@ -23,6 +25,7 @@ import { SeoService } from '../../services/seo.service';
 export class ProjectsComponent implements OnInit {
   private githubService = inject(GitHubService);
   private seo = inject(SeoService);
+  private readonly destroyRef = inject(DestroyRef);
 
   repositories = signal<GitHubRepository[]>([]);
   loading = signal<boolean>(true);
@@ -72,18 +75,24 @@ export class ProjectsComponent implements OnInit {
   }
 
   private loadRepositories(): void {
-    this.githubService.getRepositories().subscribe({
-      next: repos => {
-        this.repositories.set(repos);
-        this.loading.set(false);
-        this.publishItemList(repos);
-      },
-      error: err => {
-        console.error('Failed to load repositories:', err);
-        this.error.set('Failed to load projects from GitHub');
-        this.loading.set(false);
-      },
-    });
+    // Tied to the component lifetime: navigating away before the fetch lands
+    // would otherwise still run `publishItemList`, overwriting the JSON-LD the
+    // newly-active route just published.
+    this.githubService
+      .getRepositories()
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: repos => {
+          this.repositories.set(repos);
+          this.loading.set(false);
+          this.publishItemList(repos);
+        },
+        error: err => {
+          console.error('Failed to load repositories:', err);
+          this.error.set('Failed to load projects from GitHub');
+          this.loading.set(false);
+        },
+      });
   }
 
   /**

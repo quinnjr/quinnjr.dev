@@ -29,23 +29,38 @@ const CACHE_ONE_HOUR = 'public, max-age=3600';
 const CACHE_TTL_MS = 3600 * 1000;
 
 interface RenderedDocument {
-  body: string;
+  body: Promise<string>;
   expiresAt: number;
 }
 
 /** Rendered bodies, keyed by route. These documents are identical for every
  * caller for the whole hour the Cache-Control header advertises, so re-querying
  * and re-serializing per request was pure waste — a crawler hitting sitemap.xml
- * repeatedly used to re-read every published post each time. */
+ * repeatedly used to re-read every published post each time.
+ *
+ * The entry holds the in-flight *promise*, not the resolved string: caching
+ * only the settled value still let every concurrent request that arrived during
+ * the first render run its own `findMany`, which is exactly the stampede the
+ * cache exists to prevent. A rejected render is evicted so the next request
+ * retries instead of serving a poisoned entry for an hour. */
 const rendered = new Map<string, RenderedDocument>();
 
-async function renderCached(key: string, render: () => string | Promise<string>): Promise<string> {
+function renderCached(key: string, render: () => string | Promise<string>): Promise<string> {
   const now = Date.now();
   const hit = rendered.get(key);
   if (hit && now < hit.expiresAt) {
     return hit.body;
   }
-  const body = await render();
+  const body: Promise<string> = Promise.resolve()
+    .then(render)
+    .catch((error: unknown) => {
+      // Only evict if this entry is still the current one; a later successful
+      // render must not be thrown away by an earlier failure settling late.
+      if (rendered.get(key)?.body === body) {
+        rendered.delete(key);
+      }
+      throw error;
+    });
   rendered.set(key, { body, expiresAt: now + CACHE_TTL_MS });
   return body;
 }

@@ -31,6 +31,15 @@ services:
       - NODE_ENV=production
       - PORT=4000
       - DATABASE_URL=postgresql://quinnjr:quinnjr@db:5432/quinnjr?schema=public
+      # `:?` so compose REFUSES to start without a secret rather than booting a
+      # stack whose every login fails as a masked internal error — the server
+      # only warns and rejects all tokens when JWT_SECRET is missing.
+      - JWT_SECRET=${JWT_SECRET:?set JWT_SECRET}
+      # The WebAuthn relying party defaults to quinnjr.dev/https://quinnjr.dev,
+      # which can never match this stack's http://localhost:4000 origin, so no
+      # passkey ceremony would ever succeed. Override for other origins.
+      - WEBAUTHN_RP_ID=${WEBAUTHN_RP_ID:-localhost}
+      - WEBAUTHN_ORIGIN=${WEBAUTHN_ORIGIN:-http://localhost:4000}
     # Apply migrations before starting the server (the image ships the Prisma
     # CLI and prisma/migrations as runtime dependencies).
     command: sh -c "pnpm exec prisma migrate deploy && node dist/quinnjr.dev/server/server.mjs"

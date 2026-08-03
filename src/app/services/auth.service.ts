@@ -69,6 +69,9 @@ export type LoginResult =
 
 interface JwtClaims {
   exp?: number;
+  sub?: string;
+  name?: string;
+  role?: string;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -78,7 +81,11 @@ export class AuthService {
   private readonly browser = isPlatformBrowser(this.platformId);
 
   readonly isAuthenticated = signal(this.hasValidToken());
-  readonly currentUser = signal<LoginUser | null>(null);
+  // Seeded from the token rather than left null: `establishSession` only runs
+  // in the tab that performed the login, so after a reload the two signals
+  // would otherwise disagree — the guard admits the user while every view
+  // gated on `currentUser()` silently renders nothing.
+  readonly currentUser = signal<LoginUser | null>(this.userFromStoredToken());
 
   token(): string | null {
     return this.browser ? localStorage.getItem(TOKEN_KEY) : null;
@@ -173,37 +180,70 @@ export class AuthService {
   }
 
   /**
-   * Re-derives authentication from the stored token and syncs the
-   * `isAuthenticated` signal so the UI reflects an expiry that happened after
-   * login. Prefer this over reading the signal when the answer must be current.
+   * Re-derives authentication from the stored token and syncs both signals so
+   * the UI reflects an expiry that happened after login. Prefer this over
+   * reading the signal when the answer must be current.
    */
   refreshAuthState(): boolean {
     const valid = this.hasValidToken();
     if (this.isAuthenticated() !== valid) {
       this.isAuthenticated.set(valid);
     }
+    if (!valid) {
+      if (this.currentUser() !== null) {
+        this.currentUser.set(null);
+      }
+    } else if (!this.currentUser()) {
+      // Only fill a gap — a user established by `login`/`verifyPasskey` comes
+      // from the server and is at least as complete as the token claims.
+      this.currentUser.set(this.userFromStoredToken());
+    }
     return valid;
   }
 
   /** True when a stored token exists and its `exp` is in the future. */
   hasValidToken(): boolean {
+    return this.unexpiredClaims() !== null;
+  }
+
+  /**
+   * The identity carried by the stored token, or null when there is no live
+   * token. `sub` is the only claim a session cannot exist without, so a token
+   * missing it is treated as carrying no identity at all.
+   */
+  private userFromStoredToken(): LoginUser | null {
+    const claims = this.unexpiredClaims();
+    if (!claims?.sub) {
+      return null;
+    }
+    return { id: claims.sub, name: claims.name ?? '', role: claims.role ?? '' };
+  }
+
+  /** Decoded claims of the stored token, or null if absent, malformed or expired. */
+  private unexpiredClaims(): JwtClaims | null {
     const token = this.token();
     if (!token) {
-      return false;
+      return null;
     }
     try {
       const parts = token.split('.');
       if (parts.length < 2 || !parts[1]) {
-        return false;
+        return null;
       }
+      // base64url → base64, then re-pad: `atob` rejects an unpadded input,
+      // and JWT segments are emitted without padding.
       const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+      const padded = base64.padEnd(base64.length + ((4 - (base64.length % 4)) % 4), '=');
       // JSON.parse returns `any`; casting through `unknown` gives us a typed
       // shape without triggering unsafe-assignment from the `any` origin.
-      const raw: unknown = JSON.parse(atob(base64)) as unknown;
+      const raw: unknown = JSON.parse(atob(padded)) as unknown;
       const claims = raw as JwtClaims;
-      return typeof claims.exp === 'number' && claims.exp * 1000 > Date.now();
+      if (typeof claims.exp !== 'number' || claims.exp * 1000 <= Date.now()) {
+        return null;
+      }
+      return claims;
     } catch {
-      return false;
+      return null;
     }
   }
 }

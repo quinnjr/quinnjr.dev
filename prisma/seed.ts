@@ -28,10 +28,22 @@ async function main() {
 
   console.log('✓ Created SEO settings:', seoSettings.id);
 
-  // Provision the initial ADMIN user from env. Set SEED_ADMIN_EMAIL/SEED_ADMIN_PASSWORD;
-  // subsequent role changes can be made in Prisma Studio.
-  const adminEmail = process.env['SEED_ADMIN_EMAIL'] ?? 'jquinn@lexmata.ai';
-  const adminPassword = process.env['SEED_ADMIN_PASSWORD'] ?? 'change-me-locally';
+  // Provision the initial ADMIN user from env. Both variables are REQUIRED and
+  // deliberately have no defaults: this upsert creates a real ADMIN account, so
+  // any fallback committed here would be a published credential for every
+  // database ever seeded without the env set. Fail closed instead.
+  // Subsequent role changes can be made in Prisma Studio.
+  const adminEmail = process.env['SEED_ADMIN_EMAIL'];
+  const adminPassword = process.env['SEED_ADMIN_PASSWORD'];
+  if (!adminEmail || !adminPassword) {
+    console.error(
+      'Refusing to seed: SEED_ADMIN_EMAIL and SEED_ADMIN_PASSWORD must both be set.\n' +
+        'The seed creates an ADMIN user; there is no default password by design.\n' +
+        'Example:\n' +
+        '  SEED_ADMIN_EMAIL="you@example.com" SEED_ADMIN_PASSWORD="…" pnpm prisma:seed'
+    );
+    process.exit(1);
+  }
   const passwordHash = await new PasswordService().hash(adminPassword);
   const admin = await prisma.user.upsert({
     where: { email: adminEmail },

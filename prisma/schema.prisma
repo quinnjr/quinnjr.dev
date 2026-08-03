@@ -83,6 +83,7 @@ model User {
   blogPosts       BlogPost[]
   passkeys        Passkey[]
   webauthnChallenges WebauthnChallenge[]
+  mfaTickets      MfaTicket[]
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -147,6 +148,29 @@ model WebauthnChallenge {
 enum WebauthnChallengeKind {
   REGISTRATION
   AUTHENTICATION
+}
+
+/// Server-side state for one MFA ticket — the short-lived token minted when the
+/// password step succeeds. The JWT on its own is stateless, so it would stay
+/// replayable for its whole lifetime: this row is what makes it single-use
+/// (`consumedAt`) and attempt-limited (`failures`), turning a leaked ticket from
+/// an unlimited assertion oracle into a handful of tries. Rows are created
+/// lazily on first use and are worthless once `expiresAt` passes.
+model MfaTicket {
+  /// The token's `jti` claim, so the ticket identifies its own row.
+  id              String          @id
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  failures        Int             @default(0)
+  consumedAt      DateTime?
+  expiresAt       DateTime
+
+  createdAt       DateTime        @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("mfa_tickets")
 }
 
 enum UserRole {

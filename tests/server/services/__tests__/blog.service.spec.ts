@@ -146,7 +146,6 @@ describe('BlogService', () => {
         content: 'Updated content',
       };
 
-      mockPrismaClient.blogPost.findFirst.mockResolvedValue(null);
       mockPrismaClient.blogPost.update.mockResolvedValue(mockUpdatedPost);
 
       const result = await service.updatePost(updateDto);
@@ -167,6 +166,9 @@ describe('BlogService', () => {
         data: Record<string, unknown>;
       };
       expect(data).not.toHaveProperty('id');
+      // As in createPost, the unique index is the arbiter — no pre-flight
+      // conflict lookup round trip.
+      expect(mockPrismaClient.blogPost.findFirst).not.toHaveBeenCalled();
     });
 
     it('does not touch the slug when the title is unchanged', async () => {
@@ -184,7 +186,6 @@ describe('BlogService', () => {
     });
 
     it('should replace tags inside the single update, never deleting them first', async () => {
-      mockPrismaClient.blogPost.findFirst.mockResolvedValue(null);
       mockPrismaClient.blogPost.update.mockResolvedValue({ id: '1' });
 
       await service.updatePost({ id: '1', tagIds: ['t1', 't2'] });
@@ -199,19 +200,21 @@ describe('BlogService', () => {
       expect(updateArg.data.tags.create).toHaveLength(2);
     });
 
-    it('should throw error if new slug conflicts with another post', async () => {
-      const updateDto = {
-        id: '1',
-        title: 'Conflicting Title',
-      };
+    it('should translate the unique-constraint violation into a domain error', async () => {
+      mockPrismaClient.blogPost.update.mockRejectedValue(
+        Object.assign(new Error('Unique constraint failed'), { code: 'P2002' })
+      );
 
-      mockPrismaClient.blogPost.findFirst.mockResolvedValue({
-        id: '2',
-        slug: 'conflicting-title',
-      });
-
-      await expect(service.updatePost(updateDto)).rejects.toThrow(
+      await expect(service.updatePost({ id: '1', title: 'Conflicting Title' })).rejects.toThrow(
         'A post with this title already exists'
+      );
+    });
+
+    it('should let unrelated database errors surface unchanged', async () => {
+      mockPrismaClient.blogPost.update.mockRejectedValue(new Error('connection reset'));
+
+      await expect(service.updatePost({ id: '1', title: 'Any Title' })).rejects.toThrow(
+        'connection reset'
       );
     });
   });

@@ -16,6 +16,10 @@ export const config: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideNoopAnimations(), // Use noop animations for SSR
+    // `withXhr()` overrides Angular's default fetch backend, routing server
+    // requests through the `xhr2` shim. Zone.js patches XHR, so requests made
+    // during a render are tracked and the render waits for them; that
+    // stability signal is what keeps SSR output complete.
     provideHttpClient(withXhr(), withInterceptorsFromDi()),
     provideServerRendering(withRoutes(serverRoutes)),
     provideApollo(serverApolloOptionsFactory),

@@ -20,6 +20,22 @@ const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4200';
 const BASE_PORT = new URL(BASE_URL).port || '4200';
 
 /**
+ * Which projects this invocation selected, from `--project=x` / `--project x`.
+ *
+ * `webServer` is global in Playwright — it cannot be attached to one project —
+ * so without this an `--project=ssr-routes` run boots an `ng serve` that no
+ * test in that project ever talks to (they target PLAYWRIGHT_SSR_BASE_URL) and
+ * waits up to two minutes for it. An empty list means "all projects", which
+ * includes chromium, so the dev server is still started for a bare run.
+ */
+const selectedProjects = process.argv.flatMap((arg, index) => {
+  if (arg === '--project') return process.argv[index + 1] ? [process.argv[index + 1]] : [];
+  if (arg.startsWith('--project=')) return [arg.slice('--project='.length)];
+  return [];
+});
+const needsDevServer = selectedProjects.length === 0 || selectedProjects.includes('chromium');
+
+/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({

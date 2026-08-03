@@ -177,6 +177,64 @@ describe('SitemapService', () => {
       expect(xml).toContain('&amp;');
       expect(xml).not.toContain('?param=1&other=2');
     });
+
+    // `changefreq` and `priority` come straight from the operator-editable
+    // `sitemapConfig` table. One row carrying `<` or `&` used to be enough to
+    // make the whole document malformed, and crawlers reject an invalid
+    // sitemap wholesale rather than skipping the bad entry.
+    it('should drop a changefreq that is not one of the sitemap enum values', () => {
+      const xml = service.generateSitemapXml([
+        { loc: 'https://example.com/x', changefreq: '<script>weekly' },
+      ]);
+
+      expect(xml).not.toContain('<script>');
+      expect(xml).not.toContain('<changefreq>');
+    });
+
+    it('should keep every legitimate changefreq value', () => {
+      const xml = service.generateSitemapXml([
+        { loc: 'https://example.com/x', changefreq: 'always' },
+        { loc: 'https://example.com/y', changefreq: 'never' },
+      ]);
+
+      expect(xml).toContain('<changefreq>always</changefreq>');
+      expect(xml).toContain('<changefreq>never</changefreq>');
+    });
+
+    it('should coerce priority to a number and omit it when it is not one', () => {
+      const xml = service.generateSitemapXml([
+        { loc: 'https://example.com/x', priority: '0.5</priority><!--' as unknown as number },
+      ]);
+
+      expect(xml).not.toContain('<!--');
+      expect(xml).not.toContain('<priority>');
+    });
+
+    it('should escape lastmod rather than interpolating it raw', () => {
+      const xml = service.generateSitemapXml([
+        { loc: 'https://example.com/x', lastmod: '2025-01-01 & later' },
+      ]);
+
+      expect(xml).toContain('<lastmod>2025-01-01 &amp; later</lastmod>');
+    });
+
+    it('should stay well-formed when a database row carries XML metacharacters', () => {
+      const xml = service.generateSitemapXml([
+        {
+          loc: 'https://example.com/a&b',
+          lastmod: '<bad>',
+          changefreq: 'a&b',
+          priority: NaN,
+        },
+      ]);
+
+      expect(xml).toContain('<loc>https://example.com/a&amp;b</loc>');
+      expect(xml).toContain('<lastmod>&lt;bad&gt;</lastmod>');
+      expect(xml).not.toContain('<bad>');
+      // `a&b` is not a valid changefreq, and NaN is not a usable priority.
+      expect(xml).not.toContain('<changefreq>');
+      expect(xml).not.toContain('<priority>');
+    });
   });
 
   describe('generateRobotsTxt', () => {

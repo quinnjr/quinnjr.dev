@@ -56,6 +56,12 @@ async function submitPassword(page: Page): Promise<void> {
   await page.getByRole('button', { name: /enter/i }).click();
 }
 
+// Both cases enrol against the SAME seeded admin account and both begin by
+// signing in with the password alone — which only reaches /admin while no
+// passkey exists. Run in parallel (the default off CI) they race each other
+// into failure, so this file is explicitly serial.
+test.describe.configure({ mode: 'serial' });
+
 test.describe('passkey second factor', () => {
   test('enrols a passkey, then requires it on the next sign-in', async ({ page }) => {
     await attachAuthenticator(page);

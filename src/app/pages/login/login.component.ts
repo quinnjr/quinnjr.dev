@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  OnDestroy,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -77,7 +84,7 @@ import { SeoService } from '../../services/seo.service';
               <button
                 type="button"
                 class="btn-rpg btn-rpg-primary w-full justify-center"
-                [disabled]="submitting()"
+                [disabled]="submitting() || !passkeySupported()"
                 (click)="onPasskey()"
                 data-testid="passkey-continue"
               >
@@ -143,7 +150,7 @@ import { SeoService } from '../../services/seo.service';
     `,
   ],
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
@@ -158,6 +165,10 @@ export class LoginComponent implements OnInit {
 
   /** Proof the password step passed. Not a session — see signMfaToken. */
   private mfaToken: string | null = null;
+  /** Whether this browser can present a passkey at all; drives the stage-two
+   *  button so an account that requires one cannot offer an action that could
+   *  only ever fail. */
+  readonly passkeySupported = signal(true);
 
   readonly form = this.fb.nonNullable.group({
     // eslint-disable-next-line @typescript-eslint/unbound-method
@@ -197,7 +208,8 @@ export class LoginComponent implements OnInit {
         if (result.status === 'passkeyRequired') {
           this.mfaToken = result.mfaToken;
           this.stage.set('passkey');
-          if (!this.passkeys.isSupported()) {
+          this.passkeySupported.set(this.passkeys.isSupported());
+          if (!this.passkeySupported()) {
             this.error.set('This account requires a passkey, but this browser cannot present one.');
             return;
           }
@@ -212,6 +224,13 @@ export class LoginComponent implements OnInit {
         this.error.set('Invalid email or password');
       },
     });
+  }
+
+  /** Drop the pending proof with the component. The instance is unreachable
+   *  after destroy and the server enforces expiry regardless, but leaving a
+   *  live credential on a discarded object is not a habit worth keeping. */
+  ngOnDestroy(): void {
+    this.mfaToken = null;
   }
 
   onPasskey(): void {

@@ -12,8 +12,19 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, ActivatedRoute } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 import { QuillModule } from 'ngx-quill';
+import { distinctUntilChanged, map } from 'rxjs';
+import slugify from 'slugify';
 
 import { ButtonComponent } from '../../../shared/components/ui';
+
+// The server is the sole author of a post's slug (see `BlogService.generateSlug`).
+// The preview must use the identical call, or it advertises a URL the server
+// will not mint: "Node.js at Scale" is `nodejs-at-scale`, not `node-js-at-scale`.
+const SLUGIFY_OPTIONS = {
+  lower: true,
+  strict: true,
+  remove: /[*+~.()'"!:@]/g,
+} as const;
 
 // `postById` applies the same ownership rule as the admin list, so a post the
 // user may not edit resolves to null rather than being filtered client-side.
@@ -60,7 +71,9 @@ const UPDATE_POST = gql`
               {{ isEditMode() ? 'Edit Blog Post' : 'Create New Blog Post' }}
             </h1>
             <p class="text-gray-600 dark:text-gray-400 mt-1">
-              {{ isEditMode() ? 'Update your existing post' : 'Write and publish a new article' }}
+              <!-- Create mode always writes a DRAFT: there is no status control
+                   in this editor, so it cannot claim to publish. -->
+              {{ isEditMode() ? 'Update your existing post' : 'Write a new article as a draft' }}
             </p>
           </div>
           <app-button (click)="goBack()" variant="ghost">
@@ -170,7 +183,7 @@ const UPDATE_POST = gql`
               @if (!isSubmitting()) {
                 <i class="fas fa-paper-plane mr-2"></i>
               }
-              {{ isEditMode() ? 'Update' : 'Publish' }}
+              {{ isEditMode() ? 'Update' : 'Save draft' }}
             </app-button>
           </div>
 
@@ -221,10 +234,30 @@ export class BlogEditorComponent implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
-    this.postId = this.route.snapshot.paramMap.get('id') ?? undefined;
-    if (this.postId) {
-      this.isEditMode.set(true);
-      this.loadPost(this.postId);
+    // `articles/edit/:id` is a single route definition, so the router reuses
+    // this component when only :id changes. Reading the snapshot once left the
+    // form holding post A's content with `postId` still A while the URL said
+    // B — a submit then silently wrote A's body back to A.
+    this.route.paramMap
+      .pipe(
+        map(params => params.get('id') ?? undefined),
+        distinctUntilChanged(),
+        takeUntilDestroyed(this.destroyRef)
+      )
+      .subscribe(id => this.resetFor(id));
+  }
+
+  /** Re-arms the editor for a (possibly different) post id. */
+  private resetFor(id: string | undefined): void {
+    this.postId = id;
+    this.isSubmitting.set(false);
+    this.saveError.set(null);
+    this.loadError.set(null);
+    this.isLoading.set(false);
+    this.postForm.reset({ title: '', content: '' });
+    this.isEditMode.set(Boolean(id));
+    if (id) {
+      this.loadPost(id);
     }
   }
 
@@ -246,6 +279,11 @@ export class BlogEditorComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ data }) => {
+          // A navigation to another id may have landed while this was in
+          // flight; the newer load owns the form.
+          if (this.postId !== id) {
+            return;
+          }
           const post = data?.postById ?? null;
           this.isLoading.set(false);
           if (!post) {
@@ -255,6 +293,9 @@ export class BlogEditorComponent implements OnInit {
           this.postForm.patchValue({ title: post.title, content: post.content });
         },
         error: (err: unknown) => {
+          if (this.postId !== id) {
+            return;
+          }
           this.isLoading.set(false);
           this.loadError.set('Failed to load this post. Reload the page to try again.');
           console.error('Failed to load post', err);
@@ -280,10 +321,7 @@ export class BlogEditorComponent implements OnInit {
     if (!title) {
       return '';
     }
-    return title
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/(^-|-$)/g, '');
+    return slugify(title, SLUGIFY_OPTIONS);
   }
 
   onSubmit = (): void => {

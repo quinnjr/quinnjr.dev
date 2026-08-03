@@ -7,6 +7,9 @@ test.describe('Home Page', () => {
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForURL(/.*home/, { timeout: 10000 });
     await expect(page).toHaveURL(/.*home/);
+    // `app-root` is in the served HTML before Angular boots, so a URL-only
+    // assertion passes even when the component throws and renders nothing.
+    await expect(page.locator('h1.hero-name')).toContainText('Joseph R. Quinn');
   });
 
   test('should display page title', async ({ page }) => {

@@ -142,10 +142,16 @@ export class AdminDashboardComponent implements OnInit {
       .watchQuery<{ posts: Array<{ id: string }> }>({ query: ADMIN_POST_COUNT })
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        // Apollo Client 4 reports watchQuery failures on the result itself
-        // rather than erroring the stream; the `error` callback stays as a
-        // backstop for anything that does terminate the observable.
-        next: ({ data, error }) => {
+        // Apollo Client 4 emits the in-flight result first (`data: undefined`,
+        // `loading: true`) and reports failures on the result itself rather
+        // than erroring the stream; the `error` callback stays as a backstop
+        // for anything that does terminate the observable.
+        next: ({ data, error, loading }) => {
+          // Without this guard the in-flight emission would fall through to
+          // `?? 0` and render a fabricated count for the whole request.
+          if (loading) {
+            return;
+          }
           if (error) {
             this.setCountError(error);
             return;

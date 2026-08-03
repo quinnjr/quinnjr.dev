@@ -124,26 +124,29 @@ export class BlogService {
   async updatePost(data: UpdateBlogPostDto) {
     const { id, tagIds, ...updateData } = data;
 
-    // If title changed, regenerate slug
-    let slug: string | undefined;
-    if (updateData.title) {
-      slug = this.generateSlug(updateData.title);
+    // If title changed, regenerate slug. As in createPost, there is no
+    // pre-flight conflict lookup: it cost a round trip on every title change,
+    // still lost the race against a concurrent write, and left the losing
+    // request with a generic Prisma error instead of the domain one. The unique
+    // index decides; its P2002 is translated below.
+    const slug = updateData.title ? this.generateSlug(updateData.title) : undefined;
 
-      // Check if new slug conflicts with another post
-      const existingPost = await this.prisma.blogPost.findFirst({
-        where: {
-          slug,
-          NOT: {
-            id,
-          },
-        },
-      });
-
-      if (existingPost) {
+    try {
+      return await this.updatePostRecord(id, updateData, slug, tagIds);
+    } catch (error) {
+      if (isUniqueViolation(error)) {
         throw new UserInputError(DUPLICATE_TITLE_MESSAGE);
       }
+      throw error;
     }
+  }
 
+  private updatePostRecord(
+    id: string,
+    updateData: Omit<UpdateBlogPostDto, 'id' | 'tagIds'>,
+    slug: string | undefined,
+    tagIds: string[] | undefined
+  ) {
     return this.prisma.blogPost.update({
       where: { id },
       data: {

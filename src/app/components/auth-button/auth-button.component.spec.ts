@@ -18,6 +18,9 @@ describe('AuthButtonComponent', () => {
     beforeEach(async () => {
       mockAuthService = {
         isAuthenticated: signal(false),
+        // The component re-derives on init so expired tokens cannot leave the
+        // button offering "Logout"; the stub must answer that call.
+        refreshAuthState: vi.fn().mockReturnValue(false),
         logout: vi.fn(),
       };
 
@@ -73,6 +76,7 @@ describe('AuthButtonComponent', () => {
     beforeEach(async () => {
       mockAuthService = {
         isAuthenticated: signal(true),
+        refreshAuthState: vi.fn().mockReturnValue(true),
         logout: vi.fn(),
       };
 

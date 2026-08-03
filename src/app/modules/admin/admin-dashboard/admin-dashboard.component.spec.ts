@@ -32,6 +32,24 @@ describe('AdminDashboardComponent', () => {
     expect(tile?.textContent?.trim()).toBe('3');
   });
 
+  // Regression guard: Apollo 4 emits an in-flight result before the response
+  // lands. Treating it as data rendered a hard "0" for the whole request.
+  it('renders the dash, not a zero, while the count query is in flight', () => {
+    const fixture = TestBed.createComponent(AdminDashboardComponent);
+    fixture.detectChanges();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.articleCount()).toBeNull();
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('[data-testid="article-count"]')).toBeNull();
+    expect(host.textContent).toContain('—');
+
+    // Settle the operation so `controller.verify()` in afterEach passes.
+    controller.expectOne('AdminPostCount').flush({ data: { posts: [{ id: 'p1' }] } });
+    fixture.detectChanges();
+    expect(fixture.componentInstance.articleCount()).toBe(1);
+  });
+
   it('shows the count as unavailable rather than zero when the query fails', async () => {
     const fixture = TestBed.createComponent(AdminDashboardComponent);
     fixture.detectChanges();

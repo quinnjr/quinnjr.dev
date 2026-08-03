@@ -29,6 +29,26 @@ describe('BlogListComponent', () => {
     expect(fixture.componentInstance.posts().length).toBe(1);
   });
 
+  // Regression guard: Apollo 4 emits an in-flight result first. Treating it as
+  // data told an author "No articles yet" before the server had answered.
+  it('renders a loading state, not the empty state, while the query is in flight', () => {
+    const fixture = TestBed.createComponent(BlogListComponent);
+    fixture.detectChanges();
+    fixture.detectChanges();
+
+    expect(fixture.componentInstance.loading()).toBe(true);
+    const host = fixture.nativeElement as HTMLElement;
+    expect(host.querySelector('[data-testid="posts-loading"]')).toBeTruthy();
+    expect(host.textContent).not.toContain('No articles yet');
+    expect(host.textContent).not.toContain('Create Your First Article');
+
+    // Settle the operation so `controller.verify()` in afterEach passes.
+    controller.expectOne('AdminPosts').flush({ data: { posts: [] } });
+    fixture.detectChanges();
+    expect(fixture.componentInstance.loading()).toBe(false);
+    expect((fixture.nativeElement as HTMLElement).textContent).toContain('No articles yet');
+  });
+
   // Regression guard: the subscription had no error callback, so an outage or
   // auth failure rendered the "No articles yet" empty state to an author who
   // does have articles.

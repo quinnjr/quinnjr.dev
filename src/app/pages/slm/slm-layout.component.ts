@@ -121,7 +121,9 @@ export class SlmLayoutComponent {
   }
 
   private slugFromUrl(): string {
-    // .../slm/<slug> — last non-empty path segment.
-    return this.router.url.split('?')[0].split('/').filter(Boolean).pop() ?? '';
+    // .../slm/<slug> — last non-empty path segment. Fragments are stripped
+    // too: `/slm/evidence#charts` would otherwise yield `evidence#charts`,
+    // match no chapter, and leave the previous route's metadata in place.
+    return this.router.url.split(/[?#]/)[0].split('/').filter(Boolean).pop() ?? '';
   }
 }
