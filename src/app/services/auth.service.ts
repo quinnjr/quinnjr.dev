@@ -87,6 +87,19 @@ export class AuthService {
     this.apollo.client.resetStore().catch(() => undefined);
   }
 
+  /**
+   * Re-derives authentication from the stored token and syncs the
+   * `isAuthenticated` signal so the UI reflects an expiry that happened after
+   * login. Prefer this over reading the signal when the answer must be current.
+   */
+  refreshAuthState(): boolean {
+    const valid = this.hasValidToken();
+    if (this.isAuthenticated() !== valid) {
+      this.isAuthenticated.set(valid);
+    }
+    return valid;
+  }
+
   /** True when a stored token exists and its `exp` is in the future. */
   hasValidToken(): boolean {
     const token = this.token();

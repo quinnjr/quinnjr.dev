@@ -1,5 +1,5 @@
 import { isPlatformBrowser } from '@angular/common';
-import { Injectable, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
+import { DestroyRef, Injectable, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
 
 /**
  * ScrollRevealService uses IntersectionObserver to add a `.revealed` class to
@@ -36,9 +36,20 @@ export class ScrollRevealService implements OnDestroy {
    * Start observing an element. Add `reveal-target` (and optionally
    * `reveal-delay-N`) classes to the element in the template; this service
    * appends `revealed` when it scrolls into view.
+   *
+   * The service is root-scoped, so its own `ngOnDestroy` only runs at app
+   * teardown — an element observed and never unobserved keeps its detached DOM
+   * alive for the whole session. Pass the caller's `DestroyRef` (recommended)
+   * to have the element unobserved automatically, or invoke the returned
+   * teardown function yourself.
    */
-  observe(el: Element): void {
+  observe(el: Element, destroyRef?: DestroyRef): () => void {
     this.observer?.observe(el);
+    const teardown = (): void => {
+      this.observer?.unobserve(el);
+    };
+    destroyRef?.onDestroy(teardown);
+    return teardown;
   }
 
   /** Unobserve a specific element (call in ngOnDestroy of short-lived components). */

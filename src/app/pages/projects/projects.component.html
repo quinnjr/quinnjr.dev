@@ -30,7 +30,7 @@
     <!-- Grid -->
     @if (!loading() && !error()) {
       <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        @for (repo of repositories(); track repo.name) {
+        @for (repo of cards(); track repo.name) {
           <a
             [href]="repo.url"
             target="_blank"
@@ -39,16 +39,14 @@
           >
             <div class="mb-4 flex items-start justify-between">
               <i
-                class="fas {{
-                  getIconForRepo(repo)
-                }} text-3xl text-amber group-hover:text-amber-bright"
+                class="fas {{ repo.icon }} text-3xl text-amber group-hover:text-amber-bright"
                 aria-hidden="true"
               ></i>
               <span class="text-muted transition-colors group-hover:text-amber">
                 <i class="fab fa-github text-lg" aria-hidden="true"></i>
               </span>
             </div>
-            <h3 class="font-heading text-lg text-parchment">{{ getDisplayName(repo.name) }}</h3>
+            <h3 class="font-heading text-lg text-parchment">{{ repo.displayName }}</h3>
             <p class="mt-2 flex-1 font-body text-sm text-muted">
               {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
             </p>

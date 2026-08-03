@@ -1,9 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-login',
@@ -112,10 +113,11 @@ import { AuthService } from '../../services/auth.service';
     `,
   ],
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   private readonly fb = inject(FormBuilder);
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+  private readonly seo = inject(SeoService);
 
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
@@ -126,6 +128,20 @@ export class LoginComponent {
     // eslint-disable-next-line @typescript-eslint/unbound-method
     password: ['', Validators.required],
   });
+
+  ngOnInit(): void {
+    // robots.txt disallows /login, but a disallowed URL can still be indexed
+    // from an inbound link; noindex is what actually keeps it out of results.
+    this.seo.apply({
+      title: 'Sign in',
+      description: 'Authentication for the quinnjr.dev administration area.',
+      path: '/login',
+      noIndex: true,
+    });
+    this.seo.removeJsonLd('page');
+    this.seo.removeJsonLd('faq');
+    this.seo.removeJsonLd('breadcrumbs');
+  }
 
   onSubmit(): void {
     if (this.form.invalid) {

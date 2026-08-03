@@ -8,6 +8,18 @@ import { defineConfig, devices } from '@playwright/test';
 // dotenv.config({ path: '.env' });
 
 /**
+ * Dev-server origin for the SPA suite.
+ *
+ * Both the baseURL and the managed webServer derive from this one value. When
+ * they were allowed to disagree — baseURL configurable, webServer pinned to
+ * 4200 — a dev server for an unrelated project already listening on 4200 was
+ * silently adopted by `reuseExistingServer`, and the whole suite ran green-ish
+ * against the wrong application. Override PLAYWRIGHT_BASE_URL to move both.
+ */
+const BASE_URL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4200';
+const BASE_PORT = new URL(BASE_URL).port || '4200';
+
+/**
  * See https://playwright.dev/docs/test-configuration.
  */
 export default defineConfig({
@@ -25,7 +37,7 @@ export default defineConfig({
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
-    baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:4200',
+    baseURL: BASE_URL,
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
@@ -44,7 +56,32 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
+      // The SSR-only suite lives under e2e/ssr and is driven by its own project
+      // (below) against a built SSR server, not the `ng serve` dev server.
+      testIgnore: '**/ssr/**',
       use: { ...devices['Desktop Chrome'] },
+    },
+
+    /**
+     * Express/SSR surface: /robots.txt, /sitemap.xml, /llms.txt, /healthz.
+     *
+     * The default `webServer` is `ng serve`, whose development configuration
+     * sets `"ssr": false`, so none of those routes exist there. These specs
+     * therefore SKIP unless PLAYWRIGHT_SSR_BASE_URL points at a running SSR
+     * server, which keeps `pnpm test:e2e` green and fast.
+     *
+     * To run them:
+     *   pnpm build
+     *   DATABASE_URL=postgresql://... pnpm serve:ssr:quinnjr.dev &
+     *   PLAYWRIGHT_SSR_BASE_URL=http://localhost:4000 pnpm exec playwright test --project=ssr-routes
+     */
+    {
+      name: 'ssr-routes',
+      testDir: './e2e/ssr',
+      use: {
+        ...devices['Desktop Chrome'],
+        baseURL: process.env.PLAYWRIGHT_SSR_BASE_URL || 'http://localhost:4000',
+      },
     },
 
     // Additional browsers disabled for CI to reduce test time and complexity
@@ -72,8 +109,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'pnpm start',
-    url: 'http://localhost:4200',
+    command: `pnpm start --port ${BASE_PORT}`,
+    url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     timeout: 120 * 1000,
     stdout: 'pipe',

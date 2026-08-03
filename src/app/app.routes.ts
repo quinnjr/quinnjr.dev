@@ -86,6 +86,14 @@ export const routes: Routes = [
         redirectTo: 'home',
         pathMatch: 'full',
       },
+      // Terminal catch-all — must stay last. Inside the shell so an unknown
+      // URL keeps the nav and footer, and so it renders a real 404 page
+      // instead of an empty outlet the server would serve as a soft 404.
+      {
+        path: '**',
+        loadComponent: () =>
+          import('./pages/not-found/not-found.component').then(m => m.NotFoundComponent),
+      },
     ],
   },
 ];

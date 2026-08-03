@@ -228,13 +228,36 @@ export default tseslint.config(
     },
   },
   {
+    // Test files are linted (they used to be ignored wholesale, which hid real
+    // problems). Relax only the rules that legitimately fight test code:
+    // mocks are deliberately partial/untyped, and fixtures repeat strings.
+    files: ['**/*.spec.ts', '**/*.test.ts', 'tests/**/*.ts', 'e2e/**/*.ts'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/no-unnecessary-condition': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      // Stub prisma clients are written as `async () => value` to match the
+      // real (promise-returning) signature; there is nothing to await.
+      'require-await': 'off',
+      '@typescript-eslint/require-await': 'off',
+      'sonarjs/no-duplicate-string': 'off',
+      'sonarjs/no-identical-functions': 'off',
+      'security/detect-object-injection': 'off',
+      'no-console': 'off',
+    },
+  },
+  {
     // Ignore patterns
     ignores: [
       '**/dist/**',
       '**/node_modules/**',
       '**/coverage/**',
-      '**/*.spec.ts',
-      '**/*.test.ts',
       '**/generated/**',
       '**/generated.ts',
       '**/.angular/**',

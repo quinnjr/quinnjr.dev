@@ -2,8 +2,21 @@ import slugify from 'slugify';
 import { inject, singleton } from 'tsyringe';
 
 import { PostStatus, Prisma } from '../../generated/prisma/client';
+import { UserInputError } from '../graphql/errors';
 
 import { DatabaseService } from './database.service';
+
+const DUPLICATE_TITLE_MESSAGE = 'A post with this title already exists';
+
+/**
+ * Duck-typed rather than `instanceof Prisma.PrismaClientKnownRequestError`:
+ * specs mock the generated client module out, so the class is not available.
+ */
+function isUniqueViolation(error: unknown): boolean {
+  return (
+    typeof error === 'object' && error !== null && (error as { code?: unknown }).code === 'P2002'
+  );
+}
 
 export interface CreateBlogPostDto {
   title: string;
@@ -48,15 +61,21 @@ export class BlogService {
   async createPost(data: CreateBlogPostDto) {
     const slug = this.generateSlug(data.title);
 
-    // Check if slug already exists
-    const existingPost = await this.prisma.blogPost.findUnique({
-      where: { slug },
-    });
-
-    if (existingPost) {
-      throw new Error('A post with this title already exists');
+    // No pre-flight uniqueness check: it cost an extra round trip on every
+    // successful create and still lost the race between two concurrent creates
+    // of the same title. The unique index on `slug` is the real arbiter, so let
+    // it decide and translate its P2002 into the same domain error.
+    try {
+      return await this.createPostRecord(data, slug);
+    } catch (error) {
+      if (isUniqueViolation(error)) {
+        throw new UserInputError(DUPLICATE_TITLE_MESSAGE);
+      }
+      throw error;
     }
+  }
 
+  private createPostRecord(data: CreateBlogPostDto, slug: string) {
     return this.prisma.blogPost.create({
       data: {
         title: data.title,
@@ -121,15 +140,8 @@ export class BlogService {
       });
 
       if (existingPost) {
-        throw new Error('A post with this title already exists');
+        throw new UserInputError(DUPLICATE_TITLE_MESSAGE);
       }
-    }
-
-    // Delete existing tags if updating
-    if (tagIds) {
-      await this.prisma.blogPostTag.deleteMany({
-        where: { blogPostId: id },
-      });
     }
 
     return this.prisma.blogPost.update({
@@ -137,8 +149,12 @@ export class BlogService {
       data: {
         ...updateData,
         ...(slug && { slug }),
+        // Tag replacement is nested in the same update so it is one statement:
+        // deleting the old rows first left the post with zero tags whenever the
+        // update then failed (slug race, bad tagId, dropped connection).
         ...(tagIds && {
           tags: {
+            deleteMany: {},
             create: tagIds.map(tagId => ({
               tag: {
                 connect: { id: tagId },

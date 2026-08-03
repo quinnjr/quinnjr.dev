@@ -1,11 +1,31 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  OnInit,
+  inject,
+  signal,
+} from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 import { QuillModule } from 'ngx-quill';
 
 import { ButtonComponent } from '../../../shared/components/ui';
+
+// `postById` applies the same ownership rule as the admin list, so a post the
+// user may not edit resolves to null rather than being filtered client-side.
+const POST_BY_ID = gql`
+  query PostById($id: String!) {
+    postById(id: $id) {
+      id
+      title
+      content
+    }
+  }
+`;
 
 const CREATE_POST = gql`
   mutation CreatePost($input: CreateBlogPostInput!) {
@@ -37,16 +57,38 @@ const UPDATE_POST = gql`
         <div class="flex items-center justify-between mb-6">
           <div>
             <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-              {{ isEditMode ? 'Edit Blog Post' : 'Create New Blog Post' }}
+              {{ isEditMode() ? 'Edit Blog Post' : 'Create New Blog Post' }}
             </h1>
             <p class="text-gray-600 dark:text-gray-400 mt-1">
-              {{ isEditMode ? 'Update your existing post' : 'Write and publish a new article' }}
+              {{ isEditMode() ? 'Update your existing post' : 'Write and publish a new article' }}
             </p>
           </div>
           <app-button (click)="goBack()" variant="ghost">
             <i class="fas fa-arrow-left mr-2"></i>Back
           </app-button>
         </div>
+
+        @if (isLoading()) {
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center"
+            data-testid="editor-loading"
+          >
+            <i class="fas fa-spinner fa-spin text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400">Loading post…</p>
+          </div>
+        }
+
+        @if (loadError()) {
+          <div
+            class="mb-6 p-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+            role="alert"
+            data-testid="editor-load-error"
+          >
+            <p class="text-sm text-red-700 dark:text-red-400">
+              <i class="fas fa-triangle-exclamation mr-2"></i>{{ loadError() }}
+            </p>
+          </div>
+        }
 
         <!-- Form -->
         <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="space-y-6">
@@ -81,8 +123,11 @@ const UPDATE_POST = gql`
               <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
                 <p class="text-sm text-gray-600 dark:text-gray-400">
                   URL:
-                  <span class="font-mono text-blue-600 dark:text-blue-400">
-                    /blog/{{ generateSlug($safeNavigationMigration(postForm.get('title')?.value)) }}
+                  <span
+                    class="font-mono text-blue-600 dark:text-blue-400"
+                    data-testid="slug-preview"
+                  >
+                    /articles/{{ generateSlug(postForm.get('title')?.value) }}
                   </span>
                 </p>
               </div>
@@ -118,16 +163,28 @@ const UPDATE_POST = gql`
 
             <app-button
               type="submit"
-              [disabled]="postForm.invalid || isSubmitting"
-              [loading]="isSubmitting"
+              [disabled]="postForm.invalid || isSubmitting() || !canSubmit()"
+              [loading]="isSubmitting()"
               variant="primary"
             >
-              @if (!isSubmitting) {
+              @if (!isSubmitting()) {
                 <i class="fas fa-paper-plane mr-2"></i>
               }
-              {{ isEditMode ? 'Update' : 'Publish' }}
+              {{ isEditMode() ? 'Update' : 'Publish' }}
             </app-button>
           </div>
+
+          @if (saveError()) {
+            <div
+              class="p-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
+              role="alert"
+              data-testid="editor-save-error"
+            >
+              <p class="text-sm text-red-700 dark:text-red-400">
+                <i class="fas fa-triangle-exclamation mr-2"></i>{{ saveError() }}
+              </p>
+            </div>
+          }
         </form>
       </div>
     </div>
@@ -139,10 +196,16 @@ export class BlogEditorComponent implements OnInit {
   private router = inject(Router);
   private route = inject(ActivatedRoute);
   private readonly apollo = inject(Apollo);
+  private readonly destroyRef = inject(DestroyRef);
 
   postForm!: FormGroup;
-  isEditMode = false;
-  isSubmitting = false;
+  // OnPush: every piece of mutable view state must be a signal, otherwise a
+  // mutation performed inside an async callback never marks the view dirty.
+  readonly isEditMode = signal(false);
+  readonly isSubmitting = signal(false);
+  readonly isLoading = signal(false);
+  readonly loadError = signal<string | null>(null);
+  readonly saveError = signal<string | null>(null);
   postId?: string;
 
   quillModules = {
@@ -160,8 +223,48 @@ export class BlogEditorComponent implements OnInit {
     this.initForm();
     this.postId = this.route.snapshot.paramMap.get('id') ?? undefined;
     if (this.postId) {
-      this.isEditMode = true;
+      this.isEditMode.set(true);
+      this.loadPost(this.postId);
     }
+  }
+
+  /**
+   * Populate the form with the stored post before the user can submit.
+   * Submitting an unpopulated form in edit mode would overwrite the stored
+   * title/content with empty values, so submit stays disabled until this
+   * resolves — and permanently if it fails.
+   */
+  private loadPost(id: string): void {
+    this.isLoading.set(true);
+    this.loadError.set(null);
+    this.apollo
+      .query<{ postById: { id: string; title: string; content: string } | null }>({
+        query: POST_BY_ID,
+        variables: { id },
+        fetchPolicy: 'network-only',
+      })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe({
+        next: ({ data }) => {
+          const post = data?.postById ?? null;
+          this.isLoading.set(false);
+          if (!post) {
+            this.loadError.set('That post could not be found, or you do not have access to it.');
+            return;
+          }
+          this.postForm.patchValue({ title: post.title, content: post.content });
+        },
+        error: (err: unknown) => {
+          this.isLoading.set(false);
+          this.loadError.set('Failed to load this post. Reload the page to try again.');
+          console.error('Failed to load post', err);
+        },
+      });
+  }
+
+  /** Never allow a submit that could overwrite stored content with blanks. */
+  canSubmit(): boolean {
+    return !this.isLoading() && !this.loadError();
   }
 
   initForm = (): void => {
@@ -188,16 +291,17 @@ export class BlogEditorComponent implements OnInit {
       this.postForm.markAllAsTouched();
       return;
     }
-    if (this.isSubmitting) {
+    if (this.isSubmitting() || !this.canSubmit()) {
       return;
     }
-    this.isSubmitting = true;
+    this.isSubmitting.set(true);
+    this.saveError.set(null);
 
     const { title, content } = this.postForm.value as { title: string; content: string };
 
     // On update, omit `status` so an existing post's published state is preserved
     // (the editor has no status control yet). New posts start as DRAFT.
-    const op = this.isEditMode
+    const op = this.isEditMode()
       ? this.apollo.mutate({
           mutation: UPDATE_POST,
           variables: { id: this.postId, input: { title, content } },
@@ -207,16 +311,18 @@ export class BlogEditorComponent implements OnInit {
           variables: { input: { title, content, status: 'DRAFT' as const } },
         });
 
-    op.subscribe({
+    op.pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
-        this.isSubmitting = false;
+        this.isSubmitting.set(false);
         this.router.navigate(['/admin/articles']).catch(() => {
           // Navigation error handled
         });
       },
       error: (err: unknown) => {
-        this.isSubmitting = false;
-
+        this.isSubmitting.set(false);
+        this.saveError.set(
+          err instanceof Error ? err.message : 'Failed to save this post. Please try again.'
+        );
         console.error('Failed to save post', err);
       },
     });

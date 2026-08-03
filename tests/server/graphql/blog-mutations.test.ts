@@ -1,7 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
 import { graphql } from 'graphql';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+
 import { BlogService } from '../../../src/server/services/blog.service';
 import { DatabaseService } from '../../../src/server/services/database.service';
 
@@ -22,7 +23,8 @@ function ctx(role: string | null, { authorId = 'u1' }: { authorId?: string | nul
 
 describe('blog mutations', () => {
   it('denies createPost for VIEWER', async () => {
-    container.registerInstance(BlogService, {} as never);
+    const createPost = vi.fn();
+    container.registerInstance(BlogService, { createPost } as never);
     container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
@@ -30,8 +32,15 @@ describe('blog mutations', () => {
       source: 'mutation { createPost(input:{title:"x",content:"y",status:DRAFT}) { id } }',
       contextValue: ctx('VIEWER'),
     });
-    expect(result.errors?.[0]?.extensions?.['code'] ?? 'FORBIDDEN').toBeTruthy();
+    // `errors?.[0]?.extensions?.['code'] ?? 'FORBIDDEN'` used to stand here; the
+    // `??` fallback made it unconditionally truthy, so it passed even when the
+    // mutation was allowed. The scope-auth plugin denies without an extensions
+    // code, so pin what it actually produces: the denial message naming the
+    // field, no data, and — most importantly — no call into the service.
+    expect(result.errors).toBeDefined();
+    expect(result.errors?.[0]?.message).toBe('Not authorized to resolve Mutation.createPost');
     expect(result.data?.createPost ?? null).toBeNull();
+    expect(createPost).not.toHaveBeenCalled();
   });
 
   it('allows createPost for AUTHOR and delegates to BlogService', async () => {
@@ -95,6 +104,7 @@ describe('blog mutations', () => {
     });
     expect(result.errors).toBeDefined();
     expect(result.errors![0].message).toContain('your own posts');
+    expect(result.errors![0].extensions?.['code']).toBe('FORBIDDEN');
     expect(updatePost).not.toHaveBeenCalled();
   });
 
@@ -123,6 +133,8 @@ describe('blog mutations', () => {
       contextValue: ctx('AUTHOR', { authorId: null }),
     });
     expect(result.errors).toBeDefined();
+    expect(result.errors![0].message).toBe('Post not found');
+    expect(result.errors![0].extensions?.['code']).toBe('NOT_FOUND');
     expect(updatePost).not.toHaveBeenCalled();
   });
 
@@ -152,6 +164,25 @@ describe('blog mutations', () => {
       contextValue: ctx('AUTHOR'),
     });
     expect(result.errors).toBeDefined();
+    expect(result.errors?.[0]?.message).toBe('Not authorized to resolve Mutation.deletePost');
+    expect(result.data?.deletePost ?? null).toBeNull();
     expect(deletePost).not.toHaveBeenCalled();
+  });
+
+  it('deletePost: missing post → NOT_FOUND rather than a masked internal error', async () => {
+    const deletePost = vi
+      .fn()
+      .mockRejectedValue(Object.assign(new Error('nope'), { code: 'P2025' }));
+    container.registerInstance(BlogService, { deletePost } as never);
+    container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { deletePost(id:"missing") }',
+      contextValue: ctx('EDITOR'),
+    });
+    expect(result.errors).toBeDefined();
+    expect(result.errors![0].message).toBe('Post not found');
+    expect(result.errors![0].extensions?.['code']).toBe('NOT_FOUND');
   });
 });

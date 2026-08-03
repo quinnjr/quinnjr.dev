@@ -1,5 +1,5 @@
 import { provideLocationMocks } from '@angular/common/testing';
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 
 import { HomeComponent } from './home.component';
@@ -14,10 +14,18 @@ describe('HomeComponent', () => {
     globalThis.IntersectionObserver ??= class {
       readonly root = null;
       readonly rootMargin = '';
-      readonly thresholds: ReadonlyArray<number> = [];
-      observe(): void {}
-      unobserve(): void {}
-      disconnect(): void {}
+      readonly thresholds: readonly number[] = [];
+      // Deliberate no-ops: the component only needs the constructor to exist
+      // and the methods to be callable; nothing asserts on their effects.
+      observe(): void {
+        /* no-op */
+      }
+      unobserve(): void {
+        /* no-op */
+      }
+      disconnect(): void {
+        /* no-op */
+      }
       takeRecords(): IntersectionObserverEntry[] {
         return [];
       }

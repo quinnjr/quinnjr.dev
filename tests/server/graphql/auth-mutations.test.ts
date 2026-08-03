@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
 import { graphql } from 'graphql';
 import 'reflect-metadata';
 import { container } from 'tsyringe';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 
-import { PasswordService } from '../../../src/server/services/password.service';
 import { DatabaseService } from '../../../src/server/services/database.service';
+import { PasswordService } from '../../../src/server/services/password.service';
 
 afterEach(() => container.reset());
 

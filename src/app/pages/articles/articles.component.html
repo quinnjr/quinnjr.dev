@@ -9,7 +9,20 @@
       </p>
     </header>
 
-    @if (posts().length) {
+    @if (loading()) {
+      <!-- Fetch in flight — never flash the "no entries" panel before it lands -->
+      <div class="flex flex-col items-center justify-center py-24 text-center">
+        <i class="fas fa-scroll animate-pulse text-4xl text-amber" aria-hidden="true"></i>
+        <p class="mt-4 font-mono text-sm text-muted">Unrolling the chronicles…</p>
+      </div>
+    } @else if (error()) {
+      <!-- Fetch failed — distinct from an empty archive -->
+      <div class="card-stone mx-auto max-w-xl p-8 text-center">
+        <i class="fas fa-triangle-exclamation mb-3 text-3xl text-amber" aria-hidden="true"></i>
+        <h2 class="font-heading text-xl text-parchment">The archive is sealed</h2>
+        <p class="mt-2 font-body text-muted">{{ error() }}</p>
+      </div>
+    } @else if (posts().length) {
       <!-- Published chronicles -->
       <div class="mx-auto max-w-3xl space-y-4">
         @for (post of posts(); track post.id) {

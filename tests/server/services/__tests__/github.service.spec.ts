@@ -1,8 +1,54 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+
 import { GitHubService } from '../../../../src/server/services/github.service';
 
 // Mock fetch globally
 global.fetch = vi.fn();
+
+interface MockRepo {
+  name: string;
+  description: string | null;
+  html_url: string;
+  stargazers_count: number;
+  language: string | null;
+  pushed_at: string;
+  private: boolean;
+  fork: boolean;
+}
+
+function repo(overrides: Partial<MockRepo> & { name: string }): MockRepo {
+  return {
+    description: null,
+    html_url: `https://github.com/quinnjr/${overrides.name}`,
+    stargazers_count: 0,
+    language: 'TypeScript',
+    pushed_at: '2025-01-01T00:00:00Z',
+    private: false,
+    fork: false,
+    ...overrides,
+  };
+}
+
+/** Minimal Response stand-in; `nextUrl` becomes a `Link: rel="next"` header. */
+function page(repos: MockRepo[], nextUrl?: string) {
+  return {
+    ok: true,
+    json: async () => repos,
+    headers: {
+      get: (name: string) =>
+        name.toLowerCase() === 'link' && nextUrl ? `<${nextUrl}>; rel="next"` : null,
+    },
+  };
+}
+
+function mockPages(...pages: Array<ReturnType<typeof page>>) {
+  const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+  fetchMock.mockReset();
+  for (const p of pages) {
+    fetchMock.mockResolvedValueOnce(p);
+  }
+  return fetchMock;
+}
 
 describe('GitHubService', () => {
   let service: GitHubService;
@@ -14,33 +60,12 @@ describe('GitHubService', () => {
 
   describe('getRepositories', () => {
     it('should fetch and transform repositories from GitHub API', async () => {
-      const mockRepos = [
-        {
-          name: 'test-repo',
-          description: 'A test repository',
-          html_url: 'https://github.com/quinnjr/test-repo',
-          stargazers_count: 5,
-          language: 'TypeScript',
-          pushed_at: '2025-01-01T00:00:00Z',
-          private: false,
-          fork: false,
-        },
-        {
-          name: 'another-repo',
-          description: null,
-          html_url: 'https://github.com/quinnjr/another-repo',
-          stargazers_count: 0,
-          language: null,
-          pushed_at: '2024-12-01T00:00:00Z',
-          private: false,
-          fork: false,
-        },
-      ];
-
-      (global.fetch as any).mockResolvedValue({
-        ok: true,
-        json: async () => mockRepos,
-      });
+      mockPages(
+        page([
+          repo({ name: 'test-repo', description: 'A test repository', stargazers_count: 5 }),
+          repo({ name: 'another-repo', language: null, pushed_at: '2024-12-01T00:00:00Z' }),
+        ])
+      );
 
       const result = await service.getRepositories();
 
@@ -53,33 +78,9 @@ describe('GitHubService', () => {
     });
 
     it('should filter out private repositories', async () => {
-      const mockRepos = [
-        {
-          name: 'public-repo',
-          description: 'Public',
-          html_url: 'https://github.com/quinnjr/public-repo',
-          stargazers_count: 0,
-          language: 'TypeScript',
-          pushed_at: '2025-01-01T00:00:00Z',
-          private: false,
-          fork: false,
-        },
-        {
-          name: 'private-repo',
-          description: 'Private',
-          html_url: 'https://github.com/quinnjr/private-repo',
-          stargazers_count: 0,
-          language: 'TypeScript',
-          pushed_at: '2025-01-01T00:00:00Z',
-          private: true,
-          fork: false,
-        },
-      ];
-
-      (global.fetch as any).mockResolvedValue({
-        ok: true,
-        json: async () => mockRepos,
-      });
+      mockPages(
+        page([repo({ name: 'public-repo' }), repo({ name: 'private-repo', private: true })])
+      );
 
       const result = await service.getRepositories();
 
@@ -88,33 +89,7 @@ describe('GitHubService', () => {
     });
 
     it('should filter out forked repositories', async () => {
-      const mockRepos = [
-        {
-          name: 'original-repo',
-          description: 'Original',
-          html_url: 'https://github.com/quinnjr/original-repo',
-          stargazers_count: 0,
-          language: 'TypeScript',
-          pushed_at: '2025-01-01T00:00:00Z',
-          private: false,
-          fork: false,
-        },
-        {
-          name: 'forked-repo',
-          description: 'Fork',
-          html_url: 'https://github.com/quinnjr/forked-repo',
-          stargazers_count: 0,
-          language: 'TypeScript',
-          pushed_at: '2025-01-01T00:00:00Z',
-          private: false,
-          fork: true,
-        },
-      ];
-
-      (global.fetch as any).mockResolvedValue({
-        ok: true,
-        json: async () => mockRepos,
-      });
+      mockPages(page([repo({ name: 'original-repo' }), repo({ name: 'forked-repo', fork: true })]));
 
       const result = await service.getRepositories();
 
@@ -123,33 +98,12 @@ describe('GitHubService', () => {
     });
 
     it('should sort repositories by pushed_at date descending', async () => {
-      const mockRepos = [
-        {
-          name: 'old-repo',
-          description: 'Old',
-          html_url: 'https://github.com/quinnjr/old-repo',
-          stargazers_count: 0,
-          language: 'TypeScript',
-          pushed_at: '2024-01-01T00:00:00Z',
-          private: false,
-          fork: false,
-        },
-        {
-          name: 'new-repo',
-          description: 'New',
-          html_url: 'https://github.com/quinnjr/new-repo',
-          stargazers_count: 0,
-          language: 'TypeScript',
-          pushed_at: '2025-01-01T00:00:00Z',
-          private: false,
-          fork: false,
-        },
-      ];
-
-      (global.fetch as any).mockResolvedValue({
-        ok: true,
-        json: async () => mockRepos,
-      });
+      mockPages(
+        page([
+          repo({ name: 'old-repo', pushed_at: '2024-01-01T00:00:00Z' }),
+          repo({ name: 'new-repo', pushed_at: '2025-01-01T00:00:00Z' }),
+        ])
+      );
 
       const result = await service.getRepositories();
 
@@ -157,19 +111,88 @@ describe('GitHubService', () => {
       expect(result[1].name).toBe('old-repo');
     });
 
+    it('should follow Link rel="next" until exhausted', async () => {
+      const fetchMock = mockPages(
+        page([repo({ name: 'page-1' })], 'https://api.github.com/next-page'),
+        page([repo({ name: 'page-2' })])
+      );
+
+      const result = await service.getRepositories();
+
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+      expect(fetchMock.mock.calls[1][0]).toBe('https://api.github.com/next-page');
+      expect(result.map(r => r.name)).toEqual(['page-1', 'page-2']);
+    });
+
+    it('should stop at the page cap and warn instead of truncating silently', async () => {
+      const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+      fetchMock.mockReset();
+      // Every page claims another one after it, so only the cap ends the loop.
+      fetchMock.mockResolvedValue(page([repo({ name: 'endless' })], 'https://api.github.com/more'));
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+      await service.getRepositories();
+
+      expect(fetchMock).toHaveBeenCalledTimes(10);
+      expect(warn).toHaveBeenCalledWith(expect.stringContaining('truncated'));
+      warn.mockRestore();
+    });
+
+    it('should serve the memoized result without re-fetching', async () => {
+      const fetchMock = mockPages(page([repo({ name: 'cached-repo' })]));
+
+      const first = await service.getRepositories();
+      const second = await service.getRepositories();
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(second).toEqual(first);
+    });
+
+    it('should coalesce concurrent calls into a single fetch', async () => {
+      const fetchMock = mockPages(page([repo({ name: 'coalesced' })]));
+
+      const [a, b] = await Promise.all([service.getRepositories(), service.getRepositories()]);
+
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(a).toEqual(b);
+    });
+
+    it('should serve a stale cache rather than failing when a refresh errors', async () => {
+      mockPages(page([repo({ name: 'stale-repo' })]));
+      await service.getRepositories();
+
+      // Expire the cache so the next call re-fetches, then make that fail.
+      (service as unknown as { cache: { expiresAt: number } }).cache.expiresAt = 0;
+      const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+      fetchMock.mockRejectedValue(new Error('rate limited'));
+      const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+
+      const result = await service.getRepositories();
+
+      expect(result[0].name).toBe('stale-repo');
+      error.mockRestore();
+      warn.mockRestore();
+    });
+
     it('should throw error when GitHub API fails', async () => {
-      (global.fetch as any).mockResolvedValue({
-        ok: false,
-        statusText: 'Not Found',
-      });
+      const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+      fetchMock.mockReset();
+      fetchMock.mockResolvedValue({ ok: false, statusText: 'Not Found' });
+      const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
       await expect(service.getRepositories()).rejects.toThrow('GitHub API error: Not Found');
+      error.mockRestore();
     });
 
     it('should throw error when fetch fails', async () => {
-      (global.fetch as any).mockRejectedValue(new Error('Network error'));
+      const fetchMock = global.fetch as unknown as ReturnType<typeof vi.fn>;
+      fetchMock.mockReset();
+      fetchMock.mockRejectedValue(new Error('Network error'));
+      const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
 
       await expect(service.getRepositories()).rejects.toThrow('Network error');
+      error.mockRestore();
     });
   });
 });

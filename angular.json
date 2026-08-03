@@ -103,13 +103,21 @@
             "tsConfig": "tsconfig.spec.json",
             "runner": "vitest",
             "buildTarget": "quinnjr.dev:build:testing",
+            "setupFiles": ["src/test-setup.ts"],
             "exclude": ["**/src/server/**", "**/e2e/**"]
           }
         },
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html",
+              "scripts/**/*.ts",
+              "prisma/**/*.ts",
+              "tests/**/*.ts",
+              "e2e/**/*.ts"
+            ]
           }
         }
       }

@@ -1,4 +1,6 @@
 // src/server/graphql/resolvers/blog.mutations.ts
+import { GraphQLError } from 'graphql';
+
 import { type CreateBlogPostDto, type UpdateBlogPostDto } from '../../services/blog.service';
 import { builder } from '../builder';
 import { meetsMinimumRole, requireUser } from '../context';
@@ -89,8 +91,12 @@ builder.mutationType({
           rethrowAsGraphQLError(new Error('Post not found'));
         }
         // Authors may only edit their own posts; editors and above may edit any.
+        // Thrown coded directly: routing it through rethrowAsGraphQLError would
+        // report an authorization denial as INTERNAL_SERVER_ERROR.
         if (!meetsMinimumRole(ctx.user, 'EDITOR') && existing.authorId !== requireUser(ctx).id) {
-          rethrowAsGraphQLError(new Error('You can only edit your own posts'));
+          throw new GraphQLError('You can only edit your own posts', {
+            extensions: { code: 'FORBIDDEN' },
+          });
         }
         try {
           return await blog().updatePost({
@@ -110,7 +116,13 @@ builder.mutationType({
       authScopes: { role: 'EDITOR' },
       args: { id: t.arg.string({ required: true }) },
       resolve: async (_root, args) => {
-        await blog().deletePost(args.id);
+        try {
+          await blog().deletePost(args.id);
+        } catch (e) {
+          // Without this, Prisma's P2025 for a missing id escapes unmapped and
+          // masking turns it into "Unexpected error" for the client.
+          rethrowAsGraphQLError(e, 'Post not found');
+        }
         return true;
       },
     }),

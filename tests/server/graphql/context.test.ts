@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
 import { container } from 'tsyringe';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 
-import { DatabaseService } from '../../../src/server/services/database.service';
 import * as auth from '../../../src/server/graphql/auth';
+import { DatabaseService } from '../../../src/server/services/database.service';
 
 afterEach(() => {
   container.reset();

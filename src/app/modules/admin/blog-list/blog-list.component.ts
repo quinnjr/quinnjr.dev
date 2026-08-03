@@ -52,7 +52,21 @@ interface AdminPost {
           </a>
         </div>
 
-        @if (posts().length) {
+        @if (loadError()) {
+          <!-- Distinct from the empty state: an outage or auth failure must not
+               be reported to an author as "you have no articles". -->
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center"
+            role="alert"
+            data-testid="posts-load-error"
+          >
+            <i class="fas fa-triangle-exclamation text-red-500 text-6xl mb-4"></i>
+            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
+              Could not load your articles
+            </h2>
+            <p class="text-gray-600 dark:text-gray-400">{{ loadError() }}</p>
+          </div>
+        } @else if (posts().length) {
           <ul class="space-y-2">
             @for (post of posts(); track post.id) {
               <li
@@ -95,11 +109,32 @@ export class BlogListComponent implements OnInit {
   private readonly apollo = inject(Apollo);
   private readonly destroyRef = inject(DestroyRef);
   readonly posts = signal<AdminPost[]>([]);
+  readonly loadError = signal<string | null>(null);
 
   ngOnInit(): void {
     this.apollo
       .watchQuery<{ posts: AdminPost[] }>({ query: ADMIN_POSTS })
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(({ data }) => this.posts.set((data?.posts ?? []) as AdminPost[]));
+      .subscribe({
+        // Apollo Client 4 reports watchQuery failures on the result itself
+        // rather than erroring the stream; the `error` callback stays as a
+        // backstop for anything that does terminate the observable.
+        next: ({ data, error }) => {
+          if (error) {
+            this.setLoadError(error);
+            return;
+          }
+          this.loadError.set(null);
+          this.posts.set((data?.posts ?? []) as AdminPost[]);
+        },
+        error: (err: unknown) => this.setLoadError(err),
+      });
+  }
+
+  private setLoadError(err: unknown): void {
+    this.loadError.set(
+      err instanceof Error && err.message ? err.message : 'The server did not return your articles.'
+    );
+    console.error('Failed to load admin posts', err);
   }
 }

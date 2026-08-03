@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <!--
+    Source for public/assets/og-image.png (the sitewide social/answer-engine
+    card). Edit here, then regenerate:  pnpm run og:image
+    Rendered with generic serif/monospace families so the output does not
+    depend on Cinzel being installed on the machine doing the rasterising.
+  -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a0a14" />
+      <stop offset="55%" stop-color="#12121f" />
+      <stop offset="100%" stop-color="#1a1208" />
+    </linearGradient>
+    <radialGradient id="hearth" cx="0.5" cy="1.05" r="0.75">
+      <stop offset="0%" stop-color="#c9a84c" stop-opacity="0.28" />
+      <stop offset="100%" stop-color="#c9a84c" stop-opacity="0" />
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)" />
+  <rect width="1200" height="630" fill="url(#hearth)" />
+  <rect x="24" y="24" width="1152" height="582" fill="none" stroke="#c9a84c" stroke-width="2" stroke-opacity="0.55" />
+  <rect x="36" y="36" width="1128" height="558" fill="none" stroke="#c9a84c" stroke-width="1" stroke-opacity="0.25" />
+
+  <!-- JRQ shield monogram -->
+  <g transform="translate(96, 210) scale(3.1)">
+    <path d="M18 2L2 9V22C2 31.9 9.4 40.4 18 42C26.6 40.4 34 31.9 34 22V9L18 2Z"
+          stroke="#c9a84c" stroke-width="1.5" fill="rgba(10,10,20,0.85)" />
+    <text x="18" y="26" text-anchor="middle" fill="#c9a84c"
+          font-family="serif" font-size="10" font-weight="700">JRQ</text>
+  </g>
+
+  <text x="270" y="252" fill="#c9a84c" font-family="monospace" font-size="24"
+        letter-spacing="7">QUINNJR.DEV</text>
+
+  <text x="270" y="330" fill="#f0e6d2" font-family="serif" font-size="62" font-weight="700">
+    Joseph R. Quinn, Esq.
+  </text>
+
+  <text x="270" y="386" fill="#c9a84c" font-family="serif" font-size="30">
+    Software Engineer ◆ Attorney ◆ Technologist
+  </text>
+
+  <line x1="270" y1="420" x2="1050" y2="420" stroke="#c9a84c" stroke-width="1" stroke-opacity="0.4" />
+
+  <text x="270" y="464" fill="#a89f8d" font-family="serif" font-size="25">
+    Full-stack engineering, systems programming, and technology law.
+  </text>
+</svg>

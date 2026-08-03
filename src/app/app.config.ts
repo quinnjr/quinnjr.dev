@@ -1,5 +1,6 @@
 import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
 import { type ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideApollo } from 'apollo-angular';
@@ -17,6 +18,9 @@ export const appConfig: ApplicationConfig = {
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
     ),
     provideAnimations(),
+    // Hydrate the SSR markup in place instead of destroying and re-rendering
+    // it; event replay covers clicks that land before hydration finishes.
+    provideClientHydration(withEventReplay()),
     provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     provideApollo(apolloOptionsFactory),
     FlowbiteService,

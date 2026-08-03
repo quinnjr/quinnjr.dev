@@ -34,20 +34,11 @@ import { AuthButtonComponent } from '../../../components/auth-button/auth-button
                 >
                   <i class="fas fa-newspaper mr-1"></i>Articles
                 </a>
-                <a
-                  routerLink="/admin/projects"
-                  routerLinkActive="text-blue-600 dark:text-blue-400"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <i class="fas fa-project-diagram mr-1"></i>Projects
-                </a>
-                <a
-                  routerLink="/admin/settings"
-                  routerLinkActive="text-blue-600 dark:text-blue-400"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <i class="fas fa-cog mr-1"></i>Settings
-                </a>
+                <!--
+                  Only routes declared under the admin path in app.routes.ts belong here.
+                  Projects/Settings links used to live here and threw
+                  "Cannot match any routes" because no such child route exists.
+                -->
               </nav>
             </div>
             <div class="flex items-center gap-4">

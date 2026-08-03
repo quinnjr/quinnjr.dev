@@ -39,6 +39,12 @@ export class NavigationComponent {
       icon: 'fas fa-book-skull',
     },
     {
+      title: "Parkinson's Map",
+      link: 'https://parkinsons.quinnjr.dev/',
+      icon: 'fas fa-diagram-project',
+      external: true,
+    },
+    {
       title: 'Guild Hall',
       link: 'https://www.linkedin.com/in/quinnjosephr/',
       icon: 'fas fa-users',

@@ -46,6 +46,31 @@ builder.queryType({
       },
     }),
 
+    // The admin editor loads a post by its route id. Without this it had to
+    // fetch the author's entire post list and filter client-side, which grows
+    // linearly with the archive to retrieve one row.
+    postById: t.prismaField({
+      type: 'BlogPost',
+      nullable: true,
+      authScopes: { role: 'AUTHOR' },
+      args: { id: t.arg.string({ required: true }) },
+      resolve: async (query, _root, args, ctx) => {
+        const post = await ctx.prisma.blogPost.findUnique({
+          ...query,
+          where: { id: args.id },
+        });
+        if (!post) {
+          return null;
+        }
+        // Same ownership rule the `posts` list enforces: authors see only
+        // their own drafts, editors and above see everything.
+        if (!meetsMinimumRole(ctx.user, 'EDITOR') && post.authorId !== requireUser(ctx).id) {
+          return null;
+        }
+        return post;
+      },
+    }),
+
     posts: t.prismaField({
       type: ['BlogPost'],
       // Authors may list their own posts; editors and above see every post.

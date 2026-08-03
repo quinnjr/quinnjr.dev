@@ -1,4 +1,5 @@
 import { vi, type MockedFunction } from 'vitest';
+
 import { PrismaClient } from '../../../../src/generated/prisma/client';
 import { DatabaseService } from '../../../../src/server/services/database.service';
 
@@ -25,7 +26,7 @@ describe('DatabaseService', () => {
 
     // Replace the client in the service with our mock
     service = new DatabaseService();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
     (service as any).client = mockPrismaClient;
   });
 
@@ -34,10 +35,30 @@ describe('DatabaseService', () => {
   });
 
   describe('getClient', () => {
-    it('should return the Prisma client instance', () => {
-      const client = service.getClient();
-      expect(client).toBeDefined();
-      expect(client).toBe(mockPrismaClient);
+    // Asserting `getClient() === mockPrismaClient` only re-verified the
+    // assignment beforeEach itself performed. The contract worth pinning is
+    // that the service constructs exactly one PrismaClient and hands the same
+    // instance back on every call — so build an untouched service here.
+    it('constructs exactly one PrismaClient per service instance', () => {
+      const PrismaClientMock = vi.mocked(PrismaClient);
+      PrismaClientMock.mockClear();
+
+      const fresh = new DatabaseService();
+
+      expect(PrismaClientMock).toHaveBeenCalledTimes(1);
+      fresh.getClient();
+      fresh.getClient();
+      expect(PrismaClientMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('returns the same client instance on every call', () => {
+      const fresh = new DatabaseService();
+
+      const first = fresh.getClient();
+      const second = fresh.getClient();
+
+      expect(first).toBeDefined();
+      expect(second).toBe(first);
     });
   });
 

@@ -18,7 +18,8 @@ export interface GitHubRepository {
 
 interface ApiResponse {
   success: boolean;
-  data: GitHubRepository[];
+  /** Absent on a `success: false` body. */
+  data?: GitHubRepository[];
   error?: string;
 }
 
@@ -30,8 +31,15 @@ export class GitHubService {
   private readonly http = inject(HttpClient);
 
   getRepositories(): Observable<GitHubRepository[]> {
-    return this.http
-      .get<ApiResponse>(`${this.apiUrl}/repositories`)
-      .pipe(map(response => response.data));
+    return this.http.get<ApiResponse>(`${this.apiUrl}/repositories`).pipe(
+      map(response => {
+        // The API signals failure in the body, not the status code, so an
+        // unchecked `.data` would emit undefined typed as a repository list.
+        if (response.success === false) {
+          throw new Error(response.error ?? 'Failed to load GitHub repositories');
+        }
+        return response.data ?? [];
+      })
+    );
   }
 }
