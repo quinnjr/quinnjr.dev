@@ -81,12 +81,72 @@ model User {
 
   // Relationships
   blogPosts       BlogPost[]
+  passkeys        Passkey[]
+  webauthnChallenges WebauthnChallenge[]
 
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
   @@index([email])
   @@map("users")
+}
+
+/// A registered WebAuthn credential, used as the second factor after a
+/// successful password check. A user with zero passkeys signs in with the
+/// password alone; enrolling the first one turns the second factor on.
+model Passkey {
+  id              String          @id @default(uuid())
+  userId          String
+  user            User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  /// Base64URL credential ID as returned by the authenticator.
+  credentialId    String          @unique
+  /// COSE public key bytes. Stored raw rather than re-encoded per read.
+  publicKey       Bytes
+  /// Signature counter. A value that fails to advance signals a cloned
+  /// authenticator, so it is persisted and compared on every assertion.
+  counter         BigInt          @default(0)
+  /// e.g. ["internal", "hybrid"] — lets the browser hint the right affordance.
+  transports      String[]        @default([])
+  /// "singleDevice" | "multiDevice" from the attestation.
+  deviceType      String
+  /// True when the credential is synced to a provider's cloud keychain.
+  backedUp        Boolean         @default(false)
+  /// User-supplied label, so multiple authenticators stay tellable apart.
+  name            String
+
+  createdAt       DateTime        @default(now())
+  lastUsedAt      DateTime?
+
+  @@index([userId])
+  @@map("passkeys")
+}
+
+/// A single-use WebAuthn challenge, held between the two halves of a
+/// registration or authentication ceremony.
+///
+/// Kept server-side rather than round-tripped through the client so it cannot
+/// be replayed or chosen by the caller; rows are deleted on use and swept once
+/// expired.
+model WebauthnChallenge {
+  id              String                @id @default(uuid())
+  userId          String
+  user            User                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  challenge       String
+  kind            WebauthnChallengeKind
+  expiresAt       DateTime
+
+  createdAt       DateTime              @default(now())
+
+  @@index([userId])
+  @@index([expiresAt])
+  @@map("webauthn_challenges")
+}
+
+enum WebauthnChallengeKind {
+  REGISTRATION
+  AUTHENTICATION
 }
 
 enum UserRole {

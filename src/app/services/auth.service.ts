@@ -2,11 +2,26 @@ import { isPlatformBrowser } from '@angular/common';
 import { Injectable, PLATFORM_ID, inject, signal } from '@angular/core';
 import { Apollo, gql } from 'apollo-angular';
 import type { Observable } from 'rxjs';
-import { map, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
+      token
+      mfaRequired
+      mfaToken
+      user {
+        id
+        name
+        role
+      }
+    }
+  }
+`;
+
+const VERIFY_PASSKEY = gql`
+  mutation VerifyPasskey($mfaToken: String!, $response: JSON!) {
+    verifyPasskey(mfaToken: $mfaToken, response: $response) {
       token
       user {
         id
@@ -17,7 +32,14 @@ const LOGIN = gql`
   }
 `;
 
+const BEGIN_PASSKEY_AUTH = gql`
+  mutation BeginPasskeyAuthentication($mfaToken: String!) {
+    beginPasskeyAuthentication(mfaToken: $mfaToken)
+  }
+`;
+
 const TOKEN_KEY = 'auth_token';
+const LOGIN_FAILED = 'Login failed';
 
 export interface LoginUser {
   id: string;
@@ -26,13 +48,24 @@ export interface LoginUser {
 }
 
 interface LoginPayload {
-  token: string;
-  user: LoginUser;
+  token: string | null;
+  user: LoginUser | null;
+  mfaRequired: boolean;
+  mfaToken: string | null;
 }
 
 interface LoginResponse {
   login: LoginPayload;
 }
+
+/**
+ * Outcome of the password step. `complete` means the account has no passkey
+ * enrolled and a session already exists; `passkeyRequired` means the password
+ * was correct but is not sufficient on its own.
+ */
+export type LoginResult =
+  | { status: 'complete'; user: LoginUser }
+  | { status: 'passkeyRequired'; mfaToken: string };
 
 interface JwtClaims {
   exp?: number;
@@ -51,7 +84,12 @@ export class AuthService {
     return this.browser ? localStorage.getItem(TOKEN_KEY) : null;
   }
 
-  login(email: string, password: string): Observable<LoginUser> {
+  /**
+   * First factor. Resolves to `passkeyRequired` when the account has an
+   * authenticator enrolled — no session is established in that case, and the
+   * caller must complete `verifyPasskey`.
+   */
+  login(email: string, password: string): Observable<LoginResult> {
     return this.apollo
       .mutate<LoginResponse>({
         mutation: LOGIN,
@@ -61,19 +99,66 @@ export class AuthService {
         map(res => {
           const payload = res.data?.login;
           if (!payload) {
-            throw new Error('Login failed');
+            throw new Error(LOGIN_FAILED);
           }
-          return payload;
-        }),
-        tap(payload => {
-          if (this.browser) {
-            localStorage.setItem(TOKEN_KEY, payload.token);
+          if (payload.mfaRequired) {
+            if (!payload.mfaToken) {
+              throw new Error(LOGIN_FAILED);
+            }
+            return { status: 'passkeyRequired', mfaToken: payload.mfaToken } as const;
           }
-          this.currentUser.set(payload.user);
-          this.isAuthenticated.set(true);
-        }),
-        map(payload => payload.user)
+          if (!payload.token || !payload.user) {
+            throw new Error(LOGIN_FAILED);
+          }
+          this.establishSession(payload.token, payload.user);
+          return { status: 'complete', user: payload.user } as const;
+        })
       );
+  }
+
+  /** Fetches the assertion options for the pending sign-in attempt. */
+  beginPasskeyAuthentication(mfaToken: string): Observable<unknown> {
+    return this.apollo
+      .mutate<{ beginPasskeyAuthentication: unknown }>({
+        mutation: BEGIN_PASSKEY_AUTH,
+        variables: { mfaToken },
+      })
+      .pipe(
+        map(res => {
+          const options = res.data?.beginPasskeyAuthentication;
+          if (!options) {
+            throw new Error('Could not start the passkey step');
+          }
+          return options;
+        })
+      );
+  }
+
+  /** Second factor. Only this establishes a session when a passkey is enrolled. */
+  verifyPasskey(mfaToken: string, response: unknown): Observable<LoginUser> {
+    return this.apollo
+      .mutate<{ verifyPasskey: { token: string; user: LoginUser } }>({
+        mutation: VERIFY_PASSKEY,
+        variables: { mfaToken, response },
+      })
+      .pipe(
+        map(res => {
+          const payload = res.data?.verifyPasskey;
+          if (!payload?.token) {
+            throw new Error('Passkey verification failed');
+          }
+          this.establishSession(payload.token, payload.user);
+          return payload.user;
+        })
+      );
+  }
+
+  private establishSession(token: string, user: LoginUser): void {
+    if (this.browser) {
+      localStorage.setItem(TOKEN_KEY, token);
+    }
+    this.currentUser.set(user);
+    this.isAuthenticated.set(true);
   }
 
   logout(): void {

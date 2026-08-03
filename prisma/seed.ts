@@ -1,3 +1,9 @@
+// PasswordService is a tsyringe @singleton, and tsyringe throws at import time
+// without this polyfill. The server entry point loads it first; a standalone
+// script like this one has to do so itself, or `pnpm prisma:seed` dies before
+// reaching main().
+import 'reflect-metadata';
+
 import { PrismaClient } from '../src/generated/prisma/client';
 import { PasswordService } from '../src/server/services/password.service';
 
