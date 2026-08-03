@@ -1,15 +1,27 @@
 import { TestBed } from '@angular/core/testing';
-import { ActivatedRoute, convertToParamMap, provideRouter } from '@angular/router';
+import { ActivatedRoute, convertToParamMap, provideRouter, type ParamMap } from '@angular/router';
 import { ApolloTestingModule, ApolloTestingController } from 'apollo-angular/testing';
+import { BehaviorSubject } from 'rxjs';
 
 import { BlogEditorComponent } from './blog-editor.component';
 
+/** Drives `:id`, so a test can navigate edit/A → edit/B on the same instance. */
+let paramMap$: BehaviorSubject<ParamMap>;
+
 /** Stub route so the component takes its edit-mode branch off `:id`. */
 function routeWithId(id: string | null) {
+  paramMap$ = new BehaviorSubject<ParamMap>(convertToParamMap(id ? { id } : {}));
   return {
     provide: ActivatedRoute,
-    useValue: { snapshot: { paramMap: convertToParamMap(id ? { id } : {}) } },
+    useValue: {
+      snapshot: { paramMap: paramMap$.value },
+      paramMap: paramMap$.asObservable(),
+    },
   };
+}
+
+function navigateToId(id: string): void {
+  paramMap$.next(convertToParamMap({ id }));
 }
 
 describe('BlogEditorComponent', () => {
@@ -45,19 +57,33 @@ describe('BlogEditorComponent', () => {
       expect(cmp.postForm.get('title')?.touched).toBe(true);
     });
 
-    // Regression guard: the preview used to call a non-existent
-    // `$safeNavigationMigration` helper, so this block threw on first keystroke.
-    it('renders the slug preview against the real /articles/ route once a title is typed', () => {
+    // Regression guard: the preview is a claim about the URL the server will
+    // mint, so it must use the server's slugify options — not a lookalike
+    // regex. "Node.js at Scale" is the cheapest title that tells them apart:
+    // the old client algorithm produced `node-js-at-scale`.
+    it('previews the slug the server would actually mint', () => {
       const fixture = TestBed.createComponent(BlogEditorComponent);
       fixture.detectChanges();
-      fixture.componentInstance.postForm.patchValue({ title: 'Hello There World' });
+      fixture.componentInstance.postForm.patchValue({ title: 'Node.js at Scale' });
       fixture.detectChanges();
 
       const preview = (fixture.nativeElement as HTMLElement).querySelector(
         '[data-testid="slug-preview"]'
       );
       expect(preview).toBeTruthy();
-      expect(preview?.textContent?.trim()).toBe('/articles/hello-there-world');
+      expect(preview?.textContent?.trim()).toBe('/articles/nodejs-at-scale');
+      // Non-ASCII is transliterated server-side, not dropped.
+      expect(fixture.componentInstance.generateSlug('Café Rules')).toBe('cafe-rules');
+    });
+
+    // Create mode has no status control and always posts DRAFT, so the button
+    // must not promise publication.
+    it('labels the create action as saving a draft', () => {
+      const fixture = TestBed.createComponent(BlogEditorComponent);
+      fixture.detectChanges();
+      const text = (fixture.nativeElement as HTMLElement).textContent ?? '';
+      expect(text).toContain('Save draft');
+      expect(text).not.toContain('Publish');
     });
 
     it('clears the spinner and surfaces the message when the save fails', async () => {
@@ -153,6 +179,41 @@ describe('BlogEditorComponent', () => {
       cmp.postForm.patchValue({ title: 'Whatever', content: '<p>Whatever</p>' });
       cmp.onSubmit();
       controller.expectNone('UpdatePost');
+    });
+
+    // Regression guard: the id came from `route.snapshot`, and `edit/:id` is a
+    // single route definition — so navigating edit/A → edit/B reused the
+    // component without re-running ngOnInit. The form kept A's content and
+    // `postId` stayed A, so a submit wrote A back to A while the URL said B.
+    it('reloads and re-targets when the route id changes on the same instance', async () => {
+      const fixture = TestBed.createComponent(BlogEditorComponent);
+      const cmp = fixture.componentInstance;
+      fixture.detectChanges();
+      controller.expectOne('PostById').flush({
+        data: { postById: { id: 'existing-id', title: 'Post A', content: '<p>Body A</p>' } },
+      });
+      await new Promise(resolve => setTimeout(resolve, 0));
+      fixture.detectChanges();
+      expect(cmp.postForm.value.title).toBe('Post A');
+
+      navigateToId('other-id');
+      fixture.detectChanges();
+
+      const second = controller.expectOne('PostById');
+      expect(second.operation.variables['id']).toBe('other-id');
+      second.flush({
+        data: { postById: { id: 'other-id', title: 'Post B', content: '<p>Body B</p>' } },
+      });
+      await new Promise(resolve => setTimeout(resolve, 0));
+      fixture.detectChanges();
+
+      expect(cmp.postForm.value.title).toBe('Post B');
+      expect(cmp.postForm.value.content).toBe('<p>Body B</p>');
+
+      cmp.onSubmit();
+      const update = controller.expectOne('UpdatePost');
+      expect(update.operation.variables['id']).toBe('other-id');
+      update.flush({ data: { updatePost: { id: 'other-id', slug: 'post-b' } } });
     });
 
     afterEach(() => controller.verify());

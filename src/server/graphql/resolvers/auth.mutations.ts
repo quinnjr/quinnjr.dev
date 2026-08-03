@@ -5,7 +5,7 @@ import { signMfaToken, signSession } from '../auth';
 import { builder } from '../builder';
 import { AuthPayload } from '../types';
 
-import { passwordService, webauthnService } from './services';
+import { passwordService } from './services';
 
 /**
  * Argon2id hash of a throwaway string, verified when no user matches the email.
@@ -28,7 +28,13 @@ builder.mutationFields(t => ({
       password: t.arg.string({ required: true }),
     },
     resolve: async (_root, args, ctx) => {
-      const user = await ctx.prisma.user.findUnique({ where: { email: args.email } });
+      // The passkey count rides along on the user lookup. Fetching it
+      // separately cost a second round trip on the hot path of every sign-in,
+      // for a single boolean that the same row join already carries.
+      const user = await ctx.prisma.user.findUnique({
+        where: { email: args.email },
+        include: { _count: { select: { passkeys: true } } },
+      });
       const ok = await passwordService().verify(
         user?.passwordHash ?? DUMMY_PASSWORD_HASH,
         args.password
@@ -41,7 +47,7 @@ builder.mutationFields(t => ({
       // Passkeys are a second factor, not an alternative: once one is
       // enrolled, the password alone stops being sufficient. No session token
       // is issued here — only proof that the first factor passed.
-      if (await webauthnService().hasPasskeys(user.id)) {
+      if (user._count.passkeys > 0) {
         return {
           token: null,
           user: null,

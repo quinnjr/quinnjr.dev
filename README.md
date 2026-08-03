@@ -46,18 +46,53 @@ served by `pnpm start`. Build and run the SSR server to exercise those routes �
 
 ### Environment Setup
 
-| Variable              | Required | Purpose                                                              |
-| --------------------- | -------- | -------------------------------------------------------------------- |
-| `DATABASE_URL`        | yes      | PostgreSQL connection string used by Prisma                          |
-| `JWT_SECRET`          | yes      | Signing secret for the HS256 session token                           |
-| `SEED_ADMIN_EMAIL`    | seeding  | Email for the admin user created by `pnpm prisma:seed`               |
-| `SEED_ADMIN_PASSWORD` | seeding  | Password for that admin user                                         |
-| `PORT`                | no       | SSR server port (default `4000`)                                     |
-| `SITE_ORIGIN`         | no       | Canonical origin emitted in sitemap/robots/llms (default the domain) |
-| `SSR_ALLOWED_HOSTS`   | no       | Comma-separated hostnames accepted by the SSR host guard             |
+| Variable              | Required             | Purpose                                                              |
+| --------------------- | -------------------- | -------------------------------------------------------------------- |
+| `DATABASE_URL`        | yes                  | PostgreSQL connection string used by Prisma                          |
+| `JWT_SECRET`          | yes                  | Signing secret for the HS256 session token                           |
+| `WEBAUTHN_RP_ID`      | yes off `quinnjr.dev` | WebAuthn relying-party ID (default `quinnjr.dev`)                    |
+| `WEBAUTHN_ORIGIN`     | yes off `quinnjr.dev` | Comma-separated origins accepted in a ceremony (default `https://$WEBAUTHN_RP_ID`) |
+| `WEBAUTHN_RP_NAME`    | no                   | Display name shown by the authenticator (default `quinnjr.dev`)      |
+| `SEED_ADMIN_EMAIL`    | seeding              | Email for the admin user created by `pnpm prisma:seed`               |
+| `SEED_ADMIN_PASSWORD` | seeding              | Password for that admin user — no default; the seed exits if unset   |
+| `PORT`                | no                   | SSR server port (default `4000`)                                     |
+| `SITE_ORIGIN`         | no                   | Canonical origin emitted in sitemap/robots/llms (default the domain) |
+| `SSR_ALLOWED_HOSTS`   | no                   | Comma-separated hostnames accepted by the SSR host guard             |
+| `GITHUB_TOKEN`        | no                   | GitHub API token for `/api/github/*`; unset means the anonymous 60 req/hr limit |
 
-There is no external identity provider. Sign-in goes through the GraphQL `login` mutation, and the
-returned token is stored in `localStorage` under `auth_token`.
+There is no external identity provider. Sign-in starts with the GraphQL `login` mutation, and a
+returned session token is stored in `localStorage` under `auth_token`. For an account with a passkey
+enrolled — the intended state for the admin — `login` returns **no** token and sign-in continues
+through a second factor; see [Passkeys / second factor](#passkeys--second-factor).
+
+> **Changing `WEBAUTHN_RP_ID` invalidates every enrolled credential, with no migration path.** A
+> credential created under one relying-party ID cannot be asserted under another, so every existing
+> passkey becomes unusable and has to be re-enrolled. `WEBAUTHN_ORIGIN` is compared verbatim against
+> the browser's origin, carrying the scheme and any non-default port — a wrong value silently breaks
+> every ceremony. Both default to the production domain, so any deployment **not** served from
+> `quinnjr.dev` (local SSR, Docker Compose, staging) must set them or no passkey will ever work.
+
+### Passkeys / second factor
+
+Passkeys (WebAuthn) are the second factor for password sign-in. Sign-in is a two-step ceremony:
+
+1. `login(email:, password:)` returns an `AuthPayload`. If the account has no passkey, `token` and
+   `user` are populated and `mfaRequired` is `false` — that is the whole sign-in. If the account has
+   at least one passkey, `token` and `user` are `null`, `mfaRequired` is `true`, and `mfaToken`
+   carries a short-lived ticket proving the password was correct. The ticket is **not** a session:
+   it authorizes nothing but the second step.
+2. `beginPasskeyAuthentication(mfaToken:)` returns the assertion options, the browser runs the
+   ceremony, and `verifyPasskey(mfaToken:, response:)` returns the real `AuthPayload` with a session
+   `token`.
+
+The `mfaToken` is valid for **5 minutes** and is burned after a handful of failed assertions; a
+pending challenge expires on the same 5-minute window. Once either lapses, start again from `login`.
+
+Enrolment (`beginPasskeyRegistration` → `registerPasskey`) requires an existing session and is
+driven from `/admin/security`. Passkeys are listed by the `passkeys` query, which only ever returns
+the caller's own. Removing the **last** passkey reverts the account to single-factor password
+sign-in, so `deletePasskey` refuses it unless the caller explicitly confirms disabling the second
+factor — otherwise a stolen session token could quietly downgrade the account.
 
 ## Development
 
@@ -214,7 +249,17 @@ The `app` service already runs `prisma migrate deploy` on start. To run it by ha
 
 ```bash
 docker-compose exec app pnpm prisma:migrate:deploy
-docker-compose exec app pnpm prisma:seed
+```
+
+Seeding cannot run inside the container: `pnpm prisma:seed` is `tsx prisma/seed.ts`, and the
+production image installs `--prod` (no `tsx`) and ships only the manifests, `prisma/`, and `dist/` —
+`prisma/seed.ts` also imports from `src/server/`, which is not in the image. Seed from a development
+checkout pointed at the production database instead:
+
+```bash
+DATABASE_URL="postgresql://…production…" \
+  SEED_ADMIN_EMAIL="you@example.com" SEED_ADMIN_PASSWORD="…" \
+  pnpm prisma:seed
 ```
 
 ## Docker Deployment

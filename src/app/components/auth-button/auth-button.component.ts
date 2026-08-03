@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, inject } from '@angular/core';
 import { Router } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
@@ -27,9 +27,17 @@ import { ButtonComponent } from '../../shared/components/ui';
   `,
   styles: [],
 })
-export class AuthButtonComponent {
+export class AuthButtonComponent implements OnInit {
   readonly auth = inject(AuthService);
   private readonly router = inject(Router);
+
+  ngOnInit(): void {
+    // `isAuthenticated` is only written on login/logout, so a token that
+    // expired mid-session leaves this button offering "Logout" while the guard
+    // is already bouncing the user to /login. Re-deriving on init also settles
+    // the SSR-false / client-true swap on hydration.
+    this.auth.refreshAuthState();
+  }
 
   goToLogin(): void {
     this.router.navigate(['/login']).catch(() => undefined);

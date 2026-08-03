@@ -6,18 +6,33 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { verifyMfaToken, verifySession } from '../../../src/server/graphql/auth';
 import { DatabaseService } from '../../../src/server/services/database.service';
 import { PasswordService } from '../../../src/server/services/password.service';
-import { WebauthnService } from '../../../src/server/services/webauthn.service';
 
 afterEach(() => container.reset());
 
-// `findUnique` returns a user row (with passwordHash) or null.
-function ctx(userRow: { id: string; role: string } | null) {
+interface UserRow {
+  id: string;
+  role: string;
+  /** Enrolled passkey count, delivered by the same query as the user row. */
+  passkeys?: number;
+  passwordHash?: string;
+}
+
+// `findUnique` returns a user row (with passwordHash and the passkey count the
+// resolver folds into this single query) or null.
+function ctx(userRow: UserRow | null) {
   return {
     prisma: {
       user: {
         findUnique: async () =>
           userRow
-            ? { id: userRow.id, email: 'a@b.com', name: 'A', role: userRow.role, passwordHash: 'h' }
+            ? {
+                id: userRow.id,
+                email: 'a@b.com',
+                name: 'A',
+                role: userRow.role,
+                passwordHash: userRow.passwordHash ?? 'h',
+                _count: { passkeys: userRow.passkeys ?? 0 },
+              }
             : null,
       },
     },
@@ -26,27 +41,26 @@ function ctx(userRow: { id: string; role: string } | null) {
   } as never;
 }
 
-/** Registers the collaborators `login` resolves lazily. `hasPasskeys` is what
- *  decides whether the second factor is demanded. */
-function register(opts: { verify?: boolean; hasPasskeys?: boolean } = {}) {
-  container.registerInstance(PasswordService, {
-    verify: vi.fn().mockResolvedValue(opts.verify ?? true),
-  } as never);
+/** Registers the collaborators `login` resolves lazily. Omitting `verify`
+ *  leaves the real PasswordService in place. */
+function register(opts: { verify?: boolean } = {}) {
+  if (opts.verify !== undefined) {
+    container.registerInstance(PasswordService, {
+      verify: vi.fn().mockResolvedValue(opts.verify),
+    } as never);
+  }
   container.registerInstance(DatabaseService, { getClient: () => ({}) } as never);
-  container.registerInstance(WebauthnService, {
-    hasPasskeys: vi.fn().mockResolvedValue(opts.hasPasskeys ?? false),
-  } as never);
 }
 
 describe('login mutation', () => {
   it('returns a token + user when the account has no passkey enrolled', async () => {
-    register({ hasPasskeys: false });
+    register({ verify: true });
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
       schema,
       source:
         'mutation { login(email:"a@b.com", password:"pw") { token mfaRequired user { id } } }',
-      contextValue: ctx({ id: 'u1', role: 'ADMIN' }),
+      contextValue: ctx({ id: 'u1', role: 'ADMIN', passkeys: 0 }),
     });
     expect(result.errors).toBeUndefined();
     const data = result.data?.['login'] as {
@@ -60,13 +74,13 @@ describe('login mutation', () => {
   });
 
   it('withholds the session and demands a passkey once one is enrolled', async () => {
-    register({ hasPasskeys: true });
+    register({ verify: true });
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
       schema,
       source:
         'mutation { login(email:"a@b.com", password:"pw") { token user { id } mfaRequired mfaToken } }',
-      contextValue: ctx({ id: 'u1', role: 'ADMIN' }),
+      contextValue: ctx({ id: 'u1', role: 'ADMIN', passkeys: 1 }),
     });
     expect(result.errors).toBeUndefined();
     const data = result.data?.['login'] as {
@@ -83,12 +97,12 @@ describe('login mutation', () => {
   });
 
   it('issues an mfaToken that identifies the user but is not a session', async () => {
-    register({ hasPasskeys: true });
+    register({ verify: true });
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
       schema,
       source: 'mutation { login(email:"a@b.com", password:"pw") { mfaToken } }',
-      contextValue: ctx({ id: 'u1', role: 'ADMIN' }),
+      contextValue: ctx({ id: 'u1', role: 'ADMIN', passkeys: 1 }),
     });
     const { mfaToken } = result.data?.['login'] as { mfaToken: string };
 
@@ -119,5 +133,23 @@ describe('login mutation', () => {
       contextValue: ctx(null),
     });
     expect(result.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
+  });
+
+  // The `passwordHash` column was backfilled with `''` for pre-existing rows
+  // (prisma/migrations/20260803175852_users_password_hash), and that migration
+  // rests on this behaving as fail-closed. `''` is not nullish, so it is NOT
+  // swapped for DUMMY_PASSWORD_HASH — the real PasswordService is left
+  // registered here so the argon2 verify of an empty hash is genuinely
+  // exercised rather than mocked away.
+  it('refuses to authenticate a row whose passwordHash was backfilled empty', async () => {
+    register();
+    const { schema } = await import('../../../src/server/graphql/schema');
+    const result = await graphql({
+      schema,
+      source: 'mutation { login(email:"a@b.com", password:"") { token } }',
+      contextValue: ctx({ id: 'u1', role: 'ADMIN', passwordHash: '' }),
+    });
+    expect(result.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
+    expect(result.errors?.[0]?.message).toBe('Invalid email or password');
   });
 });

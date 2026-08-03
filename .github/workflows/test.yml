@@ -144,8 +144,12 @@ jobs:
       - name: Install Playwright browsers
         run: pnpm exec playwright install --with-deps chromium
 
+      # Scoped to the chromium project on purpose. Bare `playwright test` also
+      # runs `ssr-routes`, which needs PLAYWRIGHT_SSR_BASE_URL (never set here)
+      # and therefore skips every case while reporting green — a job that looks
+      # like it covers the SSR surface and does not.
       - name: Run E2E tests
-        run: pnpm test:e2e
+        run: pnpm exec playwright test --project=chromium
         env:
           CI: true
 

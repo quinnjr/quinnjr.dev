@@ -20,4 +20,13 @@ describe('PasswordService', () => {
   it('returns false (no throw) for a malformed hash', async () => {
     expect(await svc.verify('not-a-hash', 'whatever')).toBe(false);
   });
+
+  // prisma/migrations/20260803175852_users_password_hash backfills existing
+  // rows with `''` and names this method as the reason that is safe: an empty
+  // hash must authenticate nobody, including someone submitting an empty
+  // password.
+  it('returns false for an empty hash, so the migration backfill is fail-closed', async () => {
+    expect(await svc.verify('', 'anything')).toBe(false);
+    expect(await svc.verify('', '')).toBe(false);
+  });
 });

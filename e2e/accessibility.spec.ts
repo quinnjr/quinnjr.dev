@@ -26,20 +26,28 @@ test.describe('Accessibility', () => {
     await expect(navigation.first()).toBeVisible({ timeout: 10000 });
   });
 
-  test('should have proper heading hierarchy', async ({ page }) => {
+  // Named for what it actually asserts. Real hierarchy analysis (skipped
+  // levels, landmarks, contrast, ARIA) would need @axe-core/playwright, which
+  // is not a dependency here — the single-h1 rule below is what can be checked
+  // without one, and it is the rule this page most needs held.
+  test('has exactly one h1, and it is the first heading on the page', async ({ page }) => {
     await page.goto('/home');
     // Wait for Angular to bootstrap
     await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });
     await page.waitForLoadState('networkidle', { timeout: 15000 });
     await page.waitForSelector('h1', { timeout: 10000 });
 
-    // Check if at least one heading exists - home page has h1 and h2
-    const headings = page.locator('h1, h2, h3, h4, h5, h6');
-    const count = await headings.count();
-    expect(count).toBeGreaterThan(0);
+    await expect(page.locator('h1')).toHaveCount(1);
+
+    // A page of six <h6> and no <h1> passed the previous version of this test.
+    const levels = await page
+      .locator('h1, h2, h3, h4, h5, h6')
+      .evaluateAll(nodes => nodes.map(node => node.tagName.toLowerCase()));
+    expect(levels.length).toBeGreaterThan(0);
+    expect(levels[0]).toBe('h1');
   });
 
-  test('should have accessible links', async ({ page }) => {
+  test('renders links that all carry an accessible name', async ({ page }) => {
     await page.goto('/home');
     // Wait for Angular to bootstrap
     await page.waitForSelector('app-root', { state: 'attached', timeout: 15000 });

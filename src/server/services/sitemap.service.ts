@@ -46,6 +46,23 @@ const EXCLUDED_ROUTES = new Set(['/login', '/admin', '/callback', '/blog', '/slm
 const DISALLOWED_PATHS = ['/admin', '/login', '/callback', '/graphql'] as const;
 
 /**
+ * The only values sitemaps.org permits in `<changefreq>`. `sitemapConfig` rows
+ * are operator-editable free text, so anything else is dropped rather than
+ * emitted: an invalid enum member (or one containing `<` / `&`) makes the whole
+ * document invalid, and crawlers reject invalid sitemaps wholesale rather than
+ * skipping the offending entry.
+ */
+const VALID_CHANGEFREQ = new Set([
+  'always',
+  'hourly',
+  'daily',
+  'weekly',
+  'monthly',
+  'yearly',
+  'never',
+]);
+
+/**
  * Crawlers granted explicit access. Listing them individually matters because
  * several of these agents ignore the `User-agent: *` group once any named
  * group exists in the file.
@@ -171,16 +188,24 @@ export class SitemapService {
       .map(url => {
         let entry = `  <url>\n    <loc>${this.escapeXml(url.loc)}</loc>\n`;
 
+        // Every value below is escaped or validated before interpolation. `loc`
+        // was the only one that used to be, but `changefreq` and `priority`
+        // come straight from the `sitemapConfig` table, so a single row holding
+        // `<` or `&` produced malformed XML and cost the site its entire
+        // sitemap rather than one entry.
         if (url.lastmod) {
-          entry += `    <lastmod>${url.lastmod}</lastmod>\n`;
+          entry += `    <lastmod>${this.escapeXml(url.lastmod)}</lastmod>\n`;
         }
 
-        if (url.changefreq) {
+        if (url.changefreq && VALID_CHANGEFREQ.has(url.changefreq)) {
           entry += `    <changefreq>${url.changefreq}</changefreq>\n`;
         }
 
         if (url.priority !== undefined) {
-          entry += `    <priority>${url.priority}</priority>\n`;
+          const priority = Number(url.priority);
+          if (Number.isFinite(priority)) {
+            entry += `    <priority>${priority}</priority>\n`;
+          }
         }
 
         entry += '  </url>';

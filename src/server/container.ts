@@ -5,6 +5,7 @@ import { BlogService } from './services/blog.service';
 import { DatabaseService } from './services/database.service';
 import { GitHubService } from './services/github.service';
 import { PasswordService } from './services/password.service';
+import { RateLimitService } from './services/rate-limit.service';
 import { SitemapService } from './services/sitemap.service';
 import { WebauthnService } from './services/webauthn.service';
 
@@ -17,6 +18,7 @@ export function initializeContainer(): void {
   container.registerSingleton(BlogService);
   container.registerSingleton(GitHubService);
   container.registerSingleton(PasswordService);
+  container.registerSingleton(RateLimitService);
   container.registerSingleton(SitemapService);
   container.registerSingleton(WebauthnService);
 

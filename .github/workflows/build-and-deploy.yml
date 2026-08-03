@@ -71,8 +71,11 @@ jobs:
         env:
           CI: true
 
-      - name: Build application
-        run: pnpm build
+      # Compile check only. A full `pnpm build` here would be thrown away and
+      # then repeated verbatim inside the Dockerfile for two platforms in the
+      # next job; the type-check catches the same class of error in seconds.
+      - name: Type-check application
+        run: pnpm exec tsc -p tsconfig.app.json --noEmit
 
   build-and-push:
     name: Build and Push Docker Image

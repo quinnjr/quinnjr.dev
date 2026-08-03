@@ -66,6 +66,16 @@ interface AdminPost {
             </h2>
             <p class="text-gray-600 dark:text-gray-400">{{ loadError() }}</p>
           </div>
+        } @else if (loading()) {
+          <!-- Also distinct from the empty state: until the server answers, we
+               do not know whether this author has articles. -->
+          <div
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center"
+            data-testid="posts-loading"
+          >
+            <i class="fas fa-spinner fa-spin text-gray-400 text-4xl mb-4"></i>
+            <p class="text-gray-600 dark:text-gray-400">Loading your articles…</p>
+          </div>
         } @else if (posts().length) {
           <ul class="space-y-2">
             @for (post of posts(); track post.id) {
@@ -109,6 +119,7 @@ export class BlogListComponent implements OnInit {
   private readonly apollo = inject(Apollo);
   private readonly destroyRef = inject(DestroyRef);
   readonly posts = signal<AdminPost[]>([]);
+  readonly loading = signal(true);
   readonly loadError = signal<string | null>(null);
 
   ngOnInit(): void {
@@ -116,10 +127,17 @@ export class BlogListComponent implements OnInit {
       .watchQuery<{ posts: AdminPost[] }>({ query: ADMIN_POSTS })
       .valueChanges.pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        // Apollo Client 4 reports watchQuery failures on the result itself
-        // rather than erroring the stream; the `error` callback stays as a
-        // backstop for anything that does terminate the observable.
-        next: ({ data, error }) => {
+        // Apollo Client 4 emits the in-flight result first (`data: undefined`,
+        // `loading: true`) and reports failures on the result itself rather
+        // than erroring the stream; the `error` callback stays as a backstop
+        // for anything that does terminate the observable.
+        next: ({ data, error, loading }) => {
+          // Falling through here would re-set `posts` to [] and show the
+          // "No articles yet" panel before the server has answered.
+          if (loading) {
+            return;
+          }
+          this.loading.set(false);
           if (error) {
             this.setLoadError(error);
             return;
@@ -132,6 +150,7 @@ export class BlogListComponent implements OnInit {
   }
 
   private setLoadError(err: unknown): void {
+    this.loading.set(false);
     this.loadError.set(
       err instanceof Error && err.message ? err.message : 'The server did not return your articles.'
     );

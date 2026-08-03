@@ -7,6 +7,17 @@ import { AuthService, type LoginResult } from './auth.service';
  *  controller, so assertions must wait a tick after `flush`. */
 const settle = () => new Promise(resolve => setTimeout(resolve, 0));
 
+/** Minimal unsigned JWT — the client only ever reads the payload segment. */
+const jwt = (claims: Record<string, unknown>): string => {
+  const payload = btoa(JSON.stringify(claims))
+    .replace(/\+/g, '-')
+    .replace(/\//g, '_')
+    .replace(/=+$/, '');
+  return `header.${payload}.signature`;
+};
+
+const inOneHour = () => Math.floor(Date.now() / 1000) + 3600;
+
 describe('AuthService', () => {
   let controller: ApolloTestingController;
 
@@ -28,6 +39,38 @@ describe('AuthService', () => {
     svc.logout();
     expect(svc.token()).toBeNull();
     expect(svc.isAuthenticated()).toBe(false);
+  });
+
+  describe('rehydration from a stored token', () => {
+    it('populates currentUser at construction so a reload keeps the identity', () => {
+      localStorage.setItem(
+        'auth_token',
+        jwt({ sub: 'u1', name: 'Joseph', role: 'ADMIN', exp: inOneHour() })
+      );
+
+      const svc = TestBed.inject(AuthService);
+
+      expect(svc.isAuthenticated()).toBe(true);
+      expect(svc.currentUser()).toEqual({ id: 'u1', name: 'Joseph', role: 'ADMIN' });
+    });
+
+    it('leaves currentUser null when the stored token has expired', () => {
+      localStorage.setItem('auth_token', jwt({ sub: 'u1', name: 'Joseph', exp: 1 }));
+
+      const svc = TestBed.inject(AuthService);
+
+      expect(svc.isAuthenticated()).toBe(false);
+      expect(svc.currentUser()).toBeNull();
+    });
+
+    it('clears currentUser when refreshAuthState finds the token gone', () => {
+      localStorage.setItem('auth_token', jwt({ sub: 'u1', name: 'Joseph', exp: inOneHour() }));
+      const svc = TestBed.inject(AuthService);
+      localStorage.clear();
+
+      expect(svc.refreshAuthState()).toBe(false);
+      expect(svc.currentUser()).toBeNull();
+    });
   });
 
   describe('login', () => {

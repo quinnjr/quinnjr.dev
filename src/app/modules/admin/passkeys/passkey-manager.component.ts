@@ -4,6 +4,7 @@ import {
   Component,
   DestroyRef,
   OnInit,
+  computed,
   inject,
   signal,
 } from '@angular/core';
@@ -45,9 +46,12 @@ const FINISH_REGISTRATION = gql`
   }
 `;
 
+// `confirmDisableMfa` is the server's record that the user was told removing
+// their last key re-enables password-only sign-in; it is only ever sent true
+// from the confirmed last-key path below.
 const DELETE_PASSKEY = gql`
-  mutation DeletePasskey($id: String!) {
-    deletePasskey(id: $id)
+  mutation DeletePasskey($id: String!, $confirmDisableMfa: Boolean) {
+    deletePasskey(id: $id, confirmDisableMfa: $confirmDisableMfa)
   }
 `;
 
@@ -88,8 +92,25 @@ interface PasskeyRow {
         </p>
       }
 
+      <!-- The header's "register a spare" is an operating rule, so the single-key
+           state has to be visible rather than implied. -->
+      @if (isSoleKey()) {
+        <p class="passkey-advisory" data-testid="passkey-single-advisory">
+          <i class="fas fa-circle-exclamation" aria-hidden="true"></i>
+          One passkey guards this account. Lose that authenticator and you lose the gate — register
+          a spare now.
+        </p>
+      }
+
       @if (loading()) {
         <p class="font-mono text-sm text-muted">Reading the ledger…</p>
+      } @else if (error() && passkeys().length === 0) {
+        <!-- An unreadable list is not an empty one: saying "none registered"
+             here would tell the user their second factor is off when it may
+             well be on. -->
+        <p class="font-body text-muted" data-testid="passkey-unavailable">
+          Your passkeys could not be read, so this list may be incomplete.
+        </p>
       } @else if (passkeys().length === 0) {
         <p class="font-body text-muted" data-testid="passkey-empty">
           No passkeys registered. Your password alone currently opens the gate.
@@ -118,12 +139,45 @@ interface PasskeyRow {
                 class="link-tavern text-sm"
                 [disabled]="busy()"
                 (click)="remove(key)"
+                data-testid="passkey-remove"
               >
                 Remove
               </button>
             </li>
           }
         </ul>
+
+        <!-- Removing the last key silently drops the account back to
+             password-only, so that consequence is named before it happens
+             rather than inferred afterwards from the empty state. -->
+        @if (pendingRemoval(); as pending) {
+          <div class="passkey-confirm" role="alertdialog" data-testid="passkey-remove-confirm">
+            <p class="font-body text-parchment">
+              Remove “{{ pending.name }}”? It is your only passkey — this will re-enable
+              password-only sign-in, and your password alone will open the gate again.
+            </p>
+            <div class="mt-3 flex flex-wrap gap-3">
+              <button
+                type="button"
+                class="btn-rpg btn-rpg-primary"
+                [disabled]="busy()"
+                (click)="confirmRemove()"
+                data-testid="passkey-remove-confirm-yes"
+              >
+                Remove it and disable the second seal
+              </button>
+              <button
+                type="button"
+                class="link-tavern text-sm"
+                [disabled]="busy()"
+                (click)="cancelRemove()"
+                data-testid="passkey-remove-confirm-no"
+              >
+                Keep it
+              </button>
+            </div>
+          </div>
+        }
       }
 
       <div class="mt-6 flex flex-wrap items-center gap-3">
@@ -132,6 +186,7 @@ interface PasskeyRow {
           [(ngModel)]="newName"
           name="passkeyName"
           placeholder="Name this authenticator (e.g. YubiKey, iPhone)"
+          maxlength="64"
           [disabled]="busy() || !supported()"
         />
         <button
@@ -194,6 +249,13 @@ export class PasskeyManagerComponent implements OnInit {
   readonly busy = signal(false);
   readonly error = signal<string | null>(null);
   readonly supported = signal(false);
+  /** Set only while the user is being asked to confirm removing their sole
+   *  passkey; `null` at every other moment. */
+  readonly pendingRemoval = signal<PasskeyRow | null>(null);
+
+  /** One credential is the state the header's "register a spare" advice is
+   *  about, and the state where removal is destructive. */
+  readonly isSoleKey = computed(() => this.passkeys().length === 1);
 
   newName = '';
 
@@ -278,10 +340,14 @@ export class PasskeyManagerComponent implements OnInit {
         next: ({ data }) => {
           this.busy.set(false);
           const created = data?.finishPasskeyRegistration;
-          if (created) {
-            this.passkeys.update(list => [created, ...list]);
-            this.newName = '';
+          if (!created) {
+            // Silently returning here left the button snapping back to "Add
+            // passkey" with nothing added and nothing said.
+            this.error.set('That passkey could not be registered.');
+            return;
           }
+          this.passkeys.update(list => [created, ...list]);
+          this.newName = '';
         },
         error: () => {
           this.busy.set(false);
@@ -290,15 +356,44 @@ export class PasskeyManagerComponent implements OnInit {
       });
   }
 
+  /**
+   * Removing any but the last key is unremarkable. Removing the last one turns
+   * the second factor off for the whole account, so that path stops here and
+   * asks — the server refuses it too, unless `confirmDisableMfa` is sent.
+   */
   remove(key: PasskeyRow): void {
     if (this.busy()) {
       return;
     }
+    if (this.isSoleKey()) {
+      this.pendingRemoval.set(key);
+      return;
+    }
+    this.dispatchRemove(key, false);
+  }
+
+  confirmRemove(): void {
+    const key = this.pendingRemoval();
+    if (!key || this.busy()) {
+      return;
+    }
+    this.pendingRemoval.set(null);
+    this.dispatchRemove(key, true);
+  }
+
+  cancelRemove(): void {
+    this.pendingRemoval.set(null);
+  }
+
+  private dispatchRemove(key: PasskeyRow, confirmDisableMfa: boolean): void {
     this.busy.set(true);
     this.error.set(null);
 
     this.apollo
-      .mutate<{ deletePasskey: boolean }>({ mutation: DELETE_PASSKEY, variables: { id: key.id } })
+      .mutate<{ deletePasskey: boolean }>({
+        mutation: DELETE_PASSKEY,
+        variables: { id: key.id, confirmDisableMfa },
+      })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {

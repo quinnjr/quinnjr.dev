@@ -1,15 +1,15 @@
 import 'reflect-metadata'; // Must be first import for tsyringe
 // Must precede any import that pulls in graphql-yoga: whatwg-node captures the
 // `Event` constructor at module scope, and zone.js has replaced it by now.
-import './restore-native-event';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 import { APP_BASE_HREF } from '@angular/common';
-import { CommonEngine } from '@angular/ssr/node';
+import { CommonEngine, isMainModule } from '@angular/ssr/node';
 import express from 'express';
 
 import bootstrap from './main.server';
+import { restoreNativeEvent } from './restore-native-event';
 import { initializeContainer } from './server/container';
 import { createYogaMiddleware } from './server/graphql/yoga';
 import githubRoutes from './server/routes/github';
@@ -59,7 +59,18 @@ export function app(): express.Express {
 
   // GraphQL API (Yoga). Mounted before the Angular catch-all.
   const yoga = createYogaMiddleware();
-  server.use(yoga.graphqlEndpoint, yoga as unknown as express.RequestHandler);
+  server.use(yoga.graphqlEndpoint, ((req, res, next) => {
+    // Yoga aborts the request's AbortController from a `close` listener, and
+    // that abort constructs an `Event` from whatever the global currently is.
+    // An SSR render between this request starting and the socket closing will
+    // have swapped in Angular's server DOM constructor, which Node's native
+    // EventTarget rejects — an uncaught throw that kills the process.
+    // Prepending our listener means the global is native again before Yoga's
+    // own `close` handler runs.
+    res.prependListener('close', restoreNativeEvent);
+    restoreNativeEvent();
+    return (yoga as unknown as express.RequestHandler)(req, res, next);
+  }) as express.RequestHandler);
 
   // SEO Routes (sitemap, robots.txt)
   server.use('/', sitemapRoutes);
@@ -123,4 +134,10 @@ function run(): void {
   });
 }
 
-run();
+// Only bind a port when this module is the process entrypoint. `app()` is
+// exported for serverless adapters, which import it and own the listener
+// themselves; an unconditional `run()` meant merely importing this module also
+// took PORT, which either fights the adapter or crashes on EADDRINUSE.
+if (isMainModule(import.meta.url)) {
+  run();
+}

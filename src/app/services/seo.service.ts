@@ -69,7 +69,6 @@ export class SeoService {
 
     this.setName('title', fullTitle);
     this.setName('description', config.description);
-    this.setName('author', `${SITE.author}, ${SITE.authorSuffix}`);
     this.setName(
       'robots',
       config.noIndex
@@ -91,17 +90,18 @@ export class SeoService {
     this.setProperty('og:description', config.description);
     this.setProperty('og:image', image);
     this.setProperty('og:image:alt', config.imageAlt ?? SITE.defaultImageAlt);
-    this.setProperty('og:site_name', SITE.name);
-    this.setProperty('og:locale', SITE.locale);
 
-    this.setName('twitter:card', 'summary_large_image');
     this.setName('twitter:url', canonical);
     this.setName('twitter:title', fullTitle);
     this.setName('twitter:description', config.description);
     this.setName('twitter:image', image);
     this.setName('twitter:image:alt', config.imageAlt ?? SITE.defaultImageAlt);
-    this.setName('twitter:creator', SITE.twitterHandle);
-    this.setName('twitter:site', SITE.twitterHandle);
+
+    // `og:site_name`, `og:locale`, `twitter:card`, `twitter:creator`,
+    // `twitter:site` and `author` are deliberately absent: they are
+    // route-invariant and already hard-coded in index.html, so rewriting them
+    // here cost six `head` querySelector traversals per navigation to
+    // overwrite each tag with the value it already held.
 
     // article:* only applies to og:type=article; stale values on a subsequent
     // website-type route would misdate that page, so always clear then re-set.

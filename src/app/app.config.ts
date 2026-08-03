@@ -21,6 +21,9 @@ export const appConfig: ApplicationConfig = {
     // Hydrate the SSR markup in place instead of destroying and re-rendering
     // it; event replay covers clicks that land before hydration finishes.
     provideClientHydration(withEventReplay()),
+    // `withXhr()` overrides Angular's default fetch backend: Zone.js patches
+    // XHR, so in-flight requests keep the application stable for hydration and
+    // for SSR's "is the app quiet yet" check in a way fetch does not.
     provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
     provideApollo(apolloOptionsFactory),
     FlowbiteService,
