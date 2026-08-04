@@ -356,11 +356,33 @@ Version tags drive the build workflow. Bump the version in `package.json`, then:
 pnpm release:tag
 ```
 
-This creates and pushes a `vX.Y.Z` tag when HEAD is a merge from a `release/*` branch (it is a
-no-op otherwise). The tag triggers `.github/workflows/build-and-deploy.yml` to
-run the test suite and publish the semver-tagged image to GHCR. Production deploys are currently
-**manual** — the Pulumi job is intentionally broken since the infrastructure moved to the
-`quinnjr.dev-infra` repository; see the comments in that workflow.
+This creates and pushes a `vX.Y.Z` tag when HEAD is a merge from a `release/*` branch AND is
+contained in `origin/main` (it refuses otherwise — releases are cut from `main`, never `develop`).
+
+The tag triggers `.github/workflows/build-and-publish.yml`, which runs the test suite and publishes
+a multi-arch, Sigstore-attested image to GHCR tagged with the semver.
+
+### Deploying
+
+Deploys are run **from a trusted workstation, never from CI** — deliberately, so the credentials
+that can alter production infrastructure (the DigitalOcean token, the Pulumi passphrase, the Spaces
+state-bucket keys) never need to exist in GitHub Actions, where any change to a workflow file is a
+path to them. CI's authority stops at publishing an image.
+
+Against a clone of [`quinnjr.dev-infra`](https://github.com/quinnjr/quinnjr.dev-infra) (private):
+
+```bash
+cd quinnjr.dev-infra
+pulumi config set quinnjr-dev:imageTag 2.6.0   # the version just published
+pulumi up --stack production
+```
+
+The Pulumi project (`quinnjr-dev`) lives at the **root** of that repository. State is self-managed
+in a DigitalOcean Spaces bucket, so `pulumi login` must point at it:
+
+```bash
+pulumi login 's3://quinnjr-pulumi?endpoint=nyc3.digitaloceanspaces.com&region=nyc3&s3ForcePathStyle=true'
+```
 
 ## Project Structure
 

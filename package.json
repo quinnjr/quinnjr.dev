@@ -1,6 +1,6 @@
 {
   "name": "quinnjr.dev",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "engines": {
     "node": "^22.22.3 || >=24.15.0",
     "pnpm": ">=10.13.1"
