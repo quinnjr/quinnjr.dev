@@ -38,14 +38,25 @@ function tagExists(tag) {
 }
 
 /**
- * Create git tag
+ * Create the git tag for a bare version (e.g. "2.6.0").
+ *
+ * Takes the VERSION and returns the tag name, rather than taking a tag name.
+ * The caller used to prepend `v` itself and pass the result here, where it was
+ * prepended a second time — so the tag created was `vv2.6.0` while the push
+ * that followed asked for `v2.6.0` and failed with "src refspec does not
+ * match any". The `vv1.7.1` tag in this repository is that bug reaching the
+ * remote. Owning the whole name in one place is what stops the two halves
+ * disagreeing again.
+ *
+ * @param {string} version Bare semver, no leading `v`.
+ * @returns {string|null} The tag name if it was created, or null if it existed.
  */
 function createTag(version) {
   const tagName = `v${version}`;
 
   if (tagExists(tagName)) {
     console.log(`Tag ${tagName} already exists, skipping.`);
-    return false;
+    return null;
   }
 
   try {
@@ -54,7 +65,7 @@ function createTag(version) {
       stdio: 'inherit',
     });
     console.log(`✓ Created tag: ${tagName}`);
-    return true;
+    return tagName;
   } catch (error) {
     console.error(`Error creating tag: ${error.message}`);
     process.exit(1);
@@ -147,14 +158,13 @@ function main() {
     process.exit(0);
   }
 
-  const tagName = `v${version}`;
-  const created = createTag(tagName);
+  const tagName = createTag(version);
 
-  if (created) {
+  if (tagName) {
     pushTag(tagName);
     console.log(`\n✓ Successfully created and pushed tag: ${tagName}`);
   } else {
-    console.log(`\nTag ${tagName} already exists, nothing to do.`);
+    console.log(`\nTag v${version} already exists, nothing to do.`);
   }
 }
 
