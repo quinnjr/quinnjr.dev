@@ -80,12 +80,11 @@ interface LoginResponse {
 }
 
 /**
- * Outcome of the password step. `complete` means the account has no passkey
- * enrolled and a session already exists; `passkeyRequired` means the password
- * was correct but is not sufficient on its own.
+ * Outcome of the password step. A passkey is mandatory, so this never yields a
+ * session: `passkeyRequired` when a credential exists to assert against,
+ * `enrolmentRequired` when the account has none and must register one now.
  */
 export type LoginResult =
-  | { status: 'complete'; user: LoginUser }
   | { status: 'passkeyRequired'; mfaToken: string }
   /** Password correct, but the account has no passkey and one is mandatory.
    *  No session exists yet — the ticket is only good for enrolling. */
@@ -141,11 +140,13 @@ export class AuthService {
               mfaToken: payload.mfaToken,
             } as const;
           }
-          if (!payload.token || !payload.user) {
-            throw new Error(LOGIN_FAILED);
-          }
-          this.establishSession(payload.token, payload.user);
-          return { status: 'complete', user: payload.user } as const;
+          // Every successful exit from `login` is one of the two branches
+          // above: the server withholds a session until the second factor is
+          // satisfied, so reaching here means the response set neither flag.
+          // A token arriving from `login` is a protocol violation, not a
+          // success — establishing a session from it would hand out admin
+          // access on a password alone, so refuse it like any other bad reply.
+          throw new Error(LOGIN_FAILED);
         })
       );
   }

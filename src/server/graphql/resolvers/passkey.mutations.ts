@@ -1,10 +1,12 @@
 import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simplewebauthn/server';
 import { GraphQLError } from 'graphql';
 
+import type { User } from '../../../generated/prisma/client';
 import { ExpiredCeremonyError, LastPasskeyError } from '../../services/webauthn.service';
 import type { MfaScope, MfaTicketClaims } from '../auth';
 import { readMfaTicket, signSession } from '../auth';
 import { builder } from '../builder';
+import type { GraphQLContext } from '../context';
 import { requireUser } from '../context';
 import { AuthPayload, PasskeyType } from '../types';
 
@@ -29,16 +31,6 @@ function expiredAttempt(): GraphQLError {
 }
 
 /**
- * Collapse any ceremony failure to one of exactly two strings.
- *
- * Passing service messages through verbatim defeated the production error
- * masking on the one surface that most needs it: "No passkeys are registered
- * for this account" and "That passkey is not registered for this account" are
- * distinguishable answers about an account the caller has not authenticated to,
- * and raw @simplewebauthn messages leak internals on top. The detail is kept —
- * it just goes to the server log instead of the wire.
- */
-/**
  * Read a ticket and require it to be of the expected kind.
  *
  * The two ticket kinds are minted by the same function and verify under the
@@ -57,6 +49,81 @@ async function readScopedTicket(
   return ticket?.scope === expected ? ticket : null;
 }
 
+/**
+ * Charge a failed ceremony against the ticket's `MFA_MAX_FAILURES` budget,
+ * without letting the bookkeeping displace the error that caused it.
+ *
+ * Awaiting `recordMfaFailure` bare inside a catch meant a rejection there — a
+ * connection blip or pool exhaustion, most likely exactly when things are
+ * already going wrong — replaced the ceremony error entirely. `asAuthError`
+ * then never ran, so the `[passkey] …` log line was never written and the
+ * original failure was lost; the Prisma error escaped unhandled and production
+ * masking turned it into a bare "Unexpected error" with no UNAUTHENTICATED
+ * code, which is an observably different shape from every other failure on
+ * these endpoints and so a small oracle in its own right.
+ */
+async function chargeFailure(jti: string, context: string): Promise<void> {
+  try {
+    await webauthnService().recordMfaFailure(jti);
+  } catch (error) {
+    console.error(`[passkey] recordMfaFailure after ${context}:`, error);
+  }
+}
+
+/**
+ * Load the account an enrolment ticket names, and confirm it still has no
+ * credential.
+ *
+ * Both lookups used to sit outside any `try`, so a Prisma failure threw
+ * straight out of the resolver: production masking flattened it to "Unexpected
+ * error" and — unlike every other failure on these endpoints — nothing wrote a
+ * `[passkey] …` line, because `asAuthError` is the only logger. An operator
+ * watching first sign-ins fail site-wide had no server-side trace and could not
+ * tell a database outage from callers presenting stale tickets.
+ *
+ * An outage is deliberately NOT collapsed into `expiredAttempt()`. That string
+ * is the anti-oracle for authentication outcomes; reporting infrastructure
+ * failure as "your attempt expired" sends the user to retry a thing that cannot
+ * work, and hides the incident. It is safe to distinguish because it does not
+ * depend on whether the account exists.
+ */
+async function loadEnrolmentSubject(
+  ctx: GraphQLContext,
+  ticket: MfaTicketClaims,
+  context: string
+): Promise<User | null> {
+  let user: User | null;
+  let alreadyEnrolled: boolean;
+  try {
+    user = await ctx.prisma.user.findUnique({ where: { id: ticket.userId } });
+    alreadyEnrolled = await webauthnService().hasPasskeys(ticket.userId);
+  } catch (error) {
+    console.error(`[passkey] ${context} lookup:`, error);
+    throw new GraphQLError('Service temporarily unavailable. Try again shortly.', {
+      extensions: { code: 'INTERNAL_SERVER_ERROR' },
+    });
+  }
+
+  // The scope check is the ticket saying which path it belongs to; this is the
+  // database saying so. A credential could have been enrolled between minting
+  // and spending, and this route must never be a way past an existing second
+  // factor.
+  if (!user || alreadyEnrolled) {
+    return null;
+  }
+  return user;
+}
+
+/**
+ * Collapse any ceremony failure to one of exactly two strings.
+ *
+ * Passing service messages through verbatim defeated the production error
+ * masking on the one surface that most needs it: "No passkeys are registered
+ * for this account" and "That passkey is not registered for this account" are
+ * distinguishable answers about an account the caller has not authenticated to,
+ * and raw @simplewebauthn messages leak internals on top. The detail is kept —
+ * it just goes to the server log instead of the wire.
+ */
 function asAuthError(error: unknown, context: string): GraphQLError {
   console.error(`[passkey] ${context}:`, error);
   if (error instanceof ExpiredCeremonyError) {
@@ -100,16 +167,8 @@ builder.mutationFields(t => ({
         throw expiredAttempt();
       }
 
-      const user = await ctx.prisma.user.findUnique({ where: { id: ticket.userId } });
+      const user = await loadEnrolmentSubject(ctx, ticket, 'beginPasskeyEnrolment');
       if (!user) {
-        throw expiredAttempt();
-      }
-
-      // The scope check above is the ticket saying which path it belongs to;
-      // this is the database saying so. A credential could have been enrolled
-      // between minting and spending, and this route must never be a way past
-      // an existing second factor.
-      if (await webauthnService().hasPasskeys(ticket.userId)) {
         throw expiredAttempt();
       }
 
@@ -143,15 +202,11 @@ builder.mutationFields(t => ({
         throw expiredAttempt();
       }
 
-      const user = await ctx.prisma.user.findUnique({ where: { id: ticket.userId } });
-      if (!user) {
-        throw expiredAttempt();
-      }
-
-      // See beginPasskeyEnrolment: enrolment is only ever a first-credential
+      // See loadEnrolmentSubject: enrolment is only ever a first-credential
       // path. Allowing it against an account that already has one would let a
       // password alone mint a session by registering a new authenticator.
-      if (await webauthnService().hasPasskeys(ticket.userId)) {
+      const user = await loadEnrolmentSubject(ctx, ticket, 'completePasskeyEnrolment');
+      if (!user) {
         throw expiredAttempt();
       }
 
@@ -168,7 +223,7 @@ builder.mutationFields(t => ({
           args.name
         );
       } catch (error) {
-        await webauthnService().recordMfaFailure(ticket.jti);
+        await chargeFailure(ticket.jti, 'completePasskeyEnrolment');
         throw asAuthError(error, 'completePasskeyEnrolment');
       }
 
@@ -286,7 +341,7 @@ builder.mutationFields(t => ({
           args.response as AuthenticationResponseJSON
         );
       } catch (error) {
-        await webauthnService().recordMfaFailure(ticket.jti);
+        await chargeFailure(ticket.jti, 'finishAuthentication');
         throw asAuthError(error, 'finishAuthentication');
       }
 

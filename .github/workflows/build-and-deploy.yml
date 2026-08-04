@@ -57,6 +57,14 @@ jobs:
       - name: Run linter
         run: pnpm lint
 
+      # Typechecks tests/** and e2e/**, which no other project covers: the app
+      # build compiles src/, tsconfig.spec.json covers only src/app/**/*.spec.ts,
+      # and Vitest transpiles without checking types. Real errors sat green in
+      # the test suite indefinitely — including a service signature that had
+      # drifted from its own unit tests.
+      - name: Typecheck tests and e2e specs
+        run: pnpm typecheck
+
       - name: Run server unit tests
         run: pnpm test:server:coverage
 
@@ -87,6 +95,14 @@ jobs:
     permissions:
       contents: read
       packages: write
+      # Both are required by actions/attest-build-provenance below: `id-token`
+      # for the OIDC token it exchanges with Sigstore, `attestations` to record
+      # the attestation against the repository. Without them the step fails on
+      # permissions — so fixing the empty `subject-digest` alone would have left
+      # provenance just as absent, only now failing the release loudly instead
+      # of silently.
+      id-token: write
+      attestations: write
 
     steps:
       - name: Checkout code
@@ -141,8 +157,16 @@ jobs:
       # so every release shipped with no provenance while the workflow stayed
       # green. `continue-on-error` is dropped along with the fix: a silent
       # no-op was the only thing it was protecting.
+      #
+      # The trade that removal makes, stated so it is a decision rather than an
+      # oversight: this step runs AFTER the image is pushed, so a Sigstore or
+      # GHCR outage now fails a release whose artefact is already published at
+      # an immutable tag. That is the right way round — an unattested image
+      # should not report success — and `timeout-minutes` bounds a hung signing
+      # call so it fails in minutes rather than at the job limit.
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
+        timeout-minutes: 10
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}

@@ -1,0 +1,21 @@
+{
+  // Typecheck-only project for the server test suite and the e2e specs.
+  //
+  // Neither was covered by ANY tsconfig: `tsconfig.app.json` builds the app,
+  // `tsconfig.spec.json` includes only `src/app/**/*.spec.ts`, and Vitest
+  // transpiles without typechecking. So `tests/**` and `e2e/**` compiled
+  // nowhere, and real type errors sat green indefinitely — a service signature
+  // and its unit tests had already drifted apart, and a refactor of
+  // `loadEnrolmentSubject` broke `ng build` while `pnpm test:server` stayed
+  // fully passing.
+  //
+  // Emits nothing; `pnpm typecheck` runs it as a gate.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./out-tsc/server-spec",
+    "noEmit": true,
+    "types": ["vitest/globals", "node"]
+  },
+  "include": ["tests/**/*.ts", "e2e/**/*.ts", "src/**/*.d.ts"],
+  "exclude": ["node_modules/**/*"]
+}

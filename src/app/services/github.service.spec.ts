@@ -1,4 +1,4 @@
-import { HttpClient, HttpErrorResponse, withXhr, provideHttpClient } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse, provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
 
@@ -33,7 +33,7 @@ describe('GitHubService', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      providers: [provideHttpClient(withXhr()), GitHubService],
+      providers: [provideHttpClient(), GitHubService],
     });
     service = TestBed.inject(GitHubService);
     httpClient = TestBed.inject(HttpClient);

@@ -1,3 +1,5 @@
+import { isIP } from 'node:net';
+
 import type { Request, Response } from 'express';
 import {
   getOperationAST,
@@ -5,6 +7,8 @@ import {
   OperationTypeNode,
   type ExecutionArgs,
   type FieldNode,
+  type FragmentDefinitionNode,
+  type SelectionSetNode,
 } from 'graphql';
 import { createYoga, type Plugin } from 'graphql-yoga';
 import { container } from 'tsyringe';
@@ -16,7 +20,7 @@ import { schema } from './schema';
 
 const FIFTEEN_MINUTES_MS = 15 * 60 * 1000;
 
-interface AuthLimit {
+interface MutationRateLimit {
   /** Attempts allowed per client IP per window. */
   ipLimit: number;
   /** Argument naming the subject being attacked (email, mfaToken), if any. */
@@ -33,16 +37,28 @@ interface AuthLimit {
 }
 
 /**
- * Mutations reachable without a session, keyed by root field name. Everything
- * else is guarded by authScopes and costs an attacker a valid session first.
+ * One shared shape for every mutation keyed on an mfaToken.
  *
- * This must cover EVERY mutation whose authScopes are `{ public: true }`.
- * `yoga.test.ts` walks the built schema and fails if the two sets diverge, so
- * adding a public mutation without a policy here breaks the build rather than
- * silently shipping an unthrottled endpoint — which is exactly how
- * `beginPasskeyEnrolment` and `completePasskeyEnrolment` were first missed.
+ * Named rather than written out four times, so the "these mirror each other"
+ * intent is true by construction. Spelled out per-field, the four were
+ * byte-identical and nothing enforced that: retuning the ticket-keyed limit
+ * meant editing four literals correctly, and missing one broke the symmetry
+ * silently, since the coverage test only checks that a key is PRESENT.
+ *
+ * They must match because all four spend from the same ticket's
+ * MFA_MAX_FAILURES budget: a looser limit on any one of them lets an attacker
+ * holding a captured ticket exhaust the victim's failure budget and lock them
+ * out of a sign-in they have no other route to complete.
  */
-const AUTH_LIMIT_DEFAULTS = new Map<string, AuthLimit>([
+const TICKET_LIMIT: MutationRateLimit = {
+  ipLimit: 15,
+  subjectArg: 'mfaToken',
+  subjectLimit: 10,
+  windowMs: FIFTEEN_MINUTES_MS,
+  cpuBound: false,
+};
+
+const SHIPPED_LIMITS = new Map<string, MutationRateLimit>([
   [
     'login',
     {
@@ -53,52 +69,11 @@ const AUTH_LIMIT_DEFAULTS = new Map<string, AuthLimit>([
       cpuBound: true,
     },
   ],
-  [
-    'beginPasskeyAuthentication',
-    {
-      ipLimit: 15,
-      subjectArg: 'mfaToken',
-      subjectLimit: 10,
-      windowMs: FIFTEEN_MINUTES_MS,
-      cpuBound: false,
-    },
-  ],
-  [
-    'verifyPasskey',
-    {
-      ipLimit: 15,
-      subjectArg: 'mfaToken',
-      subjectLimit: 10,
-      windowMs: FIFTEEN_MINUTES_MS,
-      cpuBound: false,
-    },
-  ],
-  // The enrolment twins. Their limits mirror the assertion pair deliberately:
-  // the per-subject bucket is keyed on the mfaToken, and the server's own
-  // MFA_MAX_FAILURES budget is spent from the same ticket, so a looser limit
-  // here would let an attacker holding a captured ticket exhaust the victim's
-  // failure budget and lock them out of a first sign-in they have no other
-  // route to complete.
-  [
-    'beginPasskeyEnrolment',
-    {
-      ipLimit: 15,
-      subjectArg: 'mfaToken',
-      subjectLimit: 10,
-      windowMs: FIFTEEN_MINUTES_MS,
-      cpuBound: false,
-    },
-  ],
-  [
-    'completePasskeyEnrolment',
-    {
-      ipLimit: 15,
-      subjectArg: 'mfaToken',
-      subjectLimit: 10,
-      windowMs: FIFTEEN_MINUTES_MS,
-      cpuBound: false,
-    },
-  ],
+  ['beginPasskeyAuthentication', { ...TICKET_LIMIT }],
+  ['verifyPasskey', { ...TICKET_LIMIT }],
+  // The enrolment twins, deliberately identical to the assertion pair above.
+  ['beginPasskeyEnrolment', { ...TICKET_LIMIT }],
+  ['completePasskeyEnrolment', { ...TICKET_LIMIT }],
   // Not an authentication endpoint, but public and write-bearing: without a cap
   // anyone can inflate a post's view count indefinitely. The subject is the
   // slug, so one bucket per post per address rather than one shared bucket that
@@ -117,17 +92,40 @@ const AUTH_LIMIT_DEFAULTS = new Map<string, AuthLimit>([
 
 /**
  * The policy actually enforced, and the map `limitedFields` reads on every
- * request. Seeded from the defaults above and mutated in place by
+ * request. Seeded from the shipped values above and mutated in place by
  * `configureAuthLimits`, so an override takes effect for the next request
  * without rebuilding the plugin or restarting the limiter's windows.
+ *
+ * NOT exported. It was, and that made the careful validation in
+ * `configureAuthLimits` — which refuses `subjectArg`/`cpuBound` changes,
+ * non-integers and a zero window — optional rather than the only door: any
+ * importer could write `activeLimits.get('login').subjectArg = 'password'` or
+ * `activeLimits.clear()` and bypass every check, including the environment
+ * guard. Read it through `authLimits` below.
  */
-export const AUTH_LIMITS = new Map<string, AuthLimit>(
-  [...AUTH_LIMIT_DEFAULTS].map(([name, limit]) => [name, { ...limit }])
+const activeLimits = new Map<string, MutationRateLimit>(
+  [...SHIPPED_LIMITS].map(([name, limit]) => [name, { ...limit }])
 );
+
+/**
+ * Read-only view of the enforced policy, for tests and diagnostics.
+ *
+ * `get` hands back a frozen copy rather than the live object, so a caller
+ * cannot mutate the policy through a value it merely read.
+ */
+export const authLimits = {
+  names(): string[] {
+    return [...activeLimits.keys()];
+  },
+  get(name: string): Readonly<MutationRateLimit> | undefined {
+    const limit = activeLimits.get(name);
+    return limit ? Object.freeze({ ...limit }) : undefined;
+  },
+};
 
 // Frozen so `resetAuthLimits` always has pristine values to restore to; every
 // read below copies out of these rather than handing the originals around.
-for (const limit of AUTH_LIMIT_DEFAULTS.values()) {
+for (const limit of SHIPPED_LIMITS.values()) {
   Object.freeze(limit);
 }
 
@@ -138,7 +136,9 @@ for (const limit of AUTH_LIMIT_DEFAULTS.values()) {
  * names), and clearing `cpuBound` disables the Argon2id concurrency gate —
  * neither is a thing a test should be able to do by accident.
  */
-export type AuthLimitOverride = Partial<Pick<AuthLimit, 'ipLimit' | 'subjectLimit' | 'windowMs'>>;
+export type MutationRateLimitOverride = Partial<
+  Pick<MutationRateLimit, 'ipLimit' | 'subjectLimit' | 'windowMs'>
+>;
 
 /** Environment variable carrying overrides, as JSON. See `configureAuthLimits`. */
 export const AUTH_LIMIT_OVERRIDES_ENV = 'AUTH_RATE_LIMIT_OVERRIDES';
@@ -148,9 +148,9 @@ const OVERRIDABLE_KEYS = ['ipLimit', 'subjectLimit', 'windowMs'] as const;
 /** Restore the shipped policy. Primarily so a test cannot leak its own limits
  *  into the next one — the map is module state and outlives any single spec. */
 export function resetAuthLimits(): void {
-  AUTH_LIMITS.clear();
-  for (const [name, limit] of AUTH_LIMIT_DEFAULTS) {
-    AUTH_LIMITS.set(name, { ...limit });
+  activeLimits.clear();
+  for (const [name, limit] of SHIPPED_LIMITS) {
+    activeLimits.set(name, { ...limit });
   }
 }
 
@@ -165,7 +165,7 @@ function isValidCount(value: unknown): value is number {
 
 /** Collect every problem with one field's override. Empty means it is usable. */
 function overrideProblems(name: string, override: unknown): string[] {
-  if (!AUTH_LIMIT_DEFAULTS.has(name)) {
+  if (!SHIPPED_LIMITS.has(name)) {
     return [`unknown rate-limited field "${name}"`];
   }
   if (override === null || typeof override !== 'object' || Array.isArray(override)) {
@@ -178,10 +178,20 @@ function overrideProblems(name: string, override: unknown): string[] {
       problems.push(
         `"${name}.${key}" is not overridable (allowed: ${OVERRIDABLE_KEYS.join(', ')})`
       );
-    } else if (key === 'windowMs' ? !(isValidCount(value) && value >= 1) : !isValidCount(value)) {
+    } else {
       // A window of 0ms expires before it can count anything, so it is the one
       // value that would silently disable the limit rather than tighten it.
-      problems.push(`"${name}.${key}" must be an integer >= ${key === 'windowMs' ? 1 : 0}`);
+      // Every other field may legitimately be 0, which rejects the first
+      // attempt and is the only way to reach the throttled branch in a test.
+      //
+      // The minimum is hoisted rather than computed twice: the condition used
+      // to branch on `key === 'windowMs'` inside a negated conjunction and then
+      // repeat the same comparison in the message, so changing the bound needed
+      // two coordinated edits on adjacent lines.
+      const minimum = key === 'windowMs' ? 1 : 0;
+      if (!isValidCount(value) || value < minimum) {
+        problems.push(`"${name}.${key}" must be an integer >= ${minimum}`);
+      }
     }
   }
   return problems;
@@ -201,7 +211,24 @@ function overrideProblems(name: string, override: unknown): string[] {
  *
  * @returns whether the overrides were applied.
  */
-export function configureAuthLimits(overrides: Record<string, unknown>): boolean {
+export function configureAuthLimits(
+  overrides: Record<string, unknown>,
+  env: NodeJS.ProcessEnv = process.env
+): boolean {
+  // The environment guard lives here as well as in
+  // `applyAuthLimitOverridesFromEnv`, because this function is exported: with
+  // the check only at the env-reading layer, any future caller — or anything
+  // that imports this module — could relax the limits in production without
+  // passing the gate at all. Checked in both places so the guarded path is the
+  // only path.
+  const nodeEnv = env['NODE_ENV'];
+  if (nodeEnv === undefined || !OVERRIDABLE_ENVIRONMENTS.has(nodeEnv)) {
+    console.error(
+      `Refusing to change auth rate limits: only permitted when NODE_ENV is one of ${[...OVERRIDABLE_ENVIRONMENTS].join(', ')}.`
+    );
+    return false;
+  }
+
   const entries = Object.entries(overrides);
   const problems = entries.flatMap(([name, override]) => overrideProblems(name, override));
 
@@ -213,22 +240,36 @@ export function configureAuthLimits(overrides: Record<string, unknown>): boolean
   }
 
   for (const [name, override] of entries) {
-    const base = AUTH_LIMIT_DEFAULTS.get(name);
+    const base = SHIPPED_LIMITS.get(name);
     if (base) {
-      AUTH_LIMITS.set(name, { ...base, ...(override as AuthLimitOverride) });
+      activeLimits.set(name, { ...base, ...(override as MutationRateLimitOverride) });
     }
   }
   return true;
 }
 
 /**
+ * Environments in which auth rate limits may be relaxed.
+ *
+ * An ALLOWLIST, deliberately. The guard was previously
+ * `NODE_ENV === 'production'` — a denylist of exactly one string — so an unset,
+ * empty, `Production`, `prod` or `staging` value all permitted unbounded
+ * widening of the Argon2id-backed login path. Unset is the dangerous case:
+ * nothing in this repo requires NODE_ENV to be set, and the same unset value
+ * simultaneously enables GraphiQL and disables `maskedErrors`, so one omission
+ * yields an introspectable endpoint with unmasked errors and no login throttle.
+ * Failing closed means an unrecognised environment keeps the shipped limits.
+ */
+const OVERRIDABLE_ENVIRONMENTS = new Set(['development', 'test']);
+
+/**
  * Read overrides from the environment. Called once at module load, so a server
  * started with the variable set is throttled by the overridden policy from its
  * first request.
  *
- * Refused outright under NODE_ENV=production. The refusal is loud but not
- * fatal: ignoring the variable leaves the strict shipped limits in force, so
- * failing safe here means staying up, and taking the site down over a
+ * Refused outside development and test. The refusal is loud but not fatal:
+ * ignoring the variable leaves the strict shipped limits in force, so failing
+ * safe here means staying up, and taking the site down over an
  * already-harmless misconfiguration would be the worse trade.
  *
  * Example — let an end-to-end suite sign in as often as it needs to:
@@ -238,16 +279,15 @@ export function configureAuthLimits(overrides: Record<string, unknown>): boolean
  * @returns whether any overrides were applied.
  */
 export function applyAuthLimitOverridesFromEnv(env: NodeJS.ProcessEnv = process.env): boolean {
-  /* eslint-disable-next-line security/detect-object-injection --
-   * The key is this module's own string constant, not caller-supplied. */
-  const raw = env[AUTH_LIMIT_OVERRIDES_ENV];
+  const raw = env['AUTH_RATE_LIMIT_OVERRIDES'];
   if (raw === undefined || raw.trim() === '') {
     return false;
   }
 
-  if (env['NODE_ENV'] === 'production') {
+  const nodeEnv = env['NODE_ENV'];
+  if (nodeEnv === undefined || !OVERRIDABLE_ENVIRONMENTS.has(nodeEnv)) {
     console.error(
-      `${AUTH_LIMIT_OVERRIDES_ENV} is set but ignored: auth rate limits are not overridable in production. The shipped limits remain in force.`
+      `${AUTH_LIMIT_OVERRIDES_ENV} is set but ignored: auth rate limits are only overridable when NODE_ENV is one of ${[...OVERRIDABLE_ENVIRONMENTS].join(', ')} (got ${nodeEnv === undefined ? 'unset' : `"${nodeEnv}"`}). The shipped limits remain in force.`
     );
     return false;
   }
@@ -284,32 +324,40 @@ applyAuthLimitOverridesFromEnv();
 /**
  * The address to charge this request's rate-limit bucket to.
  *
- * `req.ip` is authoritative now that `src/server.ts` sets `trust proxy` to a
- * hop count: Express walks back exactly that many entries from the right of
- * X-Forwarded-For, so the value is one a trusted proxy wrote, not one the
- * client chose. Reading the LEFTMOST entry — as this did before — took the
- * client's own claim, so rotating the header minted a fresh bucket per request
- * and the IP limit was decorative.
+ * Only `req.ip` and the socket address are considered, and `req.ip` must parse
+ * as an IP address before it is used. Reading X-Forwarded-For here directly —
+ * as an earlier version did, taking the LEFTMOST entry — took the client's own
+ * claim, so rotating the header minted a fresh bucket per request and the IP
+ * limit was decorative. That branch is gone rather than kept as a fallback:
+ * being selected by the shape of the data rather than by build target, it would
+ * have silently restored the forgeable behaviour whenever `req` was absent.
  *
- * The header is still consulted, but only as a fallback for callers that reach
- * this without an Express request (Yoga's own `fetch`, used by the tests). The
- * per-subject buckets never depended on the address and are what hold the line
- * against a genuinely distributed attack either way.
+ * How much `req.ip` is worth depends entirely on `trust proxy` being right for
+ * the deployment — see src/server/trust-proxy.ts. The `net.isIP` check is the
+ * cheap backstop: a malformed or spoofed value that survived Express's own
+ * parsing cannot become a bucket key.
+ *
+ * Callers with no Express request (Yoga's own `fetch`, used by the tests) fall
+ * through to `'unknown'`, so they share one bucket — which is why tests that
+ * need distinct buckets construct a `req`-shaped context.
  */
-function clientAddress(contextValue: unknown): string {
-  const ctx = contextValue as { request?: { headers: Headers }; req?: Request } | null;
+export function clientAddress(contextValue: unknown): string {
+  // Narrowed to the two fields actually read, with every level optional. The
+  // parameter is genuinely `unknown` — Yoga hands over whatever server context
+  // it was given — so asserting the full Express `Request` here would be a lie
+  // that makes `socket` look guaranteed and turns a missing one into a
+  // TypeError on the request path.
+  const ctx = contextValue as {
+    req?: { ip?: string; socket?: { remoteAddress?: string } };
+  } | null;
 
-  if (ctx?.req?.ip) {
-    return ctx.req.ip;
+  const ip = ctx?.req?.ip;
+  if (ip && isIP(ip) !== 0) {
+    return ip;
   }
 
-  const forwarded = ctx?.request?.headers.get('x-forwarded-for');
-  const leftmost = forwarded?.split(',')[0]?.trim();
-  if (leftmost) {
-    return leftmost;
-  }
-
-  return ctx?.req?.socket.remoteAddress ?? 'unknown';
+  const socketAddress = ctx?.req?.socket?.remoteAddress;
+  return socketAddress && isIP(socketAddress) !== 0 ? socketAddress : 'unknown';
 }
 
 /**
@@ -342,7 +390,7 @@ function argumentValue(
 function enforce(
   limiter: RateLimitService,
   field: FieldNode,
-  config: AuthLimit,
+  config: MutationRateLimit,
   address: string,
   variables: Map<string, unknown>
 ): void {
@@ -376,21 +424,64 @@ function enforce(
   }
 }
 
+/**
+ * Every root field the operation executes, with fragments resolved.
+ *
+ * Walking only the operation's direct `FIELD` selections was a complete bypass
+ * of this plugin: `mutation { ...L } fragment L on Mutation { login(...) }`
+ * executes `login` while the selection set contains nothing but a spread, so
+ * `limitedFields` returned empty and `onExecute` bailed before enforcing any
+ * bucket — and before the Argon2id concurrency gate, making it a CPU-exhaustion
+ * vector as well as unmetered password guessing. Every entry in activeLimits was
+ * reachable this way.
+ *
+ * `visited` guards fragment cycles. A cyclic document is invalid GraphQL and is
+ * normally rejected before execution, but this must not be the thing that
+ * depends on validation having run.
+ */
+function rootFields(
+  selectionSet: SelectionSetNode,
+  fragments: ReadonlyMap<string, FragmentDefinitionNode>,
+  visited: Set<string>
+): FieldNode[] {
+  return selectionSet.selections.flatMap(selection => {
+    if (selection.kind === Kind.FIELD) {
+      return [selection];
+    }
+    if (selection.kind === Kind.INLINE_FRAGMENT) {
+      return rootFields(selection.selectionSet, fragments, visited);
+    }
+    const name = selection.name.value;
+    if (visited.has(name)) {
+      return [];
+    }
+    visited.add(name);
+    const fragment = fragments.get(name);
+    return fragment ? rootFields(fragment.selectionSet, fragments, visited) : [];
+  });
+}
+
 /** Root fields of the executed mutation that carry a rate-limit policy. */
-function limitedFields(args: ExecutionArgs): Array<[FieldNode, AuthLimit]> {
+function limitedFields(args: ExecutionArgs): Array<[FieldNode, MutationRateLimit]> {
   const operation = getOperationAST(args.document, args.operationName);
   if (operation?.operation !== OperationTypeNode.MUTATION) {
     return [];
   }
 
-  const matches: Array<[FieldNode, AuthLimit]> = [];
-  for (const selection of operation.selectionSet.selections) {
-    if (selection.kind !== Kind.FIELD) {
-      continue;
-    }
-    const config = AUTH_LIMITS.get(selection.name.value);
+  const fragments = new Map<string, FragmentDefinitionNode>(
+    args.document.definitions
+      .filter(
+        (definition): definition is FragmentDefinitionNode =>
+          definition.kind === Kind.FRAGMENT_DEFINITION
+      )
+      .map(definition => [definition.name.value, definition])
+  );
+
+  const matches: Array<[FieldNode, MutationRateLimit]> = [];
+  for (const field of rootFields(operation.selectionSet, fragments, new Set())) {
+    const config = activeLimits.get(field.name.value);
     if (config) {
-      matches.push([selection, config]);
+      matches.push([field, config]);
     }
   }
   return matches;
@@ -403,7 +494,7 @@ function limitedFields(args: ExecutionArgs): Array<[FieldNode, AuthLimit]> {
  * auth mutation cannot be added without a conscious decision here, and so the
  * cost is rejected before any database or Argon2 work is scheduled.
  */
-export function useAuthRateLimit(): Plugin {
+export function usePublicMutationRateLimit(): Plugin {
   const limiter = container.resolve(RateLimitService);
 
   return {
@@ -448,7 +539,7 @@ export function createYogaMiddleware() {
     graphqlEndpoint: '/graphql',
     graphiql: process.env['NODE_ENV'] !== 'production',
     maskedErrors: process.env['NODE_ENV'] === 'production',
-    plugins: [useAuthRateLimit()],
+    plugins: [usePublicMutationRateLimit()],
     context: ({ request }) => createContext(request.headers.get('authorization')),
   });
 }

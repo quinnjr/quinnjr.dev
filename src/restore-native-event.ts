@@ -54,7 +54,10 @@ function captureNativeEvent(): typeof Event | undefined {
     );
     controller.abort();
     return ctor;
-  } catch {
+  } catch (error) {
+    // The swallowed exception was the only evidence of WHY the capture failed,
+    // and the failure is three layers away from the crash it eventually causes.
+    console.error('restore-native-event: could not capture the native Event constructor', error);
     return undefined;
   }
 }
@@ -62,16 +65,26 @@ function captureNativeEvent(): typeof Event | undefined {
 const nativeEvent = captureNativeEvent();
 
 if (nativeEvent === undefined) {
-  // Silence here has no other symptom until the first mid-request client
-  // disconnect kills the process, by which point the site is down and the cause
-  // is three layers away.
-  console.error(
-    'restore-native-event: could not recover the native Event constructor; a client ' +
-      'disconnecting mid-request will crash the process with ERR_INVALID_ARG_TYPE.'
+  // Fail at boot rather than serve traffic.
+  //
+  // This branch means the process has DIAGNOSED that it cannot survive a
+  // mid-request client disconnect. Logging and continuing meant starting a
+  // server guaranteed to die on the first cancelled request, with the only
+  // clue a single line emitted at startup — and after the restart, the same
+  // line again, so the operator sees a crash-loop with no visible cause.
+  //
+  // Refusing to start is strictly more diagnosable: an orchestrator surfaces a
+  // boot failure directly, whereas an intermittent uncaught exception three
+  // layers down looks like a network problem. A server that cannot stay up is
+  // not more available for having started.
+  throw new Error(
+    'restore-native-event: could not recover the native Event constructor. A client ' +
+      'disconnecting mid-request would crash the process with ERR_INVALID_ARG_TYPE, so ' +
+      'refusing to start rather than serving traffic that is guaranteed to fail.'
   );
-} else {
-  globalThis.Event = nativeEvent;
 }
+
+globalThis.Event = nativeEvent;
 
 /**
  * Re-assert the native `Event` global.

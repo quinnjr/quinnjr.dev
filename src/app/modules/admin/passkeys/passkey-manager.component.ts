@@ -364,9 +364,12 @@ export class PasskeyManagerComponent implements OnInit {
   }
 
   /**
-   * Removing any but the last key is unremarkable. Removing the last one turns
-   * the second factor off for the whole account, so that path stops here and
-   * asks — the server refuses it too, unless `confirmRemoveLastPasskey` is sent.
+   * Removing any but the last key is unremarkable. Removing the last one does
+   * NOT turn the second factor off — it cannot be turned off — but it does
+   * leave the next sign-in unable to complete without enrolling again, which
+   * locks the owner out on any device that cannot do WebAuthn. That path
+   * therefore stops here and asks; the server refuses it too, unless
+   * `confirmRemoveLastPasskey` is sent.
    */
   remove(key: PasskeyRow): void {
     if (this.busy()) {
