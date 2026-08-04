@@ -1,6 +1,7 @@
 import 'reflect-metadata'; // Must be first import for tsyringe
 // Must precede any import that pulls in graphql-yoga: whatwg-node captures the
-// `Event` constructor at module scope, and zone.js has replaced it by now.
+// `Event` constructor at module scope, and Angular's domino DOM shim has
+// replaced it by now.
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -63,7 +64,7 @@ export function app(): express.Express {
     // Yoga aborts the request's AbortController from a `close` listener, and
     // that abort constructs an `Event` from whatever the global currently is.
     // An SSR render between this request starting and the socket closing will
-    // have swapped in Angular's server DOM constructor, which Node's native
+    // have swapped in Angular's domino DOM constructor, which Node's native
     // EventTarget rejects — an uncaught throw that kills the process.
     // Prepending our listener means the global is native again before Yoga's
     // own `close` handler runs.

@@ -24,7 +24,6 @@
             "outputPath": "dist/quinnjr.dev",
             "index": "src/index.html",
             "browser": "src/main.ts",
-            "polyfills": ["src/preserve-native-event.ts", "zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
