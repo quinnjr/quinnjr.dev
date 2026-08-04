@@ -139,6 +139,34 @@ function isReleaseMerge() {
 }
 
 /**
+ * Refuse to tag a commit that is not contained in `origin/main`.
+ *
+ * Releases are cut from `main`, and nothing enforced that: v2.6.0 was tagged
+ * from `develop`, and `main` had to be force-reset onto the tag afterwards to
+ * reconcile it. The tag was well-formed, so neither the script nor CI noticed —
+ * only a human comparing branches would.
+ *
+ * Checked against the REMOTE ref on purpose. A stale local `main` would happily
+ * vouch for a commit the remote has never seen, which is the same class of
+ * mistake with an extra step.
+ *
+ * Fails closed, for the reason `isReleaseMerge` documents: pushing a `v*` tag
+ * is what triggers the release workflow, so an unrelated git failure must not
+ * read as approval.
+ *
+ * @returns {boolean} True when HEAD is an ancestor of origin/main.
+ */
+function isOnMain() {
+  try {
+    execSync('git fetch origin main --quiet', { encoding: 'utf-8' });
+    execSync('git merge-base --is-ancestor HEAD origin/main', { encoding: 'utf-8' });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+/**
  * Main function
  */
 function main() {
@@ -149,6 +177,16 @@ function main() {
   if (!semverRegex.test(version)) {
     console.error(`Invalid version format: ${version}`);
     console.error('Version must follow semantic versioning (e.g., 1.2.3)');
+    process.exit(1);
+  }
+
+  // Releases are cut from `main`. Checked before the release-merge heuristic
+  // because it is the cheaper and less ambiguous of the two.
+  if (!isOnMain()) {
+    console.error(
+      'Refusing to tag: HEAD is not contained in origin/main. Releases are cut from main — ' +
+        'merge the release branch into main first, then re-run.'
+    );
     process.exit(1);
   }
 
