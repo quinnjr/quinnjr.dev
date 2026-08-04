@@ -1,7 +1,7 @@
 # Get the current branch name
 current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 
-# Prevent pushing directly to a long-lived branch — everything goes via a PR.
+# Prevent updating a long-lived branch on the remote — everything goes via a PR.
 #
 # `develop` is included. It used to be exempt, on the grounds that back-merges
 # from main are pushed here directly — but that exemption is what let release
@@ -10,11 +10,29 @@ current_branch=$(git symbolic-ref --short HEAD 2>/dev/null)
 # happen ("Protected branch - no direct commits or pushes"). A back-merge is a
 # PR like anything else: branch it, push the branch, open the PR.
 #
-# This mirrors the server-side `pull_request` rule on both branches, so the
-# failure is local and immediate rather than a rejected push after the tests
-# have already run.
-if [ "$current_branch" = "main" ] || [ "$current_branch" = "master" ] || [ "$current_branch" = "develop" ]; then
-  echo "❌ You cannot push directly to '$current_branch' branch!"
+# This inspects the refs actually being pushed, which git supplies on stdin as
+# `<local-ref> <local-oid> <remote-ref> <remote-oid>`, rather than the branch
+# that happens to be checked out. Testing the current branch was wrong in both
+# directions: it rejected `git push origin --delete feature/x` merely because
+# HEAD was on develop, and it waved through `git push origin feature/x:develop`,
+# which updates develop from a branch whose NAME looks fine.
+#
+# Mirrors the server-side `pull_request` rule on both branches, so the failure
+# is local and immediate rather than a rejected push after the tests have run.
+blocked_ref=""
+while read -r _local_ref _local_oid remote_ref _remote_oid; do
+  # A push with nothing to do produces no stdin lines; guard the empty read.
+  [ -z "$remote_ref" ] && continue
+  case "$remote_ref" in
+    refs/heads/main | refs/heads/master | refs/heads/develop)
+      blocked_ref="${remote_ref#refs/heads/}"
+      break
+      ;;
+  esac
+done
+
+if [ -n "$blocked_ref" ]; then
+  echo "❌ You cannot push directly to '$blocked_ref'!"
   echo ""
   echo "git-flow: open a pull request from a feature/, bugfix/, release/ or"
   echo "hotfix/ branch instead."
