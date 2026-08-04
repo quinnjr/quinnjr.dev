@@ -10,9 +10,15 @@ import {
 import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
+import { rateLimitMessage } from '../../graphql/rate-limit-error';
 import { AuthService } from '../../services/auth.service';
 import { PasskeyService } from '../../services/passkey.service';
 import { SeoService } from '../../services/seo.service';
+
+/** Names the budget in throttle messages for every passkey-stage mutation:
+ *  the passkey steps share a per-ticket bucket that the password step does
+ *  not, so saying "sign-in attempts" here would point at the wrong limit. */
+const PASSKEY_ATTEMPTS = 'passkey attempts';
 
 @Component({
   selector: 'app-login',
@@ -284,9 +290,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
         this.router.navigate(['/admin']).catch(() => undefined);
       },
-      error: () => {
+      error: (err: unknown) => {
         this.submitting.set(false);
-        this.error.set('Invalid email or password');
+        // A throttled attempt is not a wrong password. Reporting it as one
+        // invites the retry that spends the next attempt from the same
+        // exhausted bucket.
+        this.error.set(rateLimitMessage(err, 'sign-in attempts') ?? 'Invalid email or password');
       },
     });
   }
@@ -315,9 +324,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.error.set('The passkey could not be registered.');
         });
       },
-      error: () => {
+      error: (err: unknown) => {
         this.submitting.set(false);
-        this.error.set('This sign-in attempt has expired. Start over.');
+        this.error.set(
+          rateLimitMessage(err, PASSKEY_ATTEMPTS) ?? 'This sign-in attempt has expired. Start over.'
+        );
       },
     });
   }
@@ -339,9 +350,12 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.submitting.set(false);
           this.router.navigate(['/admin']).catch(() => undefined);
         },
-        error: () => {
+        error: (err: unknown) => {
           this.submitting.set(false);
-          this.error.set('That passkey could not be registered. Try again.');
+          this.error.set(
+            rateLimitMessage(err, PASSKEY_ATTEMPTS) ??
+              'That passkey could not be registered. Try again.'
+          );
         },
       });
   }
@@ -361,9 +375,11 @@ export class LoginComponent implements OnInit, OnDestroy {
           this.error.set('The passkey step could not be completed.');
         });
       },
-      error: () => {
+      error: (err: unknown) => {
         this.submitting.set(false);
-        this.error.set('This sign-in attempt has expired. Start over.');
+        this.error.set(
+          rateLimitMessage(err, PASSKEY_ATTEMPTS) ?? 'This sign-in attempt has expired. Start over.'
+        );
       },
     });
   }
@@ -394,9 +410,12 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.submitting.set(false);
         this.router.navigate(['/admin']).catch(() => undefined);
       },
-      error: () => {
+      error: (err: unknown) => {
         this.submitting.set(false);
-        this.error.set('That passkey could not be verified. Try again.');
+        this.error.set(
+          rateLimitMessage(err, PASSKEY_ATTEMPTS) ??
+            'That passkey could not be verified. Try again.'
+        );
       },
     });
   }
