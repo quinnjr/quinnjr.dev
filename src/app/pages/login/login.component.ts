@@ -96,7 +96,8 @@ const PASSKEY_ATTEMPTS = 'passkey attempts';
                     name="passkeyName"
                     class="field-rune"
                     maxlength="64"
-                    [(ngModel)]="passkeyName"
+                    [ngModel]="passkeyName()"
+                    (ngModelChange)="passkeyName.set($event)"
                     [ngModelOptions]="{ standalone: true }"
                     placeholder="YubiKey, iPhone, this laptop…"
                     [disabled]="submitting()"
@@ -117,7 +118,7 @@ const PASSKEY_ATTEMPTS = 'passkey attempts';
                 Start over
               </button>
             </div>
-          } @else {
+          } @else if (stage() === 'passkey') {
             <div class="mt-8 space-y-5 text-center" data-testid="passkey-stage">
               <div class="login-sigil mx-auto" aria-hidden="true">
                 <i class="fas fa-fingerprint"></i>
@@ -212,12 +213,31 @@ export class LoginComponent implements OnInit, OnDestroy {
    * 'password' is the first factor. The server then decides which second-factor
    * stage follows: 'passkey' when a credential exists to assert against, or
    * 'enrol' when the account has none — a passkey is mandatory, so there is no
-   * path from here to the admin area that skips this.
+   * path from here to the admin area that skips this. Each value has its own
+   * explicit branch in the template: rendering the passkey stage as a catch-all
+   * would show `data-testid="passkey-stage"` for a stage that is not it, which
+   * silently breaks the e2e assertions that key off that element.
    */
   readonly stage = signal<'password' | 'passkey' | 'enrol'>('password');
 
-  /** Label the new credential is stored under. */
-  passkeyName = '';
+  /** Label the new credential is stored under. A signal like every other piece
+   *  of mutable view state, because zoneless change detection only notices the
+   *  ones it can subscribe to. */
+  readonly passkeyName = signal('');
+
+  /** Told to the user when this browser cannot do the ceremony the stage needs.
+   *  The two stages fail for different reasons — creating a credential versus
+   *  presenting an existing one — so the wording is per-stage data rather than
+   *  one vague message covering both. */
+  private readonly UNSUPPORTED = {
+    // Fail closed and say so plainly. A passkey is required, so a browser that
+    // cannot create one cannot complete sign-in at all — better to state that
+    // than to leave a dead button.
+    enrol:
+      'This account needs a passkey, and this browser cannot create one. ' +
+      'Sign in from a browser or device that supports passkeys.',
+    passkey: 'This account requires a passkey, but this browser cannot present one.',
+  } as const;
 
   /** Proof the password step passed. Not a session — see signMfaToken. */
   private mfaToken: string | null = null;
@@ -261,34 +281,25 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.auth.login(email, password).subscribe({
       next: result => {
         this.submitting.set(false);
-        if (result.status === 'enrolmentRequired') {
-          this.mfaToken = result.mfaToken;
-          this.stage.set('enrol');
-          this.passkeySupported.set(this.passkeys.isSupported());
-          if (!this.passkeySupported()) {
-            // Fail closed and say so plainly. A passkey is required, so a
-            // browser that cannot create one cannot complete sign-in at all —
-            // better to state that than to leave a dead button.
-            this.error.set(
-              'This account needs a passkey, and this browser cannot create one. ' +
-                'Sign in from a browser or device that supports passkeys.'
-            );
-          }
-          return;
-        }
-        if (result.status === 'passkeyRequired') {
-          this.mfaToken = result.mfaToken;
-          this.stage.set('passkey');
-          this.passkeySupported.set(this.passkeys.isSupported());
-          if (!this.passkeySupported()) {
-            this.error.set('This account requires a passkey, but this browser cannot present one.');
+        switch (result.status) {
+          case 'enrolmentRequired':
+            this.enterSecondFactor('enrol', result.mfaToken);
             return;
+          case 'passkeyRequired':
+            // Chrome requires the ceremony to be user-activated, so the stage
+            // only arms a button rather than firing on arrival.
+            this.enterSecondFactor('passkey', result.mfaToken);
+            return;
+          default: {
+            // Exhaustive today: the server has exactly the two second-factor
+            // exits and neither carries a session. A third status would make
+            // this assignment a compile error, which is the point — the
+            // alternative is a stray redirect into /admin for an outcome
+            // nobody has reviewed.
+            const unhandled: never = result;
+            throw new Error(`Unhandled login result: ${String(unhandled)}`);
           }
-          // Chrome requires the ceremony to be user-activated, so this is a
-          // button rather than something fired on arrival at the stage.
-          return;
         }
-        this.router.navigate(['/admin']).catch(() => undefined);
       },
       error: (err: unknown) => {
         this.submitting.set(false);
@@ -298,6 +309,22 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.error.set(rateLimitMessage(err, 'sign-in attempts') ?? 'Invalid email or password');
       },
     });
+  }
+
+  /** Moves onto the second factor once the password is accepted. Both stages do
+   *  the same three things — stash the ticket, switch the view, and find out
+   *  whether this browser can run the ceremony at all — so only the message for
+   *  a browser that cannot differs, and that lives in UNSUPPORTED. */
+  private enterSecondFactor(stage: 'enrol' | 'passkey', mfaToken: string): void {
+    this.mfaToken = mfaToken;
+    this.stage.set(stage);
+    this.passkeySupported.set(this.passkeys.isSupported());
+    if (!this.passkeySupported()) {
+      // `stage` is a two-value literal union chosen by this component, never
+      // caller- or server-controlled input, so the dynamic key is safe.
+      // eslint-disable-next-line security/detect-object-injection -- literal union key
+      this.error.set(this.UNSUPPORTED[stage]);
+    }
   }
 
   /** Drop the pending proof with the component. The instance is unreachable
@@ -344,11 +371,18 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
 
     this.auth
-      .completePasskeyEnrolment(token, attestation, this.passkeyName.trim() || 'Passkey')
+      .completePasskeyEnrolment(token, attestation, this.passkeyName().trim() || 'Passkey')
       .subscribe({
         next: () => {
           this.submitting.set(false);
-          this.router.navigate(['/admin']).catch(() => undefined);
+          // The session is already established here, so a swallowed navigation
+          // failure would strand the user on the login form with no error and
+          // no spinner — and a retry would then hit the passkey path and claim
+          // the attempt "expired", which is simply untrue.
+          this.router.navigate(['/admin']).catch((err: unknown) => {
+            console.error('post-enrolment navigation failed', err);
+            this.error.set('Signed in, but the admin area could not be opened. Reload the page.');
+          });
         },
         error: (err: unknown) => {
           this.submitting.set(false);
@@ -391,7 +425,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.stage.set('password');
     this.error.set(null);
     this.submitting.set(false);
-    this.passkeyName = '';
+    this.passkeyName.set('');
     this.form.patchValue({ password: '' });
   }
 
@@ -408,7 +442,13 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.auth.verifyPasskey(token, assertion).subscribe({
       next: () => {
         this.submitting.set(false);
-        this.router.navigate(['/admin']).catch(() => undefined);
+        // Same reasoning as after enrolment: the session exists by now, so a
+        // silent navigation failure leaves a signed-in user staring at the
+        // gate with nothing to act on.
+        this.router.navigate(['/admin']).catch((err: unknown) => {
+          console.error('post-verification navigation failed', err);
+          this.error.set('Signed in, but the admin area could not be opened. Reload the page.');
+        });
       },
       error: (err: unknown) => {
         this.submitting.set(false);

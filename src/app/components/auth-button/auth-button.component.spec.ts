@@ -1,4 +1,4 @@
-import { provideHttpClient, withXhr } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { signal } from '@angular/core';
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
 import { provideRouter, Router } from '@angular/router';
@@ -31,7 +31,7 @@ describe('AuthButtonComponent', () => {
       await TestBed.configureTestingModule({
         imports: [AuthButtonComponent],
         providers: [
-          provideHttpClient(withXhr()),
+          provideHttpClient(),
           provideRouter([]),
           { provide: AuthService, useValue: mockAuthService },
           { provide: Router, useValue: mockRouter },
@@ -83,7 +83,7 @@ describe('AuthButtonComponent', () => {
       await TestBed.configureTestingModule({
         imports: [AuthButtonComponent],
         providers: [
-          provideHttpClient(withXhr()),
+          provideHttpClient(),
           provideRouter([]),
           { provide: AuthService, useValue: mockAuthService },
         ],

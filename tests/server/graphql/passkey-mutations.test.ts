@@ -240,6 +240,88 @@ describe('passkey mutations', () => {
       expect(result.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
       expect(stub.finishRegistration).not.toHaveBeenCalled();
     });
+
+    // The same guard on the sibling resolver. It had no test: deleting the
+    // `hasPasskeys` check from `beginPasskeyEnrolment` failed nothing, and the
+    // omission was invisible in review because the twin above still had one.
+    it('refuses to START enrolment once the account already has a credential', async () => {
+      const stub = registerWebauthn({ hasPasskeys: vi.fn().mockResolvedValue(true) });
+      const enrolTicket = await signMfaToken({ id: 'u1' }, 'enrol');
+      const { schema } = await import('../../../src/server/graphql/schema');
+
+      const result = await graphql({
+        schema,
+        source: `mutation { beginPasskeyEnrolment(mfaToken: "${enrolTicket}") }`,
+        contextValue: anonymousCtx(),
+      });
+
+      expect(result.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
+      expect(stub.beginRegistration).not.toHaveBeenCalled();
+      expect(stub.validateMfaTicket).not.toHaveBeenCalled();
+    });
+
+    // A database outage is not an authentication outcome, and must not be
+    // reported as one. Collapsing it into `expiredAttempt()` told the user to
+    // retry something that could not work and left no server-side trace, since
+    // `asAuthError` is the only thing that logs. It is safe to distinguish
+    // because it happens regardless of whether the account exists, so it is not
+    // an enumeration oracle.
+    it.each([
+      ['beginPasskeyEnrolment', 'mutation { beginPasskeyEnrolment(mfaToken: "%TOKEN%") }'],
+      [
+        'completePasskeyEnrolment',
+        'mutation { completePasskeyEnrolment(mfaToken: "%TOKEN%", response: {}, name: "K") { token } }',
+      ],
+    ])('reports a database failure in %s as an outage, not an expired attempt', async (_l, src) => {
+      const stub = registerWebauthn();
+      vi.spyOn(console, 'error').mockImplementation(() => undefined);
+      const enrolTicket = await signMfaToken({ id: 'u1' }, 'enrol');
+      const { schema } = await import('../../../src/server/graphql/schema');
+
+      const result = await graphql({
+        schema,
+        source: src.replace('%TOKEN%', enrolTicket),
+        contextValue: {
+          prisma: {
+            user: {
+              findUnique: () => Promise.reject(new Error('connection pool exhausted')),
+            },
+          },
+          user: null,
+          isAuthenticated: false,
+        },
+      });
+
+      expect(result.errors?.[0]?.extensions?.['code']).toBe('INTERNAL_SERVER_ERROR');
+      expect(result.errors?.[0]?.message).not.toContain('expired');
+      expect(stub.validateMfaTicket).not.toHaveBeenCalled();
+      expect(stub.finishRegistration).not.toHaveBeenCalled();
+    });
+
+    // A ticket can outlive the account it names — deleted between minting and
+    // spending — and both enrolment resolvers must answer with the same
+    // expired-attempt string rather than distinguishing "no such user".
+    it.each([
+      ['beginPasskeyEnrolment', 'mutation { beginPasskeyEnrolment(mfaToken: "%TOKEN%") }'],
+      [
+        'completePasskeyEnrolment',
+        'mutation { completePasskeyEnrolment(mfaToken: "%TOKEN%", response: {}, name: "K") { token } }',
+      ],
+    ])('refuses %s when the ticket names an account that no longer exists', async (_l, source) => {
+      const stub = registerWebauthn();
+      const enrolTicket = await signMfaToken({ id: 'u1' }, 'enrol');
+      const { schema } = await import('../../../src/server/graphql/schema');
+
+      const result = await graphql({
+        schema,
+        source: source.replace('%TOKEN%', enrolTicket),
+        contextValue: anonymousCtx(null),
+      });
+
+      expect(result.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
+      expect(stub.beginRegistration).not.toHaveBeenCalled();
+      expect(stub.finishRegistration).not.toHaveBeenCalled();
+    });
   });
 
   describe('enrolment during first sign-in', () => {
@@ -316,9 +398,13 @@ describe('passkey mutations', () => {
 
       expect(result.errors).toBeUndefined();
       expect(result.data?.['beginPasskeyEnrolment']).toEqual({ challenge: 'r' });
-      // The resolver's replay note makes claiming-before-beginning a property
-      // of this path, not an implementation detail: it is what stops a replayed
-      // token restarting, and so destroying, the victim's in-flight ceremony.
+      // The gate runs before the ceremony starts, so a spent, expired or
+      // over-budget ticket never reaches `beginRegistration`. It is NOT a
+      // replay defence — `validateMfaTicket` marks nothing, so the same token
+      // passes as often as it is presented; see the note on the resolver. What
+      // bounds replay is the per-subject rate-limit bucket in yoga.ts. An
+      // earlier version of this comment claimed the opposite of the resolver it
+      // cross-referenced.
       expect(stub.validateMfaTicket).toHaveBeenCalled();
       expect(stub.beginRegistration).toHaveBeenCalled();
     });

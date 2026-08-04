@@ -77,7 +77,7 @@ describe('read queries', () => {
     });
     expect(result.errors).toBeUndefined();
     const { where } = calls[0] as { where: Record<string, unknown> };
-    expect(where.authorId).toBe('author-1');
+    expect(where['authorId']).toBe('author-1');
   });
 
   // postById backs the admin editor's load. Its ownership rule is the reason

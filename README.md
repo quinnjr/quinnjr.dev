@@ -58,10 +58,11 @@ served by `pnpm start`. Build and run the SSR server to exercise those routes �
 | `PORT`                | no                   | SSR server port (default `4000`)                                     |
 | `SITE_ORIGIN`         | no                   | Canonical origin emitted in sitemap/robots/llms (default the domain) |
 | `SSR_ALLOWED_HOSTS`   | no                   | Comma-separated hostnames accepted by the SSR host guard             |
-| `SSR_TRUST_PROXY`     | no                   | Reverse-proxy hops in front of the server (default `1`). Sets Express `trust proxy`, which is what makes `req.ip` — and so the rate limiter's per-IP bucket — reflect the real caller rather than a forgeable `X-Forwarded-For` entry. Use `0` when nothing proxies the process |
+| `SSR_TRUST_PROXY`     | no                   | Reverse-proxy hops, or trusted addresses, in front of the server (default `1`; use `0` when nothing proxies it) |
 | `GITHUB_TOKEN`        | no                   | GitHub API token for `/api/github/*`; unset means the anonymous 60 req/hr limit |
 | `ADMIN_EMAIL`         | e2e                  | Credentials the SSR passkey e2e signs in with (`e2e/ssr/passkey.spec.ts`) |
 | `ADMIN_PASSWORD`      | e2e                  | As above; the spec skips itself when either is unset                 |
+| `AUTH_RATE_LIMIT_OVERRIDES` | e2e            | JSON relaxing the auth rate limits; required by `e2e/ssr/passkey.spec.ts` |
 
 There is no external identity provider. Sign-in starts with the GraphQL `login` mutation, and a
 session token — once earned — is stored in `localStorage` under `auth_token`. `login` itself
@@ -74,6 +75,27 @@ continues through a second step. See [Passkeys / second factor](#passkeys--secon
 > the browser's origin, carrying the scheme and any non-default port — a wrong value silently breaks
 > every ceremony. Both default to the production domain, so any deployment **not** served from
 > `quinnjr.dev` (local SSR, Docker Compose, staging) must set them or no passkey will ever work.
+
+`SSR_TRUST_PROXY` becomes Express's `trust proxy`, which decides what `req.ip` resolves to — and
+`req.ip` is the key of the rate limiter's per-IP bucket, so a wrong value breaks the limiter in one
+of two opposite directions. Too low a count behind a real proxy makes `req.ip` the proxy's own
+address for every visitor, collapsing the whole internet into one shared bucket, so a handful of
+login attempts locks everyone out at once. Too high a count walks past the entries the trusted proxy
+wrote and returns one the **client** wrote, letting a caller mint a fresh bucket per request by
+rotating `X-Forwarded-For` — the forgeable behaviour the setting exists to remove. The value is
+therefore a deployment fact rather than a preference. Where the proxy's address is known, prefer the
+address form — a comma-separated list of IPs, CIDRs, or Express's named subnets `loopback`,
+`linklocal` and `uniquelocal` (for example `SSR_TRUST_PROXY="10.0.0.0/8"`) — because an address list
+cannot be over-counted: a hop is trusted only if it matches, whatever the chain length. The default
+`1` matches DigitalOcean App Platform, which appends exactly one entry.
+
+`AUTH_RATE_LIMIT_OVERRIDES` is JSON keyed by mutation name — for example
+`'{"login":{"ipLimit":1000,"subjectLimit":1000}}'` — and only `ipLimit`, `subjectLimit` and
+`windowMs` are overridable; anything else rejects the whole payload and leaves the shipped limits in
+force. It is honoured **only** when `NODE_ENV` is `development` or `test`. That is an allowlist:
+unset, `production`, `staging` and any other value all refuse it, loudly, and keep the shipped
+limits. It exists so a test suite can sign in more often than the shipped policy allows, and
+`e2e/ssr/passkey.spec.ts` requires it on both the SSR server and the Playwright runner.
 
 ### Passkeys / second factor
 
@@ -94,11 +116,13 @@ already has a credential:
    options, and `completePasskeyEnrolment(mfaToken:, response:, name:)` stores the credential and
    returns the session `token`. Both are `public` scope by necessity — there is no session yet.
 
-The two ticket scopes are **not** interchangeable, and this is load-bearing rather than cosmetic:
-both are signed with the same key, so without the scope claim a caller who knew only the password of
-a passkey-protected account could spend their `assert` ticket on `completePasskeyEnrolment`,
-register their own authenticator, and be handed a session. Each enrolment resolver additionally
-re-checks the database and refuses if the account already holds a credential.
+The two ticket scopes are **not** interchangeable. Both are signed with the same key, so without the
+scope claim a caller holding only the password of a passkey-protected account could present their
+`assert` ticket to `completePasskeyEnrolment`. That alone would not hand them a session today: each
+enrolment resolver also re-checks the database (`loadEnrolmentSubject`) and refuses outright if the
+account already holds a credential, which is true by definition of a passkey-protected account. The
+scope claim is defence in depth — it closes the window where a credential has just been deleted and
+a still-valid `assert` ticket could be spent down the enrolment path.
 
 The `mfaToken` is valid for **5 minutes** and is burned after a handful of failed attempts; a
 pending challenge expires on the same window. Once either lapses, start again from `login`.

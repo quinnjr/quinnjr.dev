@@ -39,7 +39,7 @@ describe('blog mutations', () => {
     // field, no data, and — most importantly — no call into the service.
     expect(result.errors).toBeDefined();
     expect(result.errors?.[0]?.message).toBe('Not authorized to resolve Mutation.createPost');
-    expect(result.data?.createPost ?? null).toBeNull();
+    expect(result.data?.['createPost'] ?? null).toBeNull();
     expect(createPost).not.toHaveBeenCalled();
   });
 
@@ -68,7 +68,7 @@ describe('blog mutations', () => {
       contextValue: c,
     });
     expect(result.errors).toBeUndefined();
-    expect(result.data?.recordPostView).toBe(true);
+    expect(result.data?.['recordPostView']).toBe(true);
     expect((c as any).prisma.blogPost.updateMany).toHaveBeenCalledOnce();
     expect((c as any).prisma.blogPost.updateMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -149,7 +149,7 @@ describe('blog mutations', () => {
       contextValue: ctx('EDITOR'),
     });
     expect(result.errors).toBeUndefined();
-    expect(result.data?.deletePost).toBe(true);
+    expect(result.data?.['deletePost']).toBe(true);
     expect(deletePost).toHaveBeenCalledOnce();
   });
 
@@ -165,7 +165,7 @@ describe('blog mutations', () => {
     });
     expect(result.errors).toBeDefined();
     expect(result.errors?.[0]?.message).toBe('Not authorized to resolve Mutation.deletePost');
-    expect(result.data?.deletePost ?? null).toBeNull();
+    expect(result.data?.['deletePost'] ?? null).toBeNull();
     expect(deletePost).not.toHaveBeenCalled();
   });
 

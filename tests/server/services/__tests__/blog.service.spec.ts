@@ -11,6 +11,24 @@ vi.mock('../../../../src/generated/prisma/client', () => ({
   PrismaClient: vi.fn(),
 }));
 
+/**
+ * First argument of a mock's first call, widened.
+ *
+ * `createMockPrismaClient` builds bare `vi.fn()`s with no declared signature,
+ * so Vitest types `mock.calls` as the empty tuple `[]` — indexing it is a
+ * compile error even though the call plainly happened. This asserts the shape
+ * the test is about to destructure, in one place rather than at every site,
+ * and fails loudly if the call never happened.
+ */
+function firstCallArg<T>(mock: { mock: { calls: unknown } }): T {
+  const calls = mock.mock.calls as unknown[][];
+  const first = calls[0];
+  if (!first) {
+    throw new Error('expected the mock to have been called at least once');
+  }
+  return first[0] as T;
+}
+
 describe('BlogService', () => {
   let service: BlogService;
   let mockDatabaseService: { getClient: ReturnType<typeof vi.fn> };
@@ -86,9 +104,9 @@ describe('BlogService', () => {
         authorId: 'author-1',
       });
 
-      const { data } = mockPrismaClient.blogPost.create.mock.calls[0][0] as {
+      const { data } = firstCallArg<{
         data: Record<string, unknown>;
-      };
+      }>(mockPrismaClient.blogPost.create);
       expect(data['status']).toBe('DRAFT');
       expect(data['publishedAt']).toBeUndefined();
     });
@@ -104,9 +122,9 @@ describe('BlogService', () => {
         tagIds: ['tag-1', 'tag-2'],
       });
 
-      const { data } = mockPrismaClient.blogPost.create.mock.calls[0][0] as {
+      const { data } = firstCallArg<{
         data: { tags: { create: unknown[] } };
-      };
+      }>(mockPrismaClient.blogPost.create);
       expect(data.tags.create).toEqual([
         { tag: { connect: { id: 'tag-1' } } },
         { tag: { connect: { id: 'tag-2' } } },
@@ -162,9 +180,9 @@ describe('BlogService', () => {
         })
       );
       // The `id` is the where-clause, never part of the update payload.
-      const { data } = mockPrismaClient.blogPost.update.mock.calls[0][0] as {
+      const { data } = firstCallArg<{
         data: Record<string, unknown>;
-      };
+      }>(mockPrismaClient.blogPost.update);
       expect(data).not.toHaveProperty('id');
       // As in createPost, the unique index is the arbiter — no pre-flight
       // conflict lookup round trip.
@@ -178,9 +196,9 @@ describe('BlogService', () => {
 
       // No title → no slug regeneration, and no conflict lookup round trip.
       expect(mockPrismaClient.blogPost.findFirst).not.toHaveBeenCalled();
-      const { data } = mockPrismaClient.blogPost.update.mock.calls[0][0] as {
+      const { data } = firstCallArg<{
         data: Record<string, unknown>;
-      };
+      }>(mockPrismaClient.blogPost.update);
       expect(data).not.toHaveProperty('slug');
       expect(data['content']).toBe('Only the body changed');
     });
@@ -193,9 +211,9 @@ describe('BlogService', () => {
       // A separate blogPostTag.deleteMany could strand the post with zero tags
       // if the update then failed; the nested deleteMany is part of the same
       // statement.
-      const updateArg = mockPrismaClient.blogPost.update.mock.calls[0][0] as {
+      const updateArg = firstCallArg<{
         data: { tags: { deleteMany: unknown; create: unknown[] } };
-      };
+      }>(mockPrismaClient.blogPost.update);
       expect(updateArg.data.tags.deleteMany).toEqual({});
       expect(updateArg.data.tags.create).toHaveLength(2);
     });

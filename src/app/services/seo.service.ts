@@ -22,7 +22,25 @@ import { SITE, absoluteUrl } from './seo.config';
  * consumer that `eval`s the block would see a syntax error.
  */
 export function serializeJsonLd(data: unknown): string {
-  return JSON.stringify(data)
+  // `JSON.stringify` does not always return a string: it yields the VALUE
+  // `undefined` for `undefined`, a function or a symbol, and throws outright on
+  // a circular reference or a BigInt. Assigning that straight to `textContent`
+  // used to be harmless \u2014 the block rendered empty \u2014 but chaining `.replace`
+  // onto it makes the same input a TypeError, and this runs inside a
+  // component's SSR render, so one bad metadata value would turn a content page
+  // into a 500. Degrading to an empty graph costs a rich result; throwing costs
+  // the page.
+  let json: string | undefined;
+  try {
+    json = JSON.stringify(data);
+  } catch (error) {
+    console.error('serializeJsonLd: value could not be serialized', error);
+  }
+  if (typeof json !== 'string') {
+    return '{}';
+  }
+
+  return json
     .replace(/</g, '\\u003c')
     .replace(/>/g, '\\u003e')
     .replace(/&/g, '\\u0026')

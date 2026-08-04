@@ -112,9 +112,17 @@ export const PasskeyType = builder.prismaObject('Passkey', {
 /**
  * Result of a sign-in attempt.
  *
- * `token`/`user` are null when `mfaRequired` is true: the password was correct
- * but the account has a passkey enrolled, so no session exists yet. The caller
- * completes the ceremony with `verifyPasskey(mfaToken:)`.
+ * `login` returns this with `token`/`user` null unconditionally: a passkey is a
+ * mandatory second factor, so a correct password never earns a session on its
+ * own. `mfaToken` carries the short-lived ticket, and the flag that is true
+ * says which resolver spends it:
+ *
+ *   - `mfaRequired` — the account has a passkey; finish with
+ *     `verifyPasskey(mfaToken:, response:)`.
+ *   - `enrolmentRequired` — the account has none; finish with
+ *     `completePasskeyEnrolment(mfaToken:, response:, name:)`.
+ *
+ * Those two resolvers return this same shape with `token`/`user` populated.
  */
 export interface AuthPayloadShape {
   token: string | null;

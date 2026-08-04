@@ -1,4 +1,5 @@
 import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
+import type { MockInstance } from 'vitest';
 
 import { DatabaseService } from '../../../../src/server/services/database.service';
 
@@ -14,7 +15,10 @@ function signalListeners(signal: 'SIGTERM' | 'SIGINT'): Array<() => void> {
 }
 
 describe('DatabaseService shutdown hooks', () => {
-  let exitSpy: ReturnType<typeof vi.spyOn>;
+  // `process.exit` returns `never`, which does not fit the default
+  // `ReturnType<typeof vi.spyOn>` instantiation, so the spy is typed loosely
+  // here rather than at the mockImplementation call.
+  let exitSpy: MockInstance;
   let before: Record<'SIGTERM' | 'SIGINT', number>;
 
   beforeEach(() => {
