@@ -41,22 +41,17 @@ export function app(): express.Express {
 
   const commonEngine = new CommonEngine({ allowedHosts });
 
-  // Number of reverse proxies in front of this process, so Express can resolve
-  // `req.ip` to the real caller instead of the nearest hop.
+  // What Express should trust when resolving `req.ip`, which is the key of the
+  // rate limiter's per-IP bucket. See src/server/trust-proxy.ts for why this is
+  // a deployment fact rather than a preference.
   //
-  // This is what makes the rate limiter's per-IP bucket mean anything. Without
-  // it `req.ip` is the DigitalOcean App Platform edge — one bucket for every
-  // visitor on Earth — which is why `clientAddress` in graphql/yoga.ts used to
-  // read the leftmost X-Forwarded-For entry directly instead. That value is
-  // whatever the client says it is, so an attacker rotated the header and minted
-  // a fresh bucket per request. With this set, Express counts back the trusted
-  // number of hops and hands over the address it actually connected from.
-  //
-  // Default 1 matches App Platform, Docker Compose behind a single reverse
-  // proxy, and the local SSR server (where there is no proxy at all and Express
-  // falls back to the socket address). Override with SSR_TRUST_PROXY when the
-  // chain is longer; `0` disables the hop-counting entirely and pins every
-  // request to its socket address.
+  // Correcting an earlier version of this comment, which claimed that with no
+  // proxy in front "Express falls back to the socket address": it does not.
+  // With a non-zero hop count Express returns an X-Forwarded-For entry whenever
+  // the header is present, so on a directly-reachable deployment `req.ip` is
+  // whatever the caller wrote — and the per-IP bucket is forgeable, exactly as
+  // it was before this setting existed. Only `0` pins to the socket address,
+  // and `0` behind a real proxy collapses every visitor into one shared bucket.
   server.set('trust proxy', trustProxyHops());
 
   server.set('view engine', 'html');
