@@ -46,12 +46,13 @@ const FINISH_REGISTRATION = gql`
   }
 `;
 
-// `confirmDisableMfa` is the server's record that the user was told removing
-// their last key re-enables password-only sign-in; it is only ever sent true
-// from the confirmed last-key path below.
+// `confirmRemoveLastPasskey` is the server's record that the user was told what
+// removing their last key means — a forced enrolment at the next sign-in, not a
+// return to password-only. It is only ever sent true from the confirmed
+// last-key path below.
 const DELETE_PASSKEY = gql`
-  mutation DeletePasskey($id: String!, $confirmDisableMfa: Boolean) {
-    deletePasskey(id: $id, confirmDisableMfa: $confirmDisableMfa)
+  mutation DeletePasskey($id: String!, $confirmRemoveLastPasskey: Boolean) {
+    deletePasskey(id: $id, confirmRemoveLastPasskey: $confirmRemoveLastPasskey)
   }
 `;
 
@@ -74,8 +75,8 @@ interface PasskeyRow {
       <header class="mb-4">
         <h2 class="font-medieval text-2xl text-parchment">Passkeys</h2>
         <p class="mt-1 font-body text-sm text-muted">
-          A second seal on the gatehouse. Once one is registered, your password alone will no longer
-          open the door — so register a spare before you rely on it.
+          A second seal on the gatehouse. Your password alone never opens the door — so register a
+          spare before you come to rely on any one authenticator.
         </p>
       </header>
 
@@ -112,8 +113,11 @@ interface PasskeyRow {
           Your passkeys could not be read, so this list may be incomplete.
         </p>
       } @else if (passkeys().length === 0) {
+        <!-- Not "your password alone opens the gate": it does not. With no
+             passkey the next sign-in stops at a mandatory enrolment step. -->
         <p class="font-body text-muted" data-testid="passkey-empty">
-          No passkeys registered. Your password alone currently opens the gate.
+          No passkeys registered. Your next sign-in will stop and ask you to enrol one before it can
+          finish.
         </p>
       } @else {
         <ul class="passkey-list" data-testid="passkey-list">
@@ -147,14 +151,17 @@ interface PasskeyRow {
           }
         </ul>
 
-        <!-- Removing the last key silently drops the account back to
-             password-only, so that consequence is named before it happens
-             rather than inferred afterwards from the empty state. -->
+        <!-- Removing the last key does NOT restore password-only sign-in: the
+             second factor is mandatory, so the next sign-in stops halfway and
+             demands a new enrolment. The lockout risk is the part worth naming
+             before it happens — an earlier version of this copy told the user
+             the opposite of what the server does. -->
         @if (pendingRemoval(); as pending) {
           <div class="passkey-confirm" role="alertdialog" data-testid="passkey-remove-confirm">
             <p class="font-body text-parchment">
-              Remove “{{ pending.name }}”? It is your only passkey — this will re-enable
-              password-only sign-in, and your password alone will open the gate again.
+              Remove “{{ pending.name }}”? It is your only passkey — your password alone will not
+              sign you in. The next sign-in will ask you to enrol a new passkey, so you will need a
+              device that supports them.
             </p>
             <div class="mt-3 flex flex-wrap gap-3">
               <button
@@ -164,7 +171,7 @@ interface PasskeyRow {
                 (click)="confirmRemove()"
                 data-testid="passkey-remove-confirm-yes"
               >
-                Remove it and disable the second seal
+                Remove it and enrol again next time
               </button>
               <button
                 type="button"
@@ -357,9 +364,12 @@ export class PasskeyManagerComponent implements OnInit {
   }
 
   /**
-   * Removing any but the last key is unremarkable. Removing the last one turns
-   * the second factor off for the whole account, so that path stops here and
-   * asks — the server refuses it too, unless `confirmDisableMfa` is sent.
+   * Removing any but the last key is unremarkable. Removing the last one does
+   * NOT turn the second factor off — it cannot be turned off — but it does
+   * leave the next sign-in unable to complete without enrolling again, which
+   * locks the owner out on any device that cannot do WebAuthn. That path
+   * therefore stops here and asks; the server refuses it too, unless
+   * `confirmRemoveLastPasskey` is sent.
    */
   remove(key: PasskeyRow): void {
     if (this.busy()) {
@@ -385,14 +395,14 @@ export class PasskeyManagerComponent implements OnInit {
     this.pendingRemoval.set(null);
   }
 
-  private dispatchRemove(key: PasskeyRow, confirmDisableMfa: boolean): void {
+  private dispatchRemove(key: PasskeyRow, confirmRemoveLastPasskey: boolean): void {
     this.busy.set(true);
     this.error.set(null);
 
     this.apollo
       .mutate<{ deletePasskey: boolean }>({
         mutation: DELETE_PASSKEY,
-        variables: { id: key.id, confirmDisableMfa },
+        variables: { id: key.id, confirmRemoveLastPasskey },
       })
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({

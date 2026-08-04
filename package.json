@@ -26,6 +26,7 @@
     "serve:ssr:quinnjr.dev": "node dist/quinnjr.dev/server/server.mjs",
     "lint": "ng lint",
     "lint:fix": "ng lint --fix",
+    "typecheck": "tsc -p tsconfig.server-spec.json",
     "format": "prettier --write \"**/*.{ts,html,css,scss,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,html,css,scss,json,md}\"",
     "postinstall": "prisma generate",
@@ -82,8 +83,7 @@
     "rxjs": "~7.8.0",
     "slugify": "^1.6.6",
     "tslib": "^2.3.0",
-    "tsyringe": "^4.10.0",
-    "zone.js": "~0.15.0"
+    "tsyringe": "^4.10.0"
   },
   "devDependencies": {
     "@angular/build": "^22.0.4",

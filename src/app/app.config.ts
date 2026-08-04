@@ -1,5 +1,5 @@
-import { provideHttpClient, withInterceptors, withXhr } from '@angular/common/http';
-import { type ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { type ApplicationConfig, provideZonelessChangeDetection } from '@angular/core';
 import { provideClientHydration, withEventReplay } from '@angular/platform-browser';
 import { provideAnimations } from '@angular/platform-browser/animations';
 import { provideRouter, withInMemoryScrolling } from '@angular/router';
@@ -12,7 +12,11 @@ import { FlowbiteService } from './services/flowbite.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    provideZoneChangeDetection({ eventCoalescing: true }),
+    // Zoneless: change detection is driven by signal writes, template/host
+    // listeners and `markForCheck`, not by zone.js patching every async API.
+    // Every component here is OnPush and every piece of mutable view state is a
+    // signal, so the notification sources line up with what the app already does.
+    provideZonelessChangeDetection(),
     provideRouter(
       routes,
       withInMemoryScrolling({ scrollPositionRestoration: 'enabled', anchorScrolling: 'enabled' })
@@ -21,10 +25,11 @@ export const appConfig: ApplicationConfig = {
     // Hydrate the SSR markup in place instead of destroying and re-rendering
     // it; event replay covers clicks that land before hydration finishes.
     provideClientHydration(withEventReplay()),
-    // `withXhr()` overrides Angular's default fetch backend: Zone.js patches
-    // XHR, so in-flight requests keep the application stable for hydration and
-    // for SSR's "is the app quiet yet" check in a way fetch does not.
-    provideHttpClient(withXhr(), withInterceptors([authInterceptor])),
+    // The default fetch backend. Stability for hydration and for SSR's "is the
+    // app quiet yet" check comes from `PendingTasks`, which `HttpClient`
+    // registers per request regardless of backend — it does not depend on
+    // zone.js having patched XHR.
+    provideHttpClient(withInterceptors([authInterceptor])),
     provideApollo(apolloOptionsFactory),
     FlowbiteService,
   ],

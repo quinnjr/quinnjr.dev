@@ -116,9 +116,6 @@ importers:
       tsyringe:
         specifier: ^4.10.0
         version: 4.10.0
-      zone.js:
-        specifier: ~0.15.0
-        version: 0.15.1
     devDependencies:
       '@angular/build':
         specifier: ^22.0.4
@@ -14226,4 +14223,5 @@ snapshots:
 
   zod@4.4.2: {}
 
-  zone.js@0.15.1: {}
+  zone.js@0.15.1:
+    optional: true

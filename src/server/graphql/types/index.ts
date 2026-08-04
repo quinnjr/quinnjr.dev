@@ -112,14 +112,28 @@ export const PasskeyType = builder.prismaObject('Passkey', {
 /**
  * Result of a sign-in attempt.
  *
- * `token`/`user` are null when `mfaRequired` is true: the password was correct
- * but the account has a passkey enrolled, so no session exists yet. The caller
- * completes the ceremony with `verifyPasskey(mfaToken:)`.
+ * `login` returns this with `token`/`user` null unconditionally: a passkey is a
+ * mandatory second factor, so a correct password never earns a session on its
+ * own. `mfaToken` carries the short-lived ticket, and the flag that is true
+ * says which resolver spends it:
+ *
+ *   - `mfaRequired` — the account has a passkey; finish with
+ *     `verifyPasskey(mfaToken:, response:)`.
+ *   - `enrolmentRequired` — the account has none; finish with
+ *     `completePasskeyEnrolment(mfaToken:, response:, name:)`.
+ *
+ * Those two resolvers return this same shape with `token`/`user` populated.
  */
 export interface AuthPayloadShape {
   token: string | null;
   user: User | null;
   mfaRequired: boolean;
+  /**
+   * True when the password was correct but the account has no passkey yet.
+   * A second factor is mandatory, so no session is issued: the caller must
+   * complete enrolment with the accompanying ticket first.
+   */
+  enrolmentRequired: boolean;
   mfaToken: string | null;
 }
 
@@ -128,6 +142,7 @@ export const AuthPayload = builder.objectRef<AuthPayloadShape>('AuthPayload').im
     token: t.exposeString('token', { nullable: true }),
     user: t.field({ type: UserType, nullable: true, resolve: p => p.user }),
     mfaRequired: t.exposeBoolean('mfaRequired'),
+    enrolmentRequired: t.exposeBoolean('enrolmentRequired'),
     mfaToken: t.exposeString('mfaToken', { nullable: true }),
   }),
 });

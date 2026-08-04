@@ -1,6 +1,7 @@
 import 'reflect-metadata'; // Must be first import for tsyringe
 // Must precede any import that pulls in graphql-yoga: whatwg-node captures the
-// `Event` constructor at module scope, and zone.js has replaced it by now.
+// `Event` constructor at module scope, and Angular's domino DOM shim has
+// replaced it by now.
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -14,6 +15,7 @@ import { initializeContainer } from './server/container';
 import { createYogaMiddleware } from './server/graphql/yoga';
 import githubRoutes from './server/routes/github';
 import sitemapRoutes from './server/routes/sitemap';
+import { trustProxyHops } from './server/trust-proxy';
 
 // The Express app is exported so that it can be used by serverless Functions.
 export function app(): express.Express {
@@ -39,6 +41,19 @@ export function app(): express.Express {
 
   const commonEngine = new CommonEngine({ allowedHosts });
 
+  // What Express should trust when resolving `req.ip`, which is the key of the
+  // rate limiter's per-IP bucket. See src/server/trust-proxy.ts for why this is
+  // a deployment fact rather than a preference.
+  //
+  // Correcting an earlier version of this comment, which claimed that with no
+  // proxy in front "Express falls back to the socket address": it does not.
+  // With a non-zero hop count Express returns an X-Forwarded-For entry whenever
+  // the header is present, so on a directly-reachable deployment `req.ip` is
+  // whatever the caller wrote — and the per-IP bucket is forgeable, exactly as
+  // it was before this setting existed. Only `0` pins to the socket address,
+  // and `0` behind a real proxy collapses every visitor into one shared bucket.
+  server.set('trust proxy', trustProxyHops());
+
   server.set('view engine', 'html');
   server.set('views', browserDistFolder);
 
@@ -63,7 +78,7 @@ export function app(): express.Express {
     // Yoga aborts the request's AbortController from a `close` listener, and
     // that abort constructs an `Event` from whatever the global currently is.
     // An SSR render between this request starting and the socket closing will
-    // have swapped in Angular's server DOM constructor, which Node's native
+    // have swapped in Angular's domino DOM constructor, which Node's native
     // EventTarget rejects — an uncaught throw that kills the process.
     // Prepending our listener means the global is native again before Yoga's
     // own `close` handler runs.

@@ -74,7 +74,8 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    it('establishes a session when no passkey is enrolled', async () => {
+    // A passkey is mandatory, so no passkey means enrolment — not a session.
+    it('reports enrolmentRequired and establishes nothing when no passkey exists', async () => {
       const svc = TestBed.inject(AuthService);
       let result: LoginResult | undefined;
       svc.login('a@b.com', 'pw').subscribe(r => (result = r));
@@ -82,18 +83,19 @@ describe('AuthService', () => {
       controller.expectOne('Login').flush({
         data: {
           login: {
-            token: 'tok',
+            token: null,
             mfaRequired: false,
-            mfaToken: null,
-            user: { id: 'u1', name: 'A', role: 'ADMIN' },
+            enrolmentRequired: true,
+            mfaToken: 'enrol-tok',
+            user: null,
           },
         },
       });
       await settle();
 
-      expect(result?.status).toBe('complete');
-      expect(svc.token()).toBe('tok');
-      expect(svc.isAuthenticated()).toBe(true);
+      expect(result).toEqual({ status: 'enrolmentRequired', mfaToken: 'enrol-tok' });
+      expect(svc.token()).toBeNull();
+      expect(svc.isAuthenticated()).toBe(false);
     });
 
     it('does NOT establish a session when a passkey is required', async () => {
@@ -102,7 +104,15 @@ describe('AuthService', () => {
       svc.login('a@b.com', 'pw').subscribe(r => (result = r));
 
       controller.expectOne('Login').flush({
-        data: { login: { token: null, mfaRequired: true, mfaToken: 'mfa-tok', user: null } },
+        data: {
+          login: {
+            token: null,
+            mfaRequired: true,
+            enrolmentRequired: false,
+            mfaToken: 'mfa-tok',
+            user: null,
+          },
+        },
       });
       await settle();
 
@@ -119,7 +129,15 @@ describe('AuthService', () => {
       svc.login('a@b.com', 'pw').subscribe({ error: () => (errored = true) });
 
       controller.expectOne('Login').flush({
-        data: { login: { token: null, mfaRequired: true, mfaToken: null, user: null } },
+        data: {
+          login: {
+            token: null,
+            mfaRequired: true,
+            enrolmentRequired: false,
+            mfaToken: null,
+            user: null,
+          },
+        },
       });
       await settle();
 
@@ -154,6 +172,45 @@ describe('AuthService', () => {
       svc.verifyPasskey('mfa-tok', {}).subscribe({ error: () => (errored = true) });
 
       controller.expectOne('VerifyPasskey').networkError(new Error('nope'));
+      await settle();
+
+      expect(errored).toBe(true);
+      expect(svc.token()).toBeNull();
+      expect(svc.isAuthenticated()).toBe(false);
+    });
+  });
+
+  describe('completePasskeyEnrolment', () => {
+    it('establishes the session only after the credential is registered', async () => {
+      const svc = TestBed.inject(AuthService);
+      let user: { id: string } | undefined;
+      svc.completePasskeyEnrolment('enrol-tok', { id: 'att' }, 'Key').subscribe(u => (user = u));
+
+      const op = controller.expectOne('CompletePasskeyEnrolment');
+      expect(op.operation.variables['name']).toBe('Key');
+      op.flush({
+        data: {
+          completePasskeyEnrolment: {
+            token: 'session-tok',
+            user: { id: 'u1', name: 'A', role: 'ADMIN' },
+          },
+        },
+      });
+      await settle();
+
+      expect(user?.id).toBe('u1');
+      expect(svc.token()).toBe('session-tok');
+      expect(svc.isAuthenticated()).toBe(true);
+    });
+
+    it('leaves the client unauthenticated when enrolment fails', async () => {
+      const svc = TestBed.inject(AuthService);
+      let errored = false;
+      svc.completePasskeyEnrolment('enrol-tok', {}, 'Key').subscribe({
+        error: () => (errored = true),
+      });
+
+      controller.expectOne('CompletePasskeyEnrolment').networkError(new Error('nope'));
       await settle();
 
       expect(errored).toBe(true);

@@ -63,13 +63,17 @@ export class ExpiredCeremonyError extends Error {
 }
 
 /**
- * Raised when deleting a passkey would leave the account with none — i.e.
- * silently demote it to password-only. The caller must ask again with explicit
- * confirmation.
+ * Raised when deleting a passkey would leave the account with none.
+ *
+ * This does NOT demote the account to password-only — the second factor is
+ * mandatory, so the next sign-in withholds the session and demands a fresh
+ * enrolment instead. The confirmation exists because that is still a
+ * consequential state to enter unintentionally: on a browser or device without
+ * WebAuthn the owner cannot complete the enrolment and is locked out.
  */
 export class LastPasskeyError extends Error {
   constructor() {
-    super('Removing this passkey would leave the account with password-only sign-in');
+    super('Removing this passkey would require enrolling a new one at the next sign-in');
     this.name = 'LastPasskeyError';
   }
 }
@@ -257,22 +261,27 @@ export class WebauthnService {
    * Removes one of the user's own passkeys. Returns false when the id does not
    * belong to them, so a caller cannot probe for others' credentials.
    *
-   * Removing the last credential turns the second factor off for the account,
-   * so it is refused unless the caller says so explicitly — otherwise anyone
-   * holding a stolen session token could quietly downgrade the account to
-   * password-only.
+   * Removing the last credential does not turn the second factor off — it
+   * cannot be turned off — but it does put the account into the state where
+   * the next sign-in must enrol a new one. That is refused unless the caller
+   * says so explicitly, because anyone holding a stolen session token could
+   * otherwise strip the owner's credential and be first to enrol against the
+   * resulting empty account.
    */
   async deleteForUser(
     userId: string,
     passkeyId: string,
-    confirmDisableMfa = false
+    confirmRemoveLastPasskey = false
   ): Promise<boolean> {
     const target = await this.prisma.passkey.findFirst({ where: { id: passkeyId, userId } });
     if (!target) {
       return false;
     }
 
-    if (!confirmDisableMfa && (await this.prisma.passkey.count({ where: { userId } })) === 1) {
+    if (
+      !confirmRemoveLastPasskey &&
+      (await this.prisma.passkey.count({ where: { userId } })) === 1
+    ) {
       throw new LastPasskeyError();
     }
 
@@ -290,7 +299,16 @@ export class WebauthnService {
    * expired ticket here is what stops one leaked token from driving unlimited
    * ceremonies for its whole five-minute life.
    */
-  async claimMfaTicket(ticket: MfaTicketClaims): Promise<void> {
+  /**
+   * Register the ticket server-side if this is its first use, and refuse it if
+   * it is spent, expired, over its failure budget, or bound to another user.
+   *
+   * Named `validate`, not `claim`: it deliberately marks nothing. Calling it
+   * twice with the same ticket succeeds twice. Single-use is enforced by
+   * `consumeMfaTicket`, and the number of attempts by `recordMfaFailure`
+   * against `MFA_MAX_FAILURES` — this call is the gate that reads both.
+   */
+  async validateMfaTicket(ticket: MfaTicketClaims): Promise<void> {
     const row = await this.prisma.mfaTicket.upsert({
       where: { id: ticket.jti },
       create: { id: ticket.jti, userId: ticket.userId, expiresAt: ticket.expiresAt },
@@ -308,7 +326,7 @@ export class WebauthnService {
   }
 
   /** Count a failed assertion against the ticket. `MFA_MAX_FAILURES` of these
-   *  and `claimMfaTicket` stops accepting it. */
+   *  and `validateMfaTicket` stops accepting it. */
   async recordMfaFailure(jti: string): Promise<void> {
     await this.prisma.mfaTicket.updateMany({
       where: { id: jti },

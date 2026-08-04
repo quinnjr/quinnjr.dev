@@ -50,20 +50,24 @@ served by `pnpm start`. Build and run the SSR server to exercise those routes �
 | --------------------- | -------------------- | -------------------------------------------------------------------- |
 | `DATABASE_URL`        | yes                  | PostgreSQL connection string used by Prisma                          |
 | `JWT_SECRET`          | yes                  | Signing secret for the HS256 session token                           |
-| `WEBAUTHN_RP_ID`      | yes off `quinnjr.dev` | WebAuthn relying-party ID (default `quinnjr.dev`)                    |
-| `WEBAUTHN_ORIGIN`     | yes off `quinnjr.dev` | Comma-separated origins accepted in a ceremony (default `https://$WEBAUTHN_RP_ID`) |
+| `WEBAUTHN_RP_ID`      | yes, unless served from `quinnjr.dev` | WebAuthn relying-party ID (default `quinnjr.dev`)   |
+| `WEBAUTHN_ORIGIN`     | yes, unless served from `quinnjr.dev` | Comma-separated origins accepted in a ceremony (default `https://$WEBAUTHN_RP_ID`) |
 | `WEBAUTHN_RP_NAME`    | no                   | Display name shown by the authenticator (default `quinnjr.dev`)      |
 | `SEED_ADMIN_EMAIL`    | seeding              | Email for the admin user created by `pnpm prisma:seed`               |
 | `SEED_ADMIN_PASSWORD` | seeding              | Password for that admin user — no default; the seed exits if unset   |
 | `PORT`                | no                   | SSR server port (default `4000`)                                     |
 | `SITE_ORIGIN`         | no                   | Canonical origin emitted in sitemap/robots/llms (default the domain) |
 | `SSR_ALLOWED_HOSTS`   | no                   | Comma-separated hostnames accepted by the SSR host guard             |
+| `SSR_TRUST_PROXY`     | no                   | Reverse-proxy hops, or trusted addresses, in front of the server (default `1`; use `0` when nothing proxies it) |
 | `GITHUB_TOKEN`        | no                   | GitHub API token for `/api/github/*`; unset means the anonymous 60 req/hr limit |
+| `ADMIN_EMAIL`         | e2e                  | Credentials the SSR passkey e2e signs in with (`e2e/ssr/passkey.spec.ts`) |
+| `ADMIN_PASSWORD`      | e2e                  | As above; the spec skips itself when either is unset                 |
+| `AUTH_RATE_LIMIT_OVERRIDES` | e2e            | JSON relaxing the auth rate limits; required by `e2e/ssr/passkey.spec.ts` |
 
 There is no external identity provider. Sign-in starts with the GraphQL `login` mutation, and a
-returned session token is stored in `localStorage` under `auth_token`. For an account with a passkey
-enrolled — the intended state for the admin — `login` returns **no** token and sign-in continues
-through a second factor; see [Passkeys / second factor](#passkeys--second-factor).
+session token — once earned — is stored in `localStorage` under `auth_token`. `login` itself
+**never** returns a session token, for any account: a passkey is mandatory, so sign-in always
+continues through a second step. See [Passkeys / second factor](#passkeys--second-factor).
 
 > **Changing `WEBAUTHN_RP_ID` invalidates every enrolled credential, with no migration path.** A
 > credential created under one relying-party ID cannot be asserted under another, so every existing
@@ -72,27 +76,71 @@ through a second factor; see [Passkeys / second factor](#passkeys--second-factor
 > every ceremony. Both default to the production domain, so any deployment **not** served from
 > `quinnjr.dev` (local SSR, Docker Compose, staging) must set them or no passkey will ever work.
 
+`SSR_TRUST_PROXY` becomes Express's `trust proxy`, which decides what `req.ip` resolves to — and
+`req.ip` is the key of the rate limiter's per-IP bucket, so a wrong value breaks the limiter in one
+of two opposite directions. Too low a count behind a real proxy makes `req.ip` the proxy's own
+address for every visitor, collapsing the whole internet into one shared bucket, so a handful of
+login attempts locks everyone out at once. Too high a count walks past the entries the trusted proxy
+wrote and returns one the **client** wrote, letting a caller mint a fresh bucket per request by
+rotating `X-Forwarded-For` — the forgeable behaviour the setting exists to remove. The value is
+therefore a deployment fact rather than a preference. Where the proxy's address is known, prefer the
+address form — a comma-separated list of IPs, CIDRs, or Express's named subnets `loopback`,
+`linklocal` and `uniquelocal` (for example `SSR_TRUST_PROXY="10.0.0.0/8"`) — because an address list
+cannot be over-counted: a hop is trusted only if it matches, whatever the chain length. The default
+`1` matches DigitalOcean App Platform, which appends exactly one entry.
+
+`AUTH_RATE_LIMIT_OVERRIDES` is JSON keyed by mutation name — for example
+`'{"login":{"ipLimit":1000,"subjectLimit":1000}}'` — and only `ipLimit`, `subjectLimit` and
+`windowMs` are overridable; anything else rejects the whole payload and leaves the shipped limits in
+force. It is honoured **only** when `NODE_ENV` is `development` or `test`. That is an allowlist:
+unset, `production`, `staging` and any other value all refuse it, loudly, and keep the shipped
+limits. It exists so a test suite can sign in more often than the shipped policy allows, and
+`e2e/ssr/passkey.spec.ts` requires it on both the SSR server and the Playwright runner.
+
 ### Passkeys / second factor
 
-Passkeys (WebAuthn) are the second factor for password sign-in. Sign-in is a two-step ceremony:
+A passkey (WebAuthn) is a **mandatory** second factor. `login` never returns a session token; it
+returns one of exactly two short-lived tickets, and which one depends on whether the account
+already has a credential:
 
-1. `login(email:, password:)` returns an `AuthPayload`. If the account has no passkey, `token` and
-   `user` are populated and `mfaRequired` is `false` — that is the whole sign-in. If the account has
-   at least one passkey, `token` and `user` are `null`, `mfaRequired` is `true`, and `mfaToken`
-   carries a short-lived ticket proving the password was correct. The ticket is **not** a session:
-   it authorizes nothing but the second step.
-2. `beginPasskeyAuthentication(mfaToken:)` returns the assertion options, the browser runs the
-   ceremony, and `verifyPasskey(mfaToken:, response:)` returns the real `AuthPayload` with a session
-   `token`.
+1. `login(email:, password:)` returns an `AuthPayload` whose `token` and `user` are **always**
+   `null`. `mfaToken` carries a five-minute ticket proving the password was correct, and one of two
+   flags says what to do with it:
+   - `mfaRequired: true` — the account has at least one passkey. The ticket is scoped `assert`.
+   - `enrolmentRequired: true` — the account has none. The ticket is scoped `enrol`, and the only
+     way to finish signing in is to register a credential now.
+2. **Assertion path** (`mfaRequired`): `beginPasskeyAuthentication(mfaToken:)` returns the assertion
+   options, the browser runs the ceremony, and `verifyPasskey(mfaToken:, response:)` returns the
+   `AuthPayload` carrying the session `token`.
+3. **Enrolment path** (`enrolmentRequired`): `beginPasskeyEnrolment(mfaToken:)` returns creation
+   options, and `completePasskeyEnrolment(mfaToken:, response:, name:)` stores the credential and
+   returns the session `token`. Both are `public` scope by necessity — there is no session yet.
 
-The `mfaToken` is valid for **5 minutes** and is burned after a handful of failed assertions; a
-pending challenge expires on the same 5-minute window. Once either lapses, start again from `login`.
+The two ticket scopes are **not** interchangeable. Both are signed with the same key, so without the
+scope claim a caller holding only the password of a passkey-protected account could present their
+`assert` ticket to `completePasskeyEnrolment`. That alone would not hand them a session today: each
+enrolment resolver also re-checks the database (`loadEnrolmentSubject`) and refuses outright if the
+account already holds a credential, which is true by definition of a passkey-protected account. The
+scope claim is defence in depth — it closes the window where a credential has just been deleted and
+a still-valid `assert` ticket could be spent down the enrolment path.
 
-Enrolment (`beginPasskeyRegistration` → `registerPasskey`) requires an existing session and is
-driven from `/admin/security`. Passkeys are listed by the `passkeys` query, which only ever returns
-the caller's own. Removing the **last** passkey reverts the account to single-factor password
-sign-in, so `deletePasskey` refuses it unless the caller explicitly confirms disabling the second
-factor — otherwise a stolen session token could quietly downgrade the account.
+The `mfaToken` is valid for **5 minutes** and is burned after a handful of failed attempts; a
+pending challenge expires on the same window. Once either lapses, start again from `login`.
+
+Enrolment from an existing session (`beginPasskeyRegistration` → `finishPasskeyRegistration`) is
+driven from `/admin/security` and is how a spare key is added. Passkeys are listed by the `passkeys`
+query, which only ever returns the caller's own.
+
+Removing the **last** passkey does not return the account to password-only sign-in — nothing does.
+It returns the account to the mandatory-enrolment state, so the next sign-in stops and demands a new
+credential. `deletePasskey` therefore refuses to remove the last one unless the caller passes
+`confirmRemoveLastPasskey: true`: the owner may be left unable to sign in at all from a device
+without WebAuthn, and without the gate a stolen session token could strip the real owner's
+credential and enrol the attacker's in its place.
+
+> **The seeded admin has no passkey.** `pnpm prisma:seed` creates the account with a password only,
+> so the very first sign-in goes through the enrolment path above and must be done from a device
+> that can create a passkey.
 
 ## Development
 
@@ -231,6 +279,15 @@ pnpm prisma:seed
 
 # Reset database (WARNING: deletes all data)
 pnpm prisma:reset
+
+# Create an additional user interactively (prompts for email/password/role)
+pnpm user:create
+
+# Print the built GraphQL SDL to schema.graphql
+pnpm schema:print
+
+# Regenerate the typed client operations (runs schema:print first)
+pnpm codegen
 ```
 
 ### Database Migrations

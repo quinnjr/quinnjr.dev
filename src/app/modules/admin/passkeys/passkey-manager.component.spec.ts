@@ -85,7 +85,11 @@ describe('PasskeyManagerComponent', () => {
       // Nothing is dispatched yet — the user has only been asked.
       controller.expectNone('DeletePasskey');
       expect(fixture.componentInstance.pendingRemoval()).not.toBeNull();
-      expect(html()).toContain('password-only sign-in');
+      // The consequence must be stated, and stated correctly: the account is
+      // not returning to password-only, it is being put into a state where the
+      // next sign-in cannot finish without enrolling again.
+      expect(html()).toContain('enrol a new passkey');
+      expect(html()).not.toContain('password-only');
     });
 
     it('sends the explicit confirmation once the user accepts', async () => {
@@ -95,7 +99,7 @@ describe('PasskeyManagerComponent', () => {
 
       fixture.componentInstance.confirmRemove();
       const op = controller.expectOne('DeletePasskey');
-      expect(op.operation.variables['confirmDisableMfa']).toBe(true);
+      expect(op.operation.variables['confirmRemoveLastPasskey']).toBe(true);
       op.flush({ data: { deletePasskey: true } });
       await settle();
 
@@ -124,7 +128,7 @@ describe('PasskeyManagerComponent', () => {
 
     fixture.componentInstance.remove(KEY());
     const op = controller.expectOne('DeletePasskey');
-    expect(op.operation.variables['confirmDisableMfa']).toBe(false);
+    expect(op.operation.variables['confirmRemoveLastPasskey']).toBe(false);
     op.flush({ data: { deletePasskey: true } });
     await settle();
 

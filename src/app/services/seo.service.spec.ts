@@ -3,7 +3,7 @@ import { Meta, Title } from '@angular/platform-browser';
 import { provideRouter } from '@angular/router';
 
 import { SITE } from './seo.config';
-import { SeoService } from './seo.service';
+import { SeoService, serializeJsonLd } from './seo.service';
 
 describe('SeoService', () => {
   let service: SeoService;
@@ -234,6 +234,24 @@ describe('SeoService', () => {
       expect(jsonLd('page')).toEqual({ '@type': 'WebPage', name: 'Second' });
     });
 
+    // A blog post title reaches `setJsonLd('article', ...)` verbatim, so this
+    // is attacker-influenced content rendered into the document head. In the
+    // browser `textContent` is inert, but SSR serializes the element back to
+    // markup and a raw `</script>` there closes the block early — everything
+    // after it is then parsed as HTML. Asserting on the SERIALIZED form is the
+    // point: reading `textContent` back would pass either way.
+    it('escapes markup so a title cannot break out of the script element', () => {
+      const hostile = '</script><img src=x onerror=alert(1)>';
+      service.setJsonLd('article', { '@type': 'Article', headline: hostile });
+
+      const html = document.head.querySelector('script[data-seo-jsonld="article"]')!.outerHTML;
+      expect(html).not.toContain('</script><img');
+      expect(html).toContain('\\u003c');
+      // Still one element, still parseable, and the value survives intact.
+      expect(document.head.querySelectorAll('script[data-seo-jsonld="article"]').length).toBe(1);
+      expect(jsonLd('article')).toEqual({ '@type': 'Article', headline: hostile });
+    });
+
     it('removes a block on request', () => {
       service.setJsonLd('page', { '@type': 'WebPage' });
       service.removeJsonLd('page');
@@ -298,5 +316,72 @@ describe('SeoService', () => {
         ],
       });
     });
+  });
+});
+
+/**
+ * Tested directly as well as through the DOM, because the `outerHTML` test
+ * above only ever exercises the `<` replacement. Three of the five escapes had
+ * no coverage at all, and the ones without it are the hardest to notice
+ * missing: U+2028 in a blog title breaks any consumer that evaluates the block
+ * as JavaScript, and nothing would have caught its removal.
+ *
+ * The round-trip is the real oracle. Asserting only that the output contains
+ * `\\u003c` would pass for an escape that mangled the value; `JSON.parse`
+ * returning the original object proves the escaping is semantics-preserving,
+ * which is the whole reason `\\uXXXX` was chosen over entity-encoding.
+ */
+describe('serializeJsonLd', () => {
+  it.each([
+    ['less-than', '<', '\\u003c'],
+    ['greater-than', '>', '\\u003e'],
+    ['ampersand', '&', '\\u0026'],
+    ['line separator U+2028', '\u2028', '\\u2028'],
+    ['paragraph separator U+2029', '\u2029', '\\u2029'],
+  ])('escapes %s and round-trips', (_label, raw, escaped) => {
+    const value = { headline: `before${raw}after` };
+    const out = serializeJsonLd(value);
+
+    expect(out).toContain(escaped);
+    expect(out).not.toContain(raw);
+    expect(JSON.parse(out)).toEqual(value);
+  });
+
+  it('escapes every occurrence, not just the first', () => {
+    const out = serializeJsonLd({ a: '<<<', b: '&&&' });
+
+    expect(out).not.toContain('<');
+    expect(out).not.toContain('&');
+    expect(JSON.parse(out)).toEqual({ a: '<<<', b: '&&&' });
+  });
+
+  // The replace chain must not reprocess its own output: `\\u003c` contains no
+  // `<`, `>` or `&`, so no later replacement can touch an earlier one. If it
+  // could, the value would silently corrupt rather than fail loudly.
+  it('does not double-escape a value that already looks escaped', () => {
+    const value = { headline: 'literal \\u003c in the text' };
+
+    expect(JSON.parse(serializeJsonLd(value))).toEqual(value);
+  });
+
+  // Previously `JSON.stringify` returned the value `undefined` here and the
+  // block rendered empty. Chaining `.replace` made the same input throw, inside
+  // an SSR render — a 500 on a content page caused by one metadata value.
+  it.each([
+    ['undefined', undefined],
+    ['a function', () => 'x'],
+    ['a symbol', Symbol('x')],
+  ])('degrades to an empty graph rather than throwing on %s', (_label, value) => {
+    expect(() => serializeJsonLd(value)).not.toThrow();
+    expect(serializeJsonLd(value)).toBe('{}');
+  });
+
+  it('degrades to an empty graph rather than throwing on a circular reference', () => {
+    const circular: Record<string, unknown> = { name: 'loop' };
+    circular['self'] = circular;
+    vi.spyOn(console, 'error').mockImplementation(() => undefined);
+
+    expect(() => serializeJsonLd(circular)).not.toThrow();
+    expect(serializeJsonLd(circular)).toBe('{}');
   });
 });

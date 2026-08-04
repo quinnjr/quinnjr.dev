@@ -1,4 +1,4 @@
-import { provideHttpClient, withXhr } from '@angular/common/http';
+import { provideHttpClient } from '@angular/common/http';
 import { TestBed } from '@angular/core/testing';
 import { Router, provideRouter } from '@angular/router';
 import { ApolloTestingModule } from 'apollo-angular/testing';
@@ -13,7 +13,7 @@ describe('SlmLayoutComponent', () => {
       imports: [ApolloTestingModule],
       providers: [
         provideRouter([{ path: '**', component: SlmLayoutComponent }]),
-        provideHttpClient(withXhr()),
+        provideHttpClient(),
       ],
     });
   }
