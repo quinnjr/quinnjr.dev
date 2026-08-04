@@ -1,14 +1,28 @@
-name: Build and Deploy
+name: Build and Publish
 
 # Release-driven: pushing a version tag (e.g. v2.4.0) runs the test suite and
-# builds/pushes the semver-tagged image to GHCR. Cut a release with
+# builds/pushes the semver-tagged, attested image to GHCR. Cut a release with
 # `pnpm release:tag` (creates and pushes the tag from package.json's version).
 #
-# NOTE: this workflow does NOT currently deploy. The `deploy` job below is
-# BROKEN BY DESIGN since ./infra moved to the quinnjr.dev-infra repository —
-# see the comment on that job. Until the infra checkout is restored, production
-# deploys are MANUAL, run by hand from a clone of quinnjr.dev-infra against the
-# image tag this workflow published.
+# This workflow does NOT deploy, by policy rather than by omission. Deploys are
+# run from a trusted workstation against a clone of
+# github.com/quinnjr/quinnjr.dev-infra, so the credentials that can alter
+# production infrastructure — the DigitalOcean token, the Pulumi passphrase and
+# the Spaces state-bucket keys — never have to exist in CI, where any workflow
+# change is a path to them.
+#
+# A `deploy` job used to live here. It broke when ./infra moved out to that
+# repository, and was left failing loudly so it could not be mistaken for a
+# passing deploy; it has now been removed rather than repaired.
+#
+# To deploy the image this workflow publishes:
+#
+#   cd quinnjr.dev-infra
+#   pulumi config set quinnjr-dev:imageTag <version>   # e.g. 2.6.0
+#   pulumi up --stack production
+#
+# The Pulumi project lives at the ROOT of that repository, not under a
+# quinnjr.dev/ subdirectory as an earlier note here claimed.
 on:
   push:
     tags:
@@ -89,8 +103,6 @@ jobs:
     name: Build and Push Docker Image
     needs: test
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.version.outputs.version }}
 
     permissions:
       contents: read
@@ -108,14 +120,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Derive version from tag
-        id: version
+      # Log-only. This used to publish a job output for the `deploy` job to
+      # consume; with deploys moved off CI there is no consumer, so it no
+      # longer writes to $GITHUB_OUTPUT. The image tags come from
+      # docker/metadata-action reading the git ref directly, not from here.
+      - name: Report version being released
         env:
           TAG: ${{ github.ref_name }} # e.g. v2.4.0 (constrained by the trigger filter)
         run: |
-          VERSION="${TAG#v}"
-          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
-          echo "Releasing version: ${VERSION}"
+          echo "Releasing version: ${TAG#v}"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -171,73 +184,3 @@ jobs:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
-
-  deploy:
-    name: Pulumi Deploy (DigitalOcean)
-    needs: build-and-push
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-
-    # BROKEN BY DESIGN, as of the infra consolidation.
-    #
-    # ./infra moved to github.com/quinnjr/quinnjr.dev-infra (private) under
-    # quinnjr.dev/. This job therefore fails at checkout — the directory it
-    # expects is not in this repository any more. That was an accepted trade
-    # when the infra was consolidated, and the failure is left loud rather than
-    # commented out so it is never mistaken for a passing deploy.
-    #
-    # To restore, add a second checkout of the infra repo and repoint this job:
-    #
-    #   - uses: actions/checkout@v4
-    #     with:
-    #       repository: quinnjr/quinnjr.dev-infra
-    #       path: infra
-    #       token: ${{ secrets.INFRA_REPO_TOKEN }}   # PAT; the repo is private
-    #
-    # then set working-directory / work-dir to ./infra/quinnjr.dev.
-    # The default GITHUB_TOKEN cannot read another repository.
-    #
-    # Until then, deploy by hand from a clone of quinnjr.dev-infra:
-    #   cd quinnjr.dev && pulumi config set quinnjr-dev:imageTag <tag> && pulumi up
-    defaults:
-      run:
-        working-directory: ./infra
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-
-      - name: Install infra dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Pulumi up
-        uses: pulumi/actions@v6
-        with:
-          command: up
-          stack-name: production
-          work-dir: ./infra
-          # Self-managed state in a DigitalOcean Spaces (S3-compatible) bucket.
-          cloud-url: s3://quinnjr-pulumi?endpoint=nyc3.digitaloceanspaces.com&region=nyc3&s3ForcePathStyle=true
-          # Deploy the exact semver just built from the release tag.
-          config-map: |
-            { "quinnjr-dev:imageTag": { "value": "${{ needs.build-and-push.outputs.version }}" } }
-        env:
-          # Passphrase secrets provider — decrypts the stack's encrypted config.
-          PULUMI_CONFIG_PASSPHRASE: ${{ secrets.PULUMI_CONFIG_PASSPHRASE }}
-          DIGITALOCEAN_TOKEN: ${{ secrets.DIGITALOCEAN_TOKEN }}
-          # Spaces credentials for the S3 state backend.
-          AWS_ACCESS_KEY_ID: ${{ secrets.SPACES_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.SPACES_SECRET_KEY }}
-          AWS_REGION: nyc3
