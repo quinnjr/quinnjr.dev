@@ -5,6 +5,31 @@ import { Router } from '@angular/router';
 
 import { SITE, absoluteUrl } from './seo.config';
 
+/**
+ * Serialize a JSON-LD payload for embedding in a `<script>` element.
+ *
+ * `JSON.stringify` escapes nothing that matters to an HTML parser, and setting
+ * `textContent` is only safe in a live DOM. Under SSR the element is serialized
+ * back to markup, so a `</script>` sequence anywhere in the data — a blog post
+ * title is attacker-influenced content that reaches here via
+ * `setJsonLd('article', ...)` — closes the script early and everything after it
+ * is parsed as HTML. That is stored XSS in the document head.
+ *
+ * Escaping `<`, `>` and `&` as `\uXXXX` leaves the JSON semantically identical
+ * (a parser resolves the escapes back to the same string) while making it
+ * impossible for any substring to be read as a tag. U+2028/U+2029 are escaped
+ * too: they are valid in JSON strings but terminate a line in JavaScript, so a
+ * consumer that `eval`s the block would see a syntax error.
+ */
+export function serializeJsonLd(data: unknown): string {
+  return JSON.stringify(data)
+    .replace(/</g, '\\u003c')
+    .replace(/>/g, '\\u003e')
+    .replace(/&/g, '\\u0026')
+    .replace(/\u2028/g, '\\u2028')
+    .replace(/\u2029/g, '\\u2029');
+}
+
 export interface SeoMeta {
   /** Page title, without the site suffix — the service appends it. */
   title: string;
@@ -136,7 +161,7 @@ export class SeoService {
       script.setAttribute('data-seo-jsonld', key);
       head.appendChild(script);
     }
-    script.textContent = JSON.stringify(data);
+    script.textContent = serializeJsonLd(data);
   }
 
   removeJsonLd(key: string): void {

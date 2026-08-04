@@ -2,6 +2,7 @@ import type { AuthenticationResponseJSON, RegistrationResponseJSON } from '@simp
 import { GraphQLError } from 'graphql';
 
 import { ExpiredCeremonyError, LastPasskeyError } from '../../services/webauthn.service';
+import type { MfaScope, MfaTicketClaims } from '../auth';
 import { readMfaTicket, signSession } from '../auth';
 import { builder } from '../builder';
 import { requireUser } from '../context';
@@ -37,6 +38,25 @@ function expiredAttempt(): GraphQLError {
  * and raw @simplewebauthn messages leak internals on top. The detail is kept —
  * it just goes to the server log instead of the wire.
  */
+/**
+ * Read a ticket and require it to be of the expected kind.
+ *
+ * The two ticket kinds are minted by the same function and verify under the
+ * same key, so without this an `assert` ticket — issued to an account that
+ * ALREADY has a passkey — could be spent on `completePasskeyEnrolment`
+ * instead. A caller who knew only the password could then answer the
+ * second-factor demand by registering their own authenticator, which defeats
+ * the entire feature. Returns null on any mismatch so the caller answers with
+ * the same expired-attempt string as every other rejection.
+ */
+async function readScopedTicket(
+  token: string,
+  expected: MfaScope
+): Promise<MfaTicketClaims | null> {
+  const ticket = await readMfaTicket(token);
+  return ticket?.scope === expected ? ticket : null;
+}
+
 function asAuthError(error: unknown, context: string): GraphQLError {
   console.error(`[passkey] ${context}:`, error);
   if (error instanceof ExpiredCeremonyError) {
@@ -60,6 +80,111 @@ builder.mutationFields(t => ({
       } catch (error) {
         throw asAuthError(error, 'beginRegistration');
       }
+    },
+  }),
+
+  /**
+   * Enrolment during a first sign-in, before any session exists.
+   *
+   * Public scope by necessity: the account has no passkey, so `login` issued a
+   * ticket instead of a session and this is the only thing identifying the
+   * caller. It is the enrolment twin of `beginPasskeyAuthentication`.
+   */
+  beginPasskeyEnrolment: t.field({
+    type: 'JSON',
+    authScopes: { public: true },
+    args: { mfaToken: t.arg.string({ required: true }) },
+    resolve: async (_root, args, ctx) => {
+      const ticket = await readScopedTicket(args.mfaToken, 'enrol');
+      if (!ticket) {
+        throw expiredAttempt();
+      }
+
+      const user = await ctx.prisma.user.findUnique({ where: { id: ticket.userId } });
+      if (!user) {
+        throw expiredAttempt();
+      }
+
+      // The scope check above is the ticket saying which path it belongs to;
+      // this is the database saying so. A credential could have been enrolled
+      // between minting and spending, and this route must never be a way past
+      // an existing second factor.
+      if (await webauthnService().hasPasskeys(ticket.userId)) {
+        throw expiredAttempt();
+      }
+
+      try {
+        await webauthnService().validateMfaTicket(ticket);
+        return await webauthnService().beginRegistration(user);
+      } catch (error) {
+        throw asAuthError(error, 'beginPasskeyEnrolment');
+      }
+    },
+  }),
+
+  /**
+   * Completes a first-sign-in enrolment and mints the session.
+   *
+   * The ticket is spent only once the credential is stored, so a failed
+   * ceremony leaves the user able to retry rather than locked out mid-flow
+   * with no session and no passkey.
+   */
+  completePasskeyEnrolment: t.field({
+    type: AuthPayload,
+    authScopes: { public: true },
+    args: {
+      mfaToken: t.arg.string({ required: true }),
+      response: t.arg({ type: 'JSON', required: true }),
+      name: t.arg.string({ required: true }),
+    },
+    resolve: async (_root, args, ctx) => {
+      const ticket = await readScopedTicket(args.mfaToken, 'enrol');
+      if (!ticket) {
+        throw expiredAttempt();
+      }
+
+      const user = await ctx.prisma.user.findUnique({ where: { id: ticket.userId } });
+      if (!user) {
+        throw expiredAttempt();
+      }
+
+      // See beginPasskeyEnrolment: enrolment is only ever a first-credential
+      // path. Allowing it against an account that already has one would let a
+      // password alone mint a session by registering a new authenticator.
+      if (await webauthnService().hasPasskeys(ticket.userId)) {
+        throw expiredAttempt();
+      }
+
+      try {
+        await webauthnService().validateMfaTicket(ticket);
+      } catch (error) {
+        throw asAuthError(error, 'validateMfaTicket');
+      }
+
+      try {
+        await webauthnService().finishRegistration(
+          user,
+          args.response as RegistrationResponseJSON,
+          args.name
+        );
+      } catch (error) {
+        await webauthnService().recordMfaFailure(ticket.jti);
+        throw asAuthError(error, 'completePasskeyEnrolment');
+      }
+
+      try {
+        await webauthnService().consumeMfaTicket(ticket.jti);
+      } catch (error) {
+        throw asAuthError(error, 'consumeMfaTicket');
+      }
+
+      return {
+        token: await signSession(user),
+        user,
+        mfaRequired: false,
+        enrolmentRequired: false,
+        mfaToken: null,
+      };
     },
   }),
 
@@ -93,21 +218,28 @@ builder.mutationFields(t => ({
    * Every failure here answers with the same string, including the one raised
    * when the account has no credentials: a garbage token and a valid token for
    * a passkey-less account must be indistinguishable, or this becomes an
-   * enrolment oracle. Claiming the ticket first also stops a third party who
-   * replayed a captured token from restarting — and so destroying — the
-   * victim's in-flight ceremony.
+   * enrolment oracle.
+   *
+   * NOTE: validating the ticket first does NOT stop a replayed token from
+   * restarting the victim's in-flight ceremony. `validateMfaTicket` records and
+   * checks the ticket but marks nothing, so the same token passes as often as
+   * it is presented, and each pass reaches `beginAuthentication` →
+   * `storeChallenge`, which discards the pending challenge. What actually
+   * bounds that abuse is the per-subject rate-limit bucket in `yoga.ts`, keyed
+   * on the mfaToken itself. An earlier version of this comment claimed the
+   * validation call was the defence; it never was.
    */
   beginPasskeyAuthentication: t.field({
     type: 'JSON',
     authScopes: { public: true },
     args: { mfaToken: t.arg.string({ required: true }) },
     resolve: async (_root, args) => {
-      const ticket = await readMfaTicket(args.mfaToken);
+      const ticket = await readScopedTicket(args.mfaToken, 'assert');
       if (!ticket) {
         throw expiredAttempt();
       }
       try {
-        await webauthnService().claimMfaTicket(ticket);
+        await webauthnService().validateMfaTicket(ticket);
         return await webauthnService().beginAuthentication(ticket.userId);
       } catch (error) {
         console.error('[passkey] beginAuthentication:', error);
@@ -132,7 +264,7 @@ builder.mutationFields(t => ({
       response: t.arg({ type: 'JSON', required: true }),
     },
     resolve: async (_root, args, ctx) => {
-      const ticket = await readMfaTicket(args.mfaToken);
+      const ticket = await readScopedTicket(args.mfaToken, 'assert');
       if (!ticket) {
         throw expiredAttempt();
       }
@@ -143,9 +275,9 @@ builder.mutationFields(t => ({
       }
 
       try {
-        await webauthnService().claimMfaTicket(ticket);
+        await webauthnService().validateMfaTicket(ticket);
       } catch (error) {
-        throw asAuthError(error, 'claimMfaTicket');
+        throw asAuthError(error, 'validateMfaTicket');
       }
 
       try {
@@ -167,23 +299,33 @@ builder.mutationFields(t => ({
         throw asAuthError(error, 'consumeMfaTicket');
       }
 
-      return { token: await signSession(user), user, mfaRequired: false, mfaToken: null };
+      return {
+        token: await signSession(user),
+        user,
+        mfaRequired: false,
+        enrolmentRequired: false,
+        mfaToken: null,
+      };
     },
   }),
 
   /**
-   * `confirmDisableMfa` is required to remove the account's last credential,
-   * because doing so reverts it to password-only. Without the gate, anyone
-   * holding a stolen session token could enrol their own authenticator and drop
-   * the victim's, or simply turn the second factor off, in one silent call.
-   * A fresh re-authentication would be the stronger gate; this one at least
-   * makes the downgrade explicit.
+   * `confirmRemoveLastPasskey` is required to remove the account's last
+   * credential. It does not revert the account to password-only — nothing
+   * does — but it does leave the next sign-in unable to complete without a
+   * fresh enrolment, which locks the owner out on any device that cannot do
+   * WebAuthn.
+   *
+   * The gate also blunts a takeover: without it, anyone holding a stolen
+   * session token could enrol their own authenticator and drop the victim's in
+   * two silent calls. A fresh re-authentication would be the stronger gate;
+   * this one at least makes the consequence explicit.
    */
   deletePasskey: t.boolean({
     authScopes: { authenticated: true },
     args: {
       id: t.arg.string({ required: true }),
-      confirmDisableMfa: t.arg.boolean({ required: false }),
+      confirmRemoveLastPasskey: t.arg.boolean({ required: false }),
     },
     resolve: async (_root, args, ctx) => {
       const user = requireUser(ctx);
@@ -192,13 +334,13 @@ builder.mutationFields(t => ({
         removed = await webauthnService().deleteForUser(
           user.id,
           args.id,
-          args.confirmDisableMfa ?? false
+          args.confirmRemoveLastPasskey ?? false
         );
       } catch (error) {
         if (error instanceof LastPasskeyError) {
           throw new GraphQLError(
-            'This is the only passkey on the account. Removing it turns off two-factor sign-in.',
-            { extensions: { code: 'CONFIRM_DISABLE_MFA' } }
+            'This is the only passkey on the account. Removing it means the next sign-in must enrol a new one before it can complete.',
+            { extensions: { code: 'CONFIRM_REMOVE_LAST_PASSKEY' } }
           );
         }
         throw error;

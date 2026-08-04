@@ -20,10 +20,10 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 # Copy remaining source code
 COPY . .
 
-# Generate Prisma Client
-RUN pnpm prisma:generate
-
-# Build the application
+# Build the application. Prisma Client generation is not a separate step here:
+# package.json's `prebuild` script runs `prisma generate`, so an explicit
+# `RUN pnpm prisma:generate` before this generated the identical client twice,
+# in two layers.
 RUN pnpm build
 
 # Production stage

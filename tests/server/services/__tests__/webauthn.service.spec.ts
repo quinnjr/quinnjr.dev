@@ -179,7 +179,7 @@ describe('WebauthnService', () => {
   });
 
   describe('hasPasskeys', () => {
-    it('is false for an account with none, which is what leaves login single-factor', async () => {
+    it('is false for an account with none, which is what makes login demand enrolment', async () => {
       expect(await service.hasPasskeys('u1')).toBe(false);
     });
 
@@ -410,9 +410,12 @@ describe('WebauthnService', () => {
       expect(prisma.passkeys).toHaveLength(1);
     });
 
-    // Removing the last credential turns the second factor off entirely, so it
-    // must not be reachable by a single unconfirmed call — otherwise a stolen
-    // session token quietly downgrades the account to password-only.
+    // Removing the last credential does not downgrade the account to
+    // password-only — the second factor is mandatory, so it returns the account
+    // to the enrol-on-next-sign-in state instead. That is still disruptive
+    // enough to require confirmation: a stolen session token could otherwise
+    // silently strip the owner's credential and force a re-enrolment the
+    // attacker is positioned to complete first.
     it('refuses to remove the last passkey without explicit confirmation', async () => {
       await expect(service.deleteForUser('u1', 'p1')).rejects.toThrow(LastPasskeyError);
       expect(prisma.passkeys).toHaveLength(1);
@@ -438,19 +441,19 @@ describe('WebauthnService', () => {
     });
 
     it('accepts a fresh ticket and creates its row lazily', async () => {
-      await expect(service.claimMfaTicket(ticket())).resolves.toBeUndefined();
+      await expect(service.validateMfaTicket(ticket())).resolves.toBeUndefined();
       expect(prisma.mfaTickets).toHaveLength(1);
     });
 
     it('rejects a ticket that was already spent', async () => {
-      await service.claimMfaTicket(ticket());
+      await service.validateMfaTicket(ticket());
       await service.consumeMfaTicket('t1');
 
-      await expect(service.claimMfaTicket(ticket())).rejects.toThrow(ExpiredCeremonyError);
+      await expect(service.validateMfaTicket(ticket())).rejects.toThrow(ExpiredCeremonyError);
     });
 
     it('lets only one of two racing requests spend the same ticket', async () => {
-      await service.claimMfaTicket(ticket());
+      await service.validateMfaTicket(ticket());
 
       const results = await Promise.allSettled([
         service.consumeMfaTicket('t1'),
@@ -462,17 +465,17 @@ describe('WebauthnService', () => {
     });
 
     it('burns a ticket after repeated failed assertions', async () => {
-      await service.claimMfaTicket(ticket());
+      await service.validateMfaTicket(ticket());
       for (let i = 0; i < 5; i++) {
         await service.recordMfaFailure('t1');
       }
 
-      await expect(service.claimMfaTicket(ticket())).rejects.toThrow(ExpiredCeremonyError);
+      await expect(service.validateMfaTicket(ticket())).rejects.toThrow(ExpiredCeremonyError);
     });
 
     it('rejects an expired ticket', async () => {
       await expect(
-        service.claimMfaTicket({ jti: 't2', userId: 'u1', expiresAt: new Date(Date.now() - 1) })
+        service.validateMfaTicket({ jti: 't2', userId: 'u1', expiresAt: new Date(Date.now() - 1) })
       ).rejects.toThrow(ExpiredCeremonyError);
     });
   });

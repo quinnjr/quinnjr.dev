@@ -7,7 +7,7 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../services/auth.service';
@@ -17,7 +17,7 @@ import { SeoService } from '../../services/seo.service';
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterLink],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
     <div class="tavern-shell flex items-center justify-center px-4 py-16">
@@ -68,6 +68,49 @@ import { SeoService } from '../../services/seo.service';
                 {{ submitting() ? 'Unbarring the door…' : 'Enter' }}
               </button>
             </form>
+          } @else if (stage() === 'enrol') {
+            <div class="mt-8 space-y-5 text-center" data-testid="enrol-stage">
+              <div class="login-sigil mx-auto" aria-hidden="true">
+                <i class="fas fa-fingerprint"></i>
+              </div>
+              <p class="font-body text-muted">
+                The words were right — but this gate takes two seals. Register a passkey now to
+                finish signing in; it will be required from here on.
+              </p>
+              @if (error()) {
+                <p class="login-error" role="alert">
+                  <i class="fas fa-triangle-exclamation" aria-hidden="true"></i>{{ error() }}
+                </p>
+              }
+              @if (passkeySupported()) {
+                <div class="text-left">
+                  <label for="passkeyName" class="field-label">Name this authenticator</label>
+                  <input
+                    id="passkeyName"
+                    name="passkeyName"
+                    class="field-rune"
+                    maxlength="64"
+                    [(ngModel)]="passkeyName"
+                    [ngModelOptions]="{ standalone: true }"
+                    placeholder="YubiKey, iPhone, this laptop…"
+                    [disabled]="submitting()"
+                  />
+                </div>
+                <button
+                  type="button"
+                  class="btn-rpg btn-rpg-primary w-full justify-center"
+                  [disabled]="submitting()"
+                  (click)="onEnrol()"
+                  data-testid="enrol-continue"
+                >
+                  <i class="fas fa-fingerprint" aria-hidden="true"></i>
+                  {{ submitting() ? 'Awaiting your sigil…' : 'Register a passkey' }}
+                </button>
+              }
+              <button type="button" class="link-tavern text-sm" (click)="restart()">
+                Start over
+              </button>
+            </div>
           } @else {
             <div class="mt-8 space-y-5 text-center" data-testid="passkey-stage">
               <div class="login-sigil mx-auto" aria-hidden="true">
@@ -159,9 +202,16 @@ export class LoginComponent implements OnInit, OnDestroy {
 
   readonly submitting = signal(false);
   readonly error = signal<string | null>(null);
-  /** 'password' is the first factor; 'passkey' is shown only once the server
-   *  has confirmed the password AND that an authenticator is enrolled. */
-  readonly stage = signal<'password' | 'passkey'>('password');
+  /**
+   * 'password' is the first factor. The server then decides which second-factor
+   * stage follows: 'passkey' when a credential exists to assert against, or
+   * 'enrol' when the account has none — a passkey is mandatory, so there is no
+   * path from here to the admin area that skips this.
+   */
+  readonly stage = signal<'password' | 'passkey' | 'enrol'>('password');
+
+  /** Label the new credential is stored under. */
+  passkeyName = '';
 
   /** Proof the password step passed. Not a session — see signMfaToken. */
   private mfaToken: string | null = null;
@@ -205,6 +255,21 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.auth.login(email, password).subscribe({
       next: result => {
         this.submitting.set(false);
+        if (result.status === 'enrolmentRequired') {
+          this.mfaToken = result.mfaToken;
+          this.stage.set('enrol');
+          this.passkeySupported.set(this.passkeys.isSupported());
+          if (!this.passkeySupported()) {
+            // Fail closed and say so plainly. A passkey is required, so a
+            // browser that cannot create one cannot complete sign-in at all —
+            // better to state that than to leave a dead button.
+            this.error.set(
+              'This account needs a passkey, and this browser cannot create one. ' +
+                'Sign in from a browser or device that supports passkeys.'
+            );
+          }
+          return;
+        }
         if (result.status === 'passkeyRequired') {
           this.mfaToken = result.mfaToken;
           this.stage.set('passkey');
@@ -231,6 +296,54 @@ export class LoginComponent implements OnInit, OnDestroy {
    *  live credential on a discarded object is not a habit worth keeping. */
   ngOnDestroy(): void {
     this.mfaToken = null;
+  }
+
+  /** Runs the enrolment ceremony and, on success, exchanges the ticket for a
+   *  session. There is deliberately no skip: the second factor is required. */
+  onEnrol(): void {
+    const token = this.mfaToken;
+    if (!token || this.submitting() || !this.passkeySupported()) {
+      return;
+    }
+    this.submitting.set(true);
+    this.error.set(null);
+
+    this.auth.beginPasskeyEnrolment(token).subscribe({
+      next: options => {
+        this.completeEnrolment(token, options).catch(() => {
+          this.submitting.set(false);
+          this.error.set('The passkey could not be registered.');
+        });
+      },
+      error: () => {
+        this.submitting.set(false);
+        this.error.set('This sign-in attempt has expired. Start over.');
+      },
+    });
+  }
+
+  private async completeEnrolment(token: string, options: unknown): Promise<void> {
+    let attestation: unknown;
+    try {
+      attestation = await this.passkeys.register(options);
+    } catch (err: unknown) {
+      this.submitting.set(false);
+      this.error.set(this.passkeys.describeError(err));
+      return;
+    }
+
+    this.auth
+      .completePasskeyEnrolment(token, attestation, this.passkeyName.trim() || 'Passkey')
+      .subscribe({
+        next: () => {
+          this.submitting.set(false);
+          this.router.navigate(['/admin']).catch(() => undefined);
+        },
+        error: () => {
+          this.submitting.set(false);
+          this.error.set('That passkey could not be registered. Try again.');
+        },
+      });
   }
 
   onPasskey(): void {
@@ -262,6 +375,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.stage.set('password');
     this.error.set(null);
     this.submitting.set(false);
+    this.passkeyName = '';
     this.form.patchValue({ password: '' });
   }
 

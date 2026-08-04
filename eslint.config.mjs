@@ -261,6 +261,10 @@ export default tseslint.config(
       '**/generated/**',
       '**/generated.ts',
       '**/.angular/**',
+      // Scratch files written by local tooling. They are not in any tsconfig,
+      // so the typed parser fatals on them and takes `pnpm lint` — and with it
+      // the pre-commit and pre-push hooks — down with it.
+      '**/.remember/**',
     ],
   }
 );

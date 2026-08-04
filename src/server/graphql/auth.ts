@@ -10,6 +10,17 @@ const EXPIRY = '7d';
 const MFA_EXPIRY = '5m';
 const MFA_PURPOSE = 'mfa';
 
+/**
+ * What a ticket is allowed to do.
+ *
+ * These are NOT interchangeable. An `assert` ticket belongs to an account that
+ * already has a passkey and may only be spent on an assertion; an `enrol`
+ * ticket belongs to an account with none. Minting one shape for both let a
+ * caller who knew the password answer an assertion demand by enrolling their
+ * own authenticator instead — bypassing the second factor entirely.
+ */
+export type MfaScope = 'assert' | 'enrol';
+
 if (!key) {
   console.warn('JWT_SECRET is not set — authentication is disabled (all tokens rejected).');
 }
@@ -44,11 +55,11 @@ export function signSession(user: { id: string; role: string }): Promise<string>
  * token: without it the same string would drive unlimited passkey attempts for
  * its full lifetime, so a leaked one would be a five-minute assertion oracle.
  */
-export function signMfaToken(user: { id: string }): Promise<string> {
+export function signMfaToken(user: { id: string }, scope: MfaScope): Promise<string> {
   if (!key) {
     throw new Error('JWT_SECRET is not configured');
   }
-  return new SignJWT({ purpose: MFA_PURPOSE })
+  return new SignJWT({ purpose: MFA_PURPOSE, scope })
     .setProtectedHeader({ alg: 'HS256' })
     .setJti(randomUUID())
     .setSubject(user.id)
@@ -61,6 +72,8 @@ export function signMfaToken(user: { id: string }): Promise<string> {
 export interface MfaTicketClaims {
   userId: string;
   jti: string;
+  /** What this ticket may be spent on. Enforced by the resolvers. */
+  scope: MfaScope;
   expiresAt: Date;
 }
 
@@ -77,10 +90,22 @@ export async function readMfaTicket(token: string): Promise<MfaTicketClaims | nu
   }
   try {
     const { payload } = await jwtVerify(token, key, { algorithms: ['HS256'] });
+    const { scope } = payload;
     if (payload['purpose'] !== MFA_PURPOSE || !payload.sub || !payload.jti || !payload.exp) {
       return null;
     }
-    return { userId: payload.sub, jti: payload.jti, expiresAt: new Date(payload.exp * 1000) };
+    // A ticket with no scope predates this field, or was minted by something
+    // that does not know about it. Either way it cannot be trusted to be the
+    // kind the caller is about to spend it as.
+    if (scope !== 'assert' && scope !== 'enrol') {
+      return null;
+    }
+    return {
+      userId: payload.sub,
+      jti: payload.jti,
+      scope,
+      expiresAt: new Date(payload.exp * 1000),
+    };
   } catch {
     return null;
   }

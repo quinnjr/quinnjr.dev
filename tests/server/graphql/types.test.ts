@@ -4,7 +4,10 @@ import { builder } from '../../../src/server/graphql/builder';
 import '../../../src/server/graphql/types';
 
 describe('object types', () => {
-  it('builds a schema exposing the CMS types and gated fields', () => {
+  // Named for what it asserts: every type and field is present in the built
+  // SDL. It does NOT inspect authScopes or nullability on any of them, so it
+  // is not evidence that the gated fields are gated.
+  it('builds a schema exposing the CMS types', () => {
     // Minimal query referencing the types so they are retained in the SDL.
     builder.queryType({
       fields: t => ({

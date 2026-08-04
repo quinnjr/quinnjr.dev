@@ -234,6 +234,24 @@ describe('SeoService', () => {
       expect(jsonLd('page')).toEqual({ '@type': 'WebPage', name: 'Second' });
     });
 
+    // A blog post title reaches `setJsonLd('article', ...)` verbatim, so this
+    // is attacker-influenced content rendered into the document head. In the
+    // browser `textContent` is inert, but SSR serializes the element back to
+    // markup and a raw `</script>` there closes the block early — everything
+    // after it is then parsed as HTML. Asserting on the SERIALIZED form is the
+    // point: reading `textContent` back would pass either way.
+    it('escapes markup so a title cannot break out of the script element', () => {
+      const hostile = '</script><img src=x onerror=alert(1)>';
+      service.setJsonLd('article', { '@type': 'Article', headline: hostile });
+
+      const html = document.head.querySelector('script[data-seo-jsonld="article"]')!.outerHTML;
+      expect(html).not.toContain('</script><img');
+      expect(html).toContain('\\u003c');
+      // Still one element, still parseable, and the value survives intact.
+      expect(document.head.querySelectorAll('script[data-seo-jsonld="article"]').length).toBe(1);
+      expect(jsonLd('article')).toEqual({ '@type': 'Article', headline: hostile });
+    });
+
     it('removes a block on request', () => {
       service.setJsonLd('page', { '@type': 'WebPage' });
       service.removeJsonLd('page');
