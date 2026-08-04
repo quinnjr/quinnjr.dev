@@ -1,4 +1,5 @@
 import { type ComponentFixture, TestBed } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 import { ApolloTestingController, ApolloTestingModule } from 'apollo-angular/testing';
 
 import { ArticlesComponent } from './articles.component';
@@ -11,6 +12,10 @@ describe('ArticlesComponent', () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [ArticlesComponent, ApolloTestingModule],
+      // The list rows carry `routerLink`. Under zoneless change detection
+      // `whenStable()` waits for the scheduled refresh, so those rows really do
+      // render once the query flushes — and `RouterLink` then needs a router.
+      providers: [provideRouter([])],
     }).compileComponents();
 
     controller = TestBed.inject(ApolloTestingController);

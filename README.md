@@ -50,20 +50,23 @@ served by `pnpm start`. Build and run the SSR server to exercise those routes �
 | --------------------- | -------------------- | -------------------------------------------------------------------- |
 | `DATABASE_URL`        | yes                  | PostgreSQL connection string used by Prisma                          |
 | `JWT_SECRET`          | yes                  | Signing secret for the HS256 session token                           |
-| `WEBAUTHN_RP_ID`      | yes off `quinnjr.dev` | WebAuthn relying-party ID (default `quinnjr.dev`)                    |
-| `WEBAUTHN_ORIGIN`     | yes off `quinnjr.dev` | Comma-separated origins accepted in a ceremony (default `https://$WEBAUTHN_RP_ID`) |
+| `WEBAUTHN_RP_ID`      | yes, unless served from `quinnjr.dev` | WebAuthn relying-party ID (default `quinnjr.dev`)   |
+| `WEBAUTHN_ORIGIN`     | yes, unless served from `quinnjr.dev` | Comma-separated origins accepted in a ceremony (default `https://$WEBAUTHN_RP_ID`) |
 | `WEBAUTHN_RP_NAME`    | no                   | Display name shown by the authenticator (default `quinnjr.dev`)      |
 | `SEED_ADMIN_EMAIL`    | seeding              | Email for the admin user created by `pnpm prisma:seed`               |
 | `SEED_ADMIN_PASSWORD` | seeding              | Password for that admin user — no default; the seed exits if unset   |
 | `PORT`                | no                   | SSR server port (default `4000`)                                     |
 | `SITE_ORIGIN`         | no                   | Canonical origin emitted in sitemap/robots/llms (default the domain) |
 | `SSR_ALLOWED_HOSTS`   | no                   | Comma-separated hostnames accepted by the SSR host guard             |
+| `SSR_TRUST_PROXY`     | no                   | Reverse-proxy hops in front of the server (default `1`). Sets Express `trust proxy`, which is what makes `req.ip` — and so the rate limiter's per-IP bucket — reflect the real caller rather than a forgeable `X-Forwarded-For` entry. Use `0` when nothing proxies the process |
 | `GITHUB_TOKEN`        | no                   | GitHub API token for `/api/github/*`; unset means the anonymous 60 req/hr limit |
+| `ADMIN_EMAIL`         | e2e                  | Credentials the SSR passkey e2e signs in with (`e2e/ssr/passkey.spec.ts`) |
+| `ADMIN_PASSWORD`      | e2e                  | As above; the spec skips itself when either is unset                 |
 
 There is no external identity provider. Sign-in starts with the GraphQL `login` mutation, and a
-returned session token is stored in `localStorage` under `auth_token`. For an account with a passkey
-enrolled — the intended state for the admin — `login` returns **no** token and sign-in continues
-through a second factor; see [Passkeys / second factor](#passkeys--second-factor).
+session token — once earned — is stored in `localStorage` under `auth_token`. `login` itself
+**never** returns a session token, for any account: a passkey is mandatory, so sign-in always
+continues through a second step. See [Passkeys / second factor](#passkeys--second-factor).
 
 > **Changing `WEBAUTHN_RP_ID` invalidates every enrolled credential, with no migration path.** A
 > credential created under one relying-party ID cannot be asserted under another, so every existing
@@ -74,25 +77,46 @@ through a second factor; see [Passkeys / second factor](#passkeys--second-factor
 
 ### Passkeys / second factor
 
-Passkeys (WebAuthn) are the second factor for password sign-in. Sign-in is a two-step ceremony:
+A passkey (WebAuthn) is a **mandatory** second factor. `login` never returns a session token; it
+returns one of exactly two short-lived tickets, and which one depends on whether the account
+already has a credential:
 
-1. `login(email:, password:)` returns an `AuthPayload`. If the account has no passkey, `token` and
-   `user` are populated and `mfaRequired` is `false` — that is the whole sign-in. If the account has
-   at least one passkey, `token` and `user` are `null`, `mfaRequired` is `true`, and `mfaToken`
-   carries a short-lived ticket proving the password was correct. The ticket is **not** a session:
-   it authorizes nothing but the second step.
-2. `beginPasskeyAuthentication(mfaToken:)` returns the assertion options, the browser runs the
-   ceremony, and `verifyPasskey(mfaToken:, response:)` returns the real `AuthPayload` with a session
-   `token`.
+1. `login(email:, password:)` returns an `AuthPayload` whose `token` and `user` are **always**
+   `null`. `mfaToken` carries a five-minute ticket proving the password was correct, and one of two
+   flags says what to do with it:
+   - `mfaRequired: true` — the account has at least one passkey. The ticket is scoped `assert`.
+   - `enrolmentRequired: true` — the account has none. The ticket is scoped `enrol`, and the only
+     way to finish signing in is to register a credential now.
+2. **Assertion path** (`mfaRequired`): `beginPasskeyAuthentication(mfaToken:)` returns the assertion
+   options, the browser runs the ceremony, and `verifyPasskey(mfaToken:, response:)` returns the
+   `AuthPayload` carrying the session `token`.
+3. **Enrolment path** (`enrolmentRequired`): `beginPasskeyEnrolment(mfaToken:)` returns creation
+   options, and `completePasskeyEnrolment(mfaToken:, response:, name:)` stores the credential and
+   returns the session `token`. Both are `public` scope by necessity — there is no session yet.
 
-The `mfaToken` is valid for **5 minutes** and is burned after a handful of failed assertions; a
-pending challenge expires on the same 5-minute window. Once either lapses, start again from `login`.
+The two ticket scopes are **not** interchangeable, and this is load-bearing rather than cosmetic:
+both are signed with the same key, so without the scope claim a caller who knew only the password of
+a passkey-protected account could spend their `assert` ticket on `completePasskeyEnrolment`,
+register their own authenticator, and be handed a session. Each enrolment resolver additionally
+re-checks the database and refuses if the account already holds a credential.
 
-Enrolment (`beginPasskeyRegistration` → `registerPasskey`) requires an existing session and is
-driven from `/admin/security`. Passkeys are listed by the `passkeys` query, which only ever returns
-the caller's own. Removing the **last** passkey reverts the account to single-factor password
-sign-in, so `deletePasskey` refuses it unless the caller explicitly confirms disabling the second
-factor — otherwise a stolen session token could quietly downgrade the account.
+The `mfaToken` is valid for **5 minutes** and is burned after a handful of failed attempts; a
+pending challenge expires on the same window. Once either lapses, start again from `login`.
+
+Enrolment from an existing session (`beginPasskeyRegistration` → `finishPasskeyRegistration`) is
+driven from `/admin/security` and is how a spare key is added. Passkeys are listed by the `passkeys`
+query, which only ever returns the caller's own.
+
+Removing the **last** passkey does not return the account to password-only sign-in — nothing does.
+It returns the account to the mandatory-enrolment state, so the next sign-in stops and demands a new
+credential. `deletePasskey` therefore refuses to remove the last one unless the caller passes
+`confirmRemoveLastPasskey: true`: the owner may be left unable to sign in at all from a device
+without WebAuthn, and without the gate a stolen session token could strip the real owner's
+credential and enrol the attacker's in its place.
+
+> **The seeded admin has no passkey.** `pnpm prisma:seed` creates the account with a password only,
+> so the very first sign-in goes through the enrolment path above and must be done from a device
+> that can create a passkey.
 
 ## Development
 
@@ -231,6 +255,15 @@ pnpm prisma:seed
 
 # Reset database (WARNING: deletes all data)
 pnpm prisma:reset
+
+# Create an additional user interactively (prompts for email/password/role)
+pnpm user:create
+
+# Print the built GraphQL SDL to schema.graphql
+pnpm schema:print
+
+# Regenerate the typed client operations (runs schema:print first)
+pnpm codegen
 ```
 
 ### Database Migrations

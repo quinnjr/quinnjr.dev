@@ -3,7 +3,7 @@ import 'reflect-metadata';
 import { container } from 'tsyringe';
 import { describe, it, expect, vi, afterEach } from 'vitest';
 
-import { verifyMfaToken, verifySession } from '../../../src/server/graphql/auth';
+import { readMfaTicket, verifyMfaToken, verifySession } from '../../../src/server/graphql/auth';
 import { DatabaseService } from '../../../src/server/services/database.service';
 import { PasswordService } from '../../../src/server/services/password.service';
 
@@ -53,24 +53,37 @@ function register(opts: { verify?: boolean } = {}) {
 }
 
 describe('login mutation', () => {
-  it('returns a token + user when the account has no passkey enrolled', async () => {
+  // A second factor is mandatory, so an account with no passkey does not get a
+  // session either — it gets a ticket to enrol with. Withholding it here is
+  // what makes the requirement real: a UI-only prompt would be skippable by
+  // any client that simply kept the token.
+  it('withholds the session and demands enrolment when no passkey exists', async () => {
     register({ verify: true });
     const { schema } = await import('../../../src/server/graphql/schema');
     const result = await graphql({
       schema,
       source:
-        'mutation { login(email:"a@b.com", password:"pw") { token mfaRequired user { id } } }',
+        'mutation { login(email:"a@b.com", password:"pw") { token user { id } mfaRequired enrolmentRequired mfaToken } }',
       contextValue: ctx({ id: 'u1', role: 'ADMIN', passkeys: 0 }),
     });
     expect(result.errors).toBeUndefined();
     const data = result.data?.['login'] as {
-      token: string;
+      token: string | null;
+      user: unknown;
       mfaRequired: boolean;
-      user: { id: string };
+      enrolmentRequired: boolean;
+      mfaToken: string;
     };
-    expect(typeof data.token).toBe('string');
+    expect(data.token).toBeNull();
+    expect(data.user).toBeNull();
     expect(data.mfaRequired).toBe(false);
-    expect(data.user.id).toBe('u1');
+    expect(data.enrolmentRequired).toBe(true);
+    // The scope is the load-bearing half of the ticket, not the flags: an
+    // `assert` ticket issued here would be spendable on `verifyPasskey` against
+    // an account with no credential. Asserting only the booleans left
+    // `signMfaToken(user, 'enrol')` free to become `'assert'` with no test
+    // failing anywhere in the suite.
+    expect((await readMfaTicket(data.mfaToken))?.scope).toBe('enrol');
   });
 
   it('withholds the session and demands a passkey once one is enrolled', async () => {
@@ -79,7 +92,7 @@ describe('login mutation', () => {
     const result = await graphql({
       schema,
       source:
-        'mutation { login(email:"a@b.com", password:"pw") { token user { id } mfaRequired mfaToken } }',
+        'mutation { login(email:"a@b.com", password:"pw") { token user { id } mfaRequired enrolmentRequired mfaToken } }',
       contextValue: ctx({ id: 'u1', role: 'ADMIN', passkeys: 1 }),
     });
     expect(result.errors).toBeUndefined();
@@ -87,13 +100,18 @@ describe('login mutation', () => {
       token: string | null;
       user: unknown;
       mfaRequired: boolean;
+      enrolmentRequired: boolean;
       mfaToken: string;
     };
     // A correct password alone must not yield a session.
     expect(data.token).toBeNull();
     expect(data.user).toBeNull();
     expect(data.mfaRequired).toBe(true);
-    expect(typeof data.mfaToken).toBe('string');
+    expect(data.enrolmentRequired).toBe(false);
+    // See the enrolment case above: the scope is what stops this ticket being
+    // spent on enrolling a fresh authenticator instead of asserting the
+    // existing one, which is the bypass the scoping scheme exists to close.
+    expect((await readMfaTicket(data.mfaToken))?.scope).toBe('assert');
   });
 
   it('issues an mfaToken that identifies the user but is not a session', async () => {
@@ -124,15 +142,32 @@ describe('login mutation', () => {
     expect(result.errors?.[0]?.message).toBe('Invalid email or password');
   });
 
-  it('rejects unknown email with the same generic error', async () => {
-    register({ verify: false });
+  // Run in ONE test and compared to each other rather than each to its own
+  // literal. Split across two tests, both would keep passing if the two paths
+  // drifted apart in wording — and the wording being identical IS the property:
+  // a caller who can tell "no such account" from "wrong password" can enumerate
+  // registered emails.
+  it('answers an unknown email and a wrong password identically', async () => {
     const { schema } = await import('../../../src/server/graphql/schema');
-    const result = await graphql({
+
+    register({ verify: false });
+    const wrongPassword = await graphql({
+      schema,
+      source: 'mutation { login(email:"a@b.com", password:"bad") { token } }',
+      contextValue: ctx({ id: 'u1', role: 'ADMIN' }),
+    });
+
+    container.reset();
+    register({ verify: false });
+    const unknownEmail = await graphql({
       schema,
       source: 'mutation { login(email:"nope@b.com", password:"x") { token } }',
       contextValue: ctx(null),
     });
-    expect(result.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
+
+    expect(unknownEmail.errors?.[0]?.extensions?.['code']).toBe('UNAUTHENTICATED');
+    expect(unknownEmail.errors?.[0]?.extensions).toEqual(wrongPassword.errors?.[0]?.extensions);
+    expect(unknownEmail.errors?.[0]?.message).toBe(wrongPassword.errors?.[0]?.message);
   });
 
   // The `passwordHash` column was backfilled with `''` for pre-existing rows

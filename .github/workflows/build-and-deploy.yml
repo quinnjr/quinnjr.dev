@@ -123,6 +123,7 @@ jobs:
             type=raw,value=latest
 
       - name: Build and push Docker image
+        id: build
         uses: docker/build-push-action@v5
         with:
           context: .
@@ -133,12 +134,18 @@ jobs:
           cache-to: type=gha,mode=max
           platforms: linux/amd64,linux/arm64
 
+      # The digest is an output of the BUILD step, not of docker/metadata-action
+      # (which exposes only tags/labels/version/json/bake-file/annotations).
+      # This read `steps.meta.outputs.digest`, which resolves to the empty
+      # string — the action then errored and `continue-on-error` swallowed it,
+      # so every release shipped with no provenance while the workflow stayed
+      # green. `continue-on-error` is dropped along with the fix: a silent
+      # no-op was the only thing it was protecting.
       - name: Generate artifact attestation
         uses: actions/attest-build-provenance@v1
-        continue-on-error: true # Don't block deployment if attestation fails
         with:
           subject-name: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          subject-digest: ${{ steps.meta.outputs.digest }}
+          subject-digest: ${{ steps.build.outputs.digest }}
           push-to-registry: true
 
   deploy:

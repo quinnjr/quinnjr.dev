@@ -93,8 +93,9 @@ model User {
 }
 
 /// A registered WebAuthn credential, used as the second factor after a
-/// successful password check. A user with zero passkeys signs in with the
-/// password alone; enrolling the first one turns the second factor on.
+/// successful password check. The second factor is mandatory: a user with zero
+/// passkeys is not signed in with the password alone, but must enrol one before
+/// any session is issued.
 model Passkey {
   id              String          @id @default(uuid())
   userId          String

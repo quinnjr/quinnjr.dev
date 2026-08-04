@@ -1,7 +1,10 @@
 // src/server/graphql/resolvers/auth.mutations.ts
 import { GraphQLError } from 'graphql';
 
-import { signMfaToken, signSession } from '../auth';
+// Note the absence of `signSession`: this resolver can no longer mint a
+// session at all. Every path out of it is a ticket, which is what makes the
+// second factor structural rather than a policy the code could forget.
+import { signMfaToken } from '../auth';
 import { builder } from '../builder';
 import { AuthPayload } from '../types';
 
@@ -44,19 +47,30 @@ builder.mutationFields(t => ({
           extensions: { code: 'UNAUTHENTICATED' },
         });
       }
-      // Passkeys are a second factor, not an alternative: once one is
-      // enrolled, the password alone stops being sufficient. No session token
-      // is issued here — only proof that the first factor passed.
+      // A second factor is mandatory, so the password alone never yields a
+      // session — it only ever produces a ticket. Which ticket depends on
+      // whether there is a credential to assert against yet.
+      //
+      // Enforcing this server-side is the whole point: the client could
+      // otherwise skip an enrolment prompt and keep using the token, which is
+      // what makes a UI-only requirement cosmetic.
       if (user._count.passkeys > 0) {
         return {
           token: null,
           user: null,
           mfaRequired: true,
-          mfaToken: await signMfaToken(user),
+          enrolmentRequired: false,
+          mfaToken: await signMfaToken(user, 'assert'),
         };
       }
 
-      return { token: await signSession(user), user, mfaRequired: false, mfaToken: null };
+      return {
+        token: null,
+        user: null,
+        mfaRequired: false,
+        enrolmentRequired: true,
+        mfaToken: await signMfaToken(user, 'enrol'),
+      };
     },
   }),
 }));

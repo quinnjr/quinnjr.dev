@@ -9,6 +9,7 @@ const LOGIN = gql`
     login(email: $email, password: $password) {
       token
       mfaRequired
+      enrolmentRequired
       mfaToken
       user {
         id
@@ -22,6 +23,25 @@ const LOGIN = gql`
 const VERIFY_PASSKEY = gql`
   mutation VerifyPasskey($mfaToken: String!, $response: JSON!) {
     verifyPasskey(mfaToken: $mfaToken, response: $response) {
+      token
+      user {
+        id
+        name
+        role
+      }
+    }
+  }
+`;
+
+const BEGIN_PASSKEY_ENROLMENT = gql`
+  mutation BeginPasskeyEnrolment($mfaToken: String!) {
+    beginPasskeyEnrolment(mfaToken: $mfaToken)
+  }
+`;
+
+const COMPLETE_PASSKEY_ENROLMENT = gql`
+  mutation CompletePasskeyEnrolment($mfaToken: String!, $response: JSON!, $name: String!) {
+    completePasskeyEnrolment(mfaToken: $mfaToken, response: $response, name: $name) {
       token
       user {
         id
@@ -51,6 +71,7 @@ interface LoginPayload {
   token: string | null;
   user: LoginUser | null;
   mfaRequired: boolean;
+  enrolmentRequired: boolean;
   mfaToken: string | null;
 }
 
@@ -65,7 +86,10 @@ interface LoginResponse {
  */
 export type LoginResult =
   | { status: 'complete'; user: LoginUser }
-  | { status: 'passkeyRequired'; mfaToken: string };
+  | { status: 'passkeyRequired'; mfaToken: string }
+  /** Password correct, but the account has no passkey and one is mandatory.
+   *  No session exists yet — the ticket is only good for enrolling. */
+  | { status: 'enrolmentRequired'; mfaToken: string };
 
 interface JwtClaims {
   exp?: number;
@@ -108,11 +132,14 @@ export class AuthService {
           if (!payload) {
             throw new Error(LOGIN_FAILED);
           }
-          if (payload.mfaRequired) {
+          if (payload.mfaRequired || payload.enrolmentRequired) {
             if (!payload.mfaToken) {
               throw new Error(LOGIN_FAILED);
             }
-            return { status: 'passkeyRequired', mfaToken: payload.mfaToken } as const;
+            return {
+              status: payload.enrolmentRequired ? 'enrolmentRequired' : 'passkeyRequired',
+              mfaToken: payload.mfaToken,
+            } as const;
           }
           if (!payload.token || !payload.user) {
             throw new Error(LOGIN_FAILED);
@@ -153,6 +180,51 @@ export class AuthService {
           const payload = res.data?.verifyPasskey;
           if (!payload?.token) {
             throw new Error('Passkey verification failed');
+          }
+          this.establishSession(payload.token, payload.user);
+          return payload.user;
+        })
+      );
+  }
+
+  /** Fetches the creation options for a first-sign-in enrolment. */
+  beginPasskeyEnrolment(mfaToken: string): Observable<unknown> {
+    return this.apollo
+      .mutate<{ beginPasskeyEnrolment: unknown }>({
+        mutation: BEGIN_PASSKEY_ENROLMENT,
+        variables: { mfaToken },
+      })
+      .pipe(
+        map(res => {
+          const options = res.data?.beginPasskeyEnrolment;
+          if (!options) {
+            throw new Error('Could not start passkey enrolment');
+          }
+          return options;
+        })
+      );
+  }
+
+  /**
+   * Completes a first-sign-in enrolment. The account had no passkey, so this
+   * is the only thing that turns the password step into a session — the server
+   * withholds one until a credential exists.
+   */
+  completePasskeyEnrolment(
+    mfaToken: string,
+    response: unknown,
+    name: string
+  ): Observable<LoginUser> {
+    return this.apollo
+      .mutate<{ completePasskeyEnrolment: { token: string; user: LoginUser } }>({
+        mutation: COMPLETE_PASSKEY_ENROLMENT,
+        variables: { mfaToken, response, name },
+      })
+      .pipe(
+        map(res => {
+          const payload = res.data?.completePasskeyEnrolment;
+          if (!payload?.token) {
+            throw new Error('Passkey enrolment failed');
           }
           this.establishSession(payload.token, payload.user);
           return payload.user;

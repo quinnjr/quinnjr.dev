@@ -120,6 +120,12 @@ export interface AuthPayloadShape {
   token: string | null;
   user: User | null;
   mfaRequired: boolean;
+  /**
+   * True when the password was correct but the account has no passkey yet.
+   * A second factor is mandatory, so no session is issued: the caller must
+   * complete enrolment with the accompanying ticket first.
+   */
+  enrolmentRequired: boolean;
   mfaToken: string | null;
 }
 
@@ -128,6 +134,7 @@ export const AuthPayload = builder.objectRef<AuthPayloadShape>('AuthPayload').im
     token: t.exposeString('token', { nullable: true }),
     user: t.field({ type: UserType, nullable: true, resolve: p => p.user }),
     mfaRequired: t.exposeBoolean('mfaRequired'),
+    enrolmentRequired: t.exposeBoolean('enrolmentRequired'),
     mfaToken: t.exposeString('mfaToken', { nullable: true }),
   }),
 });
