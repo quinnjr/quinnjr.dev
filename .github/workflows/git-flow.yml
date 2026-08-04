@@ -1,0 +1,72 @@
+name: Git Flow
+
+# Enforces the branching model in .cursor/rules/git-flow-workflow.mdc.
+#
+# That document has said "NEVER merge feature/bugfix directly to main" since it
+# was written, and nothing checked it. Documentation is not a control: in one
+# afternoon this repository saw a release tagged off `develop`, a superseded
+# branch closed by hand to avoid a conflict, and several commits pushed straight
+# to `develop` — every one of them against the written rules, none of them
+# blocked. This job is the part that actually says no.
+#
+# Runs on the PR's base/head pair only, so it costs seconds and cannot be
+# skipped by a green test suite.
+
+on:
+  pull_request:
+    types: [opened, reopened, edited, synchronize]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-branch-pair:
+    name: Validate branch pair
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check base and head follow git-flow
+        env:
+          HEAD_REF: ${{ github.head_ref }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          set -euo pipefail
+          echo "head: $HEAD_REF"
+          echo "base: $BASE_REF"
+          echo
+
+          fail() {
+            echo "::error::$1"
+            echo
+            echo "git-flow (see .cursor/rules/git-flow-workflow.mdc):"
+            echo "  feature/*, bugfix/*  ->  develop"
+            echo "  release/*, hotfix/*  ->  main, then back-merge to develop"
+            exit 1
+          }
+
+          case "$HEAD_REF" in
+            feature/*|bugfix/*)
+              # Integration work is only ever allowed into develop. Letting one
+              # of these reach main is how an unreleased change ships.
+              [ "$BASE_REF" = "develop" ] || \
+                fail "$HEAD_REF must target develop, not $BASE_REF."
+              ;;
+            release/*|hotfix/*)
+              # These target main to be released, then are back-merged to
+              # develop so the fix is not lost on the next release.
+              case "$BASE_REF" in
+                main|develop) ;;
+                *) fail "$HEAD_REF must target main (or develop for the back-merge), not $BASE_REF." ;;
+              esac
+              ;;
+            develop)
+              # develop -> main outside a release branch skips the version bump
+              # and the tag, which is how `main` silently drifts from its tags.
+              fail "develop must not be merged directly into $BASE_REF. Cut a release/* branch."
+              ;;
+            *)
+              fail "Branch '$HEAD_REF' does not follow git-flow naming (feature/, bugfix/, release/, hotfix/)."
+              ;;
+          esac
+
+          echo "OK: $HEAD_REF -> $BASE_REF is a valid git-flow pair."

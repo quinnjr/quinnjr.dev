@@ -99,20 +99,22 @@ git checkout -b release/v2.1.0
 npm version 2.1.0
 git commit -am "release: prepare v2.1.0"
 
-# 3. Create PR to main
+# 3. Create PR to main, and merge it as a MERGE COMMIT (not squash/rebase) —
+#    create-version-tag.mjs looks for that merge commit before it will tag.
 git push origin release/v2.1.0
 gh pr create --base main --head release/v2.1.0
+gh pr merge <PR#> --merge
 
-# 4. After merge to main, also merge back to develop
-git checkout develop
-git merge release/v2.1.0
-git push origin develop
+# 4. Back-merge to develop. This is a pull request too: direct pushes to
+#    develop are blocked by both the pre-push hook and the branch ruleset.
+gh pr create --base develop --head release/v2.1.0
+gh pr merge <PR#> --merge
 
-# 5. Tag the release on main
+# 5. Tag the release FROM main. `pnpm release:tag` refuses to tag a commit that
+#    origin/main does not contain, so this cannot be run from develop.
 git checkout main
 git pull origin main
-git tag -a v2.1.0 -m "Release v2.1.0"
-git push origin v2.1.0
+pnpm release:tag
 ```
 
 ### Emergency Hotfix
@@ -133,12 +135,53 @@ gh pr create --base main --head hotfix/critical-security-fix
 gh pr create --base develop --head hotfix/critical-security-fix
 ```
 
-## Pre-Push Hook Protection
+## What Actually Enforces This
 
-The `.husky/pre-push` hook automatically prevents:
-- Direct pushes to `main`
-- Direct pushes to `develop`
-- Invalid branch names (must match git-flow convention)
+Three layers, so the rule holds even when someone (or something) is moving fast.
+Until recently only the last of these existed, and the other two were assumed —
+which is how a release got tagged off `develop` and several commits landed on
+`develop` without review, both against this document.
+
+**1. `.husky/pre-push` (local, immediate)**
+
+- Refuses a direct push to `main`, `master` or `develop`
+- Refuses a branch name that is not `feature/`, `bugfix/`, `hotfix/` or `release/`
+
+`develop` was exempt from the first check until it was pointed out that this
+document already called it protected. A back-merge is a pull request like
+anything else.
+
+**2. Branch rulesets (server-side, cannot be bypassed with `--no-verify`)**
+
+Both `main` and `develop` carry `pull_request`, `non_fast_forward` and
+`deletion` rules.
+
+`required_linear_history` was deliberately REMOVED from both. It is
+incompatible with this model: git-flow's release and hotfix merges are
+`--no-ff` merge commits, and so is the back-merge into `develop`. With linear
+history enforced, `gh pr merge --merge` is rejected outright and step 4 of
+"Creating a Release" below cannot be performed at all. If you re-enable it, this
+workflow stops working — pick one.
+
+**3. `.github/workflows/git-flow.yml` (per pull request)**
+
+Validates the base/head pair on every PR: `feature/*` and `bugfix/*` may only
+target `develop`; `release/*` and `hotfix/*` may only target `main` or
+`develop`; `develop` may not be merged straight into `main`.
+
+## Merge Strategy
+
+- `feature/*` → `develop`: **squash**. One commit per unit of work.
+- `release/*` → `main`: **merge commit** (`gh pr merge --merge`). The merge
+  commit is what `scripts/create-version-tag.mjs` looks for before it will tag.
+- `hotfix/*` → `main`: **merge commit**, same reason.
+- back-merge → `develop`: **merge commit**, to preserve the release history.
+
+## Tagging
+
+`pnpm release:tag` refuses to run unless `HEAD` is contained in `origin/main`,
+so a release cannot be tagged from `develop`. Tag only after the release branch
+has merged into `main`.
 
 ## Summary
 
