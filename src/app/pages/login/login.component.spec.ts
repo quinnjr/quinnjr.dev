@@ -279,3 +279,89 @@ describe('LoginComponent', () => {
     vi.restoreAllMocks();
   });
 });
+
+describe('LoginComponent throttling', () => {
+  let controller: ApolloTestingController;
+  let fixture: ComponentFixture<LoginComponent>;
+
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [LoginComponent, ApolloTestingModule],
+      providers: [
+        provideRouter([]),
+        {
+          provide: PasskeyService,
+          useValue: {
+            isSupported: vi.fn().mockReturnValue(true),
+            authenticate: vi.fn(),
+            register: vi.fn(),
+            describeError: vi.fn(),
+          },
+        },
+      ],
+    });
+    controller = TestBed.inject(ApolloTestingController);
+    vi.spyOn(TestBed.inject(Router), 'navigate').mockResolvedValue(true);
+    fixture = TestBed.createComponent(LoginComponent);
+    fixture.detectChanges();
+  });
+
+  function submitAndThrottle(retryAfterSeconds: number | undefined) {
+    fixture.componentInstance.form.setValue({ email: 'a@b.com', password: 'pw' });
+    fixture.componentInstance.onSubmit();
+    controller.expectOne('Login').graphqlErrors([
+      {
+        message: 'Too many attempts. Please try again later.',
+        extensions:
+          retryAfterSeconds === undefined
+            ? { code: 'TOO_MANY_REQUESTS' }
+            : { code: 'TOO_MANY_REQUESTS', retryAfterSeconds },
+      },
+    ]);
+  }
+
+  // The regression this exists for: a throttled attempt was reported as a wrong
+  // password, so the natural response — retype it and try again — spent another
+  // attempt from the same exhausted bucket.
+  it('reports a throttled sign-in as throttling, not as a bad password', async () => {
+    submitAndThrottle(900);
+    await settle();
+
+    expect(fixture.componentInstance.error()).toBe(
+      'Too many sign-in attempts. Try again in about 15 minutes.'
+    );
+    expect(fixture.componentInstance.submitting()).toBe(false);
+  });
+
+  it('rounds the wait up, so the advised retry is not refused again', async () => {
+    // 90s must not become "1 minute": the retry that invites is still too early.
+    submitAndThrottle(90);
+    await settle();
+
+    expect(fixture.componentInstance.error()).toBe(
+      'Too many sign-in attempts. Try again in about 2 minutes.'
+    );
+  });
+
+  it('still reports throttling when the server sends no retry hint', async () => {
+    submitAndThrottle(undefined);
+    await settle();
+
+    expect(fixture.componentInstance.error()).toBe(
+      'Too many sign-in attempts. Wait a while before trying again.'
+    );
+  });
+
+  // The other half of the contract: a genuine credential failure must keep
+  // saying so, rather than every failure becoming a throttle message.
+  it('still blames the credentials when the rejection is not a throttle', async () => {
+    fixture.componentInstance.form.setValue({ email: 'a@b.com', password: 'pw' });
+    fixture.componentInstance.onSubmit();
+    controller
+      .expectOne('Login')
+      .graphqlErrors([{ message: 'Invalid credentials', extensions: { code: 'UNAUTHENTICATED' } }]);
+    await settle();
+
+    expect(fixture.componentInstance.error()).toBe('Invalid email or password');
+  });
+});

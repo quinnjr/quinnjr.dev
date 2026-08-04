@@ -143,6 +143,46 @@ describe('rate limiting through the middleware', () => {
     expect(codes.slice(10)).toEqual(['TOO_MANY_REQUESTS', 'TOO_MANY_REQUESTS']);
   });
 
+  // The client reads `code` and `retryAfterSeconds` off this response to tell a
+  // throttled attempt apart from a wrong password (see
+  // src/app/graphql/rate-limit-error.ts). Yoga's production masking rewrites
+  // unexpected errors into a bare "Unexpected error", so this asserts the
+  // throttle survives it — without this, masking could silently flatten the
+  // response and the sign-in form would go back to blaming the password.
+  it('reports the throttle code and retry hint even under production masking', async () => {
+    process.env['NODE_ENV'] = 'production';
+    initializeContainer();
+    const handler = createYogaMiddleware();
+
+    const attempt = () =>
+      handler.fetch('http://localhost/graphql', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json', 'x-forwarded-for': '203.0.113.200' },
+        body: JSON.stringify({
+          query: 'mutation { login(email: "masked@b.com", password: "pw") { token } }',
+        }),
+      });
+
+    let body!: {
+      errors?: Array<{
+        message?: string;
+        extensions?: { code?: string; retryAfterSeconds?: number };
+      }>;
+    };
+    // Six attempts: the per-subject limit for one email is 5.
+    for (let index = 0; index < 6; index++) {
+      body = (await (await attempt()).json()) as typeof body;
+    }
+
+    const error = body.errors?.[0];
+    expect(error?.extensions?.code).toBe('TOO_MANY_REQUESTS');
+    expect(error?.message).toBe('Too many attempts. Please try again later.');
+    // A usable hint, and whole seconds only — a high-resolution countdown would
+    // leak how far into the window the account already was.
+    expect(error?.extensions?.retryAfterSeconds).toBeGreaterThan(0);
+    expect(Number.isInteger(error?.extensions?.retryAfterSeconds)).toBe(true);
+  });
+
   it('keys the IP bucket on the forwarded address, not one global counter', async () => {
     initializeContainer();
     const handler = createYogaMiddleware();
