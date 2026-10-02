@@ -1,5 +1,5 @@
 .character-sheet {
-  min-height: 100vh;
+  min-height: 100dvh;
   // Transparent — the fixed site backdrop shows through.
   background: transparent;
   padding-top: 1rem;
@@ -19,7 +19,7 @@
 }
 
 .sidebar-brand-text {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   color: rgba(201, 168, 76, 0.55);
   letter-spacing: 0.15em;
@@ -40,14 +40,14 @@
   align-items: center;
   gap: 0.6rem;
   padding: 0.6rem 0.75rem;
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.75rem;
   color: var(--color-muted);
   text-decoration: none;
   letter-spacing: 0.05em;
   transition:
-    color 0.2s ease,
-    border-left-color 0.2s ease;
+    color 0.2s var(--ease-gilt),
+    border-left-color 0.2s var(--ease-gilt);
   border-left: 3px solid transparent;
 
   &:hover {
@@ -71,8 +71,8 @@
   font-size: 0.8rem;
   color: var(--color-muted);
   transition:
-    color 0.2s ease,
-    filter 0.2s ease;
+    color 0.2s var(--ease-gilt),
+    filter 0.2s var(--ease-gilt);
   flex-shrink: 0;
   width: 16px;
   text-align: center;
@@ -91,7 +91,7 @@
 }
 
 .char-name {
-  font-family: 'Cinzel Decorative', serif;
+  font-family: var(--font-medieval);
   font-size: 2rem;
   font-weight: 700;
   color: var(--color-parchment);
@@ -110,7 +110,7 @@
 }
 
 .char-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.85rem;
   color: var(--color-amber);
   letter-spacing: 0.06em;
@@ -132,7 +132,7 @@
 
 .stat-sep {
   color: rgba(201, 168, 76, 0.35);
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.75rem;
 }
 
@@ -148,11 +148,11 @@
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.78rem;
   color: var(--color-muted);
   text-decoration: none;
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-gilt);
 
   i {
     font-size: 0.85rem;
@@ -170,7 +170,7 @@
 }
 
 .section-heading {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-amber);
@@ -210,7 +210,7 @@
   border: 2px solid var(--color-edge);
   box-shadow:
     0 0 0 4px rgba(201, 168, 76, 0.08),
-    0 4px 20px rgba(0, 0, 0, 0.5);
+    0 4px 20px rgba(3, 3, 8, 0.5);
 
   img {
     width: 100%;
@@ -224,7 +224,7 @@
   min-width: 240px;
 
   p {
-    font-family: 'Crimson Text', serif;
+    font-family: var(--font-body);
     color: var(--color-muted);
     font-size: 1rem;
     line-height: 1.7;
@@ -249,7 +249,7 @@
   gap: 0.4rem;
 
   li {
-    font-family: 'Crimson Text', serif;
+    font-family: var(--font-body);
     color: var(--color-muted);
     font-size: 0.95rem;
     display: flex;
@@ -284,7 +284,7 @@
 }
 
 .ability-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -318,14 +318,14 @@
 }
 
 .ability-label {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--color-muted);
   white-space: nowrap;
 }
 
 .ability-pct {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--color-amber);
   min-width: 2.5rem;
@@ -386,7 +386,7 @@
 }
 
 .quest-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -397,14 +397,14 @@
 }
 
 .quest-org {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.82rem;
   color: var(--color-amber);
   font-weight: 500;
 }
 
 .quest-date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--color-muted);
   white-space: nowrap;
@@ -418,14 +418,14 @@
 }
 
 .quest-meta {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   color: rgba(138, 122, 106, 0.7);
   margin-bottom: 0.6rem;
 }
 
 .quest-desc {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   color: var(--color-muted);
   font-size: 0.95rem;
   line-height: 1.6;
@@ -441,7 +441,7 @@
 // ── Grouped positions (LinkedIn-style: multiple roles at one company) ─────
 
 .quest-company {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 1rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -502,7 +502,7 @@
 }
 
 .role-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.88rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -541,7 +541,7 @@
 }
 
 .school-name {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -549,7 +549,7 @@
 }
 
 .degree {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   color: var(--color-muted);
   font-size: 0.95rem;
   margin-bottom: 0.2rem;
@@ -560,14 +560,14 @@
 }
 
 .edu-date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: rgba(138, 122, 106, 0.7);
   margin-bottom: 0.5rem;
 }
 
 .edu-description {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   color: var(--color-muted);
   font-size: 0.95rem;
 }
@@ -581,7 +581,7 @@
     margin: 0;
 
     li {
-      font-family: 'Crimson Text', serif;
+      font-family: var(--font-body);
       color: var(--color-muted);
       font-size: 0.9rem;
       padding: 0.15rem 0;
@@ -590,7 +590,7 @@
 }
 
 .edu-activities-label {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.72rem;
   color: rgba(201, 168, 76, 0.6);
   letter-spacing: 0.06em;
@@ -601,7 +601,7 @@
   display: inline-flex;
   align-items: center;
   padding: 0.15rem 0.5rem;
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   letter-spacing: 0.05em;
   border-radius: 2px;
@@ -639,7 +639,7 @@
 }
 
 .cert-name {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.82rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -648,14 +648,14 @@
 }
 
 .cert-issuer {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.7rem;
   color: var(--color-muted);
   margin-bottom: 0.3rem;
 }
 
 .cert-id {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.65rem;
   color: rgba(138, 122, 106, 0.6);
   margin-bottom: 0.4rem;
@@ -680,20 +680,20 @@
 }
 
 .project-title {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--color-parchment);
 }
 
 .project-date {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.72rem;
   color: var(--color-muted);
 }
 
 .project-desc {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   color: var(--color-muted);
   font-size: 0.95rem;
   line-height: 1.6;
@@ -725,7 +725,7 @@
 
 .guild-svg-icon {
   margin-bottom: 0.25rem;
-  transition: filter 0.3s ease;
+  transition: filter 0.3s var(--ease-gilt);
 
   .guild-tile:hover & {
     filter: drop-shadow(0 0 8px rgba(201, 168, 76, 0.5)) brightness(1.2);
@@ -733,7 +733,7 @@
 }
 
 .guild-name {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--color-parchment);
@@ -742,7 +742,7 @@
 }
 
 .guild-info {
-  font-family: 'Share Tech Mono', monospace;
+  font-family: var(--font-mono);
   font-size: 0.68rem;
   color: var(--color-muted);
   text-align: center;

@@ -1,22 +1,22 @@
 .skip-link {
   position: absolute;
-  top: -100px;
+  top: 0;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -110%);
   z-index: 9999;
   padding: 1rem 2rem;
-  background: #c9a84c;
-  color: #0a0a0f;
-  font-family: 'Cinzel', serif;
+  background: var(--color-amber);
+  color: var(--color-void);
+  font-family: var(--font-heading);
   font-weight: 700;
   text-decoration: none;
   border-radius: 0 0 4px 4px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  transition: top 0.2s ease;
+  box-shadow: 0 4px 20px rgba(3, 3, 8, 0.5);
+  transition: transform 0.2s var(--ease-gilt);
 
   &:focus {
-    top: 0;
-    outline: 2px solid #e8c46a;
+    transform: translate(-50%, 0);
+    outline: 2px solid var(--color-amber-bright);
     outline-offset: 2px;
   }
 }
@@ -94,8 +94,8 @@ main:focus {
     0deg,
     transparent,
     transparent 2px,
-    rgba(0, 0, 0, 0.018) 2px,
-    rgba(0, 0, 0, 0.018) 4px
+    rgba(3, 3, 8, 0.018) 2px,
+    rgba(3, 3, 8, 0.018) 4px
   );
   pointer-events: none;
 }

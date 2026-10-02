@@ -30,6 +30,8 @@ export class ProjectsComponent implements OnInit {
   repositories = signal<GitHubRepository[]>([]);
   loading = signal<boolean>(true);
   error = signal<string | null>(null);
+  /** Placeholder tiles shown while GitHub answers. */
+  readonly skeletonTiles = [1, 2, 3, 4, 5, 6];
 
   /**
    * Card view-model. `getIconForRepo` walks a long string-matching chain and

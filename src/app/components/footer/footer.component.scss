@@ -19,7 +19,7 @@
 }
 
 .footer-copyright {
-  font-family: 'Crimson Text', serif;
+  font-family: var(--font-body);
   color: var(--color-muted);
   font-size: 0.9rem;
 }
@@ -34,8 +34,8 @@
   color: var(--color-muted);
   font-size: 1.25rem;
   transition:
-    color 0.2s ease,
-    text-shadow 0.2s ease;
+    color 0.2s var(--ease-gilt),
+    text-shadow 0.2s var(--ease-gilt);
   text-decoration: none;
 
   &:hover {

@@ -1,46 +1,31 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 
-export type ButtonVariant =
-  | 'primary'
-  | 'secondary'
-  | 'success'
-  | 'warning'
-  | 'danger'
-  | 'info'
-  | 'ghost'
-  | 'outline'
-  | 'link'
-  | 'amber'
-  | 'ember';
+export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'amber' | 'ember';
 
 export type ButtonSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 // Hoisted out of the getter: pure data, identical for every instance, so
 // there is no reason to re-allocate the tables on each change detection pass.
+// One accent (amber gilt) plus ember for destructive actions — see DESIGN.md.
 const BASE_CLASSES =
-  'inline-flex items-center justify-center font-semibold rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed';
+  'inline-flex min-h-11 items-center justify-center rounded-[2px] font-heading font-semibold tracking-wide transition-[color,background-color,border-color,box-shadow,transform] duration-200 ease-gilt focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-bright disabled:cursor-not-allowed disabled:opacity-50';
+
+const SOLID_AMBER =
+  'border border-amber bg-amber text-void hover:border-amber-bright hover:bg-amber-bright hover:shadow-glow enabled:hover:-translate-y-0.5';
+// Destructive actions are outlined, not filled: they should read as
+// deliberate, not as the loudest thing on the page.
+const EMBER = 'border border-ember/60 bg-ember/10 text-ember hover:border-ember hover:bg-ember/20';
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  primary:
-    'bg-gradient-to-r from-blue-600 to-purple-600 text-white hover:shadow-lg hover:shadow-blue-500/50 hover:-translate-y-0.5 focus:ring-blue-500',
+  primary: SOLID_AMBER,
+  amber: SOLID_AMBER,
   secondary:
-    'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:shadow-lg hover:shadow-purple-500/50 hover:-translate-y-0.5 focus:ring-purple-500',
-  success:
-    'bg-gradient-to-r from-green-600 to-emerald-600 text-white hover:shadow-lg hover:shadow-green-500/50 hover:-translate-y-0.5 focus:ring-green-500',
-  warning:
-    'bg-gradient-to-r from-yellow-600 to-orange-600 text-white hover:shadow-lg hover:shadow-yellow-500/50 hover:-translate-y-0.5 focus:ring-yellow-500',
-  danger:
-    'bg-gradient-to-r from-red-600 to-rose-600 text-white hover:shadow-lg hover:shadow-red-500/50 hover:-translate-y-0.5 focus:ring-red-500',
-  info: 'bg-gradient-to-r from-cyan-600 to-blue-600 text-white hover:shadow-lg hover:shadow-cyan-500/50 hover:-translate-y-0.5 focus:ring-cyan-500',
-  ghost: 'bg-transparent text-gray-300 hover:bg-gray-800 hover:text-white focus:ring-gray-500',
-  outline:
-    'bg-transparent border-2 border-gray-700 text-gray-300 hover:border-blue-500 hover:text-blue-400 hover:shadow-lg hover:shadow-blue-500/30 focus:ring-blue-500',
-  link: 'bg-transparent text-blue-400 hover:text-blue-300 hover:underline focus:ring-blue-500 px-0',
-  amber:
-    'bg-gradient-to-r from-amber-bright to-amber text-void border border-edge-strong hover:shadow-lg hover:shadow-amber/40 hover:-translate-y-0.5 focus:ring-amber',
-  ember:
-    'bg-gradient-to-r from-ember to-fire-red text-parchment-light hover:shadow-lg hover:shadow-ember/40 hover:-translate-y-0.5 focus:ring-ember',
+    'border border-amber/55 bg-amber/10 text-amber-bright hover:border-amber-bright hover:bg-amber/20',
+  ghost:
+    'border border-transparent bg-transparent text-muted hover:border-amber/30 hover:text-amber',
+  danger: EMBER,
+  ember: EMBER,
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {

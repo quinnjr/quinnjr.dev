@@ -32,7 +32,14 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"],
+            "styles": [
+              "src/styles.scss",
+              {
+                "input": "node_modules/quill/dist/quill.snow.css",
+                "bundleName": "quill-snow",
+                "inject": false
+              }
+            ],
             "scripts": [],
             "server": "src/main.server.ts",
             "prerender": false,

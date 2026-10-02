@@ -1,0 +1,113 @@
+// Quill's snow sheet ships as the lazy `quill-snow` bundle (angular.json) and
+// is attached by BlogEditorComponent; it is too large for a component style.
+// These rules re-skin it onto the theme tokens.
+
+.blog-editor {
+  // ngx-quill's host element is inline by default and shrink-wraps the toolbar.
+  quill-editor {
+    display: block;
+  }
+
+  .ql-toolbar.ql-snow,
+  .ql-container.ql-snow {
+    border-color: var(--color-edge);
+  }
+
+  .ql-toolbar.ql-snow {
+    background: var(--color-panel-hi);
+  }
+
+  .ql-container.ql-snow {
+    background: rgba(10, 10, 15, 0.7);
+    color: var(--color-parchment);
+    font-family: var(--font-body);
+    font-size: 1.05rem;
+  }
+
+  .ql-editor {
+    line-height: 1.7;
+  }
+
+  .ql-editor.ql-blank::before {
+    color: var(--color-muted);
+    font-style: italic;
+  }
+
+  .ql-container.ql-snow:focus-within {
+    border-color: var(--color-amber);
+    box-shadow: var(--shadow-glow);
+  }
+
+  // Toolbar glyphs are SVG strokes/fills hard-coded to #444 by snow.
+  .ql-snow .ql-stroke {
+    stroke: var(--color-parchment);
+  }
+
+  .ql-snow .ql-fill {
+    fill: var(--color-parchment);
+  }
+
+  .ql-snow .ql-picker {
+    color: var(--color-parchment);
+  }
+
+  .ql-snow.ql-toolbar button:hover,
+  .ql-snow.ql-toolbar button:focus-visible,
+  .ql-snow.ql-toolbar button.ql-active,
+  .ql-snow .ql-picker-label:hover,
+  .ql-snow .ql-picker-label.ql-active {
+    color: var(--color-amber-bright);
+
+    .ql-stroke {
+      stroke: var(--color-amber-bright);
+    }
+
+    .ql-fill {
+      fill: var(--color-amber-bright);
+    }
+  }
+
+  .ql-snow.ql-toolbar button:focus-visible {
+    outline: 1px solid var(--color-amber-bright);
+  }
+
+  .ql-snow .ql-picker-options {
+    background: var(--color-panel-hi);
+    border-color: var(--color-edge);
+  }
+
+  .ql-snow .ql-tooltip {
+    background: var(--color-panel-hi);
+    border-color: var(--color-edge);
+    color: var(--color-parchment);
+    box-shadow: var(--shadow-elevation);
+
+    input[type='text'] {
+      background: var(--color-void);
+      border-color: var(--color-edge);
+      color: var(--color-parchment);
+    }
+
+    a {
+      color: var(--color-ice);
+    }
+  }
+
+  .ql-editor {
+    a {
+      color: var(--color-ice);
+    }
+
+    blockquote {
+      border-left-color: var(--color-edge-strong);
+      color: var(--color-muted);
+    }
+
+    pre.ql-syntax,
+    .ql-code-block-container {
+      background: var(--color-deep);
+      color: var(--color-parchment);
+      font-family: var(--font-mono);
+    }
+  }
+}

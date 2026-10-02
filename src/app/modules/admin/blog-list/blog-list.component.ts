@@ -11,7 +11,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 
-import { ButtonComponent } from '../../../shared/components/ui';
+import { BadgeComponent, type BadgeVariant } from '../../../shared/components/ui';
 
 const ADMIN_POSTS = gql`
   query AdminPosts($status: PostStatus) {
@@ -34,83 +34,86 @@ interface AdminPost {
 @Component({
   selector: 'app-blog-list',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonComponent],
+  imports: [CommonModule, RouterLink, BadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-              <i class="fas fa-newspaper mr-2"></i>Blog Articles
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">Manage your blog posts</p>
-          </div>
-          <a routerLink="/admin/articles/new">
-            <app-button variant="primary"> <i class="fas fa-plus mr-2"></i>New Article </app-button>
-          </a>
+    <div class="container mx-auto px-4 py-10 md:py-14">
+      <!-- Header -->
+      <header class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="tavern-eyebrow">Admin console</p>
+          <h1 class="mt-2 font-medieval text-3xl text-parchment md:text-4xl">Articles</h1>
+          <p class="mt-2 font-body text-muted">Drafts and published posts, newest edits first.</p>
         </div>
+        <a routerLink="/admin/articles/new" class="btn-rpg btn-rpg-primary self-start md:self-auto">
+          <i class="fas fa-feather-pointed" aria-hidden="true"></i>New article
+        </a>
+      </header>
 
-        @if (loadError()) {
-          <!-- Distinct from the empty state: an outage or auth failure must not
-               be reported to an author as "you have no articles". -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center"
-            role="alert"
-            data-testid="posts-load-error"
-          >
-            <i class="fas fa-triangle-exclamation text-red-500 text-6xl mb-4"></i>
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              Could not load your articles
-            </h2>
-            <p class="text-gray-600 dark:text-gray-400">{{ loadError() }}</p>
-          </div>
-        } @else if (loading()) {
-          <!-- Also distinct from the empty state: until the server answers, we
-               do not know whether this author has articles. -->
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center"
-            data-testid="posts-loading"
-          >
-            <i class="fas fa-spinner fa-spin text-gray-400 text-4xl mb-4"></i>
-            <p class="text-gray-600 dark:text-gray-400">Loading your articles…</p>
-          </div>
-        } @else if (posts().length) {
-          <ul class="space-y-2">
-            @for (post of posts(); track post.id) {
-              <li
-                class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 flex items-center justify-between"
-              >
-                <div>
-                  <a
-                    [routerLink]="['/admin/articles/edit', post.id]"
-                    class="font-semibold text-gray-900 dark:text-white"
-                    >{{ post.title }}</a
-                  >
-                  <span class="ml-2 text-sm text-gray-500">{{ post.status }}</span>
-                </div>
+      @if (loadError()) {
+        <!-- Distinct from the empty state: an outage or auth failure must not
+             be reported to an author as "you have no articles". -->
+        <div class="admin-panel" role="alert" data-testid="posts-load-error">
+          <h2 class="admin-panel-title">
+            <i class="fas fa-triangle-exclamation text-blood" aria-hidden="true"></i>
+            Could not load your articles
+          </h2>
+          <p class="notice-error">{{ loadError() }}</p>
+          <p class="mt-4 font-body text-sm text-muted">
+            Reload the page to retry. If it keeps failing, your session may have expired.
+          </p>
+        </div>
+      } @else if (loading()) {
+        <!-- Also distinct from the empty state: until the server answers, we
+             do not know whether this author has articles. -->
+        <div class="admin-panel" data-testid="posts-loading" aria-busy="true">
+          <span class="sr-only" role="status">Loading your articles…</span>
+          <ul class="divide-y divide-amber/10" aria-hidden="true">
+            @for (row of skeletonRows; track row) {
+              <li class="flex items-center justify-between gap-4 py-4">
+                <span class="skeleton block h-4" [style.width.%]="row"></span>
+                <span class="skeleton block h-5 w-20"></span>
               </li>
             }
           </ul>
-        } @else {
-          <!-- Empty State -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center">
-            <i class="fas fa-newspaper text-gray-400 text-6xl mb-4"></i>
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-              No articles yet
-            </h2>
-            <p class="text-gray-600 dark:text-gray-400 mb-6">
-              Get started by creating your first blog post
+        </div>
+      } @else if (posts().length) {
+        <ul class="admin-panel divide-y divide-amber/10 py-2">
+          @for (post of posts(); track post.id) {
+            <li class="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
+              <a
+                [routerLink]="['/admin/articles/edit', post.id]"
+                class="link-tavern self-start font-heading text-parchment"
+                >{{ post.title }}</a
+              >
+              <div class="flex items-center gap-3">
+                <time [attr.datetime]="post.updatedAt" class="font-mono text-xs text-muted">
+                  {{ post.updatedAt | date: 'MMM d, y' }}
+                </time>
+                <app-badge [variant]="statusVariant(post.status)" badgeStyle="soft">
+                  {{ post.status | titlecase }}
+                </app-badge>
+              </div>
+            </li>
+          }
+        </ul>
+      } @else {
+        <!-- Empty State -->
+        <div
+          class="admin-panel flex flex-col items-start gap-4 md:flex-row md:items-center md:gap-8"
+        >
+          <i class="fas fa-feather-pointed text-5xl text-amber/60" aria-hidden="true"></i>
+          <div class="flex-1">
+            <h2 class="font-heading text-xl text-parchment">No articles yet</h2>
+            <p class="mt-1 max-w-[65ch] font-body text-muted">
+              New articles start as drafts and stay private until you publish them.
             </p>
-            <a routerLink="/admin/articles/new">
-              <app-button variant="primary" size="lg">
-                <i class="fas fa-plus mr-2"></i>Create Your First Article
-              </app-button>
-            </a>
           </div>
-        }
-      </div>
+          <a routerLink="/admin/articles/new" class="btn-rpg btn-rpg-primary">
+            <i class="fas fa-plus" aria-hidden="true"></i>Write your first article
+          </a>
+        </div>
+      }
     </div>
   `,
   styles: [],
@@ -121,6 +124,21 @@ export class BlogListComponent implements OnInit {
   readonly posts = signal<AdminPost[]>([]);
   readonly loading = signal(true);
   readonly loadError = signal<string | null>(null);
+  /** Title widths (%) for the loading skeleton, uneven so it reads as a list. */
+  readonly skeletonRows = [62, 44, 71, 38];
+
+  statusVariant(status: string): BadgeVariant {
+    switch (status) {
+      case 'PUBLISHED':
+        return 'success';
+      case 'SCHEDULED':
+        return 'info';
+      case 'DRAFT':
+        return 'warning';
+      default:
+        return 'secondary';
+    }
+  }
 
   ngOnInit(): void {
     this.apollo
