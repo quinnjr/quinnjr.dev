@@ -1,3 +1,8 @@
+// Eight links plus the auth button do not fit on one row below 1280px (they
+// wrapped to a second row and ran ~100px off-screen from 768px up), so the
+// hamburger menu stays until the xl breakpoint.
+$nav-desktop: 1280px;
+
 .tavern-nav {
   background: rgba(5, 5, 15, 0.92);
   backdrop-filter: blur(20px);
@@ -45,7 +50,7 @@
 }
 
 .nav-shield {
-  transition: filter 0.3s ease;
+  transition: filter 0.3s var(--ease-gilt);
   flex-shrink: 0;
 
   .nav-logo-link:hover & {
@@ -54,17 +59,17 @@
 }
 
 .nav-site-name {
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 1rem;
   font-weight: 600;
-  color: #e8dcc8;
+  color: var(--color-parchment);
   letter-spacing: 0.06em;
   transition:
-    color 0.2s ease,
-    text-shadow 0.2s ease;
+    color 0.2s var(--ease-gilt),
+    text-shadow 0.2s var(--ease-gilt);
 
   .nav-logo-link:hover & {
-    color: #c9a84c;
+    color: var(--color-amber);
     text-shadow: 0 0 12px rgba(201, 168, 76, 0.45);
   }
 }
@@ -78,26 +83,29 @@
   padding: 0.5rem;
   width: 2.5rem;
   height: 2.5rem;
-  color: #e8dcc8;
+  color: var(--color-parchment);
   background: rgba(10, 10, 20, 0.8);
   border: 1px solid rgba(201, 168, 76, 0.3);
-  transition: all 0.2s ease;
+  transition:
+    color 0.2s var(--ease-gilt),
+    border-color 0.2s var(--ease-gilt),
+    box-shadow 0.2s var(--ease-gilt);
 
   &:hover {
-    border-color: #c9a84c;
-    color: #c9a84c;
+    border-color: var(--color-amber);
+    color: var(--color-amber);
     box-shadow: 0 0 10px rgba(201, 168, 76, 0.15);
   }
 
   &:focus {
-    outline: 2px solid #c9a84c;
+    outline: 2px solid var(--color-amber);
     outline-offset: 2px;
   }
 
   // Angular's emulated view encapsulation gives this selector higher
-  // specificity than Tailwind's .md\:hidden utility class, so that class
-  // never actually wins the cascade. The breakpoint has to live here.
-  @media (min-width: 768px) {
+  // specificity than Tailwind's responsive hidden utilities, so they never
+  // win the cascade. The breakpoint has to live here.
+  @media (min-width: $nav-desktop) {
     display: none;
   }
 }
@@ -112,7 +120,7 @@
     display: block;
   }
 
-  @media (min-width: 768px) {
+  @media (min-width: $nav-desktop) {
     display: flex;
     width: auto;
     align-items: center;
@@ -131,7 +139,7 @@
   gap: 0.125rem;
   list-style: none;
 
-  @media (min-width: 768px) {
+  @media (min-width: $nav-desktop) {
     flex-direction: row;
     padding: 0;
     margin-top: 0;
@@ -149,15 +157,15 @@
   align-items: center;
   gap: 0.4rem;
   padding: 0.7rem 0.9rem;
-  font-family: 'Cinzel', serif;
+  font-family: var(--font-heading);
   font-size: 0.8rem;
   font-weight: 500;
-  color: #8a7a6a;
+  color: var(--color-muted);
   text-decoration: none;
   letter-spacing: 0.07em;
   white-space: nowrap;
   position: relative;
-  transition: color 0.2s ease;
+  transition: color 0.2s var(--ease-gilt);
 
   // Amber underline draw-in
   &::after {
@@ -165,30 +173,37 @@
     position: absolute;
     bottom: 6px;
     left: 0.9rem;
+    right: 0.9rem;
     height: 1px;
-    width: 0;
-    background: #c9a84c;
-    transition: width 0.2s ease;
+    background: var(--color-amber);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.25s var(--ease-gilt);
   }
 
-  &:hover {
-    color: #e8dcc8;
+  &:hover,
+  &:focus-visible {
+    color: var(--color-parchment);
 
     &::after {
-      width: calc(100% - 1.8rem);
+      transform: scaleX(1);
     }
   }
 
-  @media (min-width: 768px) {
-    padding: 0.5rem 0.75rem;
+  // Desktop row is text-only and tighter so all eight links fit beside the
+  // logo inside the 1280px container. The mobile menu keeps its icons.
+  @media (min-width: $nav-desktop) {
+    padding: 0.5rem 0.45rem;
+    letter-spacing: 0.02em;
+
+    > i:not(.nav-external-mark) {
+      display: none;
+    }
 
     &::after {
       bottom: 3px;
-      left: 0.75rem;
-    }
-
-    &:hover::after {
-      width: calc(100% - 1.5rem);
+      left: 0.45rem;
+      right: 0.45rem;
     }
   }
 }
@@ -199,27 +214,27 @@
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #c9a84c;
+  background: var(--color-amber);
   box-shadow: 0 0 6px rgba(201, 168, 76, 0.7);
   flex-shrink: 0;
 }
 
 .nav-link-active {
-  color: #c9a84c !important;
+  color: var(--color-amber) !important;
   text-shadow: 0 0 12px rgba(201, 168, 76, 0.5);
 
   .nav-active-dot {
     display: inline-block;
+
+    // The underline already marks the active link on the desktop row, and the
+    // dot's width is what pushed that row onto a second line.
+    @media (min-width: $nav-desktop) {
+      display: none;
+    }
   }
 
   &::after {
-    width: calc(100% - 1.8rem) !important;
-  }
-
-  @media (min-width: 768px) {
-    &::after {
-      width: calc(100% - 1.5rem) !important;
-    }
+    transform: scaleX(1);
   }
 }
 
@@ -228,7 +243,7 @@
   font-size: 0.55rem;
   opacity: 0.45;
   margin-left: 0.1rem;
-  transition: opacity 0.2s ease;
+  transition: opacity 0.2s var(--ease-gilt);
 
   .nav-link:hover & {
     opacity: 0.8;
@@ -242,10 +257,10 @@
   align-items: center;
   margin-top: 0.75rem;
 
-  @media (min-width: 768px) {
+  @media (min-width: $nav-desktop) {
     margin-top: 0;
-    margin-left: 1.25rem;
-    padding-left: 1.25rem;
+    margin-left: 0.6rem;
+    padding-left: 0.6rem;
     border-left: 1px solid rgba(201, 168, 76, 0.15);
   }
 }

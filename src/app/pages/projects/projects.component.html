@@ -5,25 +5,47 @@
       <p class="tavern-eyebrow">The Workshop</p>
       <h1 class="tavern-title">Crafted Works</h1>
       <p class="tavern-subtitle">
-        {{ repositories().length }} open-source creations — forged across web, systems programming,
-        bioinformatics, and the deeper arcana of code.
+        @if (!loading() && repositories().length) {
+          {{ repositories().length }} open-source repositories
+        } @else {
+          Open-source repositories
+        }
+        across web, systems programming, bioinformatics, and the deeper arcana of code.
       </p>
     </header>
 
     <!-- Loading -->
     @if (loading()) {
-      <div class="flex flex-col items-center justify-center py-24 text-center">
-        <div class="forge-spinner" aria-hidden="true"></div>
-        <p class="mt-4 font-mono text-sm text-muted">Summoning works from the GitHub forge…</p>
+      <!-- Skeleton tiles in the same grid and proportions as the real cards. -->
+      <div aria-busy="true">
+        <p class="sr-only" role="status">Loading repositories from GitHub…</p>
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3" aria-hidden="true">
+          @for (n of skeletonTiles; track n) {
+            <div class="card-stone pointer-events-none flex flex-col p-6">
+              <span class="skeleton mb-4 block h-8 w-8"></span>
+              <span class="skeleton block h-5 w-2/3"></span>
+              <span class="skeleton mt-3 block h-3 w-full"></span>
+              <span class="skeleton mt-2 block h-3 w-4/5"></span>
+              <span class="skeleton mt-5 block h-6 w-20"></span>
+            </div>
+          }
+        </div>
       </div>
     }
 
     <!-- Error -->
     @if (error()) {
-      <div class="card-stone mx-auto max-w-xl p-8 text-center">
+      <div class="card-stone mx-auto max-w-xl p-8 text-center" role="alert">
         <i class="fas fa-triangle-exclamation mb-3 text-3xl text-amber" aria-hidden="true"></i>
-        <h3 class="font-heading text-xl text-parchment">The forge is cold</h3>
+        <h2 class="font-heading text-xl text-parchment">The forge is cold</h2>
         <p class="mt-2 font-body text-muted">{{ error() }}</p>
+        <a
+          href="https://github.com/quinnjr?tab=repositories"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="link-tavern mt-4 inline-block text-sm"
+          >Browse the repositories on GitHub instead</a
+        >
       </div>
     }
 
@@ -46,7 +68,7 @@
                 <i class="fab fa-github text-lg" aria-hidden="true"></i>
               </span>
             </div>
-            <h3 class="font-heading text-lg text-parchment">{{ repo.displayName }}</h3>
+            <h2 class="font-heading text-lg text-parchment">{{ repo.displayName }}</h2>
             <p class="mt-2 flex-1 font-body text-sm text-muted">
               {{ repo.description || (repo.primaryLanguage?.name || 'Code') + ' project' }}
             </p>

@@ -14,13 +14,13 @@ import { ButtonComponent } from '../../shared/components/ui';
     <div class="flex items-center gap-2">
       @if (auth.isAuthenticated()) {
         <app-button (click)="logout()" variant="ember" size="sm">
-          <i class="fas fa-sign-out-alt"></i>
-          <span class="ml-2 hidden md:inline">Logout</span>
+          <i class="fas fa-sign-out-alt" aria-hidden="true"></i>
+          <span class="ml-2">Logout</span>
         </app-button>
       } @else {
         <app-button (click)="goToLogin()" variant="amber" size="sm">
-          <i class="fas fa-sign-in-alt"></i>
-          <span class="ml-2 hidden md:inline">Login</span>
+          <i class="fas fa-sign-in-alt" aria-hidden="true"></i>
+          <span class="ml-2">Login</span>
         </app-button>
       }
     </div>
