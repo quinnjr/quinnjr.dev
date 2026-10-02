@@ -8,50 +8,52 @@ export type BadgeStyle = 'solid' | 'soft' | 'outline' | 'dot';
 // inline they were re-allocated (4 objects, 24 entries) on every change
 // detection pass, multiplied by however many badges a list renders.
 const BASE_CLASSES =
-  'inline-flex items-center gap-1 px-2.5 py-0.5 text-xs font-medium transition-all duration-200';
+  'inline-flex items-center gap-1 px-2.5 py-0.5 font-mono text-xs tracking-wide transition-colors duration-200 ease-gilt';
 
+// Status hues come from the theme: amber is the accent, muted parchment the
+// neutral, ice for info, verdigris/blood for success/danger. No stock Tailwind palette.
 const STYLE_VARIANT_CLASSES: Record<BadgeStyle, Record<BadgeVariant, string>> = {
   solid: {
-    primary: 'bg-blue-600 text-white',
-    secondary: 'bg-purple-600 text-white',
-    success: 'bg-green-600 text-white',
-    warning: 'bg-yellow-600 text-white',
-    danger: 'bg-red-600 text-white',
-    info: 'bg-cyan-600 text-white',
+    primary: 'bg-amber text-void',
+    secondary: 'bg-muted text-void',
+    success: 'bg-verdigris text-void',
+    warning: 'bg-amber-bright text-void',
+    danger: 'bg-ember text-void',
+    info: 'bg-ice text-void',
   },
   soft: {
-    primary: 'bg-blue-500/20 text-blue-300',
-    secondary: 'bg-purple-500/20 text-purple-300',
-    success: 'bg-green-500/20 text-green-300',
-    warning: 'bg-yellow-500/20 text-yellow-300',
-    danger: 'bg-red-500/20 text-red-300',
-    info: 'bg-cyan-500/20 text-cyan-300',
+    primary: 'bg-amber/15 text-amber-bright',
+    secondary: 'bg-muted/15 text-muted',
+    success: 'bg-verdigris/15 text-verdigris',
+    warning: 'bg-amber-bright/15 text-amber-bright',
+    danger: 'bg-blood/15 text-blood',
+    info: 'bg-ice/15 text-ice',
   },
   outline: {
-    primary: 'border border-blue-500 text-blue-400',
-    secondary: 'border border-purple-500 text-purple-400',
-    success: 'border border-green-500 text-green-400',
-    warning: 'border border-yellow-500 text-yellow-400',
-    danger: 'border border-red-500 text-red-400',
-    info: 'border border-cyan-500 text-cyan-400',
+    primary: 'border border-amber text-amber',
+    secondary: 'border border-muted text-muted',
+    success: 'border border-verdigris text-verdigris',
+    warning: 'border border-amber-bright text-amber-bright',
+    danger: 'border border-blood text-blood',
+    info: 'border border-ice text-ice',
   },
   dot: {
-    primary: 'text-blue-300',
-    secondary: 'text-purple-300',
-    success: 'text-green-300',
-    warning: 'text-yellow-300',
-    danger: 'text-red-300',
-    info: 'text-cyan-300',
+    primary: 'text-amber',
+    secondary: 'text-muted',
+    success: 'text-verdigris',
+    warning: 'text-amber-bright',
+    danger: 'text-blood',
+    info: 'text-ice',
   },
 };
 
 const DOT_COLORS: Record<BadgeVariant, string> = {
-  primary: 'bg-blue-500',
-  secondary: 'bg-purple-500',
-  success: 'bg-green-500',
-  warning: 'bg-yellow-500',
-  danger: 'bg-red-500',
-  info: 'bg-cyan-500',
+  primary: 'bg-amber',
+  secondary: 'bg-muted',
+  success: 'bg-verdigris',
+  warning: 'bg-amber-bright',
+  danger: 'bg-blood',
+  info: 'bg-ice',
 };
 
 @Component({
@@ -69,10 +71,10 @@ const DOT_COLORS: Record<BadgeVariant, string> = {
         <button
           type="button"
           (click)="onRemove()"
-          class="ml-1 hover:text-white focus:outline-none"
+          class="ml-1 hover:text-parchment focus-visible:outline-1 focus-visible:outline-current"
           aria-label="Remove"
         >
-          <i class="fas fa-times text-xs"></i>
+          <i class="fas fa-times text-xs" aria-hidden="true"></i>
         </button>
       }
     </span>
@@ -92,12 +94,12 @@ export class BadgeComponent {
   }
 
   get badgeClasses(): string {
-    const shapeClasses = this.pill ? 'rounded-full' : 'rounded';
+    const shapeClasses = this.pill ? 'rounded-full' : 'rounded-[2px]';
 
     return `${BASE_CLASSES} ${shapeClasses} ${STYLE_VARIANT_CLASSES[this.badgeStyle][this.variant]} ${this.classOverride}`.trim();
   }
 
   get dotClasses(): string {
-    return `w-2 h-2 rounded-full ${DOT_COLORS[this.variant]} animate-pulse`;
+    return `w-2 h-2 rounded-full ${DOT_COLORS[this.variant]} motion-safe:animate-pulse`;
   }
 }

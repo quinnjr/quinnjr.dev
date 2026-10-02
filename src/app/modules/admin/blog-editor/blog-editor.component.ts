@@ -1,9 +1,10 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
   OnInit,
+  ViewEncapsulation,
   inject,
   signal,
 } from '@angular/core';
@@ -20,6 +21,10 @@ import { ButtonComponent } from '../../../shared/components/ui';
 // The server is the sole author of a post's slug (see `BlogService.generateSlug`).
 // The preview must use the identical call, or it advertises a URL the server
 // will not mint: "Node.js at Scale" is `nodejs-at-scale`, not `node-js-at-scale`.
+// Emitted by the `quill-snow` entry in angular.json with `inject: false`.
+const QUILL_STYLESHEET_ID = 'quill-snow-css';
+const QUILL_STYLESHEET_HREF = 'quill-snow.css';
+
 const SLUGIFY_OPTIONS = {
   lower: true,
   strict: true,
@@ -62,147 +67,131 @@ const UPDATE_POST = gql`
   imports: [CommonModule, ReactiveFormsModule, QuillModule, ButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="flex items-center justify-between mb-6">
-          <div>
-            <h1 class="text-3xl font-bold text-gray-900 dark:text-white">
-              {{ isEditMode() ? 'Edit Blog Post' : 'Create New Blog Post' }}
-            </h1>
-            <p class="text-gray-600 dark:text-gray-400 mt-1">
-              <!-- Create mode always writes a DRAFT: there is no status control
-                   in this editor, so it cannot claim to publish. -->
-              {{ isEditMode() ? 'Update your existing post' : 'Write a new article as a draft' }}
-            </p>
+    <div class="blog-editor container mx-auto px-4 py-10 md:py-14">
+      <!-- Header -->
+      <header class="mb-8 flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p class="tavern-eyebrow">Admin console</p>
+          <h1 class="mt-2 font-medieval text-3xl text-parchment md:text-4xl">
+            {{ isEditMode() ? 'Edit article' : 'New article' }}
+          </h1>
+          <p class="mt-2 font-body text-muted">
+            <!-- Create mode always writes a DRAFT: there is no status control
+                 in this editor, so it cannot claim to publish. -->
+            {{
+              isEditMode()
+                ? 'Changes save over the existing post.'
+                : 'Saved as a draft. Nothing goes live from here.'
+            }}
+          </p>
+        </div>
+        <app-button (click)="goBack()" variant="ghost" class="self-start md:self-auto">
+          <i class="fas fa-arrow-left mr-2" aria-hidden="true"></i>Back to articles
+        </app-button>
+      </header>
+
+      @if (isLoading()) {
+        <div class="admin-panel space-y-5" data-testid="editor-loading" aria-busy="true">
+          <span class="sr-only" role="status">Loading post…</span>
+          <span class="skeleton block h-4 w-24" aria-hidden="true"></span>
+          <span class="skeleton block h-11 w-full" aria-hidden="true"></span>
+          <span class="skeleton block h-4 w-24" aria-hidden="true"></span>
+          <span class="skeleton block h-72 w-full" aria-hidden="true"></span>
+        </div>
+      }
+
+      @if (loadError()) {
+        <p class="notice-error mb-6" role="alert" data-testid="editor-load-error">
+          <i class="fas fa-triangle-exclamation mt-0.5" aria-hidden="true"></i>{{ loadError() }}
+        </p>
+      }
+
+      <!-- Form -->
+      <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="space-y-6">
+        <section class="admin-panel" aria-labelledby="content-heading">
+          <h2 id="content-heading" class="admin-panel-title">
+            <i class="fas fa-feather-pointed" aria-hidden="true"></i>Content
+          </h2>
+
+          <!-- Title -->
+          <div class="mb-5">
+            <label for="title" class="field-label">Title <span aria-hidden="true">*</span></label>
+            <input
+              id="title"
+              type="text"
+              formControlName="title"
+              class="field-rune"
+              placeholder="Why small models win on cost"
+              required
+              [attr.aria-invalid]="postForm.get('title')?.invalid && postForm.get('title')?.touched"
+              aria-describedby="title-error"
+            />
+            @if (postForm.get('title')?.invalid && postForm.get('title')?.touched) {
+              <p id="title-error" class="mt-2 font-mono text-xs text-blood">Title is required</p>
+            }
           </div>
-          <app-button (click)="goBack()" variant="ghost">
-            <i class="fas fa-arrow-left mr-2"></i>Back
+
+          <!-- Slug Preview -->
+          @if (postForm.get('title')?.value) {
+            <p class="mb-5 border border-ice/20 bg-ice/5 px-3 py-2 font-mono text-xs text-muted">
+              URL:
+              <span class="text-ice" data-testid="slug-preview">
+                /articles/{{ generateSlug(postForm.get('title')?.value) }}
+              </span>
+            </p>
+          }
+
+          <!-- Content Editor -->
+          <div>
+            <label for="content" class="field-label"
+              >Content <span aria-hidden="true">*</span></label
+            >
+            <quill-editor
+              id="content"
+              formControlName="content"
+              [modules]="quillModules"
+              [styles]="{ height: '400px' }"
+            >
+            </quill-editor>
+            @if (postForm.get('content')?.invalid && postForm.get('content')?.touched) {
+              <p class="mt-2 font-mono text-xs text-blood">Content is required</p>
+            }
+          </div>
+        </section>
+
+        <!-- Action Buttons -->
+        <div
+          class="flex flex-wrap items-center justify-between gap-3 border-t border-amber/20 pt-6"
+        >
+          <app-button type="button" (click)="goBack()" variant="ghost">Cancel</app-button>
+
+          <app-button
+            type="submit"
+            [disabled]="postForm.invalid || isSubmitting() || !canSubmit()"
+            [loading]="isSubmitting()"
+            variant="primary"
+          >
+            @if (!isSubmitting()) {
+              <i class="fas fa-paper-plane mr-2" aria-hidden="true"></i>
+            }
+            {{ isEditMode() ? 'Update' : 'Save draft' }}
           </app-button>
         </div>
 
-        @if (isLoading()) {
-          <div
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-12 text-center"
-            data-testid="editor-loading"
-          >
-            <i class="fas fa-spinner fa-spin text-gray-400 text-4xl mb-4"></i>
-            <p class="text-gray-600 dark:text-gray-400">Loading post…</p>
-          </div>
+        @if (saveError()) {
+          <p class="notice-error" role="alert" data-testid="editor-save-error">
+            <i class="fas fa-triangle-exclamation mt-0.5" aria-hidden="true"></i>{{ saveError() }}
+          </p>
         }
-
-        @if (loadError()) {
-          <div
-            class="mb-6 p-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
-            role="alert"
-            data-testid="editor-load-error"
-          >
-            <p class="text-sm text-red-700 dark:text-red-400">
-              <i class="fas fa-triangle-exclamation mr-2"></i>{{ loadError() }}
-            </p>
-          </div>
-        }
-
-        <!-- Form -->
-        <form [formGroup]="postForm" (ngSubmit)="onSubmit()" class="space-y-6">
-          <!-- Main Content Card -->
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-4">
-              <i class="fas fa-edit mr-2"></i>Content
-            </h2>
-
-            <!-- Title -->
-            <div class="mb-4">
-              <label
-                for="title"
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Title *
-              </label>
-              <input
-                id="title"
-                type="text"
-                formControlName="title"
-                class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500"
-                placeholder="Enter post title"
-              />
-              @if (postForm.get('title')?.invalid && postForm.get('title')?.touched) {
-                <p class="mt-1 text-sm text-red-600">Title is required</p>
-              }
-            </div>
-
-            <!-- Slug Preview -->
-            @if (postForm.get('title')?.value) {
-              <div class="mb-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-md">
-                <p class="text-sm text-gray-600 dark:text-gray-400">
-                  URL:
-                  <span
-                    class="font-mono text-blue-600 dark:text-blue-400"
-                    data-testid="slug-preview"
-                  >
-                    /articles/{{ generateSlug(postForm.get('title')?.value) }}
-                  </span>
-                </p>
-              </div>
-            }
-
-            <!-- Content Editor -->
-            <div class="mb-4">
-              <label
-                for="content"
-                class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-              >
-                Content *
-              </label>
-              <quill-editor
-                id="content"
-                formControlName="content"
-                [modules]="quillModules"
-                [styles]="{ height: '400px' }"
-                class="bg-white dark:bg-gray-700 rounded-md"
-              >
-              </quill-editor>
-              @if (postForm.get('content')?.invalid && postForm.get('content')?.touched) {
-                <p class="mt-1 text-sm text-red-600">Content is required</p>
-              }
-            </div>
-          </div>
-
-          <!-- Action Buttons -->
-          <div
-            class="flex items-center justify-between bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6"
-          >
-            <app-button type="button" (click)="goBack()" variant="ghost"> Cancel </app-button>
-
-            <app-button
-              type="submit"
-              [disabled]="postForm.invalid || isSubmitting() || !canSubmit()"
-              [loading]="isSubmitting()"
-              variant="primary"
-            >
-              @if (!isSubmitting()) {
-                <i class="fas fa-paper-plane mr-2"></i>
-              }
-              {{ isEditMode() ? 'Update' : 'Save draft' }}
-            </app-button>
-          </div>
-
-          @if (saveError()) {
-            <div
-              class="p-4 rounded-md bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800"
-              role="alert"
-              data-testid="editor-save-error"
-            >
-              <p class="text-sm text-red-700 dark:text-red-400">
-                <i class="fas fa-triangle-exclamation mr-2"></i>{{ saveError() }}
-              </p>
-            </div>
-          }
-        </form>
-      </div>
+      </form>
     </div>
   `,
-  styles: [],
+  // Quill builds its toolbar/editor DOM itself, outside Angular's template, so
+  // emulated encapsulation would never match it. The sheet is scoped under
+  // .blog-editor instead and only loads with this lazy admin route.
+  styleUrl: './blog-editor.component.scss',
+  // eslint-disable-next-line @angular-eslint/use-component-view-encapsulation -- Quill DOM is not template-owned; rules are scoped under .blog-editor
+  encapsulation: ViewEncapsulation.None,
 })
 export class BlogEditorComponent implements OnInit {
   private fb = inject(FormBuilder);
@@ -210,6 +199,7 @@ export class BlogEditorComponent implements OnInit {
   private route = inject(ActivatedRoute);
   private readonly apollo = inject(Apollo);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly document = inject(DOCUMENT);
 
   postForm!: FormGroup;
   // OnPush: every piece of mutable view state must be a signal, otherwise a
@@ -233,6 +223,7 @@ export class BlogEditorComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.attachQuillStylesheet();
     this.initForm();
     // `articles/edit/:id` is a single route definition, so the router reuses
     // this component when only :id changes. Reading the snapshot once left the
@@ -245,6 +236,18 @@ export class BlogEditorComponent implements OnInit {
         takeUntilDestroyed(this.destroyRef)
       )
       .subscribe(id => this.resetFor(id));
+  }
+
+  /** Quill's toolbar is unusable without its sheet; attach it once, on demand. */
+  private attachQuillStylesheet(): void {
+    if (this.document.getElementById(QUILL_STYLESHEET_ID)) {
+      return;
+    }
+    const link = this.document.createElement('link');
+    link.id = QUILL_STYLESHEET_ID;
+    link.rel = 'stylesheet';
+    link.href = QUILL_STYLESHEET_HREF;
+    this.document.head.appendChild(link);
   }
 
   /** Re-arms the editor for a (possibly different) post id. */

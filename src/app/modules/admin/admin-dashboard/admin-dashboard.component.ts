@@ -12,7 +12,7 @@ import { RouterLink } from '@angular/router';
 import { Apollo, gql } from 'apollo-angular';
 
 import { AuthService } from '../../../services/auth.service';
-import { ButtonComponent, BadgeComponent } from '../../../shared/components/ui';
+import { BadgeComponent } from '../../../shared/components/ui';
 
 // `posts` is the only admin-scoped query the schema offers; its length is the
 // real article count for the signed-in author (editors and above see all).
@@ -27,102 +27,73 @@ const ADMIN_POST_COUNT = gql`
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterLink, ButtonComponent, BadgeComponent],
+  imports: [CommonModule, RouterLink, BadgeComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <div class="container mx-auto px-4 py-8">
-        <!-- Header -->
-        <div class="mb-8">
-          <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">
-            <i class="fas fa-tachometer-alt mr-3"></i>Admin Dashboard
-          </h1>
-          <p class="text-gray-600 dark:text-gray-400">Welcome to the administration panel</p>
-        </div>
+    <div class="container mx-auto px-4 py-10 md:py-14">
+      <!-- Header -->
+      <header class="mb-10">
+        <p class="tavern-eyebrow">Admin console</p>
+        <h1 class="mt-2 font-medieval text-3xl text-parchment md:text-4xl">Dashboard</h1>
+        <p class="mt-2 max-w-[65ch] font-body text-muted">
+          Drafts, published articles and sign-in keys for quinnjr.dev.
+        </p>
+      </header>
 
-        <!-- User Info Card -->
+      <div class="grid grid-cols-1 gap-6 lg:grid-cols-[1.5fr_1fr]">
+        <!-- Account -->
         @if (auth.currentUser(); as user) {
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mb-6">
-            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-              <i class="fas fa-user-circle mr-2"></i>User Information
+          <section class="admin-panel" aria-labelledby="account-heading">
+            <h2 id="account-heading" class="admin-panel-title">
+              <i class="fas fa-user-circle" aria-hidden="true"></i>Account
             </h2>
-            <div class="flex items-center gap-4">
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ user.name }}</h3>
-                <div class="mt-2">
-                  <app-badge variant="success" badgeStyle="soft">
-                    <i class="fas fa-check-circle mr-1"></i>{{ user.role }}
-                  </app-badge>
-                </div>
-              </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <p class="font-heading text-xl text-parchment">{{ user.name }}</p>
+              <app-badge variant="success" badgeStyle="soft">
+                <i class="fas fa-check-circle mr-1" aria-hidden="true"></i>{{ user.role }}
+              </app-badge>
             </div>
-
-            <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                <p class="text-sm text-gray-600 dark:text-gray-400">User ID</p>
-                <p class="text-sm font-mono text-gray-900 dark:text-white break-all">
-                  {{ user.id }}
-                </p>
-              </div>
-            </div>
-          </div>
+            <dl class="mt-6 border-t border-amber/15 pt-4">
+              <dt class="field-label">User ID</dt>
+              <dd class="break-all font-mono text-sm text-parchment">{{ user.id }}</dd>
+            </dl>
+          </section>
         }
 
         <!--
-          Stats Grid — only metrics the server can actually answer.
+          Only metrics the server can actually answer.
           "Active Sessions" has no backing query and "Projects" comes from the
           GitHub API rather than the database, so those tiles were removed
           instead of shipping placeholder numbers as facts. "Total Users" has no
           users query either.
         -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-            <div class="flex items-center justify-between">
-              <div>
-                <p class="text-sm text-gray-600 dark:text-gray-400">Articles</p>
-                @if (articleCountError()) {
-                  <p
-                    class="text-sm text-red-600 dark:text-red-400 mt-1"
-                    role="alert"
-                    data-testid="article-count-error"
-                  >
-                    Unavailable
-                  </p>
-                } @else if (articleCount() === null) {
-                  <p class="text-3xl font-bold text-gray-400 dark:text-gray-500">—</p>
-                } @else {
-                  <p
-                    class="text-3xl font-bold text-gray-900 dark:text-white"
-                    data-testid="article-count"
-                  >
-                    {{ articleCount() }}
-                  </p>
-                }
-              </div>
-              <div
-                class="w-12 h-12 bg-yellow-100 dark:bg-yellow-900 rounded-full flex items-center justify-center"
-              >
-                <i class="fas fa-newspaper text-yellow-600 dark:text-yellow-400 text-xl"></i>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Quick Actions -->
-        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
-          <h2 class="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
-            <i class="fas fa-bolt mr-2"></i>Quick Actions
+        <section class="admin-panel flex flex-col" aria-labelledby="articles-heading">
+          <h2 id="articles-heading" class="admin-panel-title">
+            <i class="fas fa-scroll" aria-hidden="true"></i>Articles
           </h2>
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <a routerLink="/admin/articles/new">
-              <app-button variant="primary" [fullWidth]="true">
-                <i class="fas fa-plus mr-2"></i>New Article
-              </app-button>
-            </a>
+          @if (articleCountError()) {
+            <p class="notice-error" role="alert" data-testid="article-count-error">
+              <i class="fas fa-triangle-exclamation mt-0.5" aria-hidden="true"></i>
+              Unavailable — the post count query failed. Reload to retry.
+            </p>
+          } @else if (articleCount() === null) {
+            <p class="font-mono text-4xl text-muted" aria-label="Loading article count">—</p>
+          } @else {
+            <p class="font-mono text-4xl text-amber-bright" data-testid="article-count">
+              {{ articleCount() }}
+            </p>
+          }
+          <div class="mt-6 flex flex-wrap gap-3 border-t border-amber/15 pt-5">
             <!-- New Project / Settings / Analytics used to live here as enabled
                  buttons with no handler and no destination. -->
+            <a routerLink="/admin/articles/new" class="btn-rpg btn-rpg-primary">
+              <i class="fas fa-feather-pointed" aria-hidden="true"></i>New article
+            </a>
+            <a routerLink="/admin/articles" class="btn-rpg">
+              <i class="fas fa-list" aria-hidden="true"></i>All articles
+            </a>
           </div>
-        </div>
+        </section>
       </div>
     </div>
   `,

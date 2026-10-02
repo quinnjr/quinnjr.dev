@@ -9,54 +9,57 @@ import { AuthButtonComponent } from '../../../components/auth-button/auth-button
   imports: [RouterOutlet, RouterLink, RouterLinkActive, AuthButtonComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div class="min-h-dvh">
       <!-- Admin Header -->
-      <header class="bg-white dark:bg-gray-800 shadow-md">
-        <div class="container mx-auto px-4 py-4">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-4">
-              <a routerLink="/admin" class="text-2xl font-bold text-gray-900 dark:text-white">
-                <i class="fas fa-shield-alt mr-2"></i>Admin Panel
-              </a>
-              <nav class="hidden md:flex gap-4 ml-8">
-                <a
-                  routerLink="/admin"
-                  routerLinkActive="text-blue-600 dark:text-blue-400"
-                  [routerLinkActiveOptions]="{ exact: true }"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <i class="fas fa-home mr-1"></i>Dashboard
-                </a>
-                <a
-                  routerLink="/admin/articles"
-                  routerLinkActive="text-blue-600 dark:text-blue-400"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <i class="fas fa-newspaper mr-1"></i>Articles
-                </a>
-                <a
-                  routerLink="/admin/security"
-                  routerLinkActive="text-blue-600 dark:text-blue-400"
-                  class="px-3 py-2 rounded-md text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-                >
-                  <i class="fas fa-fingerprint mr-1"></i>Security
-                </a>
-                <!--
-                  Only routes declared under the admin path in app.routes.ts belong here.
-                  Projects/Settings links used to live here and threw
-                  "Cannot match any routes" because no such child route exists.
-                -->
-              </nav>
-            </div>
-            <div class="flex items-center gap-4">
+      <header class="border-b border-amber/25 bg-panel/90 backdrop-blur-sm">
+        <div
+          class="container mx-auto flex flex-col gap-3 px-4 py-4 md:flex-row md:items-center md:justify-between"
+        >
+          <div class="flex flex-col gap-3 md:flex-row md:items-center md:gap-8">
+            <a
+              routerLink="/admin"
+              class="admin-nav-brand inline-flex items-center gap-2 font-medieval text-xl text-parchment"
+            >
+              <i class="fas fa-shield-halved text-amber" aria-hidden="true"></i>Admin Console
+            </a>
+            <!--
+              Only routes declared under the admin path in app.routes.ts belong here.
+              Projects/Settings links used to live here and threw
+              "Cannot match any routes" because no such child route exists.
+            -->
+            <nav aria-label="Admin" class="-mx-1 flex gap-1 overflow-x-auto">
               <a
-                routerLink="/"
-                class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+                routerLink="/admin"
+                routerLinkActive="is-active"
+                [routerLinkActiveOptions]="{ exact: true }"
+                ariaCurrentWhenActive="page"
+                class="admin-nav-link"
               >
-                <i class="fas fa-globe mr-1"></i>View Site
+                <i class="fas fa-gauge" aria-hidden="true"></i>Dashboard
               </a>
-              <app-auth-button></app-auth-button>
-            </div>
+              <a
+                routerLink="/admin/articles"
+                routerLinkActive="is-active"
+                ariaCurrentWhenActive="page"
+                class="admin-nav-link"
+              >
+                <i class="fas fa-scroll" aria-hidden="true"></i>Articles
+              </a>
+              <a
+                routerLink="/admin/security"
+                routerLinkActive="is-active"
+                ariaCurrentWhenActive="page"
+                class="admin-nav-link"
+              >
+                <i class="fas fa-fingerprint" aria-hidden="true"></i>Security
+              </a>
+            </nav>
+          </div>
+          <div class="flex items-center gap-4">
+            <a routerLink="/" class="link-tavern text-sm">
+              <i class="fas fa-arrow-up-right-from-square mr-1" aria-hidden="true"></i>View site
+            </a>
+            <app-auth-button></app-auth-button>
           </div>
         </div>
       </header>
@@ -67,6 +70,53 @@ import { AuthButtonComponent } from '../../../components/auth-button/auth-button
       </main>
     </div>
   `,
-  styles: [],
+  styles: [
+    `
+      .admin-nav-brand:focus-visible,
+      .admin-nav-link:focus-visible {
+        outline: 2px solid var(--color-amber-bright);
+        outline-offset: 2px;
+      }
+
+      .admin-nav-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        min-height: 2.75rem;
+        padding: 0 0.55rem;
+        white-space: nowrap;
+        font-family: var(--font-heading);
+        font-size: 0.85rem;
+        letter-spacing: 0.06em;
+        color: var(--color-parchment);
+        border-bottom: 1px solid transparent;
+        transition:
+          color 0.2s var(--ease-gilt),
+          border-color 0.2s var(--ease-gilt);
+      }
+
+      .admin-nav-link i {
+        color: var(--color-muted);
+        transition: color 0.2s var(--ease-gilt);
+      }
+
+      .admin-nav-link:hover,
+      .admin-nav-link:hover i,
+      .admin-nav-link.is-active,
+      .admin-nav-link.is-active i {
+        color: var(--color-amber);
+      }
+
+      .admin-nav-link.is-active {
+        border-bottom-color: var(--color-amber);
+      }
+
+      @media (min-width: 768px) {
+        .admin-nav-link {
+          padding: 0 0.85rem;
+        }
+      }
+    `,
+  ],
 })
 export class AdminLayoutComponent {}

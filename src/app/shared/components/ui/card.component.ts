@@ -5,17 +5,17 @@ export type CardVariant = 'default' | 'elevated' | 'outlined' | 'ghost';
 
 // Hoisted out of the getter: pure data, identical for every instance, so
 // there is no reason to re-allocate the table on each change detection pass.
-const BASE_CLASSES = 'rounded-xl transition-all duration-300';
+const BASE_CLASSES =
+  'rounded-[2px] transition-[background-color,border-color,box-shadow,transform] duration-300 ease-gilt';
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default: 'bg-gray-800/50 backdrop-blur-sm border border-gray-700',
-  elevated: 'bg-gray-800/70 backdrop-blur-md shadow-lg shadow-black/20',
-  outlined: 'bg-transparent border-2 border-gray-700',
+  default: 'border border-amber/30 bg-panel/85',
+  elevated: 'border border-amber/30 bg-panel-hi/90 shadow-elevation',
+  outlined: 'border border-amber/45 bg-transparent',
   ghost: 'bg-transparent',
 };
 
-const HOVER_CLASSES =
-  'hover:border-blue-500 hover:shadow-lg hover:shadow-blue-500/20 hover:-translate-y-1';
+const HOVER_CLASSES = 'hover:border-amber/55 hover:shadow-glow motion-safe:hover:-translate-y-1';
 
 @Component({
   selector: 'app-card',
@@ -47,7 +47,7 @@ export class CardComponent {
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="p-6 border-b border-gray-700">
+    <div class="border-b border-amber/20 p-6">
       <ng-content></ng-content>
     </div>
   `,
@@ -75,7 +75,7 @@ export class CardBodyComponent {}
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <div class="p-6 border-t border-gray-700">
+    <div class="border-t border-amber/20 p-6">
       <ng-content></ng-content>
     </div>
   `,
@@ -89,7 +89,7 @@ export class CardFooterComponent {}
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <h3 class="text-xl font-bold text-white mb-2">
+    <h3 class="mb-2 font-heading text-xl text-parchment">
       <ng-content></ng-content>
     </h3>
   `,
@@ -103,7 +103,7 @@ export class CardTitleComponent {}
   imports: [CommonModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <p class="text-sm text-gray-400">
+    <p class="font-body text-sm text-muted">
       <ng-content></ng-content>
     </p>
   `,
