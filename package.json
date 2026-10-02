@@ -86,9 +86,11 @@
     "tsyringe": "^4.10.0"
   },
   "devDependencies": {
+    "@angular-eslint/builder": "22.0.0",
     "@angular/build": "^22.0.4",
     "@angular/cli": "^22.0.4",
     "@angular/compiler-cli": "^22.0.4",
+    "@eslint/js": "9.39.4",
     "@graphql-codegen/cli": "^7.1.2",
     "@graphql-codegen/client-preset": "^6.0.1",
     "@graphql-codegen/typescript": "^6.0.2",
